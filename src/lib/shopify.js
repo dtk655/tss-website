@@ -14,6 +14,22 @@ export const NAV_COLLECTIONS = [
   'lights', 'reflectors', 'safety-gear', 'sign-stands', 'deliniators',
   'equipment-rentals', 'truck-rentals'
 ];
+// Cover images for category tiles (the same art the current site uses).
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const COVERS = {
+  cones: 'CONEE.png',
+  barricades: 'SHOPIFYTYPElllRIGHTFRONT.png',
+  'water-filled-barriers': 'WATERBARRIER_ORANGE.png',
+  'traffic-drums': 'DRUMWTIREHI_NO_BG.svg',
+  'sign-shop': 'SHOPIFYSTOPSIGN_f5c72dfc-20a8-4312-bebb-08b79e63ba0c.png',
+  'safety-gear': 'Hi-VisVESTS.png',
+  'equipment-rentals': '1742906746_0.jpg',
+  'truck-rentals': '1743010145_0.png',
+  lights: 'FLASHERAC2006PLUSAMBER.png',
+  reflectors: 'SHOPIFYREFLECTORWHITEYELLOWTOPMOUNT.png',
+  'sign-stands': 'SHOPIFYKSTAND.png',
+  deliniators: 'DELINIATORRINGTOP.jpg'
+};
 // Collections that are internal/merchandising only.
 const HIDDEN = new Set(['frontpage', 'featured-collection', 'new-collection', 'best-selling-collection', 'you-might-also-like', 'lane-closure', 'custom-signage']);
 
@@ -80,7 +96,7 @@ function buildCatalog(products, collections) {
     .filter((c) => !HIDDEN.has(c.handle))
     .map((c) => {
       const items = products.filter((p) => p.collections.includes(c.handle));
-      const cover = c.image || items.find((p) => p.featuredImage)?.featuredImage || null;
+      const cover = (COVERS[c.handle] && { url: CDN + COVERS[c.handle], altText: c.title }) || c.image || items.find((p) => p.featuredImage)?.featuredImage || null;
       return { ...c, products: items, cover };
     })
     .filter((c) => c.products.length > 0);

@@ -17,6 +17,7 @@ const TYPES = { svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg:
     } else route.abort();
   });
   await pg.goto('http://localhost:4500' + upath, { waitUntil: 'networkidle', timeout: 45000 }).catch(() => {});
+  await pg.evaluate(() => document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-in')));
   if (scroll !== '0' && scroll !== 'full') { await pg.evaluate((y) => window.scrollTo(0, +y), scroll); }
   await pg.waitForTimeout(+delay);
   await pg.screenshot({ path: out, fullPage: scroll === 'full' });

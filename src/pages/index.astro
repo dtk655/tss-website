@@ -10,7 +10,6 @@ const pick = (hs) => hs.map((h) => byHandle.get(h)).filter(Boolean);
 const featured = pick(['waterbarriertss590rparent', 'cone28inch', 'cone36inch', 'type-iii-breakaway-barricade-hi-intensity-left-stripes', 'traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring', 'class3safetyvest', 'sign-30x30-silver-red-hi-intensity-prismatic-080-alum-stop-sign', 'typea-c2006']);
 const fleet = pick(['truck-mounted-attenuator-tma', 'arrow-board', 'variable-message-sign-vms-board', 'light-tower', 'portable-traffic-light', 'bucket-truck']);
 const cats = ['cones', 'barricades', 'water-filled-barriers', 'traffic-drums', 'sign-shop', 'safety-gear'].map((h) => colByHandle.get(h)).filter(Boolean);
-const productCount = [...byHandle.values()].filter((p) => !p.isRental).length;
 const wc = byHandle.get('waterbarriertss590rparent');
 const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Port Authority of NY & NJ', 'NYSDOT', 'NYS Thruway', 'PennDOT'];
 ---
@@ -18,74 +17,65 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
   <section class="hero">
     <div class="wrap hero__in">
       <div class="hero__copy">
-        <p class="hero__kicker"><span class="hero__flag" aria-hidden="true"></span>{YEARS} years of keeping Northeast roads moving</p>
-        <h1 class="hero__h">Work zones,<br />set up <span class="hero__accent">right.</span></h1>
-        <p class="hero__sub">Traffic control products shipped nationwide. Equipment rentals and union lane closure crews across New Jersey, New York, Pennsylvania and Connecticut.</p>
+        <h1 class="hero__h">Work zones, set up right<span class="dot">.</span></h1>
+        <p class="hero__sub">Traffic control products shipped nationwide. Equipment rentals and union lane closure crews across New Jersey, New York, Pennsylvania and Connecticut, since 1971.</p>
         <div class="hero__cta">
-          <a href="/pages/request-a-quote" class="btn btn--lg">Get a quote</a>
-          <a href="/tools/work-zone-builder" class="btn btn--ghost btn--lg">Plan a lane closure</a>
+          <a href="/pages/request-a-quote" class="btn">Request a quote</a>
+          <a href="/collections" class="btn btn--ghost">Shop products</a>
         </div>
         <ul class="hero__proof" aria-label="Credentials">
-          <li>10,000+ lane closures</li>
-          <li>ATSSA-certified flaggers</li>
-          <li>Union crews</li>
-          <li>24/7 emergency response</li>
+          <li><strong>10,000+</strong> lane closures</li>
+          <li><strong>{YEARS}</strong> years in business</li>
+          <li><strong>24/7</strong> emergency response</li>
+          <li><strong>ATSSA</strong>-certified flaggers</li>
         </ul>
       </div>
-      <form class="hero__ask" data-hero-ask>
-        <div class="hero__askhead">
-          <span class="hero__askcone" aria-hidden="true">
-            <svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#15181c"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg>
-          </span>
-          <label for="hero-q"><strong>Ask Coney</strong><span>Our AI assistant finds products, checks rentals and starts your quote</span></label>
-        </div>
-        <div class="hero__askrow">
-          <input id="hero-q" name="q" autocomplete="off" placeholder="I need 200 cones and 10 drums in Newark next week" />
-          <button class="btn btn--gold btn--sm" type="submit">Ask</button>
-        </div>
-        <div class="hero__chips">
-          <button type="button" data-q="Can you rent me an arrow board and a TMA for a highway job?">Rent an arrow board and TMA</button>
-          <button type="button" data-q="How many WATERCADE barriers do I need for a 300 ft event perimeter?">Barriers for an event</button>
-          <button type="button" data-q="Can you put our town's logo on traffic cones?">Cones with our logo</button>
-        </div>
-      </form>
+      <figure class="hero__panel reveal">
+        <div class="hero__road"><RoadHero /></div>
+        <figcaption>
+          <span>A right-lane closure at MUTCD spacing, drawn by our free work zone builder.</span>
+          <a class="textlink" href="/tools/work-zone-builder">Plan yours</a>
+        </figcaption>
+      </figure>
     </div>
-    <div class="hero__road"><RoadHero /></div>
   </section>
 
-  <div class="agencies" aria-label="Road authorities TSS has worked on">
-    <div class="agencies__track">
-      {[0, 1].map((dup) => (
-        <ul class="agencies__list" aria-hidden={dup === 1 ? 'true' : undefined}>
-          <li class="agencies__label">Proven on:</li>
-          {agencies.map((a) => <li>{a}</li>)}
-        </ul>
-      ))}
-    </div>
+  <div class="askbar">
+    <form class="wrap askbar__in" data-hero-ask>
+      <span class="askbar__cone" aria-hidden="true">
+        <svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg>
+      </span>
+      <label for="hero-q"><strong>Ask Coney, our AI assistant</strong><span>Products, rentals, quotes — answered in seconds</span></label>
+      <div class="askbar__row">
+        <input id="hero-q" name="q" autocomplete="off" placeholder="I need 200 cones and 10 drums in Newark next week" />
+        <button class="btn btn--sm" type="submit">Ask</button>
+      </div>
+    </form>
   </div>
 
   <section class="paths wrap" aria-label="What we do">
     <a class="path sign reveal" href="/collections">
-      <span class="path__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M20 6h8l9 34H11z" fill="#f26a1b"/><path d="M17.3 17h13.4l2 7.5H15.3z" fill="#fff"/><rect x="6" y="40" width="36" height="4" rx="2" fill="currentColor" opacity=".85"/></svg></span>
       <h2>Buy products</h2>
-      <p>{productCount}+ products, from cones and drums to signs and safety gear. Custom colors and logos. Net terms for agencies and contractors.</p>
+      <p>Cones, drums, barricades, signs and safety gear. Custom colors and logos. Net terms for agencies and contractors.</p>
       <span class="path__go">Shop products</span>
     </a>
-    <a class="path sign sign--gold reveal" href="/collections/equipment-rentals" style="--d:90ms">
-      <span class="path__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="4" y="18" width="24" height="16" rx="2" fill="currentColor"/><path d="M28 22h9l7 8v4h-16z" fill="currentColor" opacity=".75"/><circle cx="13" cy="36" r="5" fill="#fff" stroke="currentColor" stroke-width="3"/><circle cx="36" cy="36" r="5" fill="#fff" stroke="currentColor" stroke-width="3"/></svg></span>
+    <a class="path sign reveal" href="/collections/equipment-rentals" style="--d:80ms">
       <h2>Rent equipment</h2>
       <p>Crash trucks, arrow boards, message boards, light towers and everything we sell. Daily, weekly and monthly in NJ, NY, PA and CT.</p>
       <span class="path__go">See rentals</span>
     </a>
-    <a class="path sign sign--dark reveal" href="/pages/lane-closure" style="--d:180ms">
-      <span class="path__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="10" r="5" fill="#ffc400"/><path d="M24 17c-5 0-7 3-7 8v16h4V30h6v11h4V25c0-5-2-8-7-8z" fill="#ffc400"/><path d="M31 19l9-7" stroke="#ffc400" stroke-width="3" stroke-linecap="round"/><rect x="38" y="6" width="7" height="9" rx="1" fill="#f26a1b"/></svg></span>
+    <a class="path sign reveal" href="/pages/lane-closure" style="--d:160ms">
       <h2>Book a crew</h2>
       <p>MUTCD-compliant lane closures with ATSSA-certified flaggers, union labor and 24/7 emergency response.</p>
       <span class="path__go">Lane closure services</span>
     </a>
   </section>
 
-  <section class="section tools">
+  <div class="wrap">
+    <p class="agencies reveal"><span>Experience with:</span> {agencies.join(' / ')}</p>
+  </div>
+
+  <section class="section section--haze">
     <div class="wrap">
       <div class="tools__head reveal">
         <div>
@@ -97,14 +87,14 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
       <div class="tools__grid">
         <a href="/tools/work-zone-builder" class="tool tool--big reveal">
           <svg viewBox="0 0 400 150" aria-hidden="true" class="tool__art">
-            <rect width="400" height="150" fill="#1b1e22"/><line x1="0" y1="20" x2="400" y2="20" stroke="#ffc400" stroke-width="3"/><line x1="0" y1="130" x2="400" y2="130" stroke="#f7f7f2" stroke-width="3"/><line x1="0" y1="75" x2="400" y2="75" stroke="#f7f7f2" stroke-width="3" stroke-dasharray="24 30" opacity=".85"/>
+            <rect width="400" height="150" rx="8" fill="#1a1d21"/><line x1="0" y1="20" x2="400" y2="20" stroke="#f5b800" stroke-width="3"/><line x1="0" y1="130" x2="400" y2="130" stroke="#f7f7f2" stroke-width="3"/><line x1="0" y1="75" x2="400" y2="75" stroke="#f7f7f2" stroke-width="3" stroke-dasharray="24 30" opacity=".8"/>
             {[0,1,2,3,4,5,6,7].map((i) => <circle cx={150 + i * 16} cy={126 - i * 6.5} r="5" fill="#f26a1b"/>)}
             {[0,1,2,3,4].map((i) => <circle cx={280 + i * 24} cy={79} r="5" fill="#f26a1b"/>)}
-            <rect x="268" y="95" width="30" height="22" rx="3" fill="#ffc400"/>
+            <rect x="268" y="95" width="30" height="22" rx="3" fill="#f5b800"/>
           </svg>
           <h3>Work zone builder</h3>
           <p>Pick the road, speed and lanes. See the taper, buffer and signs laid out to MUTCD spacing, with a full equipment count.</p>
-          <span class="tool__go">Open the builder</span>
+          <span class="tool__go textlink">Open the builder</span>
         </a>
         <a href="/tools/watercade-planner" class="tool reveal" style="--d:80ms">
           <h3>WATERCADE planner</h3>
@@ -122,8 +112,6 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
     </div>
   </section>
 
-  <div class="hazard-band" aria-hidden="true"></div>
-
   <section class="section">
     <div class="wrap">
       <div class="row-head reveal">
@@ -132,7 +120,7 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
       </div>
       <div class="cats">
         {cats.map((c, i) => (
-          <a href={`/collections/${c.handle}`} class="cat reveal" style={`--d:${i * 60}ms`}>
+          <a href={`/collections/${c.handle}`} class="cat reveal" style={`--d:${i * 50}ms`}>
             <span class="cat__img">{c.cover && <img src={img(c.cover.url, 420)} alt="" loading="lazy" />}</span>
             <span class="cat__t">{c.title}</span>
           </a>
@@ -141,7 +129,7 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
     </div>
   </section>
 
-  <section class="section section--paper">
+  <section class="section section--tight">
     <div class="wrap">
       <div class="row-head reveal">
         <h2>Contractor favorites</h2>
@@ -152,26 +140,24 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
   </section>
 
   {wc && (
-    <section class="wcband">
+    <section class="section section--haze">
       <div class="wrap wcband__in">
         <div class="reveal">
           <p class="kicker">Our own barrier</p>
           <h2>WATERCADE<span class="tm">™</span></h2>
-          <p class="lede">The 5-foot water-filled barrier we build our name on. 50 lbs empty so one person can place it, 650 lbs once filled. MASH TL-3 crash tested, interlocking ends, turn pins included.</p>
-          <p>Used by highway contractors, police departments, DPWs, stadiums and festival crews.</p>
+          <p class="lede">The 5-foot water-filled barrier we put our name on. 50 lbs empty so one person can place it, 650 lbs once filled. MASH TL-3 crash tested, interlocking ends, turn pins included.</p>
+          <p>Used by highway contractors, police departments, DPWs, stadiums and festival crews. Orange or white, with custom colors, logos and 3M reflective striping available.</p>
           <div class="hero__cta">
-            <a href={`/products/${wc.handle}`} class="btn btn--dark">Shop WATERCADE</a>
+            <a href={`/products/${wc.handle}`} class="btn">Shop WATERCADE</a>
             <a href="/tools/watercade-planner" class="btn btn--ghost">Plan a layout</a>
           </div>
         </div>
-        <div class="wcband__img reveal" style="--d:120ms">{wc.featuredImage && <img src={img(wc.featuredImage.url, 900)} alt="WATERCADE water-filled barrier in orange" loading="lazy" />}</div>
+        <div class="wcband__img reveal" style="--d:100ms">{wc.featuredImage && <img src={img(wc.featuredImage.url, 900)} alt="WATERCADE water-filled barrier in orange" loading="lazy" />}</div>
       </div>
     </section>
   )}
 
-  <div class="hazard-band hazard-band--orange" aria-hidden="true"></div>
-
-  <section class="section section--dark">
+  <section class="section">
     <div class="wrap">
       <div class="row-head reveal">
         <h2>Rental fleet</h2>
@@ -179,41 +165,43 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
       </div>
       <div class="fleet">
         {fleet.map((p, i) => (
-          <a href={`/products/${p.handle}`} class="fleet__i reveal" style={`--d:${i * 60}ms`}>
+          <a href={`/products/${p.handle}`} class="fleet__i reveal" style={`--d:${i * 50}ms`}>
             <span class="fleet__img">{p.featuredImage && <img src={img(p.featuredImage.url, 500)} alt="" loading="lazy" />}</span>
             <span class="fleet__t">{p.title}</span>
-            <span class="fleet__r">Daily · weekly · monthly</span>
+            <span class="fleet__r">Daily, weekly or monthly</span>
           </a>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap why">
-      <div class="why__head reveal">
-        <p class="kicker">Why TSS</p>
-        <h2>Why contractors and agencies call us first</h2>
+  <section class="section section--dark stats">
+    <div class="wrap">
+      <div class="stats__grid">
+        <div class="reveal"><strong>{YEARS}</strong><span>years in business</span></div>
+        <div class="reveal" style="--d:70ms"><strong>10,578</strong><span>lane closures completed</span></div>
+        <div class="reveal" style="--d:140ms"><strong>35,017</strong><span>customers served</span></div>
+        <div class="reveal" style="--d:210ms"><strong>3.1M</strong><span>cones sold</span></div>
       </div>
-      <dl>
-        <div class="reveal"><dt>Since 1971</dt><dd>Three generations of setting up work zones in the Northeast.</dd></div>
-        <div class="reveal" style="--d:60ms"><dt>Union crews</dt><dd>Trained, ATSSA-certified flaggers and laborers on every job.</dd></div>
-        <div class="reveal" style="--d:120ms"><dt>24/7 response</dt><dd>Emergency closures for utilities, water main breaks and incidents.</dd></div>
-        <div class="reveal" style="--d:180ms"><dt>Net terms</dt><dd>Purchase orders and accounts for municipalities, agencies and contractors.</dd></div>
-        <div class="reveal" style="--d:240ms"><dt>One call</dt><dd>Products, rentals and crews from the same yard, on one invoice.</dd></div>
-        <div class="reveal" style="--d:300ms"><dt>Custom work</dt><dd>Your colors, logos and stenciling on cones, drums, barriers and signs.</dd></div>
-      </dl>
+      <div class="why">
+        <dl>
+          <div class="reveal"><dt>Union crews</dt><dd>Trained, ATSSA-certified flaggers and laborers on every job.</dd></div>
+          <div class="reveal" style="--d:60ms"><dt>24/7 response</dt><dd>Emergency closures for utilities, water main breaks and incidents.</dd></div>
+          <div class="reveal" style="--d:120ms"><dt>Net terms</dt><dd>Purchase orders and accounts for municipalities, agencies and contractors.</dd></div>
+          <div class="reveal" style="--d:180ms"><dt>One call</dt><dd>Products, rentals and crews from the same yard, on one invoice.</dd></div>
+        </dl>
+      </div>
     </div>
   </section>
 
   <section class="final">
-    <div class="wrap final__in sign sign--gold reveal">
+    <div class="wrap final__in reveal">
       <div>
         <h2>Tell us about the job</h2>
         <p>Products, rentals or a full crew. A real person replies, usually the same business day.</p>
       </div>
       <div class="final__cta">
-        <a href="/pages/request-a-quote" class="btn btn--dark">Get a quote</a>
+        <a href="/pages/request-a-quote" class="btn">Request a quote</a>
         <a href="tel:+19085614800" class="btn btn--ghost">Call 908-561-4800</a>
       </div>
     </div>
@@ -224,138 +212,96 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
   const f = document.querySelector('[data-hero-ask]');
   const ask = (q) => { if (q && window.TSSChat) window.TSSChat.ask(q); };
   f?.addEventListener('submit', (e) => { e.preventDefault(); const q = f.q.value.trim(); ask(q); f.q.value = ''; });
-  f?.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => ask(b.dataset.q)));
 </script>
 
 <style>
   /* ---------------- hero ---------------- */
-  .hero {
-    position: relative;
-    background:
-      radial-gradient(90% 70% at 18% 0%, rgba(255, 196, 0, .07), transparent 60%),
-      radial-gradient(70% 60% at 85% 20%, rgba(182, 6, 6, .14), transparent 60%),
-      linear-gradient(180deg, #23272c 0%, #1a1d21 78%, #15181c 100%);
-    color: var(--white-line);
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-  .hero__in { position: relative; display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; padding-top: clamp(56px, 7.5vw, 110px); padding-bottom: clamp(30px, 4vw, 54px); }
-  .hero__kicker { display: flex; align-items: center; gap: 10px; color: var(--gold); font-weight: 700; font-size: .98rem; letter-spacing: .01em; margin: 0 0 20px; }
-  .hero__flag { width: 30px; height: 4px; border-radius: 2px; background: var(--gold); box-shadow: 0 0 18px rgba(255, 196, 0, .8); flex: none; }
-  .hero__h { font-size: clamp(3rem, 7.6vw, 6.4rem); line-height: .96; letter-spacing: -.012em; text-wrap: balance; text-shadow: 0 2px 0 rgba(0, 0, 0, .25), 0 24px 60px rgba(0, 0, 0, .5); }
-  .hero__accent { color: var(--gold); position: relative; white-space: nowrap; }
-  .hero__accent::after { content: ''; position: absolute; left: .04em; right: .08em; bottom: -.08em; height: .085em; border-radius: .05em; background: var(--red); }
-  .hero__sub { font-size: var(--fs-2); color: #c9cdd2; margin: 26px 0 30px; max-width: 36ch; line-height: 1.45; }
+  .hero { background: #fff; }
+  .hero__in { display: grid; grid-template-columns: 1.02fr 1fr; gap: clamp(36px, 5vw, 72px); align-items: center; padding-top: clamp(52px, 6.5vw, 96px); padding-bottom: clamp(40px, 5vw, 72px); }
+  .hero__h { font-size: clamp(2.7rem, 4.6vw, 4.3rem); letter-spacing: -0.028em; text-wrap: balance; max-width: 13ch; }
+  .dot { color: var(--red); }
+  .hero__sub { font-size: var(--fs-2); color: var(--steel); margin: 22px 0 28px; max-width: 46ch; line-height: 1.5; }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .btn--lg { min-height: 58px; padding-inline: 34px; font-size: 1.1rem; }
-  .hero__proof { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 26px; margin: 30px 0 0; padding: 0; color: #aeb4ba; font-size: .95rem; font-weight: 600; }
-  .hero__proof li { display: flex; align-items: center; gap: 9px; }
-  .hero__proof li::before { content: ''; width: 7px; height: 7px; border-radius: 2px; rotate: 45deg; background: var(--orange); flex: none; }
+  .hero__proof { list-style: none; display: flex; flex-wrap: wrap; gap: 10px 36px; margin: 34px 0 0; padding: 22px 0 0; border-top: 1px solid var(--line); color: var(--steel); font-size: .95rem; }
+  .hero__proof strong { color: var(--ink); font-variation-settings: 'wght' 720; }
+  .hero__panel { margin: 0; border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--shadow-l); background: #1a1d21; }
+  .hero__road :global(.road) { height: clamp(200px, 22vw, 300px); }
+  .hero__panel figcaption { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 18px 13px; background: #fff; border-top: 1px solid var(--line); font-size: .92rem; color: var(--steel); }
+  .hero__panel figcaption a { white-space: nowrap; }
 
-  .hero__ask {
-    background: linear-gradient(165deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .03));
-    border: 1px solid rgba(255, 255, 255, .13);
-    border-radius: var(--r-l);
-    padding: 22px;
-    display: grid; gap: 14px;
-    box-shadow: var(--shadow-l);
-    backdrop-filter: blur(8px);
-  }
-  .hero__askhead { display: flex; gap: 14px; align-items: center; }
-  .hero__askcone { width: 46px; height: 52px; flex: none; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
-  .hero__askhead label { display: grid; gap: 2px; cursor: pointer; }
-  .hero__askhead strong { font-size: 1.15rem; font-weight: 800; }
-  .hero__askhead span { color: #aeb4ba; font-size: .9rem; line-height: 1.35; }
-  .hero__askrow { display: flex; gap: 8px; }
-  .hero__askrow input { flex: 1; min-width: 0; min-height: 48px; padding: 11px 15px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .16); background: rgba(21, 24, 28, .72); color: #fff; }
-  .hero__askrow input::placeholder { color: #7d848c; }
-  .hero__askrow input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255, 196, 0, .22); }
-  .hero__chips { display: flex; flex-wrap: wrap; gap: 7px; }
-  .hero__chips button { background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .14); color: #c9cdd2; border-radius: 999px; padding: 7px 13px 5px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: border-color .12s, color .12s, background .12s; }
-  .hero__chips button:hover { border-color: var(--gold); color: #fff; background: rgba(255, 196, 0, .08); }
-  .hero__road { position: relative; }
-  .hero__road::before { content: ''; position: absolute; inset: -70px 0 auto; height: 70px; background: linear-gradient(180deg, transparent, rgba(21, 24, 28, .6)); pointer-events: none; }
-
-  /* ---------------- agencies marquee ---------------- */
-  .agencies { background: var(--ink); color: #9aa1a8; overflow: hidden; border-top: 1px solid #2a2f34; }
-  .agencies__track { display: flex; width: max-content; animation: marquee 36s linear infinite; }
-  .agencies:hover .agencies__track { animation-play-state: paused; }
-  .agencies__list { list-style: none; display: flex; align-items: center; gap: 48px; margin: 0; padding: 15px 24px 13px; white-space: nowrap; }
-  .agencies__list li { font-weight: 700; font-size: .92rem; letter-spacing: .04em; }
-  .agencies__list li:not(.agencies__label)::before { content: '◆'; color: var(--orange); margin-right: 14px; font-size: .62rem; vertical-align: 2px; }
-  .agencies__label { color: var(--gold); }
-  @keyframes marquee { to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .agencies__track { animation: none; } }
+  /* ---------------- ask bar ---------------- */
+  .askbar { border-block: 1px solid var(--line); background: var(--haze); }
+  .askbar__in { display: flex; align-items: center; gap: 18px; padding-block: 14px; }
+  .askbar__cone { width: 34px; height: 39px; flex: none; }
+  .askbar__in label { display: grid; line-height: 1.3; cursor: pointer; flex: none; }
+  .askbar__in label strong { font-variation-settings: 'wght' 660; font-size: .98rem; }
+  .askbar__in label span { color: var(--steel); font-size: .85rem; }
+  .askbar__row { display: flex; gap: 8px; flex: 1; }
+  .askbar__row input { flex: 1; min-width: 0; min-height: 44px; padding: 10px 14px 9px; border-radius: var(--r-s); border: 1.5px solid var(--line-dark); background: #fff; }
+  .askbar__row input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3.5px rgba(20, 23, 26, .08); }
+  @media (max-width: 860px) { .askbar__in { flex-wrap: wrap; gap: 10px 14px; } .askbar__row { flex-basis: 100%; } }
 
   /* ---------------- paths ---------------- */
-  .paths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: clamp(44px, 6vw, 80px); }
-  .path { display: flex; flex-direction: column; gap: 10px; padding: 34px 32px 30px; text-decoration: none; min-height: 270px; transition: transform .18s ease, box-shadow .18s ease; }
-  .path:hover { transform: translateY(-4px); box-shadow: var(--shadow-m); }
-  .path h2 { font-size: var(--fs-4); }
-  .path p { margin: 0; line-height: 1.5; }
-  .path__icon { width: 52px; height: 52px; margin-bottom: 6px; }
-  .path__icon svg { width: 100%; height: 100%; }
-  .path__go { margin-top: auto; font-weight: 800; padding-top: 16px; text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: var(--gold); text-underline-offset: 5px; }
-  .sign--dark .path__go { text-decoration-color: var(--gold); }
-  .sign--gold .path__go { text-decoration-color: var(--red); }
+  .paths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: clamp(44px, 5.5vw, 72px); }
+  .path { display: flex; flex-direction: column; gap: 10px; padding: 30px 30px 26px; text-decoration: none; min-height: 230px; border-top: 3px solid var(--red); transition: border-color .15s ease, box-shadow .15s ease; }
+  .path:hover { box-shadow: var(--shadow-m); border-color: var(--line-dark); border-top-color: var(--red); }
+  .path h2 { font-size: var(--fs-3); }
+  .path p { margin: 0; line-height: 1.55; color: var(--steel); }
+  .path__go { margin-top: auto; padding-top: 16px; font-variation-settings: 'wght' 650; color: var(--red); }
+
+  .agencies { margin: clamp(40px, 5vw, 64px) 0 0; padding-top: 18px; border-top: 1px solid var(--line); color: var(--steel); font-size: .92rem; line-height: 2; }
+  .agencies span { color: var(--ink); font-variation-settings: 'wght' 660; margin-right: 6px; }
 
   /* ---------------- tools ---------------- */
-  .tools__head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: end; margin-bottom: 36px; }
+  .tools__head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: end; margin-bottom: 34px; }
   .tools__head .lede { margin: 0; }
-  .tools__grid { display: grid; grid-template-columns: 1.45fr 1fr 1fr; grid-template-rows: auto auto auto; gap: 18px; }
-  .tool { background: var(--paper); border-radius: var(--r-m); padding: 26px; text-decoration: none; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow-s); transition: transform .16s ease, box-shadow .16s ease; }
-  .tool:hover { transform: translateY(-3px); box-shadow: var(--shadow-m); }
-  .tool h3 { font-size: var(--fs-2); font-weight: 800; }
-  .tool p { margin: 0; color: var(--steel); line-height: 1.5; }
-  .tool--big { grid-row: span 3; background: linear-gradient(175deg, #272b30, #1b1e22); color: #fff; }
-  .tool--big p { color: #aeb4ba; }
+  .tools__grid { display: grid; grid-template-columns: 1.45fr 1fr 1fr; grid-template-rows: auto auto auto; gap: 16px; }
+  .tool { background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); padding: 24px; text-decoration: none; display: flex; flex-direction: column; gap: 8px; transition: border-color .15s ease, box-shadow .15s ease; }
+  .tool:hover { border-color: var(--line-dark); box-shadow: var(--shadow-m); }
+  .tool h3 { font-size: var(--fs-2); }
+  .tool p { margin: 0; color: var(--steel); line-height: 1.5; font-size: .98rem; }
+  .tool--big { grid-row: span 3; }
   .tool--big h3 { font-size: var(--fs-3); }
-  .tool__art { width: 100%; height: auto; border-radius: 9px; margin-bottom: 12px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .07); }
-  .tool__go { margin-top: auto; padding-top: 14px; font-weight: 800; color: var(--gold); }
+  .tool__art { width: 100%; height: auto; margin-bottom: 12px; }
+  .tool__go { margin-top: auto; padding-top: 14px; }
   .tools__grid .tool:not(.tool--big) { grid-column: 2 / span 2; }
 
   /* ---------------- shared rows ---------------- */
-  .row-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+  .row-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; }
   .cats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
-  .cat { background: #fff; border-radius: var(--r-m); padding: 18px 14px 16px; text-decoration: none; display: grid; gap: 8px; text-align: center; box-shadow: var(--shadow-s); transition: transform .16s ease, box-shadow .16s ease; }
-  .cat:hover { transform: translateY(-3px); box-shadow: var(--shadow-m); }
+  .cat { background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); padding: 16px 14px 14px; text-decoration: none; display: grid; gap: 8px; text-align: center; transition: border-color .15s ease, box-shadow .15s ease; }
+  .cat:hover { border-color: var(--line-dark); box-shadow: var(--shadow-m); }
   .cat__img { aspect-ratio: 1; display: grid; place-items: center; }
-  .cat__img img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 10px rgba(22, 24, 27, .12)); transition: transform .25s ease; }
-  .cat:hover .cat__img img { transform: translateY(-4px) scale(1.06); }
-  .cat__t { font-weight: 800; font-size: .98rem; }
+  .cat__img img { width: 100%; height: 100%; object-fit: contain; transition: transform .2s ease; }
+  .cat:hover .cat__img img { transform: scale(1.05); }
+  .cat__t { font-variation-settings: 'wght' 640; font-size: .96rem; }
 
-  .wcband { background: linear-gradient(170deg, #ff8a3d 0%, var(--orange) 40%, #d85a10 100%); color: var(--ink); padding-block: clamp(64px, 8vw, 110px); }
-  .wcband__in { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
-  .wcband .kicker { color: #7a2a00; }
-  .wcband .kicker::before { background: #fff; box-shadow: 8px 0 0 -1px var(--red); }
-  .wcband h2 { font-size: clamp(2.6rem, 5vw, 4rem); }
+  .wcband__in { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+  .wcband__in h2 { font-size: clamp(2.2rem, 4vw, 3.4rem); margin-bottom: 4px; }
   .tm { font-size: .45em; vertical-align: super; }
-  .wcband .lede { color: #4b1b02; }
-  .wcband .btn--ghost { color: var(--ink); }
-  .wcband__img img { width: 100%; max-height: 480px; object-fit: contain; filter: drop-shadow(0 40px 36px rgba(0, 0, 0, .3)); }
+  .wcband__img img { width: 100%; max-height: 440px; object-fit: contain; filter: drop-shadow(0 26px 24px rgba(20, 23, 26, .18)); }
 
   .fleet { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
-  .fleet__i { background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .09); border-radius: var(--r-m); padding: 14px; text-decoration: none; display: grid; gap: 10px; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
-  .fleet__i:hover { transform: translateY(-3px); border-color: var(--gold); background: rgba(255, 255, 255, .07); }
-  .fleet__img { aspect-ratio: 4/3; background: #fff; border-radius: 8px; display: grid; place-items: center; overflow: hidden; }
+  .fleet__i { background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); padding: 14px 14px 16px; text-decoration: none; display: grid; gap: 10px; transition: border-color .15s ease, box-shadow .15s ease; }
+  .fleet__i:hover { border-color: var(--line-dark); box-shadow: var(--shadow-m); }
+  .fleet__img { aspect-ratio: 4/3; display: grid; place-items: center; overflow: hidden; }
   .fleet__img img { width: 100%; height: 100%; object-fit: contain; }
-  .fleet__t { font-weight: 800; line-height: 1.3; font-size: .98rem; }
-  .fleet__r { color: #9aa1a8; font-size: .85rem; font-weight: 600; }
+  .fleet__t { font-variation-settings: 'wght' 640; line-height: 1.3; font-size: .97rem; }
+  .fleet__r { color: var(--steel); font-size: .85rem; }
 
-  .why__head { margin-bottom: 40px; max-width: 54ch; }
-  .why dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 0; border-top: 4px solid var(--ink); }
-  .why dl div { padding: 26px 28px 26px 0; border-bottom: 1px solid var(--line); }
-  .why dt { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-3); margin-bottom: 8px; }
-  .why dd { margin: 0; color: var(--steel); max-width: 34ch; line-height: 1.55; }
+  /* ---------------- stats + why ---------------- */
+  .stats__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-bottom: 46px; margin-bottom: 46px; border-bottom: 1px solid var(--asphalt-line); }
+  .stats__grid div { display: grid; gap: 4px; }
+  .stats__grid strong { font-size: clamp(2.4rem, 4vw, 3.6rem); font-variation-settings: 'wght' 740; letter-spacing: -0.02em; line-height: 1; }
+  .stats__grid span { color: #9aa1a8; font-size: .95rem; }
+  .why dl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin: 0; }
+  .why dt { font-variation-settings: 'wght' 700; font-size: var(--fs-2); margin-bottom: 6px; }
+  .why dd { margin: 0; color: #9aa1a8; line-height: 1.55; font-size: .97rem; }
 
-  .final { padding: 0 0 clamp(64px, 9vw, 128px); }
-  .final__in { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 46px clamp(26px, 4vw, 54px); }
-  .final h2 { font-size: var(--fs-5); margin-bottom: 6px; }
-  .final p { margin: 0; font-weight: 600; }
+  .final { padding: clamp(56px, 7vw, 96px) 0; }
+  .final__in { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 44px clamp(26px, 4vw, 52px); background: var(--haze); border: 1px solid var(--line); border-radius: var(--r-l); }
+  .final h2 { margin-bottom: 6px; }
+  .final p { margin: 0; color: var(--steel); }
   .final__cta { display: flex; gap: 12px; flex-wrap: wrap; }
 
   @media (max-width: 1020px) {
@@ -366,7 +312,7 @@ const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Por
     .tool--big { grid-row: auto; }
     .tools__grid .tool:not(.tool--big) { grid-column: auto; }
     .cats { grid-template-columns: repeat(3, 1fr); }
-    .why dl { grid-template-columns: 1fr 1fr; }
+    .stats__grid, .why dl { grid-template-columns: 1fr 1fr; }
   }
-  @media (max-width: 560px) { .cats { grid-template-columns: repeat(2, 1fr); } .why dl { grid-template-columns: 1fr; } .hero__proof { gap: 8px 18px; } }
+  @media (max-width: 560px) { .cats { grid-template-columns: repeat(2, 1fr); } .why dl { grid-template-columns: 1fr; } }
 </style>

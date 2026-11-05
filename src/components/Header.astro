@@ -12,10 +12,11 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
 <header class="hdr">
   <div class="hdr__util">
     <div class="wrap hdr__utilin">
-      <span class="hdr__since">Family-run in New Jersey since 1971</span>
-      <span class="hdr__area">Rentals and crews in NJ, NY, PA and CT. Products ship nationwide.</span>
-      <a href="/pages/create-c-m-account">Contractor and municipal accounts</a>
-      <a href="tel:+19085614800" class="hdr__utilphone">24/7: 908-561-4800</a>
+      <span>Family-run in New Jersey since 1971</span>
+      <span class="hdr__area">Rentals and crews in NJ, NY, PA and CT · Products ship nationwide</span>
+      <a href="/pages/create-c-m-account">Contractor &amp; municipal accounts</a>
+      <a href="/pages/contact">Contact</a>
+      <a href="tel:+19085614800" class="hdr__utilphone"><strong>24/7:</strong> 908-561-4800</a>
     </div>
   </div>
   <div class="hdr__main">
@@ -28,28 +29,27 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
       </nav>
       <div class="hdr__act">
         <a class="hdr__phone" href="tel:+19085614800" aria-label="Call 908-561-4800">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           <span>908-561-4800</span>
         </a>
         <button class="icon-btn" data-open-drawer="quote" aria-label="Quote list">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           <span class="badge" data-quote-count hidden>0</span>
         </button>
         <button class="icon-btn" data-open-drawer="cart" aria-label="Cart">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h3l2.4 11h10.2L21 7H7.2 M10 20a1 1 0 1 0 0-.01 M18 20a1 1 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h3l2.4 11h10.2L21 7H7.2 M10 20a1 1 0 1 0 0-.01 M18 20a1 1 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
           <span class="badge" data-cart-count hidden>0</span>
         </button>
-        <a href="/pages/request-a-quote" class="btn btn--sm hdr__cta">Get a quote</a>
+        <a href="/pages/request-a-quote" class="btn btn--sm hdr__cta">Request a quote</a>
         <button class="icon-btn menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mnav">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
       </div>
     </div>
   </div>
-  <div class="hdr__rule" aria-hidden="true"></div>
   <nav id="mnav" class="mnav" aria-label="Mobile" hidden>
     {nav.map((n) => <a href={n.href}>{n.label}</a>)}
-    <a href="/pages/request-a-quote" class="mnav__cta">Get a quote</a>
+    <a href="/pages/request-a-quote" class="mnav__cta">Request a quote</a>
     <a href="tel:+19085614800">Call 908-561-4800 (24/7)</a>
   </nav>
 </header>
@@ -61,43 +61,45 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
     btn.setAttribute('aria-expanded', String(!open));
     if (m) m.hidden = open;
   });
+  // shadow under the header once the page scrolls
+  const hdr = document.querySelector('.hdr');
+  const onScroll = () => hdr.classList.toggle('is-stuck', window.scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
 </script>
 <style>
-  .hdr { position: sticky; top: calc(-1 * var(--util-h, 36px)); z-index: 40; }
-  .hdr__util { --util-h: 36px; background: var(--ink); color: #c9cdd2; font-size: .84rem; }
-  .hdr__utilin { height: 36px; display: flex; align-items: center; gap: 26px; white-space: nowrap; overflow: hidden; }
-  .hdr__utilin a { text-decoration: none; font-weight: 600; color: #e6e8ea; }
-  .hdr__utilin a:hover { color: var(--gold); }
-  .hdr__since { color: var(--gold); font-weight: 700; }
-  .hdr__area { opacity: .85; }
+  .hdr { position: sticky; top: -38px; z-index: 40; background: #fff; }
+  .hdr.is-stuck .hdr__main { box-shadow: 0 1px 0 var(--line), 0 10px 28px -18px rgba(20, 23, 26, .25); }
+  .hdr__util { background: var(--haze); color: var(--steel); font-size: .85rem; border-bottom: 1px solid var(--line); }
+  .hdr__utilin { height: 38px; display: flex; align-items: center; gap: 28px; white-space: nowrap; overflow: hidden; }
+  .hdr__utilin a { text-decoration: none; color: var(--ink-2); }
+  .hdr__utilin a:hover { color: var(--red); }
   .hdr__utilphone { margin-left: auto; }
-  .hdr__main { background: rgba(255, 255, 255, .92); backdrop-filter: blur(12px); box-shadow: 0 1px 0 var(--line); }
-  .hdr__in { height: var(--header-h); display: flex; align-items: center; gap: clamp(14px, 2vw, 30px); }
+  .hdr__main { background: #fff; transition: box-shadow .2s ease; }
+  .hdr__in { height: var(--header-h); display: flex; align-items: center; gap: clamp(14px, 2vw, 32px); }
   .logo { flex: none; display: flex; }
-  .logo__img { width: clamp(118px, 12vw, 148px); height: auto; }
+  .logo__img { width: clamp(112px, 11vw, 138px); height: auto; }
   .nav { display: flex; gap: 2px; margin-right: auto; }
-  .nav a { text-decoration: none; font-weight: 700; font-size: .99rem; padding: 9px 13px 8px; border-radius: 9px; color: var(--ink-2); white-space: nowrap; transition: background .12s, color .12s; }
+  .nav a { text-decoration: none; font-variation-settings: 'wght' 600; font-size: .99rem; padding: 9px 13px 8px; border-radius: 7px; color: var(--ink-2); white-space: nowrap; transition: background .12s, color .12s; }
   .nav a:hover { background: var(--haze); color: var(--ink); }
   .nav a[aria-current] { color: var(--ink); position: relative; }
-  .nav a[aria-current]::after { content: ''; position: absolute; left: 13px; right: 13px; bottom: 2px; height: 3px; border-radius: 2px; background: var(--red); }
+  .nav a[aria-current]::after { content: ''; position: absolute; left: 13px; right: 13px; bottom: 1px; height: 2.5px; border-radius: 2px; background: var(--red); }
   .hdr__act { display: flex; align-items: center; gap: 4px; }
-  .hdr__phone { display: flex; align-items: center; gap: 7px; font-weight: 800; font-size: .97rem; text-decoration: none; margin-right: 10px; white-space: nowrap; color: var(--ink); }
-  .hdr__phone svg { width: 18px; height: 18px; color: var(--red); }
-  .hdr__phone:hover span { text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 3px; text-underline-offset: 4px; }
-  .icon-btn { position: relative; width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; border-radius: 9px; cursor: pointer; color: var(--ink); }
+  .hdr__phone { display: flex; align-items: center; gap: 7px; font-variation-settings: 'wght' 660; font-size: .97rem; text-decoration: none; margin-right: 10px; white-space: nowrap; color: var(--ink); }
+  .hdr__phone svg { width: 17px; height: 17px; color: var(--red); }
+  .hdr__phone:hover span { color: var(--red); }
+  .icon-btn { position: relative; width: 42px; height: 42px; display: grid; place-items: center; background: none; border: 0; border-radius: 8px; cursor: pointer; color: var(--ink); }
   .icon-btn:hover { background: var(--haze); }
-  .icon-btn svg { width: 23px; height: 23px; }
+  .icon-btn svg { width: 22px; height: 22px; }
   .badge[hidden] { display: none; }
-  .badge { position: absolute; top: 2px; right: 1px; min-width: 19px; height: 19px; padding: 2px 5px 0; border-radius: 10px; background: var(--red); color: #fff; font-size: .72rem; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 2px #fff; }
+  .badge { position: absolute; top: 2px; right: 1px; min-width: 18px; height: 18px; padding: 2px 5px 0; border-radius: 9px; background: var(--red); color: #fff; font-size: .7rem; font-variation-settings: 'wght' 700; display: grid; place-items: center; box-shadow: 0 0 0 2px #fff; }
   .hdr__cta { margin-left: 8px; }
   .menu-btn { display: none; }
-  .hdr__rule { height: 4px; background: linear-gradient(90deg, var(--gold) 0 60%, var(--red) 60% 100%); }
   .mnav[hidden] { display: none; }
-  .mnav { background: #fff; padding: 6px var(--gutter) 20px; display: grid; box-shadow: var(--shadow-m); }
-  .mnav a { padding: 15px 2px 13px; text-decoration: none; font-weight: 800; font-size: 1.14rem; border-bottom: 1px solid var(--haze-2); color: var(--ink); }
+  .mnav { background: #fff; padding: 6px var(--gutter) 20px; display: grid; border-top: 1px solid var(--line); box-shadow: var(--shadow-m); }
+  .mnav a { padding: 15px 2px 13px; text-decoration: none; font-variation-settings: 'wght' 640; font-size: 1.12rem; border-bottom: 1px solid var(--haze-2); color: var(--ink); }
   .mnav__cta { color: var(--red); }
-  @media (max-width: 1180px) { .hdr__phone span { display: none; } .hdr__phone { margin-right: 2px; } }
-  @media (max-width: 1060px) { .hdr__area { display: none; } }
+  @media (max-width: 1200px) { .hdr__phone span { display: none; } .hdr__phone { margin-right: 2px; } }
+  @media (max-width: 1100px) { .hdr__area { display: none; } }
   @media (max-width: 960px) {
     .nav, .hdr__cta { display: none; }
     .menu-btn { display: grid; }
