@@ -1,0 +1,184 @@
+---
+// Swipe/drag gallery with thumbnails and a full-screen zoom + pan viewer.
+// Variant changes call el.tssGallery.show(url) to jump to that variant's image.
+import { img } from '../lib/shopify.js';
+const { images = [], title } = Astro.props;
+const list = images.length ? images : [{ url: '', altText: title }];
+---
+<div class="gal" data-gallery>
+  <div class="gal__stage">
+    <div class="gal__track" tabindex="0" aria-label={`${title} images. Use arrow keys or swipe to browse.`} role="region">
+      {list.map((im, i) => (
+        <figure class="gal__slide" data-i={i} data-src={im.url}>
+          {im.url && <img src={img(im.url, 1100)} alt={im.altText || `${title}, image ${i + 1} of ${list.length}`} loading={i === 0 ? 'eager' : 'lazy'} draggable="false" />}
+        </figure>
+      ))}
+    </div>
+    {list.length > 1 && <>
+      <button class="gal__nav gal__nav--prev" aria-label="Previous image" data-prev><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+      <button class="gal__nav gal__nav--next" aria-label="Next image" data-next><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+    </>}
+    <button class="gal__zoom" data-zoom aria-label="Open full-screen zoom">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6" /></svg>
+      <span>Zoom</span>
+    </button>
+    <span class="gal__count" aria-hidden="true"><b data-cur>1</b> / {list.length}</span>
+  </div>
+  {list.length > 1 && (
+    <div class="gal__thumbs" role="tablist" aria-label="Choose image">
+      {list.map((im, i) => (
+        <button role="tab" class="gal__thumb" data-go={i} aria-selected={i === 0 ? 'true' : 'false'} aria-label={`Image ${i + 1}`}>
+          <img src={img(im.url, 160)} alt="" loading="lazy" />
+        </button>
+      ))}
+    </div>
+  )}
+  <dialog class="lb" data-lb aria-label="Zoomed image">
+    <div class="lb__view" data-lbview><img data-lbimg alt="" draggable="false" /></div>
+    <div class="lb__bar">
+      <button data-lbprev aria-label="Previous image"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+      <button data-lbout aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" /></svg></button>
+      <span data-lbpct>100%</span>
+      <button data-lbin aria-label="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" /></svg></button>
+      <button data-lbnext aria-label="Next image"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+      <button data-lbclose aria-label="Close zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+    </div>
+    <p class="lb__hint">Drag to move. Scroll, pinch or double-tap to zoom.</p>
+  </dialog>
+</div>
+
+<script>
+  const sized = (u, w) => (!u || /\.svg(\?|$)/i.test(u) ? u : u + (u.includes('?') ? '&' : '?') + 'width=' + w);
+  document.querySelectorAll('[data-gallery]').forEach((root) => {
+    const track = root.querySelector('.gal__track');
+    const slides = [...root.querySelectorAll('.gal__slide')];
+    const thumbs = [...root.querySelectorAll('[data-go]')];
+    const cur = root.querySelector('[data-cur]');
+    let idx = 0;
+
+    const go = (i, smooth = true) => {
+      idx = (i + slides.length) % slides.length;
+      track.scrollTo({ left: slides[idx].offsetLeft, behavior: smooth ? 'smooth' : 'auto' });
+    };
+    const sync = () => {
+      const i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i === idx && cur.textContent === String(i + 1)) return;
+      idx = i; cur.textContent = String(i + 1);
+      thumbs.forEach((t, k) => t.setAttribute('aria-selected', String(k === i)));
+      thumbs[i]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    };
+    track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+    root.querySelector('[data-prev]')?.addEventListener('click', () => go(idx - 1));
+    root.querySelector('[data-next]')?.addEventListener('click', () => go(idx + 1));
+    thumbs.forEach((t) => t.addEventListener('click', () => go(+t.dataset.go)));
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1); }
+      if (e.key === 'Enter') openLb();
+    });
+
+    // Mouse drag to swipe on desktop
+    let dragX = null, startScroll = 0, moved = false;
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      dragX = e.clientX; startScroll = track.scrollLeft; moved = false;
+      track.classList.add('is-drag'); track.setPointerCapture(e.pointerId);
+    });
+    track.addEventListener('pointermove', (e) => {
+      if (dragX === null) return;
+      const dx = e.clientX - dragX; if (Math.abs(dx) > 4) moved = true;
+      track.scrollLeft = startScroll - dx;
+    });
+    const end = (e) => {
+      if (dragX === null) return;
+      const dx = e.clientX - dragX; dragX = null; track.classList.remove('is-drag');
+      if (Math.abs(dx) > track.clientWidth * 0.12) go(idx + (dx < 0 ? 1 : -1)); else go(idx);
+    };
+    track.addEventListener('pointerup', end);
+    track.addEventListener('pointercancel', end);
+    track.addEventListener('click', () => { if (!moved) openLb(); });
+
+    // Lightbox with zoom and pan
+    const lb = root.querySelector('[data-lb]');
+    const view = root.querySelector('[data-lbview]');
+    const lbimg = root.querySelector('[data-lbimg]');
+    const pct = root.querySelector('[data-lbpct]');
+    let s = 1, tx = 0, ty = 0;
+    const apply = () => { lbimg.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; pct.textContent = Math.round(s * 100) + '%'; };
+    const clamp = () => {
+      s = Math.min(5, Math.max(1, s));
+      const r = view.getBoundingClientRect(), mx = (r.width * (s - 1)) / 2, my = (r.height * (s - 1)) / 2;
+      tx = Math.min(mx, Math.max(-mx, tx)); ty = Math.min(my, Math.max(-my, ty));
+      if (s === 1) { tx = 0; ty = 0; }
+      apply();
+    };
+    const load = () => { lbimg.src = sized(slides[idx].dataset.src, 2400); lbimg.alt = slides[idx].querySelector('img')?.alt || ''; s = 1; tx = ty = 0; apply(); };
+    function openLb() { load(); lb.showModal(); }
+    root.querySelector('[data-zoom]').addEventListener('click', openLb);
+    root.querySelector('[data-lbclose]').addEventListener('click', () => lb.close());
+    root.querySelector('[data-lbin]').addEventListener('click', () => { s *= 1.5; clamp(); });
+    root.querySelector('[data-lbout]').addEventListener('click', () => { s /= 1.5; clamp(); });
+    root.querySelector('[data-lbprev]').addEventListener('click', () => { go(idx - 1, false); load(); });
+    root.querySelector('[data-lbnext]').addEventListener('click', () => { go(idx + 1, false); load(); });
+    lb.addEventListener('close', () => go(idx, false));
+    view.addEventListener('wheel', (e) => { e.preventDefault(); s *= e.deltaY < 0 ? 1.15 : 1 / 1.15; clamp(); }, { passive: false });
+    view.addEventListener('dblclick', () => { s = s > 1 ? 1 : 2.5; clamp(); });
+    const pts = new Map(); let pinch0 = 0, s0 = 1, last = null;
+    view.addEventListener('pointerdown', (e) => { view.setPointerCapture(e.pointerId); pts.set(e.pointerId, e); last = { x: e.clientX, y: e.clientY }; if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch0 = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); s0 = s; } });
+    view.addEventListener('pointermove', (e) => {
+      if (!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, e);
+      if (pts.size === 2) { const [a, b] = [...pts.values()]; s = s0 * Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) / pinch0; clamp(); return; }
+      if (last) { tx += e.clientX - last.x; ty += e.clientY - last.y; last = { x: e.clientX, y: e.clientY }; clamp(); }
+    });
+    const up = (e) => { pts.delete(e.pointerId); last = null; };
+    view.addEventListener('pointerup', up); view.addEventListener('pointercancel', up);
+    lb.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { go(idx + 1, false); load(); }
+      if (e.key === 'ArrowLeft') { go(idx - 1, false); load(); }
+      if (e.key === '+' || e.key === '=') { s *= 1.5; clamp(); }
+      if (e.key === '-') { s /= 1.5; clamp(); }
+    });
+
+    root.tssGallery = {
+      show(url) {
+        if (!url) return;
+        const base = url.split('?')[0];
+        const i = slides.findIndex((sl) => (sl.dataset.src || '').split('?')[0] === base);
+        if (i >= 0) go(i);
+      }
+    };
+  });
+</script>
+
+<style>
+  .gal { display: grid; gap: 12px; min-width: 0; }
+  .gal__stage { position: relative; background: #fff; border-radius: var(--sign-r); overflow: hidden; }
+  .gal__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; aspect-ratio: 1; cursor: zoom-in; overscroll-behavior-x: contain; }
+  .gal__track::-webkit-scrollbar { display: none; }
+  .gal__track.is-drag { scroll-snap-type: none; cursor: grabbing; }
+  .gal__slide { flex: 0 0 100%; margin: 0; scroll-snap-align: center; display: grid; place-items: center; padding: clamp(16px, 4vw, 48px); }
+  .gal__slide img { width: 100%; height: 100%; object-fit: contain; user-select: none; }
+  .gal__nav { position: absolute; top: 50%; translate: 0 -50%; width: 46px; height: 46px; border-radius: 50%; border: 0; background: rgba(29,32,36,.82); color: #fff; display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity .2s; }
+  .gal__stage:hover .gal__nav, .gal__nav:focus-visible { opacity: 1; }
+  @media (hover: none) { .gal__nav { display: none; } }
+  .gal__nav--prev { left: 12px; } .gal__nav--next { right: 12px; }
+  .gal__nav svg, .lb__bar svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .gal__zoom { position: absolute; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 6px; padding: 8px 12px 6px; border: 0; border-radius: 8px; background: rgba(29,32,36,.82); color: #fff; font-weight: 800; font-size: .88rem; cursor: pointer; }
+  .gal__zoom svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+  .gal__count { position: absolute; left: 14px; bottom: 14px; font-size: .85rem; color: var(--ink-soft); }
+  .gal__thumbs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 4px; }
+  .gal__thumb { flex: 0 0 76px; height: 76px; padding: 6px; border-radius: 8px; border: 2px solid transparent; background: #fff; cursor: pointer; }
+  .gal__thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .gal__thumb[aria-selected=true] { border-color: var(--asphalt); }
+  .lb { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgba(20,22,25,.96); color: #fff; }
+  .lb::backdrop { background: rgba(20,22,25,.9); }
+  .lb[open] { display: grid; grid-template-rows: 1fr auto auto; }
+  .lb__view { overflow: hidden; display: grid; place-items: center; touch-action: none; cursor: grab; }
+  .lb__view:active { cursor: grabbing; }
+  .lb__view img { max-width: 92vw; max-height: 80dvh; object-fit: contain; background: #fff; border-radius: 8px; transition: transform .08s linear; user-select: none; }
+  .lb__bar { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 12px; }
+  .lb__bar button { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--asphalt-line); color: #fff; display: grid; place-items: center; cursor: pointer; }
+  .lb__bar span { min-width: 56px; text-align: center; font-weight: 800; }
+  .lb__hint { text-align: center; margin: 0 auto 16px; color: #aab0b7; font-size: .9rem; }
+</style>

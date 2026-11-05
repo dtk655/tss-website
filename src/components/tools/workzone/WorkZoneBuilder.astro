@@ -1,0 +1,331 @@
+---
+// Interactive lane closure planner. Calculations and drawing live in planner.ts.
+---
+<div class="wz" data-wz>
+  <div class="wz-stage">
+    <div class="wz-stage__bar">
+      <p class="wz-stage__title" data-wz-headline>Multilane road, right lane closed</p>
+      <div class="wz-zoom" role="group" aria-label="Drawing size">
+        <button type="button" data-zoom="fit" aria-pressed="true">Fit</button>
+        <button type="button" data-zoom="zoom" aria-pressed="false">Zoom in</button>
+      </div>
+    </div>
+    <div class="wz-canvas" data-wz-canvas tabindex="0" aria-label="Top-down drawing of the work zone. Traffic travels left to right.">
+      <svg data-wz-svg role="img" aria-labelledby="wz-svg-title" preserveAspectRatio="xMinYMid meet">
+        <title id="wz-svg-title">Work zone layout</title>
+      </svg>
+    </div>
+    <ul class="wz-legend" aria-label="Legend">
+      <li><span class="lg lg--dev"></span><span data-wz-devname>Drums</span></li>
+      <li><span class="lg lg--sign"></span>Warning sign</li>
+      <li><span class="lg lg--ab"></span>Arrow board</li>
+      <li><span class="lg lg--tma"></span>TMA truck</li>
+      <li><span class="lg lg--work"></span>Work area</li>
+      <li class="wz-legend__note">Drawing compressed to fit. Real distances are labeled in feet.<span class="wz-swipe"> Swipe the drawing to see the whole zone.</span></li>
+    </ul>
+  </div>
+
+  <div class="wz-body">
+    <form class="wz-controls" data-wz-form aria-label="Work zone details">
+      <fieldset class="field">
+        <legend>Road type</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="road" value="two-lane" /><span>Two-lane, two-way</span></label>
+          <label class="choice"><input type="radio" name="road" value="multilane" checked /><span>Multilane</span></label>
+          <label class="choice"><input type="radio" name="road" value="expressway" /><span>Expressway or highway</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field" data-only="area">
+        <legend>Setting</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="area" value="urban" checked /><span>Urban or suburban</span></label>
+          <label class="choice"><input type="radio" name="area" value="rural" /><span>Rural</span></label>
+        </div>
+      </fieldset>
+
+      <div class="field wz-speed">
+        <label for="wz-speed">Posted speed</label>
+        <div class="wz-speed__row">
+          <input id="wz-speed" type="range" name="speed" min="25" max="70" step="5" value="45" aria-describedby="wz-speed-out" />
+          <div class="wz-limit" aria-hidden="true"><span>Speed limit</span><output id="wz-speed-out" data-wz-speed>45</output></div>
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Lane width</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="width" value="10" /><span>10 ft</span></label>
+          <label class="choice"><input type="radio" name="width" value="11" /><span>11 ft</span></label>
+          <label class="choice"><input type="radio" name="width" value="12" checked /><span>12 ft</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field" data-only="close">
+        <legend>Lanes to close</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="close" value="1" checked /><span>1 lane</span></label>
+          <label class="choice"><input type="radio" name="close" value="2" /><span>2 lanes</span></label>
+        </div>
+        <p class="hint" data-close-hint>Two-lane closures are available on expressways.</p>
+      </fieldset>
+
+      <fieldset class="field" data-only="side">
+        <legend>Which side</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="side" value="right" checked /><span>Right</span></label>
+          <label class="choice"><input type="radio" name="side" value="left" /><span>Left</span></label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="wz-work">Work area length</label>
+        <div class="wz-unit"><input id="wz-work" name="work" type="number" inputmode="numeric" min="50" max="10000" step="10" value="300" /><span>ft</span></div>
+        <p class="hint">The stretch where your crew and equipment will be.</p>
+      </div>
+
+      <fieldset class="field">
+        <legend>Duration</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name="duration" value="day" checked /><span>Daytime, short-term</span></label>
+          <label class="choice"><input type="radio" name="duration" value="night" /><span>Overnight</span></label>
+          <label class="choice"><input type="radio" name="duration" value="multi" /><span>Multi-day</span></label>
+        </div>
+      </fieldset>
+    </form>
+
+    <section class="wz-results" aria-live="polite" aria-label="Plan results">
+      <div class="wz-total sign sign--orange">
+        <span>Total zone length</span>
+        <strong data-wz-total>0 ft</strong>
+        <small>First warning sign to end of the termination taper</small>
+      </div>
+
+      <dl class="wz-nums" data-wz-nums></dl>
+
+      <h3 class="wz-h">Equipment for this layout</h3>
+      <table class="wz-table">
+        <thead><tr><th scope="col">Item</th><th scope="col" class="num">Qty</th></tr></thead>
+        <tbody data-wz-items></tbody>
+      </table>
+
+      <div class="wz-actions">
+        <button type="button" class="btn" data-wz-quote>Add equipment to quote list</button>
+        <a class="btn btn--dark" href="/pages/lane-closure?from=builder" data-wz-crew>Have TSS set this up</a>
+        <button type="button" class="btn btn--ghost" data-wz-ask>Ask Coney to review this plan</button>
+      </div>
+
+      <p class="wz-disclaimer">This is a planning estimate, not an engineered traffic control plan. Final layouts depend on site conditions, sight distance, side streets and the permit. TSS crews set up every closure to the MUTCD and your state DOT's requirements.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+  import { compute, render, fmt, type Inputs } from './planner';
+
+  const root = document.querySelector<HTMLElement>('[data-wz]')!;
+  const form = root.querySelector<HTMLFormElement>('[data-wz-form]')!;
+  const svg = root.querySelector<SVGSVGElement>('[data-wz-svg]')!;
+  const canvas = root.querySelector<HTMLElement>('[data-wz-canvas]')!;
+  let plan = null as ReturnType<typeof compute> | null;
+
+  function read(): Inputs {
+    const fd = new FormData(form);
+    const work = Math.min(10000, Math.max(50, parseInt(String(fd.get('work')), 10) || 300));
+    return {
+      road: fd.get('road') as Inputs['road'],
+      area: fd.get('area') as Inputs['area'],
+      speed: parseInt(String(fd.get('speed')), 10),
+      width: parseInt(String(fd.get('width')), 10),
+      close: (parseInt(String(fd.get('close')), 10) === 2 ? 2 : 1),
+      side: fd.get('side') as Inputs['side'],
+      work,
+      duration: fd.get('duration') as Inputs['duration']
+    };
+  }
+
+  function syncVisibility(i: Inputs) {
+    const show = (k: string, v: boolean) => root.querySelectorAll<HTMLElement>(`[data-only="${k}"]`).forEach((el) => (el.hidden = !v));
+    show('area', i.road !== 'expressway');
+    show('side', i.road !== 'two-lane');
+    show('close', i.road !== 'two-lane');
+    const two = form.querySelector<HTMLInputElement>('input[name=close][value="2"]')!;
+    two.disabled = i.road !== 'expressway';
+    if (two.disabled && two.checked) form.querySelector<HTMLInputElement>('input[name=close][value="1"]')!.checked = true;
+    root.querySelector<HTMLElement>('[data-close-hint]')!.hidden = i.road === 'expressway';
+  }
+
+  function update(animate = true) {
+    const i = read();
+    syncVisibility(i);
+    plan = compute(read());
+    const p = plan;
+    root.querySelector('[data-wz-speed]')!.textContent = String(i.speed);
+
+    const { svg: body, width, height } = render(p);
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    svg.style.setProperty('--w', String(width));
+    svg.innerHTML = '<title id="wz-svg-title">Work zone layout</title>' + body;
+    if (animate) { svg.classList.remove('is-dropping'); void svg.getBoundingClientRect(); svg.classList.add('is-dropping'); }
+
+    const road = { 'two-lane': 'Two-lane, two-way road', multilane: 'Multilane road', expressway: 'Expressway' }[p.inputs.road];
+    root.querySelector('[data-wz-headline]')!.textContent =
+      p.inputs.road === 'two-lane' ? `${road} at ${p.inputs.speed} mph, one lane with flaggers` :
+      `${road} at ${p.inputs.speed} mph, ${p.inputs.side} ${p.inputs.close === 2 ? '2 lanes' : 'lane'} closed`;
+    root.querySelector('[data-wz-devname]')!.textContent = p.devices.kind === 'drum' ? 'Drums' : 'Cones';
+    root.querySelector('[data-wz-total]')!.textContent = `${fmt(p.total)} ft`;
+
+    const two = p.inputs.road === 'two-lane';
+    const nums: [string, string, string?][] = [
+      [two ? 'One-lane taper' : 'Merging taper (L)', `${fmt(p.taperL)} ft`, two ? '50 to 100 ft for flagger operations' : p.inputs.speed <= 40 ? 'L = W × S² ÷ 60' : 'L = W × S'],
+      ['Buffer space', `${fmt(p.buffer)} ft`, 'By posted speed'],
+      ['Device spacing', `${p.spTaper} ft / ${p.spTangent} ft`, 'In tapers / along the work'],
+      ['Sign spacing A, B, C', `${fmt(p.adv.a)} / ${fmt(p.adv.b)} / ${fmt(p.adv.c)} ft`, p.adv.label],
+    ];
+    if (!two) nums.push(['Shoulder taper', `${fmt(p.shoulderTaper)} ft`, 'If you also close the shoulder (L ÷ 3)']);
+    root.querySelector('[data-wz-nums]')!.innerHTML = nums.map(([k, v, h]) => `<div><dt>${k}</dt><dd>${v}</dd>${h ? `<dd class="h">${h}</dd>` : ''}</div>`).join('');
+
+    root.querySelector('[data-wz-items]')!.innerHTML = p.items.map((it) =>
+      `<tr><td><span class="t">${it.name}</span>${it.note ? `<span class="n">${it.note}</span>` : ''}</td><td class="num">${it.qty}</td></tr>`).join('');
+
+    try {
+      sessionStorage.setItem('tss_workzone_plan', JSON.stringify({ summary: p.summary, inputs: p.inputs, equipment: p.items.map(({ name, qty, note, handle }) => ({ name, qty, note, handle })) }));
+    } catch {}
+  }
+
+  let raf = 0;
+  form.addEventListener('input', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.name === 'speed') root.querySelector('[data-wz-speed]')!.textContent = t.value;
+    cancelAnimationFrame(raf);
+    // range sliders fire many events: redraw without the drop animation while dragging
+    raf = requestAnimationFrame(() => update(t.type !== 'range'));
+  });
+  form.addEventListener('change', (e) => { if ((e.target as HTMLInputElement).type === 'range') update(true); });
+  form.addEventListener('submit', (e) => e.preventDefault());
+
+  root.querySelectorAll<HTMLButtonElement>('[data-zoom]').forEach((b) => b.addEventListener('click', () => {
+    const zoom = b.dataset.zoom === 'zoom';
+    canvas.classList.toggle('is-zoomed', zoom);
+    root.querySelectorAll('[data-zoom]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+
+  root.querySelector('[data-wz-quote]')!.addEventListener('click', () => {
+    if (!plan) return;
+    const list = plan.items.filter((it) => it.quote).map((it) => ({
+      title: it.name, handle: it.handle, image: it.image, qty: it.qty, mode: 'rent' as const,
+      note: 'From the work zone builder'
+    }));
+    const w = window as any;
+    if (w.TSSQuote) w.TSSQuote.add(list);
+    else w.TSSToast?.('The quote list is still loading. Try again in a moment.');
+  });
+  root.querySelector('[data-wz-crew]')!.addEventListener('click', () => update(false));
+  root.querySelector('[data-wz-ask]')!.addEventListener('click', () => {
+    if (!plan) return;
+    const w = window as any;
+    const text = `Can you review my work zone plan from the builder? ${plan.summary}`;
+    if (w.TSSChat) w.TSSChat.ask(text);
+    else w.TSSToast?.('Coney is still loading. Try again in a moment.');
+  });
+
+  // mobile: start zoomed in so lanes are readable
+  if (window.matchMedia('(max-width: 700px)').matches) root.querySelector<HTMLButtonElement>('[data-zoom="zoom"]')?.click();
+  update(true);
+</script>
+
+<style is:global>
+  .wz { display: grid; gap: 28px; min-width: 0; }
+  .wz > *, .wz-body > * { min-width: 0; }
+
+  /* ---------- stage ---------- */
+  .wz-stage { background: var(--asphalt-deep); color: var(--white-line); border-radius: 14px; padding: 18px 18px 14px; }
+  .wz-stage__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .wz-stage__title { margin: 0; font-weight: 800; font-size: 1.1rem; }
+  .wz-zoom { display: flex; background: var(--asphalt); border-radius: 8px; padding: 3px; }
+  .wz-zoom button { border: 0; background: none; color: #c5c9cf; font-weight: 700; padding: 7px 14px 5px; border-radius: 6px; cursor: pointer; font-size: .9rem; }
+  .wz-zoom button[aria-pressed=true] { background: var(--white-line); color: var(--ink); }
+
+  .wz-canvas { overflow-x: auto; overscroll-behavior-x: contain; border-radius: 8px; -webkit-overflow-scrolling: touch; scrollbar-color: #4a4f56 transparent; }
+  .wz-canvas svg { display: block; width: 100%; height: auto; max-width: none; }
+  .wz-canvas.is-zoomed svg { width: calc(var(--w) * 1px); }
+  @media (min-width: 701px) { .wz-canvas.is-zoomed svg { width: calc(var(--w) * 1.25px); } }
+
+  .wz-canvas .wz-lbl { fill: #dfe2e6; font: 700 13px var(--font); }
+  .wz-canvas .wz-zone { fill: #f7f7f2; font: 800 14px var(--font); }
+  .wz-canvas .wz-ft { fill: #aab1b9; font: 600 13px var(--font); }
+
+  .wz-canvas .is-dropping .wz-dev { animation: wzDrop .42s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: var(--d); }
+  .wz-canvas .wz-dev { transform-box: fill-box; }
+  @keyframes wzDrop {
+    from { opacity: 0; translate: 0 -16px; scale: 1.8; }
+    60% { opacity: 1; }
+    to { opacity: 1; translate: 0 0; scale: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .wz-canvas .wz-dev { animation: none !important; } }
+
+  .wz-legend { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .88rem; color: #c5c9cf; align-items: center; }
+  .wz-legend li { display: flex; align-items: center; gap: 7px; }
+  .wz-legend__note { margin-left: auto; color: #9aa1a9; }
+  .wz-swipe { display: none; }
+  @media (max-width: 700px) { .wz-swipe { display: inline; } }
+  .lg { width: 14px; height: 14px; display: inline-block; }
+  .lg--dev { border-radius: 50%; background: var(--orange); box-shadow: inset 0 0 0 3px var(--orange), inset 0 0 0 5px #fff; }
+  .lg--sign { width: 11px; height: 11px; background: var(--orange); transform: rotate(45deg); outline: 1.5px solid #1d2024; }
+  .lg--ab { background: #111; border: 1.5px solid var(--yellow); border-radius: 2px; }
+  .lg--tma { background: var(--white-line); border-left: 5px solid var(--yellow); border-radius: 2px; }
+  .lg--work { background: repeating-linear-gradient(45deg, #3a3324 0 3px, #a88a2c 3px 6px); border-radius: 2px; }
+
+  /* ---------- body ---------- */
+  .wz-body { display: grid; grid-template-columns: minmax(300px, 400px) 1fr; gap: 40px; align-items: start; }
+  .wz-controls { display: grid; gap: 22px; background: var(--paper); border-radius: 14px; padding: 24px; }
+  .wz-controls fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  .wz-controls legend { padding: 0; margin-bottom: 8px; }
+  .wz-controls .choice span { font-size: .95rem; }
+  .wz-controls .choice input:disabled + span { opacity: .4; cursor: not-allowed; }
+  .wz-controls [hidden] { display: none; }
+
+  .wz-speed__row { display: flex; align-items: center; gap: 18px; }
+  .wz-speed__row input[type=range] { flex: 1; accent-color: var(--asphalt); min-height: 0; padding: 0; border: 0; height: 32px; }
+  .wz-limit { width: 76px; flex: none; background: #fff; color: var(--ink); border: 2.5px solid var(--ink); border-radius: 8px; text-align: center; padding: 6px 4px 2px; box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--concrete-dark); }
+  .wz-limit span { display: block; font-size: .7rem; font-weight: 800; line-height: 1.05; }
+  .wz-limit output { display: block; font-size: 2rem; font-weight: 900; line-height: 1.05; }
+
+  .wz-unit { display: flex; align-items: center; gap: 10px; }
+  .wz-unit input { max-width: 160px; }
+  .wz-unit span { font-weight: 700; color: var(--ink-soft); }
+
+  .wz-results { display: grid; gap: 22px; }
+  .wz-total { display: grid; gap: 2px; padding: 22px 26px; }
+  .wz-total span { font-weight: 800; }
+  .wz-total strong { font-size: var(--fs-5); font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+  .wz-total small { font-size: .9rem; }
+
+  .wz-nums { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+  .wz-nums div { padding: 12px 14px 12px 0; border-bottom: 1px solid var(--concrete-dark); }
+  .wz-nums dt { font-size: .9rem; color: var(--ink-soft); font-weight: 600; }
+  .wz-nums dd { margin: 2px 0 0; font-weight: 900; font-size: 1.15rem; }
+  .wz-nums dd.h { font-weight: 400; font-size: .82rem; color: var(--ink-soft); }
+
+  .wz-h { font-size: var(--fs-2); }
+  .wz-table { width: 100%; border-collapse: collapse; background: var(--paper); border-radius: 12px; overflow: hidden; }
+  .wz-table th { text-align: left; font-size: .85rem; color: var(--ink-soft); font-weight: 700; padding: 12px 16px 8px; border-bottom: 2px solid var(--concrete); }
+  .wz-table td { padding: 12px 16px 10px; border-bottom: 1px solid var(--concrete); vertical-align: top; }
+  .wz-table tr:last-child td { border-bottom: 0; }
+  .wz-table .num { text-align: right; font-weight: 900; font-size: 1.1rem; width: 70px; }
+  .wz-table .t { display: block; font-weight: 700; }
+  .wz-table .n { display: block; font-size: .85rem; color: var(--ink-soft); }
+
+  .wz-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .wz-disclaimer { font-size: .9rem; color: var(--ink-soft); border-left: 4px solid var(--orange); padding: 4px 0 4px 14px; margin: 0; }
+
+  @media (max-width: 960px) {
+    .wz-body { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 520px) {
+    .wz-stage { padding: 14px 12px 12px; border-radius: 10px; margin: 0 calc(var(--gutter) * -0.5); }
+    .wz-controls { padding: 18px; }
+    .wz-actions .btn { width: 100%; }
+    .wz-legend__note { margin-left: 0; width: 100%; }
+  }
+</style>

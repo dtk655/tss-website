@@ -1,0 +1,203 @@
+---
+/*
+  Reusable 3D product viewer.
+  Props:
+    model      'cone' | 'drum' | 'barricade' | 'watercade' | 'arrowboard'
+    colors     optional swatch names, e.g. ['Orange','Lime','Pink','Navy Blue','White']
+    height     optional CSS height of the stage (default clamp(320px, 56vw, 560px))
+    customize  optional; enables custom color and logo support
+    controls   'full' (default) shows swatches, custom color picker and "Upload your logo";
+               'minimal' shows only swatches and reset (the host page provides its own upload/picker)
+    label      optional accessible name for the canvas
+    fallbackImage optional image shown if WebGL is unavailable
+  Element API (available immediately, applied once three.js loads):
+    el.tssViewer.setColor('Lime' | '#ff00aa')
+    el.tssViewer.setLogo(urlOrDataUrl | null)
+    el.tssViewer.setModel('drum')
+    el.tssViewer.setSwatches(['Orange','White'])
+    el.tssViewer.reset()
+  Events on the element:
+    listens  'tss:viewer-logo'      detail: { url }   (url null removes the logo)
+    listens  'tss:viewer-colorname' detail: { name }  (e.g. 'Lime'; a '#hex' also works)
+    fires    'tss:viewer-change' detail: { model, color, logo }
+*/
+import { COLOR_HEX } from './models.js';
+
+interface Props {
+  model: 'cone' | 'drum' | 'barricade' | 'watercade' | 'arrowboard';
+  colors?: string[];
+  height?: string;
+  customize?: boolean;
+  label?: string;
+  fallbackImage?: string;
+  controls?: 'full' | 'minimal';
+}
+const { model, colors = [], height, customize = false, label, fallbackImage, controls = 'full' } = Astro.props;
+const showCustom = customize && controls === 'full';
+const NAMES: Record<string, string> = { cone: '28 inch traffic cone', drum: 'traffic drum', barricade: 'Type III barricade', watercade: 'WATERCADE water-filled barrier', arrowboard: 'trailer-mounted arrow board' };
+const hexMap = Object.fromEntries(Object.entries(COLOR_HEX).map(([k, v]) => [k, '#' + v.toString(16).padStart(6, '0')]));
+const aria = label || `Interactive 3D model of a ${NAMES[model]}. Drag or use arrow keys to rotate, plus and minus to zoom.`;
+---
+<div class="v3d" data-viewer3d data-model={model} data-colors={JSON.stringify(colors)} data-hex={JSON.stringify(hexMap)} data-customize={customize ? '1' : ''} style={height ? `--v3d-h:${height}` : undefined}>
+  <div class="v3d__stage">
+    <canvas tabindex="0" role="img" aria-label={aria}></canvas>
+    <div class="v3d__loading" aria-hidden="true"><span></span>Loading 3D view</div>
+    <div class="v3d__fallback" hidden>
+      {fallbackImage && <img src={fallbackImage} alt="" loading="lazy" />}
+      <p>Your browser can't show the 3D view. Product photos are on the product page.</p>
+    </div>
+    <button type="button" class="v3d__reset" data-v3d-reset>Reset view</button>
+    <p class="v3d__hint">Drag to rotate. Scroll or pinch to zoom.</p>
+  </div>
+  <div class="v3d__controls" data-v3d-controls>
+    <div class="v3d__swatches" role="group" aria-label="Color" data-v3d-swatches></div>
+    {showCustom && (
+      <>
+        <label class="v3d__custom" data-v3d-custom>
+          <input type="color" value="#f26a1b" data-v3d-colorinput />
+          <span>Custom color</span>
+        </label>
+        <div class="v3d__logo">
+          <label class="v3d__upload">
+            <input type="file" accept="image/png,image/jpeg,image/svg+xml" class="sr-only" data-v3d-file />
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 16V4m0 0l-5 5m5-5l5 5M4 20h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Upload your logo</span>
+          </label>
+          <button type="button" class="v3d__rmlogo" data-v3d-rmlogo hidden>Remove logo</button>
+        </div>
+      </>
+    )}
+  </div>
+  <p class="v3d__msg" role="status" aria-live="polite" data-v3d-msg></p>
+</div>
+
+<script>
+  type State = { model: string; color: string | null; logo: string | null };
+  type Inst = { setModel(n: string): void; setColor(c: string): void; setLogo(u: string | null): void; reset(): void };
+
+  function hasWebGL() {
+    try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
+  }
+
+  function setup(el: HTMLElement & { tssViewer?: any }) {
+    if (el.tssViewer) return;
+    const hex: Record<string, string> = JSON.parse(el.dataset.hex || '{}');
+    const state: State = { model: el.dataset.model || 'cone', color: null, logo: null };
+    let inst: Inst | null = null;
+    const sw = el.querySelector<HTMLElement>('[data-v3d-swatches]')!;
+    const colorInput = el.querySelector<HTMLInputElement>('[data-v3d-colorinput]');
+    const rmLogo = el.querySelector<HTMLButtonElement>('[data-v3d-rmlogo]');
+    const msg = el.querySelector<HTMLElement>('[data-v3d-msg]')!;
+
+    const emit = () => el.dispatchEvent(new CustomEvent('tss:viewer-change', { detail: { ...state } }));
+
+    function renderSwatches(list: string[]) {
+      sw.innerHTML = list.map((n) => `<button type="button" class="v3d__sw" data-color="${n}" aria-pressed="false" title="${n}"><i style="background:${hex[n] || '#999'}"></i><span>${n}</span></button>`).join('');
+      sw.hidden = list.length === 0;
+      syncSwatches();
+    }
+    function syncSwatches() {
+      sw.querySelectorAll<HTMLButtonElement>('[data-color]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.color === state.color)));
+    }
+    function syncColorable() {
+      const ok = el.dataset.colorable !== '';
+      el.querySelector<HTMLElement>('[data-v3d-custom]')?.toggleAttribute('hidden', !ok);
+    }
+
+    const api = {
+      setColor(c: string) { state.color = c; inst?.setColor(c); syncSwatches(); if (colorInput && c.startsWith('#')) colorInput.value = c; emit(); },
+      setLogo(url: string | null) { state.logo = url || null; inst?.setLogo(state.logo); if (rmLogo) rmLogo.hidden = !state.logo; emit(); },
+      setModel(name: string) { state.model = name; state.color = null; el.dataset.model = name; inst?.setModel(name); syncSwatches(); syncColorable(); emit(); },
+      setSwatches(list: string[]) { renderSwatches(list || []); },
+      reset() { inst?.reset(); }
+    };
+    el.tssViewer = api;
+
+    renderSwatches(JSON.parse(el.dataset.colors || '[]'));
+    sw.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-color]');
+      if (b) api.setColor(b.dataset.color!);
+    });
+    colorInput?.addEventListener('input', () => api.setColor(colorInput.value));
+    el.querySelector('[data-v3d-reset]')!.addEventListener('click', () => api.reset());
+    rmLogo?.addEventListener('click', () => { api.setLogo(null); msg.textContent = 'Logo removed.'; });
+    el.querySelector<HTMLInputElement>('[data-v3d-file]')?.addEventListener('change', (e) => {
+      const input = e.target as HTMLInputElement;
+      const f = input.files?.[0];
+      if (!f) return;
+      if (!/^image\/(png|jpeg|svg\+xml)$/.test(f.type)) { msg.textContent = 'Use a PNG, JPG or SVG file.'; return; }
+      if (f.size > 8 * 1024 * 1024) { msg.textContent = 'That file is over 8 MB. Use a smaller image.'; return; }
+      const r = new FileReader();
+      r.onload = () => { api.setLogo(String(r.result)); msg.textContent = 'Logo added. Rotate the model to see it.'; };
+      r.onerror = () => { msg.textContent = 'That file could not be read. Try another image.'; };
+      r.readAsDataURL(f);
+      input.value = '';
+    });
+    el.addEventListener('tss:viewer-colorname', (e: Event) => {
+      const n = (e as CustomEvent).detail?.name;
+      if (!n) return;
+      const key = Object.keys(hex).find((k) => k.toLowerCase() === String(n).toLowerCase());
+      api.setColor(key || (String(n).startsWith('#') ? String(n) : n));
+    });
+    el.addEventListener('tss:viewer-logo', (e: Event) => api.setLogo((e as CustomEvent).detail?.url ?? null));
+    el.addEventListener('tss:viewer-error', (e: Event) => { msg.textContent = (e as CustomEvent).detail?.message || 'Something went wrong.'; });
+
+    if (!hasWebGL()) {
+      el.querySelector<HTMLElement>('.v3d__fallback')!.hidden = false;
+      el.querySelector<HTMLElement>('.v3d__loading')!.hidden = true;
+      el.querySelector<HTMLElement>('[data-v3d-controls]')!.hidden = true;
+      return;
+    }
+
+    const io = new IntersectionObserver(async ([en]) => {
+      if (!en.isIntersecting) return;
+      io.disconnect();
+      try {
+        const { mountViewer } = await import('./viewer.js');
+        inst = mountViewer(el, state) as Inst;
+        syncColorable();
+      } catch (err) {
+        console.error(err);
+        el.querySelector<HTMLElement>('.v3d__fallback')!.hidden = false;
+      } finally {
+        el.querySelector<HTMLElement>('.v3d__loading')!.hidden = true;
+      }
+    }, { rootMargin: '200px' });
+    io.observe(el);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-viewer3d]').forEach(setup);
+</script>
+
+<style>
+  .v3d { display: grid; gap: 14px; }
+  .v3d__stage { position: relative; height: var(--v3d-h, clamp(320px, 56vw, 560px)); border-radius: var(--sign-r, 10px); overflow: hidden; background: #ecebe6; border: 1px solid var(--concrete-dark, #d9d7d0); }
+  .v3d canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; }
+  .v3d canvas:active { cursor: grabbing; }
+  .v3d canvas:focus-visible { box-shadow: inset 0 0 0 3px var(--orange, #f26a1b); }
+  .v3d__loading { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; color: var(--ink-soft, #545a61); font-weight: 700; }
+  .v3d__loading span { width: 34px; height: 34px; border-radius: 50%; border: 4px solid var(--concrete-dark, #d9d7d0); border-top-color: var(--orange, #f26a1b); animation: v3dspin .9s linear infinite; }
+  @keyframes v3dspin { to { transform: rotate(1turn); } }
+  .v3d__loading[hidden], .v3d__fallback[hidden] { display: none; }
+  .v3d__fallback { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; padding: 24px; text-align: center; background: #ecebe6; }
+  .v3d__fallback img { max-height: 70%; object-fit: contain; }
+  .v3d__reset { position: absolute; top: 12px; right: 12px; min-height: 40px; padding: 9px 14px 7px; border: 2px solid var(--asphalt, #2a2e33); border-radius: 8px; background: rgba(255,255,255,.85); font-weight: 800; font-size: .9rem; cursor: pointer; }
+  .v3d__reset:hover { background: #fff; }
+  .v3d__hint { position: absolute; left: 14px; bottom: 10px; margin: 0; font-size: .85rem; color: var(--ink-soft, #545a61); pointer-events: none; }
+  .v3d:not(.is-ready) .v3d__reset, .v3d:not(.is-ready) .v3d__hint { visibility: hidden; }
+  .v3d__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+  .v3d__controls[hidden], .v3d__swatches[hidden], .v3d__custom[hidden], .v3d__rmlogo[hidden] { display: none; }
+  .v3d__swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+  .v3d__sw { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 12px 4px 6px; border: 2px solid var(--concrete-dark, #d9d7d0); border-radius: 8px; background: #fff; font-weight: 700; font-size: .9rem; cursor: pointer; }
+  .v3d__sw i { width: 24px; height: 24px; border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+  .v3d__sw[aria-pressed=true] { border-color: var(--asphalt, #2a2e33); box-shadow: inset 0 0 0 1px var(--asphalt, #2a2e33); }
+  .v3d__custom { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 12px 2px 4px; border: 2px dashed var(--concrete-dark, #d9d7d0); border-radius: 8px; background: #fff; font-weight: 700; font-size: .9rem; cursor: pointer; }
+  .v3d__custom input { width: 32px; height: 30px; padding: 0; border: 0; background: none; cursor: pointer; }
+  .v3d__logo { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .v3d__upload { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 10px 16px 8px; border-radius: 8px; background: var(--asphalt, #2a2e33); color: #fff; font-weight: 800; font-size: .92rem; cursor: pointer; }
+  .v3d__upload:hover { background: var(--asphalt-deep, #1d2024); }
+  .v3d__upload:focus-within { outline: 3px solid var(--orange, #f26a1b); outline-offset: 2px; }
+  .v3d__rmlogo { background: none; border: 0; padding: 8px 4px; text-decoration: underline; text-underline-offset: 3px; font-weight: 700; color: var(--ink-soft, #545a61); cursor: pointer; }
+  .v3d__msg { margin: 0; min-height: 1.2em; font-size: .9rem; color: var(--ink-soft, #545a61); }
+  @media (max-width: 480px) { .v3d__hint { display: none; } .v3d__sw span { display: none; } .v3d__sw { padding: 6px; } }
+</style>

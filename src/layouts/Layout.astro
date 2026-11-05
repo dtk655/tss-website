@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Drawer from '../components/Drawer.astro';
+import { STOREFRONT_TOKEN, ENDPOINT } from '../lib/shopify.js';
+
+interface Props { title: string; description?: string; image?: string; dark?: boolean }
+const { title, description = 'Traffic control products, equipment rentals and lane closure crews from Traffic Safety Service. Serving NJ, NY, PA and CT since 1971. Products ship nationwide.', image, dark = false } = Astro.props;
+const fullTitle = title.includes('Traffic Safety Service') ? title : `${title} | Traffic Safety Service`;
+const canonical = new URL(Astro.url.pathname, 'https://trafficsafetyservice.com');
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  {image && <meta property="og:image" content={image} />}
+  <meta name="theme-color" content="#2a2e33" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.shopify.com" />
+  <script is:inline define:vars={{ STOREFRONT_TOKEN, ENDPOINT }}>window.TSS_SF = { token: STOREFRONT_TOKEN, endpoint: ENDPOINT };</script>
+  <slot name="head" />
+</head>
+<body class={dark ? 'page-dark' : ''}>
+  <a class="skip" href="#main">Skip to content</a>
+  <Header />
+  <main id="main"><slot /></main>
+  <Footer />
+  <Drawer />
+  <script src="../scripts/store.js"></script>
+  <script is:inline src="/coney.js" defer></script>
+</body>
+</html>
+<style is:global>
+  .skip { position: absolute; left: -9999px; top: 8px; z-index: 100; background: #fff; padding: 10px 14px; border-radius: 8px; }
+  .skip:focus { left: 8px; }
+</style>

@@ -1,0 +1,388 @@
+---
+/*
+  WATERCADE planner. Standalone section, safe to embed on any page (multiple instances OK).
+  Props:
+    variants: [{ id, title, price }]  price may be a number, a string, or { amount }
+    image?:   product image URL used for quote list rows
+    handle?:  product handle (default 'waterbarriertss590rparent')
+    heading?: section heading; pass '' to hide it
+    pin?:     optional { id, title, price } for the separate pin-piece product
+*/
+interface Variant { id: string; title: string; price: number | string | { amount: string | number } }
+interface Props { variants: Variant[]; image?: string; handle?: string; heading?: string; pin?: Variant | null }
+const { variants = [], image = '', handle = 'waterbarriertss590rparent', heading = 'Plan your WATERCADE layout', pin = null } = Astro.props;
+
+const toNum = (p: Variant['price']) => typeof p === 'object' && p !== null ? parseFloat(String(p.amount)) : parseFloat(String(p));
+const vs = variants.map((v) => ({ id: v.id, title: v.title, price: toNum(v.price) }));
+const config = {
+  handle,
+  image,
+  orange: vs.find((v) => /orange/i.test(v.title)) || vs[0] || null,
+  white: vs.find((v) => /white/i.test(v.title)) || null,
+  pin: pin ? { id: pin.id, title: pin.title, price: toNum(pin.price) } : null
+};
+const uid = 'wc' + Math.random().toString(36).slice(2, 8);
+---
+<section class="wc" data-wc-planner data-config={JSON.stringify(config)} aria-labelledby={heading ? `${uid}-h` : undefined}>
+  {heading && <h2 id={`${uid}-h`} class="wc__h">{heading}</h2>}
+  <div class="wc__grid">
+    <form class="wc__controls" onsubmit="return false">
+      <fieldset class="field">
+        <legend>Layout</legend>
+        <div class="wc__layouts">
+          {[
+            ['straight', 'Straight run', 'M6 20h36'],
+            ['l', 'L-shape', 'M8 6v28h32'],
+            ['u', 'U-shape', 'M8 6v28h32V6'],
+            ['enclosure', 'Enclosure', 'M8 8h32v26H8z']
+          ].map(([v, label, d], i) => (
+            <label class="wc__lay">
+              <input type="radio" name={`${uid}-layout`} value={v} checked={i === 2} data-k="layout" />
+              <span>
+                <svg viewBox="0 0 48 40" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" /></svg>
+                {label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="wc__dims">
+        <div class="field">
+          <label for={`${uid}-a`} data-label-a>Back length (ft)</label>
+          <input id={`${uid}-a`} type="number" inputmode="numeric" min="5" max="2000" step="5" value="60" data-k="a" />
+        </div>
+        <div class="field" data-b-wrap>
+          <label for={`${uid}-b`} data-label-b>Side length (ft)</label>
+          <input id={`${uid}-b`} type="number" inputmode="numeric" min="5" max="1000" step="5" value="30" data-k="b" />
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Colors</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name={`${uid}-color`} value="alternate" checked data-k="color" /><span>Alternating</span></label>
+          <label class="choice"><input type="radio" name={`${uid}-color`} value="orange" data-k="color" /><span>All orange</span></label>
+          {config.white && <label class="choice"><input type="radio" name={`${uid}-color`} value="white" data-k="color" /><span>All white</span></label>}
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>What it's for</legend>
+        <div class="choice-row">
+          <label class="choice"><input type="radio" name={`${uid}-use`} value="event" checked data-k="use" /><span>Event or crowd control</span></label>
+          <label class="choice"><input type="radio" name={`${uid}-use`} value="perimeter" data-k="use" /><span>Site perimeter</span></label>
+          <label class="choice"><input type="radio" name={`${uid}-use`} value="highway" data-k="use" /><span>Highway or work zone</span></label>
+        </div>
+      </fieldset>
+      <p class="wc__tip" data-tip aria-live="polite"></p>
+    </form>
+
+    <div class="wc__stage">
+      <div class="wc__canvas">
+        <svg data-svg role="img" aria-labelledby={`${uid}-svgt`}><title id={`${uid}-svgt`} data-svg-title>Layout drawing</title></svg>
+      </div>
+      <div class="wc__legend" aria-hidden="true">
+        <span><i class="sw sw--o"></i>Orange</span>
+        {config.white && <span><i class="sw sw--w"></i>White</span>}
+        <span><i class="sw sw--p"></i>Corner pin</span>
+        <span>Grid squares are 5 ft</span>
+      </div>
+    </div>
+
+    <div class="wc__results sign sign--dark">
+      <p class="wc__count"><strong data-out="count">0</strong> <span data-out="countLabel">barriers</span></p>
+      <p class="wc__run" data-out="run"></p>
+      <dl class="wc__stats">
+        <div><dt>Corner pins</dt><dd data-out="pins"></dd></div>
+        <div><dt>Weight when filled</dt><dd data-out="filled"></dd></div>
+        <div><dt>Water needed</dt><dd data-out="water"></dd></div>
+        <div><dt>Fill time, one hose</dt><dd data-out="fill"></dd></div>
+        <div><dt>Weight to haul empty</dt><dd data-out="empty"></dd></div>
+        <div><dt>Buy price</dt><dd data-out="cost"></dd></div>
+      </dl>
+      <p class="wc__mix" data-out="mix"></p>
+      <div class="wc__actions">
+        <button type="button" class="btn" data-act="buy">Buy online</button>
+        <button type="button" class="btn btn--orange" data-act="rent">Rent for my event or job</button>
+        <button type="button" class="btn btn--ghost" data-act="ask">Ask Coney about this setup</button>
+      </div>
+      <p class="wc__fine">Rentals with delivery and setup in NJ, NY, PA and CT. Purchases ship nationwide.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  type V = { id: string; title: string; price: number } | null;
+  type Cfg = { handle: string; image: string; orange: V; white: V; pin: V };
+  const UNIT = 5;          // ft per barrier
+  const W_FT = 1.6;        // drawn barrier width, ft (top-down footprint)
+  const FILLED = 650, EMPTY = 50, GAL = 72, HOSE = 5;
+  const LAYOUT_NAMES: Record<string, string> = { straight: 'Straight run', l: 'L-shape', u: 'U-shape', enclosure: 'Enclosure' };
+  const USE_NAMES: Record<string, string> = { event: 'an event or crowd control', perimeter: 'a site perimeter', highway: 'a highway or work zone' };
+  const TIPS: Record<string, string> = {
+    event: 'For crowds, alternating orange and white makes the line easy to read, and the filled weight keeps it from being pushed out of place.',
+    perimeter: 'For a perimeter, plan where gates or gaps go. Each barrier is 5 ft, so openings work best in 5 ft steps.',
+    highway: 'For roadway work, our team will check your layout against your traffic control plan before anything ships.'
+  };
+  const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
+  const money = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const NS = 'http://www.w3.org/2000/svg';
+
+  function el(tag: string, attrs: Record<string, string | number>, parent?: Element) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, String(attrs[k]));
+    parent?.appendChild(e);
+    return e;
+  }
+
+  function init(root: HTMLElement) {
+    const cfg: Cfg = JSON.parse(root.dataset.config || '{}');
+    const P = 'wc' + Math.random().toString(36).slice(2, 7);
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const svg = q<SVGSVGElement>('[data-svg]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let state: any = {};
+    let lastKey = '';
+
+    const read = () => {
+      const val = (k: string) => (root.querySelector(`[data-k="${k}"]:checked`) as HTMLInputElement | null)?.value;
+      const num = (k: string, max: number) => {
+        const n = parseFloat((q<HTMLInputElement>(`[data-k="${k}"]`)).value);
+        return Math.min(max, Math.max(UNIT, isFinite(n) ? n : UNIT));
+      };
+      return { layout: val('layout') || 'u', color: val('color') || 'alternate', use: val('use') || 'event', a: num('a', 2000), b: num('b', 1000) };
+    };
+
+    function compute(s: any) {
+      const na = Math.ceil(s.a / UNIT), nb = Math.ceil(s.b / UNIT);
+      const A = na * UNIT, B = nb * UNIT;
+      // polyline of corner points, in feet (y down)
+      let pts: [number, number][];
+      let sides: number[];
+      switch (s.layout) {
+        case 'straight': pts = [[0, 0], [A, 0]]; sides = [na]; break;
+        case 'l': pts = [[0, 0], [0, B], [A, B]]; sides = [nb, na]; break;
+        case 'u': pts = [[0, 0], [0, B], [A, B], [A, 0]]; sides = [nb, na, nb]; break;
+        default: pts = [[0, 0], [A, 0], [A, B], [0, B], [0, 0]]; sides = [na, nb, na, nb];
+      }
+      const count = sides.reduce((x, y) => x + y, 0);
+      const pins = s.layout === 'straight' ? 0 : s.layout === 'l' ? 1 : s.layout === 'u' ? 2 : 4;
+      // barrier list along path with colors
+      const list: { x1: number; y1: number; x2: number; y2: number; c: 'o' | 'w' }[] = [];
+      let idx = 0;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const [x0, y0] = pts[i], [x1, y1] = pts[i + 1];
+        const n = sides[i];
+        const dx = (x1 - x0) / n, dy = (y1 - y0) / n;
+        for (let j = 0; j < n; j++) {
+          const c = s.color === 'orange' ? 'o' : s.color === 'white' ? 'w' : (idx % 2 ? 'w' : 'o');
+          list.push({ x1: x0 + dx * j, y1: y0 + dy * j, x2: x0 + dx * (j + 1), y2: y0 + dy * (j + 1), c: (c === 'w' && !cfg.white) ? 'o' : c });
+          idx++;
+        }
+      }
+      const nO = list.filter((b) => b.c === 'o').length, nW = count - nO;
+      return { A, B, pts, list, count, pins, nO, nW };
+    }
+
+    function draw(s: any, r: any, animate: boolean) {
+      svg.textContent = '';
+      el('title', {}, svg).textContent = `${LAYOUT_NAMES[s.layout]} of ${r.count} WATERCADE barriers, ${r.A} by ${r.B} feet`;
+      const pad = 9; // ft margin for labels
+      const w = (s.layout === 'straight' ? r.A : r.A) + pad * 2;
+      const h = (s.layout === 'straight' ? 0 : r.B) + pad * 2;
+      const minH = Math.max(h, w * 0.32);
+      const oy = (minH - h) / 2;
+      svg.setAttribute('viewBox', `${-pad} ${-pad - oy} ${w} ${minH}`);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      const scale = w / 600; // approx ft per px at 600px wide, for stroke sizing
+      const defs = el('defs', {}, svg);
+      const gO = el('linearGradient', { id: P + 'gO', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+      el('stop', { offset: 0, 'stop-color': '#ff8a3d' }, gO); el('stop', { offset: 1, 'stop-color': '#e05a0f' }, gO);
+      const gW = el('linearGradient', { id: P + 'gW', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+      el('stop', { offset: 0, 'stop-color': '#ffffff' }, gW); el('stop', { offset: 1, 'stop-color': '#e3e3dd' }, gW);
+      const pat = el('pattern', { id: P + 'grid5', width: UNIT, height: UNIT, patternUnits: 'userSpaceOnUse' }, defs);
+      el('path', { d: `M ${UNIT} 0 L 0 0 0 ${UNIT}`, fill: 'none', stroke: '#cfccc4', 'stroke-width': Math.max(0.06, scale * 0.8) }, pat);
+      el('rect', { x: -pad, y: -pad - oy, width: w, height: minH, fill: `url(#${P}grid5)` }, svg);
+
+      // dimension labels
+      const fs = Math.max(2.2, Math.min(w, minH) * 0.045);
+      const lab = (x: number, y: number, t: string, rot = 0) => {
+        const tx = el('text', { x, y, 'font-size': fs, 'text-anchor': 'middle', 'font-weight': 800, fill: '#2a2e33', 'font-family': 'Overpass, sans-serif', transform: rot ? `rotate(${rot} ${x} ${y})` : '' }, svg);
+        tx.textContent = t;
+      };
+      const off = W_FT + fs * 0.9;
+      if (s.layout === 'straight') lab(r.A / 2, -off, `${r.A} ft`);
+      if (s.layout === 'l') { lab(-off, r.B / 2, `${r.B} ft`, -90); lab(r.A / 2, r.B + off + fs * 0.6, `${r.A} ft`); }
+      if (s.layout === 'u') { lab(-off, r.B / 2, `${r.B} ft`, -90); lab(r.A / 2, r.B + off + fs * 0.6, `${r.A} ft`); lab(r.A + off, r.B / 2, `${r.B} ft`, 90); }
+      if (s.layout === 'enclosure') { lab(r.A / 2, -off, `${r.A} ft`); lab(-off, r.B / 2, `${r.B} ft`, -90); }
+
+      const g = el('g', { class: animate ? 'wc-anim' : '' }, svg);
+      const n = r.list.length;
+      const step = n > 1 ? Math.min(45, 900 / n) : 0;
+      r.list.forEach((b: any, i: number) => {
+        const len = Math.hypot(b.x2 - b.x1, b.y2 - b.y1);
+        const ang = Math.atan2(b.y2 - b.y1, b.x2 - b.x1) * 180 / Math.PI;
+        const cx = (b.x1 + b.x2) / 2, cy = (b.y1 + b.y2) / 2;
+        const outer = el('g', { transform: `translate(${cx} ${cy}) rotate(${ang})` }, g);
+        const inner = el('g', { class: 'wc-b', style: `--d:${Math.round(i * step)}ms` }, outer);
+        const gap = 0.12;
+        el('rect', { x: -len / 2 + gap, y: -W_FT / 2 + 0.25, width: len - gap * 2, height: W_FT, rx: 0.5, fill: 'rgba(0,0,0,.18)' }, inner);
+        el('rect', { x: -len / 2 + gap, y: -W_FT / 2, width: len - gap * 2, height: W_FT, rx: 0.5, fill: b.c === 'o' ? `url(#${P}gO)` : `url(#${P}gW)`, stroke: b.c === 'o' ? '#b9480b' : '#a9a79f', 'stroke-width': 0.08 }, inner);
+        // filler caps
+        el('circle', { cx: -len * 0.22, cy: 0, r: 0.32, fill: b.c === 'o' ? '#c24d0c' : '#9c9a92' }, inner);
+        el('circle', { cx: len * 0.22, cy: 0, r: 0.32, fill: b.c === 'o' ? '#c24d0c' : '#9c9a92' }, inner);
+        // interlock lugs
+        el('rect', { x: len / 2 - gap - 0.35, y: -0.28, width: 0.5, height: 0.56, rx: 0.12, fill: '#2a2e33', opacity: 0.55 }, inner);
+      });
+      // corner pins
+      const corners = s.layout === 'straight' ? [] : s.layout === 'enclosure' ? r.pts.slice(0, 4) : r.pts.slice(1, -1);
+      corners.forEach((p: [number, number], i: number) => {
+        const c = el('circle', { cx: p[0], cy: p[1], r: 0.75, fill: '#f2b705', stroke: '#2a2e33', 'stroke-width': 0.18, class: 'wc-pin', style: `--d:${Math.round(n * step + i * 80)}ms` }, g);
+        c.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    function render() {
+      const s = read();
+      state = s;
+      const r = compute(s);
+      state.r = r;
+      // labels
+      const la = q<HTMLElement>('[data-label-a]'), lb = q<HTMLElement>('[data-label-b]'), bw = q<HTMLElement>('[data-b-wrap]');
+      const labels: Record<string, [string, string]> = { straight: ['Length (ft)', ''], l: ['Long side (ft)', 'Short side (ft)'], u: ['Back length (ft)', 'Side length (ft)'], enclosure: ['Length (ft)', 'Width (ft)'] };
+      la.textContent = labels[s.layout][0]; lb.textContent = labels[s.layout][1];
+      bw.hidden = s.layout === 'straight';
+      const key = JSON.stringify([s.layout, r.A, r.B, s.color]);
+      draw(s, r, !reduce && key !== lastKey);
+      lastKey = key;
+
+      const out = (k: string, v: string) => { const e = q<HTMLElement>(`[data-out="${k}"]`); if (e) e.textContent = v; };
+      out('count', fmt(r.count));
+      out('countLabel', r.count === 1 ? 'barrier' : 'barriers');
+      const dims = s.layout === 'straight' ? `${r.A} ft` : `${r.A} × ${r.B} ft`;
+      const rounded = (r.A !== s.a || (s.layout !== 'straight' && r.B !== s.b)) ? ' (rounded up to whole 5 ft barriers)' : '';
+      out('run', `${LAYOUT_NAMES[s.layout]}, ${dims}${rounded}`);
+      out('pins', r.pins ? `${r.pins}, included` : 'None needed');
+      out('filled', `${fmt(r.count * FILLED)} lbs`);
+      out('water', `${fmt(r.count * GAL)} gallons`);
+      const mins = (r.count * GAL) / HOSE;
+      out('fill', mins < 90 ? `About ${fmt(mins)} min` : `About ${(mins / 60).toFixed(1)} hours`);
+      out('empty', `${fmt(r.count * EMPTY)} lbs`);
+      const price = (v: V) => (v ? v.price : 0);
+      const cost = r.nO * price(cfg.orange) + r.nW * price(cfg.white || cfg.orange);
+      out('cost', cfg.orange ? money(cost) : 'Request a quote');
+      const parts = [];
+      if (r.nO) parts.push(`${r.nO} orange`);
+      if (r.nW) parts.push(`${r.nW} white`);
+      out('mix', `${parts.join(' and ')}${cfg.orange ? ` at ${money(price(cfg.orange))} each` : ''}.`);
+      q<HTMLElement>('[data-tip]').textContent = TIPS[s.use];
+      (q<HTMLButtonElement>('[data-act="buy"]')).disabled = !cfg.orange;
+    }
+
+    function summary() {
+      const r = state.r;
+      const dims = state.layout === 'straight' ? `${r.A} ft` : `${r.A} ft by ${r.B} ft`;
+      const colors = [r.nO && `${r.nO} orange`, r.nW && `${r.nW} white`].filter(Boolean).join(' and ');
+      return { dims, colors, text: `${LAYOUT_NAMES[state.layout]}, ${dims}, ${r.count} barriers (${colors}), for ${USE_NAMES[state.use]}` };
+    }
+
+    root.addEventListener('input', (e) => { if ((e.target as HTMLElement).matches('[data-k]')) render(); });
+    root.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.matches('input[type=number]')) { // snap to valid value on blur/commit
+        const n = Math.max(UNIT, Math.min(+t.max, parseFloat(t.value) || UNIT));
+        t.value = String(n);
+      }
+      render();
+    });
+
+    root.addEventListener('click', async (e) => {
+      const b = (e.target as HTMLElement).closest('[data-act]') as HTMLButtonElement | null;
+      if (!b) return;
+      const r = state.r;
+      const w = window as any;
+      if (b.dataset.act === 'buy') {
+        if (!w.TSSCart || !cfg.orange) return;
+        b.disabled = true;
+        try {
+          if (r.nO) await w.TSSCart.add(cfg.orange.id, r.nO);
+          if (r.nW && cfg.white) await w.TSSCart.add(cfg.white.id, r.nW);
+        } catch { /* store.js shows a toast */ }
+        b.disabled = false;
+      }
+      if (b.dataset.act === 'rent') {
+        const s = summary();
+        w.TSSQuote?.add([{ title: 'WATERCADE water-filled barrier', handle: cfg.handle, image: cfg.image, qty: r.count, mode: 'rent', variant: s.colors, note: s.text }]);
+      }
+      if (b.dataset.act === 'ask') {
+        const s = summary();
+        const msg = `I'm planning a WATERCADE layout: ${s.text}. What should I know about delivery, setup and filling for this?`;
+        if (w.TSSChat?.ask) w.TSSChat.ask(msg);
+        else w.TSSToast?.('The assistant is still loading. Try again in a moment.');
+      }
+    });
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-wc-planner]').forEach(init);
+</script>
+
+<style>
+  .wc { display: grid; gap: 24px; }
+  .wc__h { font-size: var(--fs-4); }
+  .wc__grid { display: grid; gap: 24px; grid-template-columns: minmax(280px, 340px) 1fr; grid-template-areas: 'controls stage' 'controls results'; align-items: start; }
+  .wc__controls { grid-area: controls; display: grid; gap: 22px; background: var(--paper); border-radius: var(--sign-r); padding: 22px; border: 1px solid var(--concrete-dark); }
+  .wc__controls fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .wc__controls legend { margin-bottom: 8px; }
+  .wc__layouts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .wc__lay { position: relative; }
+  .wc__lay input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .wc__lay span { display: grid; justify-items: center; gap: 6px; padding: 12px 8px 10px; border: 2px solid var(--concrete-dark); border-radius: 8px; background: #fff; font-weight: 700; font-size: .92rem; cursor: pointer; }
+  .wc__lay svg { width: 44px; height: 36px; color: var(--orange); }
+  .wc__lay input:checked + span { border-color: var(--asphalt); background: var(--asphalt); color: #fff; }
+  .wc__lay input:focus-visible + span { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .wc__dims { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .wc__dims [hidden] { display: none; }
+  .wc__tip { margin: 0; font-size: .92rem; color: var(--ink-soft); border-left: 4px solid var(--yellow); padding: 4px 0 2px 12px; }
+
+  .wc__stage { grid-area: stage; display: grid; gap: 10px; }
+  .wc__canvas { background: #f4f3ef; border-radius: var(--sign-r); border: 1px solid var(--concrete-dark); padding: 10px; }
+  .wc__canvas svg { width: 100%; height: auto; max-height: 460px; min-height: 180px; display: block; }
+  .wc__legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .88rem; color: var(--ink-soft); }
+  .wc__legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 18px; height: 8px; border-radius: 2px; display: inline-block; }
+  .sw--o { background: var(--orange); }
+  .sw--w { background: #fff; border: 1px solid #a9a79f; }
+  .sw--p { width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); border: 2px solid var(--asphalt); }
+
+  .wc__results { grid-area: results; padding: 26px 28px 24px; display: grid; gap: 14px; }
+  .wc__count { margin: 0; display: flex; align-items: baseline; gap: 10px; }
+  .wc__count strong { font-size: var(--fs-6); font-weight: 900; line-height: .9; color: var(--orange); font-variant-numeric: tabular-nums; }
+  .wc__count span { font-size: var(--fs-3); font-weight: 800; }
+  .wc__run { margin: 0; color: #c5c9cf; }
+  .wc__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 20px; margin: 4px 0 0; }
+  .wc__stats div { border-top: 1px solid var(--asphalt-line); padding-top: 8px; }
+  .wc__stats dt { font-size: .85rem; color: #aeb3ba; }
+  .wc__stats dd { margin: 2px 0 0; font-weight: 800; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+  .wc__mix { margin: 0; font-size: .95rem; color: #c5c9cf; }
+  .wc__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; position: relative; z-index: 1; }
+  .wc__fine { margin: 0; font-size: .85rem; color: #aeb3ba; }
+
+  /* snap-together animation (runs once per layout change) */
+  :global(.wc-anim .wc-b) { animation: wcSnap .42s cubic-bezier(.2,.9,.3,1.25) both; animation-delay: var(--d); transform-box: fill-box; transform-origin: center; }
+  :global(.wc-anim .wc-pin) { animation: wcPin .3s ease-out both; animation-delay: var(--d); transform-box: fill-box; transform-origin: center; }
+  @keyframes wcSnap { from { opacity: 0; transform: translateY(-2.2px) scale(.9); } 70% { opacity: 1; } to { opacity: 1; transform: none; } }
+  @keyframes wcPin { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+
+  @media (max-width: 900px) {
+    .wc__grid { grid-template-columns: 1fr; grid-template-areas: 'stage' 'controls' 'results'; }
+    .wc__stats { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 420px) {
+    .wc__controls { padding: 16px; }
+    .wc__results { padding: 22px 18px 20px; }
+    .wc__actions .btn { width: 100%; }
+  }
+</style>

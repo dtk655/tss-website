@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import WorkZoneBuilder from '../../components/tools/workzone/WorkZoneBuilder.astro';
+---
+<Layout
+  title="Work zone builder"
+  description="Plan a lane closure in minutes. Pick the road, speed and work length to see the taper, buffer, sign spacing and equipment list, drawn to MUTCD rules. Then rent the equipment or have TSS set it up."
+>
+  <section class="wzp-intro">
+    <div class="wrap wzp-intro__in">
+      <div>
+        <p class="wzp-crumb"><a href="/tools">Planning tools</a></p>
+        <h1>Work zone builder</h1>
+      </div>
+      <p class="lede">Tell us the road, the speed and how much room your crew needs. The builder lays out the taper, buffer and warning signs using MUTCD spacing, counts the equipment, and puts it on your quote list in one click.</p>
+    </div>
+  </section>
+  <section class="wzp-tool">
+    <div class="wrap">
+      <WorkZoneBuilder />
+    </div>
+  </section>
+  <section class="wzp-how">
+    <div class="wrap wzp-how__in">
+      <h2>How the numbers are worked out</h2>
+      <div class="wzp-how__cols">
+        <p><strong>Tapers.</strong> Merging tapers follow the MUTCD formula: lane width times speed squared, divided by 60, up to 40 mph, and lane width times speed at 45 mph and above. Flagger operations on two-lane roads use a short one-lane taper of 50 to 100 feet.</p>
+        <p><strong>Spacing.</strong> Channelizing devices go roughly one per mph in feet through the taper and twice that along the buffer and work area. Advance warning signs use the A, B and C distances for your road type, from 100 feet in town to half a mile on expressways.</p>
+        <p><strong>Equipment.</strong> Drums replace cones at 45 mph and up, and on any closure left in place overnight. Lane closures on multilane roads get an arrow board, and a truck mounted attenuator is recommended at 45 mph and up. Device counts include 10% spares.</p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .wzp-intro { padding: clamp(36px, 6vw, 72px) 0 28px; }
+  .wzp-intro__in { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 48px; align-items: end; }
+  .wzp-intro .lede { margin: 0; }
+  .wzp-crumb { margin: 0 0 10px; font-weight: 700; font-size: .95rem; }
+  .wzp-crumb a { color: var(--ink-soft); }
+  .wzp-tool { padding: 8px 0 clamp(56px, 8vw, 96px); }
+  .wzp-how { background: var(--paper); padding: clamp(48px, 7vw, 88px) 0; }
+  .wzp-how h2 { font-size: var(--fs-4); margin-bottom: 24px; }
+  .wzp-how__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .wzp-how__cols p { margin: 0; color: var(--ink-soft); }
+  .wzp-how__cols strong { color: var(--ink); }
+  @media (max-width: 860px) {
+    .wzp-intro__in { grid-template-columns: 1fr; }
+    .wzp-how__cols { grid-template-columns: 1fr; gap: 18px; }
+  }
+</style>

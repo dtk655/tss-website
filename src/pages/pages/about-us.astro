@@ -1,0 +1,144 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PHONE, PHONE_TEL, YEARS } from '../../lib/config.js';
+
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const rows = [
+  {
+    heading: 'Our history',
+    body: [
+      "Founded in 1971, Traffic Safety Service (TSS) has been at the forefront of traffic safety solutions for over five decades. Located in South Plainfield, NJ, we began as a small, family-owned business dedicated to providing top-quality traffic control products to local municipalities and contractors. Over the years, we've grown into a full-service provider, offering a wide range of safety equipment rentals, sales, and services across New Jersey, New York, and the surrounding areas.",
+      "Our company's rich history is built on a foundation of innovation, reliability, and a commitment to safety. From humble beginnings with basic traffic cones and barricades, we've expanded our offerings to include advanced solutions such as electronic message boards, crash trucks, and work zone safety devices. As the industry has evolved, so have we, always staying ahead of the curve with the latest technologies and best practices."
+    ],
+    image: CDN + 'thumbnail_IMG_1125.jpg',
+    alt: 'Traffic Safety Service equipment in the yard'
+  },
+  {
+    heading: 'Our goal',
+    body: [
+      "At TSS, we pride ourselves on being a trusted partner to our clients. Whether you're managing a large construction project, planning a special event, or overseeing road maintenance, our expert team is here to help you create safer environments for workers, drivers, and pedestrians. We offer 24/7 service and customized solutions to meet the specific needs of each job, ensuring safety is never compromised."
+    ],
+    image: CDN + 'thumbnail_IMG_1180.jpg',
+    alt: 'TSS equipment set up in the field'
+  },
+  {
+    heading: 'Our mission',
+    body: [
+      'Our long-standing reputation for excellence, customer satisfaction, and competitive pricing has made us a go-to resource for municipalities, contractors, and private enterprises throughout the region. We continue to grow while remaining true to our core mission: to provide innovative, dependable, and cost-effective traffic safety solutions that protect the lives of everyone on the road.'
+    ],
+    image: CDN + 'thumbnail_IMG_1133_c2839bba-db54-470f-80d2-804e82e3fd23.jpg',
+    alt: 'TSS crew equipment on a job'
+  }
+];
+const stats = [
+  { n: YEARS, label: 'Years in the industry' },
+  { n: 35017, label: 'Customers served' },
+  { n: 10578, label: 'Lane closures completed' },
+  { n: 3100345, label: 'Cones sold' }
+];
+---
+<Layout
+  title="About us"
+  description={`Traffic Safety Service has been a family-run traffic control company in South Plainfield, NJ since 1971. ${YEARS} years, 35,017 customers served and 10,578 lane closures completed.`}
+>
+  <section class="ab-hero">
+    <div class="wrap">
+      <h1>Family-run since 1971</h1>
+      <p class="lede">Three generations of putting work zones up right, from a yard in South Plainfield, NJ to roadways across the Northeast.</p>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="Company statistics">
+    <div class="wrap stats__in" data-stats>
+      {stats.map((s) => (
+        <div class="stats__i">
+          <span class="stats__n" data-count={s.n}>{s.n.toLocaleString('en-US')}</span>
+          <span class="stats__l">{s.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      {rows.map((r, i) => (
+        <article class={`abrow ${i % 2 ? 'abrow--flip' : ''}`}>
+          <div class="abrow__img"><img src={r.image} alt={r.alt} loading="lazy" /></div>
+          <div class="abrow__copy">
+            <h2>{r.heading}</h2>
+            {r.body.map((p) => <p>{p}</p>)}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="wrap ab-cta">
+      <div>
+        <h2>Put {YEARS} years of work zones on your next job</h2>
+        <p class="lede">Products, rentals or a full crew. A real person replies, usually the same business day.</p>
+      </div>
+      <div class="ab-cta__btns">
+        <a class="btn" href="/pages/request-a-quote">Request a quote</a>
+        <a class="btn btn--ghost" href={PHONE_TEL}>Call {PHONE}</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const wrap = document.querySelector('[data-stats]');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (wrap && !reduced && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      wrap.querySelectorAll('[data-count]').forEach((el) => {
+        const target = +el.dataset.count;
+        const t0 = performance.now();
+        const dur = 1400;
+        const tick = (t) => {
+          const p = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased).toLocaleString('en-US');
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.4 });
+    io.observe(wrap);
+  }
+</script>
+
+<style>
+  .ab-hero { background: var(--asphalt); color: var(--white-line); padding: clamp(48px, 7vw, 96px) 0 clamp(80px, 9vw, 130px); }
+  .ab-hero .lede { margin-top: 16px; max-width: 46ch; }
+
+  .stats { margin-top: clamp(-56px, -5vw, -40px); }
+  .stats__in { background: var(--yellow); border-radius: var(--sign-r); padding: clamp(22px, 3vw, 34px) clamp(20px, 3vw, 40px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; color: var(--ink); position: relative; }
+  .stats__in::after { content: ''; position: absolute; inset: 6px; border: 2px solid var(--ink); border-radius: calc(var(--sign-r) - 4px); pointer-events: none; opacity: .85; }
+  .stats__i { display: grid; gap: 2px; justify-items: start; padding-left: 4px; }
+  .stats__n { font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 900; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .stats__l { font-weight: 700; font-size: .95rem; }
+
+  .abrow { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(24px, 4vw, 64px); align-items: center; padding: clamp(26px, 4vw, 48px) 0; }
+  .abrow + .abrow { border-top: 1px solid var(--concrete-dark); }
+  .abrow--flip .abrow__img { order: 2; }
+  .abrow__img img { width: 100%; border-radius: var(--sign-r); aspect-ratio: 4/3; object-fit: cover; }
+  .abrow__copy h2 { margin-bottom: 14px; font-size: var(--fs-4); }
+  .abrow__copy p { margin-bottom: .8em; }
+  .abrow__copy p:last-child { margin-bottom: 0; }
+
+  .ab-cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .ab-cta h2 { max-width: 22ch; }
+  .ab-cta .lede { margin: 10px 0 0; }
+  .ab-cta__btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 880px) {
+    .abrow { grid-template-columns: 1fr; }
+    .abrow--flip .abrow__img { order: 0; }
+    .stats__in { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 420px) { .stats__in { grid-template-columns: 1fr; } }
+</style>

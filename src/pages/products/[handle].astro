@@ -1,0 +1,321 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductGallery from '../../components/ProductGallery.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { loadCatalog, money, img } from '../../lib/shopify.js';
+
+export async function getStaticPaths() {
+  const { products } = await loadCatalog();
+  return products.map((p) => ({ params: { handle: p.handle }, props: { handle: p.handle } }));
+}
+const { handle } = Astro.props;
+const { byHandle, colByHandle } = await loadCatalog();
+const p = byHandle.get(handle);
+
+// Optional 3D viewer (built separately); loads only if present.
+const viewerMods = import.meta.glob('../../components/tools/viewer3d/Viewer3D.astro', { eager: true });
+const Viewer3D = Object.values(viewerMods)[0]?.default;
+const inCol = (h) => p.collections.includes(h);
+const model =
+  handle.includes('waterbarriertss590r') ? 'watercade' :
+  handle === 'arrow-board' ? 'arrowboard' :
+  inCol('cones') && /cone(18|28|36)/.test(handle) ? 'cone' :
+  inCol('traffic-drums') && handle.startsWith('traffic-drum') ? 'drum' :
+  handle.startsWith('type-iii') ? 'barricade' : null;
+
+const CUSTOM_COLS = ['cones', 'traffic-drums', 'water-filled-barriers', 'barricades', 'safety-gear', 'sign-shop', 'deliniators', 'a-frame-barricade', 'type-lll-barricades'];
+const customizable = !p.isRental && CUSTOM_COLS.some(inCol);
+
+const SWATCH = { orange: '#f26a1b', lime: '#c6e33b', 'dark green': '#1f5d3a', green: '#2e8b3d', 'navy blue': '#1f2f5c', navy: '#1f2f5c', blue: '#1f5fbf', 'sky blue': '#6cc4ee', pink: '#ff6fae', red: '#c8102e', white: '#f7f7f2', yellow: '#f6d10b', black: '#1d2024', silver: '#c0c4c8', gray: '#8a9097', grey: '#8a9097' };
+const options = p.options.filter((o) => !(o.name === 'Title' && o.values[0] === 'Default Title'));
+const isColor = (name) => /colou?r/i.test(name);
+const variants = p.variants.map((v) => ({ id: v.id, title: v.title, price: +v.price.amount, compare: v.compareAtPrice ? +v.compareAtPrice.amount : null, available: v.availableForSale, opts: Object.fromEntries(v.selectedOptions.map((o) => [o.name, o.value])), image: v.image?.url || null }));
+const first = variants.find((v) => v.available) || variants[0];
+const viewerColors = model === 'cone' ? (options.find((o) => isColor(o.name))?.values || ['Orange']) : model === 'watercade' ? ['Orange', 'White'] : undefined;
+
+// Related: same primary collection
+const primary = ['cones', 'barricades', 'water-filled-barriers', 'traffic-drums', 'sign-shop', 'safety-gear', 'lights', 'reflectors', 'equipment-rentals', 'truck-rentals'].find(inCol);
+const related = primary ? colByHandle.get(primary)?.products.filter((x) => x.handle !== handle).slice(0, 4) || [] : [];
+const crumbCol = primary ? colByHandle.get(primary) : null;
+const desc = (p.seo?.description || p.description || '').slice(0, 155);
+const firstImg = p.featuredImage?.url;
+---
+<Layout title={p.seo?.title || p.title} description={desc} image={firstImg}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+    '@context': 'https://schema.org', '@type': 'Product', name: p.title, image: p.images.map((i) => i.url), description: p.description,
+    brand: { '@type': 'Brand', name: 'Traffic Safety Service' },
+    ...(p.isRental ? {} : { offers: { '@type': 'AggregateOffer', priceCurrency: 'USD', lowPrice: p.minPrice, highPrice: p.maxPrice, availability: 'https://schema.org/InStock' } })
+  })} />
+
+  <div class="wrap pdp">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/collections">Shop</a>
+      {crumbCol && <><span aria-hidden="true">/</span><a href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a></>}
+    </nav>
+
+    <div class="pdp__grid">
+      <ProductGallery images={p.images} title={p.title} />
+
+      <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
+        {p.isRental && <span class="tag-rent">Rental equipment</span>}
+        <h1 class="buy__title">{p.title}</h1>
+
+        {p.isRental ? (
+          <p class="buy__price">Priced per job. Request a quote for daily, weekly or monthly rates.</p>
+        ) : (
+          <p class="buy__price"><strong data-price>{money(first.price)}</strong> <span class="buy__unit">each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
+        )}
+
+        {options.map((o) => (
+          <fieldset class="opt" data-option={o.name}>
+            <legend>{o.name.charAt(0).toUpperCase() + o.name.slice(1)}: <span data-opt-val>{first.opts[o.name]}</span></legend>
+            <div class={isColor(o.name) ? 'swatches' : 'pills'}>
+              {o.values.map((val) => (
+                <label class={isColor(o.name) ? 'sw' : 'pill'} title={val}>
+                  <input type="radio" name={`opt-${o.name}`} value={val} checked={first.opts[o.name] === val} />
+                  {isColor(o.name) ? <span style={`--c:${SWATCH[val.toLowerCase()] || '#ccc'}`}><span class="sr-only">{val}</span></span> : <span>{val}</span>}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+
+        <div class="qty-row">
+          <label class="qty">
+            <span class="sr-only">Quantity</span>
+            <button type="button" data-q="-1" aria-label="Decrease quantity">−</button>
+            <input type="number" min="1" value="1" data-qty inputmode="numeric" />
+            <button type="button" data-q="1" aria-label="Increase quantity">+</button>
+          </label>
+          {!p.isRental && <button class="btn buy__add" data-add-cart>Add to cart</button>}
+          {p.isRental && <button class="btn buy__add" data-add-quote="rent">Add to rental quote</button>}
+        </div>
+        <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Add it to your quote list and we'll source it.</p>
+
+        <div class="alt-actions">
+          {!p.isRental && <button class="btn btn--ghost btn--sm" data-add-quote="rent">Rent this instead</button>}
+          {!p.isRental && <button class="btn btn--ghost btn--sm" data-add-quote="buy">Bulk or PO quote</button>}
+          <button class="btn btn--ghost btn--sm" data-ask>Ask Coney about this</button>
+        </div>
+
+        <ul class="assure">
+          {p.isRental ? <>
+            <li>Rentals delivered and picked up in NJ, NY, PA and CT</li>
+            <li>Daily, weekly, monthly and long-term rates</li>
+            <li>Need it set up? Our crews can install and maintain it</li>
+          </> : <>
+            <li>Ships anywhere in the U.S.</li>
+            <li>Net terms and purchase orders for agencies and contractors</li>
+            <li>Everything we sell can also be rented in NJ, NY, PA and CT</li>
+          </>}
+        </ul>
+
+        {customizable && (
+          <details class="custom" data-custom>
+            <summary>
+              <span><strong>Make it yours</strong><br /><span class="custom__sub">Custom colors, your logo, stenciling and bulk branding</span></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+            </summary>
+            <div class="custom__body">
+              <div class="field">
+                <label for="cc-color">Color you want</label>
+                <div class="custom__color">
+                  <input type="color" id="cc-color" value="#f26a1b" data-cc-color />
+                  <input type="text" placeholder="Or describe it, e.g. PMS 286 blue" data-cc-colortext aria-label="Describe the color" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="cc-logo">Your logo</label>
+                <input type="file" id="cc-logo" accept="image/png,image/jpeg,image/svg+xml,image/webp" data-cc-logo />
+                <p class="hint">PNG, JPG or SVG. A transparent background works best. You'll approve a proof before production.</p>
+                <div class="custom__preview" data-cc-preview hidden>
+                  <img data-cc-img alt="Your uploaded logo" />
+                  <button type="button" class="line__rm" data-cc-clear>Remove logo</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="cc-notes">Placement, text or stenciling</label>
+                <textarea id="cc-notes" rows="3" placeholder="e.g. Logo on both sides, &quot;CITY OF NEWARK DPW&quot; stenciled on the base, 200 units" data-cc-notes></textarea>
+              </div>
+              <button type="button" class="btn btn--dark" data-cc-add>Add custom order to quote list</button>
+              {model && <p class="hint">Preview your logo and color on the 3D model below.</p>}
+            </div>
+          </details>
+        )}
+      </div>
+    </div>
+
+    {model && Viewer3D && (
+      <section class="pdp__3d" aria-labelledby="h3d">
+        <div class="pdp__3dhead">
+          <h2 id="h3d">Turn it around</h2>
+          <p class="lede">Drag to rotate, pinch or scroll to zoom.{customizable && ' Pick a color or upload your logo above to preview it.'}</p>
+        </div>
+        <Viewer3D model={model} colors={viewerColors} customize={customizable} controls="minimal" height="min(70vh, 560px)" />
+      </section>
+    )}
+
+    {p.descriptionHtml && (
+      <section class="pdp__desc" aria-labelledby="hdesc">
+        <h2 id="hdesc">Details</h2>
+        <div class="rte" set:html={p.descriptionHtml} />
+      </section>
+    )}
+
+    {related.length > 0 && (
+      <section class="pdp__rel" aria-labelledby="hrel">
+        <h2 id="hrel">More {crumbCol?.title.toLowerCase()}</h2>
+        <div class="grid">{related.map((r) => <ProductCard p={r} />)}</div>
+      </section>
+    )}
+  </div>
+</Layout>
+
+<script>
+  const root = document.querySelector('[data-product]');
+  if (root) {
+    const variants = JSON.parse(root.dataset.variants);
+    const qtyEl = root.querySelector('[data-qty]');
+    const fmt = (n) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    let logoData = '';
+
+    const selected = () => {
+      const o = {};
+      root.querySelectorAll('[data-option]').forEach((fs) => { o[fs.dataset.option] = fs.querySelector('input:checked')?.value; });
+      return variants.find((v) => Object.entries(o).every(([k, val]) => v.opts[k] === val)) || variants[0];
+    };
+    const update = () => {
+      const v = selected();
+      root.querySelectorAll('[data-option]').forEach((fs) => { fs.querySelector('[data-opt-val]').textContent = fs.querySelector('input:checked')?.value || ''; });
+      const pr = root.querySelector('[data-price]'); if (pr) pr.textContent = fmt(v.price);
+      const add = root.querySelector('[data-add-cart]'); if (add) add.disabled = !v.available;
+      root.querySelector('[data-unavail]').hidden = v.available;
+      if (v.image) document.querySelector('[data-gallery]')?.tssGallery?.show(v.image);
+      const viewer = document.querySelector('[data-viewer3d]');
+      const color = v.opts.color || v.opts.Color;
+      if (viewer && color) viewer.dispatchEvent(new CustomEvent('tss:viewer-colorname', { detail: { name: color } }));
+    };
+    root.addEventListener('change', (e) => { if (e.target.closest('[data-option]')) update(); });
+    root.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => { qtyEl.value = Math.max(1, (+qtyEl.value || 1) + +b.dataset.q); }));
+    const qty = () => Math.max(1, parseInt(qtyEl.value, 10) || 1);
+    const vtitle = (v) => (v.title === 'Default Title' ? '' : v.title);
+
+    root.querySelector('[data-add-cart]')?.addEventListener('click', async (e) => {
+      const b = e.currentTarget; b.disabled = true; const t = b.textContent; b.textContent = 'Adding';
+      try { await window.TSSCart.add(selected().id, qty()); } finally { b.disabled = false; b.textContent = t; }
+    });
+    root.querySelectorAll('[data-add-quote]').forEach((b) => b.addEventListener('click', () => {
+      const v = selected();
+      window.TSSQuote.add([{ title: root.dataset.title, handle: root.dataset.handle, image: root.dataset.image, variant: vtitle(v), qty: qty(), mode: b.dataset.addQuote }]);
+    }));
+    root.querySelector('[data-ask]')?.addEventListener('click', () => {
+      const v = selected();
+      window.TSSChat?.ask(`I'm looking at ${root.dataset.title}${vtitle(v) ? ' (' + vtitle(v) + ')' : ''}. Can you tell me more about it${root.dataset.rental ? ' and how renting it works' : ', including rental and bulk options'}?`);
+    });
+
+    // Customization
+    const viewer = () => document.querySelector('[data-viewer3d]');
+    const colorEl = root.querySelector('[data-cc-color]');
+    colorEl?.addEventListener('input', () => viewer()?.tssViewer?.setColor?.(colorEl.value));
+    root.querySelector('[data-cc-logo]')?.addEventListener('change', (e) => {
+      const f = e.target.files?.[0]; if (!f) return;
+      if (f.size > 8e6) { window.TSSToast('That file is over 8 MB. Please use a smaller image.'); return; }
+      const r = new FileReader();
+      r.onload = () => {
+        const im = new Image();
+        im.onload = () => {
+          // downscale for storage in the quote list
+          const max = 800, k = Math.min(1, max / Math.max(im.width, im.height));
+          const c = document.createElement('canvas'); c.width = Math.round(im.width * k) || 400; c.height = Math.round(im.height * k) || 400;
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          logoData = c.toDataURL('image/png');
+          root.querySelector('[data-cc-img]').src = logoData;
+          root.querySelector('[data-cc-preview]').hidden = false;
+          const vw = viewer(); vw?.tssViewer?.setLogo?.(logoData);
+          vw?.dispatchEvent(new CustomEvent('tss:viewer-logo', { detail: { url: logoData } }));
+        };
+        im.src = r.result;
+      };
+      r.readAsDataURL(f);
+    });
+    root.querySelector('[data-cc-clear]')?.addEventListener('click', () => {
+      logoData = ''; root.querySelector('[data-cc-preview]').hidden = true; root.querySelector('[data-cc-logo]').value = '';
+      viewer()?.tssViewer?.setLogo?.(null);
+    });
+    root.querySelector('[data-cc-add]')?.addEventListener('click', () => {
+      const v = selected();
+      const colorText = root.querySelector('[data-cc-colortext]').value.trim();
+      const notes = root.querySelector('[data-cc-notes]').value.trim();
+      const parts = [`Custom color: ${colorText || colorEl.value}`];
+      if (logoData) parts.push('Logo attached');
+      if (notes) parts.push(notes);
+      window.TSSQuote.add([{ title: root.dataset.title + ' (custom)', handle: root.dataset.handle, image: logoData || root.dataset.image, variant: vtitle(v), qty: qty(), mode: 'buy', note: parts.join('. '), logo: logoData }]);
+    });
+  }
+</script>
+
+<style>
+  .pdp { padding-top: 24px; padding-bottom: 80px; }
+  .crumbs { display: flex; gap: 8px; font-size: .92rem; color: var(--ink-soft); margin-bottom: 18px; }
+  .crumbs a { color: inherit; }
+  .pdp__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .buy { position: sticky; top: calc(var(--header-h) + 20px); display: grid; gap: 18px; }
+  .buy__title { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.08; }
+  .buy__price { font-size: 1.5rem; margin: 0; display: flex; gap: 10px; align-items: baseline; }
+  .buy__price strong { font-weight: 900; }
+  .buy__unit { font-size: .95rem; color: var(--ink-soft); }
+  .buy__price s { color: var(--ink-soft); font-size: 1.1rem; }
+  .rental .buy__price, [data-rental='1'] .buy__price { font-size: 1.1rem; color: var(--ink-soft); }
+  .opt { border: 0; padding: 0; margin: 0; }
+  .opt legend { font-weight: 800; margin-bottom: 8px; }
+  .opt legend span { font-weight: 400; }
+  .swatches, .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sw, .pill { position: relative; }
+  .sw input, .pill input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+  .sw > span { display: block; width: 40px; height: 40px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); outline: 2px solid transparent; outline-offset: 3px; transition: outline-color .15s; }
+  .sw input:checked + span { outline-color: var(--asphalt); }
+  .sw input:focus-visible + span { outline-color: var(--orange); }
+  .pill > span { display: block; padding: 10px 14px 8px; border: 2px solid var(--concrete-dark); border-radius: 8px; background: #fff; font-weight: 700; font-size: .95rem; cursor: pointer; }
+  .pill input:checked + span { border-color: var(--asphalt); background: var(--asphalt); color: #fff; }
+  .pill input:focus-visible + span { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .qty-row { display: flex; gap: 10px; }
+  .qty { display: flex; align-items: stretch; border: 2px solid var(--concrete-dark); border-radius: var(--sign-r); background: #fff; overflow: hidden; }
+  .qty button { width: 44px; border: 0; background: none; font-size: 1.3rem; font-weight: 800; cursor: pointer; }
+  .qty input { width: 64px; border: 0; text-align: center; font-weight: 800; font-size: 1.1rem; -moz-appearance: textfield; }
+  .qty input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .buy__add { flex: 1; }
+  .buy__unavail { margin: 0; color: var(--red); font-weight: 700; }
+  .alt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .assure { list-style: none; margin: 0; padding: 16px 0 0; border-top: 2px solid var(--concrete-dark); display: grid; gap: 8px; }
+  .assure li { padding-left: 26px; position: relative; }
+  .assure li::before { content: ''; position: absolute; left: 0; top: 4px; width: 14px; height: 14px; border-radius: 3px; background: var(--orange); transform: rotate(45deg) scale(.8); }
+  .custom { background: var(--asphalt); color: var(--white-line); border-radius: var(--sign-r); }
+  .custom summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px 14px; cursor: pointer; }
+  .custom summary::-webkit-details-marker { display: none; }
+  .custom summary svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; flex: none; transition: rotate .2s; }
+  .custom[open] summary svg { rotate: 180deg; }
+  .custom__sub { color: #c5c9cf; font-size: .92rem; }
+  .custom__body { padding: 4px 18px 18px; display: grid; gap: 16px; }
+  .custom .hint { color: #aab0b7; }
+  .custom__color { display: flex; gap: 8px; }
+  .custom__color input[type=color] { width: 56px; min-height: 50px; padding: 4px; border-radius: 8px; border: 0; background: #fff; flex: none; }
+  .custom input[type=file] { color: #fff; }
+  .custom__preview { display: flex; align-items: center; gap: 12px; }
+  .custom__preview img { width: 72px; height: 72px; object-fit: contain; background: #fff; border-radius: 8px; padding: 6px; }
+  .custom .line__rm { color: #c5c9cf; }
+  .pdp__3d { margin-top: clamp(48px, 7vw, 96px); }
+  .pdp__3dhead { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
+  .pdp__3dhead .lede { margin: 0; font-size: 1.05rem; }
+  .pdp__desc { margin-top: clamp(48px, 7vw, 96px); display: grid; grid-template-columns: 1fr 2fr; gap: 32px; }
+  .rte { max-width: 72ch; }
+  .rte :global(h1), .rte :global(h2), .rte :global(h3) { font-size: var(--fs-2); margin: 1.2em 0 .5em; }
+  .rte :global(img) { height: auto; border-radius: 8px; }
+  .rte :global(table) { border-collapse: collapse; width: 100%; }
+  .rte :global(td), .rte :global(th) { border: 1px solid var(--concrete-dark); padding: 8px; }
+  .pdp__rel { margin-top: clamp(48px, 7vw, 96px); }
+  .pdp__rel h2 { margin-bottom: 20px; font-size: var(--fs-4); }
+  @media (max-width: 880px) {
+    .pdp__grid, .pdp__desc { grid-template-columns: 1fr; }
+    .buy { position: static; }
+  }
+</style>

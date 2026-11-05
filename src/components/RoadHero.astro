@@ -1,0 +1,67 @@
+---
+// Top-down drawing of a right-lane closure. Cones drop into the taper once on load.
+const taper = [];
+const x0 = 640, y0 = 210, x1 = 960, y1 = 134;
+const n = 11;
+for (let i = 0; i < n; i++) taper.push({ x: x0 + ((x1 - x0) * i) / (n - 1), y: y0 + ((y1 - y0) * i) / (n - 1) });
+const tangent = [];
+for (let x = 1010; x <= 1560; x += 50) tangent.push({ x, y: 134 });
+const cones = [...taper, ...tangent];
+const signs = [120, 300, 470];
+---
+<svg class="road" viewBox="0 0 1600 270" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Top-down view of a right lane closure: advance warning signs, a taper of cones, an arrow board, a crash truck and the work area.">
+  <defs>
+    <pattern id="hatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="14" height="14" fill="#33383e" />
+      <rect width="6" height="14" fill="#3b4148" />
+    </pattern>
+    <g id="cone">
+      <circle r="9" fill="#f26a1b" />
+      <circle r="5.2" fill="#fff" />
+      <circle r="3" fill="#f26a1b" />
+    </g>
+  </defs>
+  <rect width="1600" height="270" fill="#2a2e33" />
+  <rect y="226" width="1600" height="44" fill="#3a3f45" />
+  <line x1="0" y1="40" x2="1600" y2="40" stroke="#f2b705" stroke-width="5" />
+  <line x1="0" y1="222" x2="1600" y2="222" stroke="#f7f7f2" stroke-width="5" />
+  <line x1="0" y1="131" x2="1600" y2="131" stroke="#f7f7f2" stroke-width="4" stroke-dasharray="48 72" opacity=".9" />
+  <rect x="1130" y="140" width="430" height="78" fill="url(#hatch)" />
+  <g class="road__truck" transform="translate(1180 160)">
+    <rect width="120" height="44" rx="6" fill="#f7f7f2" />
+    <rect x="86" y="4" width="30" height="36" rx="4" fill="#d9d7d0" />
+    <rect x="10" y="10" width="60" height="24" rx="3" fill="#f26a1b" opacity=".85" />
+  </g>
+  <g transform="translate(1000 156)">
+    <rect width="96" height="50" rx="5" fill="#f7f7f2" />
+    <rect x="-24" y="4" width="26" height="42" rx="4" fill="url(#tma)" />
+    <path d="M-24 8h26v6h-26zM-24 22h26v6h-26zM-24 36h26v6h-26z" fill="#f2b705" />
+    <rect x="66" y="6" width="26" height="38" rx="3" fill="#d9d7d0" />
+  </g>
+  <g transform="translate(920 150)" class="road__arrow">
+    <rect width="70" height="52" rx="4" fill="#1d2024" />
+    <path class="road__chev" d="M14 26h34M38 14l12 12-12 12" stroke="#f2b705" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+  {signs.map((x, i) => (
+    <g transform={`translate(${x} 248)`} class="road__sign" style={`--d:${i * 90}ms`}>
+      <rect x="-13" y="-13" width="26" height="26" transform="rotate(45)" fill="#f26a1b" stroke="#1d2024" stroke-width="2" />
+    </g>
+  ))}
+  {cones.map((c, i) => (
+    <use href="#cone" x={c.x} y={c.y} class="road__cone" style={`--d:${300 + i * 55}ms`} />
+  ))}
+  <g class="road__car" transform="translate(-140 64)">
+    <rect width="104" height="46" rx="12" fill="#c5c9cf" />
+    <rect x="62" y="6" width="26" height="34" rx="5" fill="#545a61" />
+  </g>
+</svg>
+<style>
+  .road { width: 100%; height: clamp(150px, 20vw, 270px); display: block; }
+  .road__cone, .road__sign { transform-box: fill-box; transform-origin: center; animation: drop .45s cubic-bezier(.3,1.5,.5,1) both; animation-delay: var(--d); }
+  @keyframes drop { from { opacity: 0; transform: translateY(-40px) scale(1.6); } }
+  .road__chev { animation: blink 1s steps(2, jump-none) infinite; }
+  @keyframes blink { 50% { opacity: .15; } }
+  .road__car { animation: drive 7s linear 1.6s infinite; }
+  @keyframes drive { to { transform: translate(1760px, 64px); } }
+  @media (prefers-reduced-motion: reduce) { .road__car { display: none; } .road__chev { animation: none; } }
+</style>

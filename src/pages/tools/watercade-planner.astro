@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import WatercadePlanner from '../../components/tools/watercade/WatercadePlanner.astro';
+import { loadCatalog, img } from '../../lib/shopify.js';
+
+const cat = await loadCatalog();
+const product = cat.byHandle.get('waterbarriertss590rparent');
+const pinProduct = cat.byHandle.get('waterbarrierpin');
+const variants = (product?.variants || []).map((v) => ({ id: v.id, title: v.title, price: v.price }));
+const pin = pinProduct?.variants?.[0] ? { id: pinProduct.variants[0].id, title: pinProduct.title, price: pinProduct.variants[0].price } : null;
+const image = product?.featuredImage?.url ? img(product.featuredImage.url, 200) : '';
+---
+<Layout title="WATERCADE planner" description="Plan a WATERCADE water-filled barrier layout. See how many barriers you need, the filled weight, water and fill time, then buy online or request a rental.">
+  <section class="wcp-hero section--dark">
+    <div class="wrap wcp-hero__in">
+      <div>
+        <h1>WATERCADE planner</h1>
+        <p class="lede">Pick a layout and enter your dimensions. You'll see exactly how the barriers link up, how many you need, and how much water it takes to fill them.</p>
+        <p class="wcp-hero__links"><a class="textlink" href="/products/waterbarriertss590rparent">See the WATERCADE product page</a></p>
+      </div>
+      <dl class="wcp-facts">
+        <div class="sign sign--orange"><dt>Empty</dt><dd>50 lbs</dd><p>Light enough for one person to carry and place.</p></div>
+        <div class="sign"><dt>Filled</dt><dd>About 650 lbs</dd><p>Around 72 gallons of water anchors each barrier.</p></div>
+        <div class="sign"><dt>Length</dt><dd>5 ft each</dd><p>Interlocking ends, with a 90° pin for corners.</p></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      {product
+        ? <WatercadePlanner variants={variants} image={image} pin={pin} heading="" />
+        : <p>The WATERCADE planner is unavailable right now. Call <a href="tel:+19085614800">908-561-4800</a> for help sizing your layout.</p>}
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap wcp-uses">
+      <h2>Where crews use WATERCADE</h2>
+      <ul>
+        <li><strong>Events and festivals.</strong> Crowd lines, vendor rows and VIP areas that stay put once filled.</li>
+        <li><strong>Stadiums and venues.</strong> Fast perimeters on game day that drain and stack after.</li>
+        <li><strong>Police and municipal.</strong> Checkpoints, parade routes and road closures.</li>
+        <li><strong>Work zones.</strong> Separating crews and equipment from traffic on heavy highway jobs.</li>
+      </ul>
+      <p>We sell WATERCADE nationwide and rent it with delivery and setup in New Jersey, New York, Pennsylvania and Connecticut.</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .wcp-hero { padding: clamp(48px, 7vw, 88px) 0; }
+  .wcp-hero__in { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+  .wcp-hero h1 { font-size: var(--fs-6); margin-bottom: 18px; }
+  .wcp-hero__links { margin: 0; }
+  .wcp-facts { display: grid; gap: 12px; margin: 0; }
+  .wcp-facts .sign { display: grid; grid-template-columns: auto 1fr; gap: 0 16px; align-items: baseline; padding: 18px 22px; }
+  .wcp-facts dt { font-weight: 700; font-size: .95rem; }
+  .wcp-facts dd { margin: 0; font-weight: 900; font-size: var(--fs-3); }
+  .wcp-facts p { grid-column: 1 / -1; margin: 4px 0 0; font-size: .95rem; }
+  .wcp-uses { display: grid; gap: 18px; }
+  .wcp-uses ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+  .wcp-uses li { border-top: 4px solid var(--orange); padding-top: 12px; }
+  @media (max-width: 860px) { .wcp-hero__in { grid-template-columns: 1fr; } }
+</style>

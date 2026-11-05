@@ -1,0 +1,9 @@
+[
+  { "handle": "cone28inch", "title": "28\" traffic cone", "daily": 1.0, "weekly": 3.0, "monthly": 8.0, "fallbackBuy": 17.9, "placeholder": true },
+  { "handle": "cone36inch", "title": "36\" traffic cone", "daily": 1.25, "weekly": 4.0, "monthly": 10.0, "fallbackBuy": 23.9, "placeholder": true },
+  { "handle": "traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring", "title": "Traffic drum with tire ring", "daily": 2.0, "weekly": 6.0, "monthly": 15.0, "fallbackBuy": 63.25, "placeholder": true },
+  { "handle": "type-iii-breakaway-barricade-hi-intensity-left-stripes", "title": "Type III barricade", "daily": 6.0, "weekly": 18.0, "monthly": 45.0, "fallbackBuy": 182.85, "placeholder": true },
+  { "handle": "waterbarriertss590rparent", "title": "WATERCADE water-filled barrier", "daily": 15.0, "weekly": 45.0, "monthly": 120.0, "fallbackBuy": 375.0, "placeholder": true },
+  { "handle": "roll-up-sign-36x36-with-reinforcement-ribs-black-orange-be-prepared-to-stop", "title": "36x36 roll-up sign", "daily": 5.0, "weekly": 15.0, "monthly": 35.0, "fallbackBuy": 109.0, "placeholder": true },
+  { "handle": "k-stand-for-roll-up-signs-univeral-clamp-bracket", "title": "K-stand sign stand", "daily": 5.0, "weekly": 15.0, "monthly": 35.0, "fallbackBuy": 155.25, "placeholder": true }
+]

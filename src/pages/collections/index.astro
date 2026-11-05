@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { loadCatalog, NAV_COLLECTIONS, img } from '../../lib/shopify.js';
+const { colByHandle } = await loadCatalog();
+const cols = NAV_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
+---
+<Layout title="Shop all categories" description="Traffic cones, barricades, WATERCADE barriers, drums, signs, lights and safety gear. Buy online with nationwide shipping, or rent in NJ, NY, PA and CT.">
+  <section class="chead">
+    <div class="wrap">
+      <h1>Shop</h1>
+      <p class="lede">Buy online and we ship anywhere in the U.S. Need it for one job? Everything can be rented in NJ, NY, PA and CT.</p>
+    </div>
+  </section>
+  <section class="wrap cats">
+    {cols.map((c) => (
+      <a href={`/collections/${c.handle}`} class="cat">
+        <span class="cat__img">{c.cover && <img src={img(c.cover.url, 500)} alt="" loading="lazy" />}</span>
+        <span class="cat__t">{c.title}</span>
+        <span class="cat__n">{c.products.length} {c.products.every((p) => p.isRental) ? 'rentals' : 'products'}</span>
+      </a>
+    ))}
+  </section>
+</Layout>
+<style>
+  .chead { background: var(--asphalt); color: var(--white-line); padding: 44px 0 52px; }
+  .chead .lede { margin-top: 12px; }
+  .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; padding-top: 36px; padding-bottom: 96px; }
+  .cat { display: grid; grid-template-rows: auto auto auto; background: #fff; border-radius: var(--sign-r); padding: 18px 20px 20px; text-decoration: none; border: 1px solid var(--concrete-dark); transition: border-color .15s; }
+  .cat:hover { border-color: var(--asphalt); }
+  .cat__img { aspect-ratio: 4/3; display: grid; place-items: center; margin-bottom: 12px; }
+  .cat__img img { width: 100%; height: 100%; object-fit: contain; transition: transform .3s ease; }
+  .cat:hover .cat__img img { transform: scale(1.05) rotate(-1.5deg); }
+  .cat__t { font-weight: 900; font-size: var(--fs-2); }
+  .cat__n { color: var(--ink-soft); font-size: .95rem; }
+</style>

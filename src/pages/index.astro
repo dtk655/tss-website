@@ -1,0 +1,270 @@
+---
+import Layout from '../layouts/Layout.astro';
+import RoadHero from '../components/RoadHero.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { loadCatalog, img } from '../lib/shopify.js';
+
+const { byHandle, colByHandle } = await loadCatalog();
+const pick = (hs) => hs.map((h) => byHandle.get(h)).filter(Boolean);
+const featured = pick(['waterbarriertss590rparent', 'cone28inch', 'cone36inch', 'type-iii-breakaway-barricade-hi-intensity-left-stripes', 'traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring', 'class3safetyvest', 'sign-30x30-silver-red-hi-intensity-prismatic-080-alum-stop-sign', 'typea-c2006']);
+const fleet = pick(['truck-mounted-attenuator-tma', 'arrow-board', 'variable-message-sign-vms-board', 'light-tower', 'portable-traffic-light', 'bucket-truck']);
+const cats = ['cones', 'barricades', 'water-filled-barriers', 'traffic-drums', 'sign-shop', 'safety-gear'].map((h) => colByHandle.get(h)).filter(Boolean);
+const productCount = [...byHandle.values()].filter((p) => !p.isRental).length;
+const wc = byHandle.get('waterbarriertss590rparent');
+---
+<Layout title="Traffic Safety Service: traffic control products, rentals and lane closures">
+  <section class="hero">
+    <div class="wrap hero__in">
+      <div class="hero__copy">
+        <p class="hero__kicker">Family-run in New Jersey since 1971</p>
+        <h1 class="hero__h">Work zones,<br />set up right.</h1>
+        <p class="hero__sub">Traffic control products that ship nationwide. Equipment rentals and union lane closure crews across New Jersey, New York, Pennsylvania and Connecticut.</p>
+        <div class="hero__cta">
+          <a href="/pages/request-a-quote" class="btn">Get a quote</a>
+          <a href="/tools/work-zone-builder" class="btn btn--ghost">Plan a lane closure</a>
+        </div>
+      </div>
+      <form class="hero__ask" data-hero-ask>
+        <label for="hero-q">Ask Coney, our AI assistant</label>
+        <div class="hero__askrow">
+          <input id="hero-q" name="q" autocomplete="off" placeholder="I need 200 cones and 10 drums in Newark next week" />
+          <button class="btn btn--orange btn--sm" type="submit">Ask</button>
+        </div>
+        <div class="hero__chips">
+          <button type="button" data-q="Can you rent me an arrow board and a TMA for a highway job?">Rent an arrow board and TMA</button>
+          <button type="button" data-q="How many WATERCADE barriers do I need for a 300 ft event perimeter?">Barriers for an event</button>
+          <button type="button" data-q="Can you put our town's logo on traffic cones?">Cones with our logo</button>
+        </div>
+      </form>
+    </div>
+    <RoadHero />
+  </section>
+
+  <section class="paths wrap" aria-label="What we do">
+    <a class="path sign" href="/collections">
+      <h2>Buy products</h2>
+      <p>{productCount}+ products, from cones and drums to signs and safety gear. Custom colors and logos. Net terms for agencies and contractors.</p>
+      <span class="path__go">Shop products</span>
+    </a>
+    <a class="path sign sign--orange" href="/collections/equipment-rentals">
+      <h2>Rent equipment</h2>
+      <p>Crash trucks, arrow boards, message boards, light towers and everything we sell. Daily, weekly and monthly in NJ, NY, PA and CT.</p>
+      <span class="path__go">See rentals</span>
+    </a>
+    <a class="path sign sign--green" href="/pages/lane-closure">
+      <h2>Book a crew</h2>
+      <p>MUTCD-compliant lane closures with ATSSA-certified flaggers, union labor and 24/7 emergency response.</p>
+      <span class="path__go">Lane closure services</span>
+    </a>
+  </section>
+
+  <section class="section tools">
+    <div class="wrap">
+      <div class="tools__head">
+        <h2>Plan the job before you call</h2>
+        <p class="lede">Free planning tools built from how our crews actually set up work zones. Each one ends in an equipment list you can send straight to us.</p>
+      </div>
+      <div class="tools__grid">
+        <a href="/tools/work-zone-builder" class="tool tool--big">
+          <svg viewBox="0 0 400 150" aria-hidden="true" class="tool__art">
+            <rect width="400" height="150" fill="#1d2024"/><line x1="0" y1="20" x2="400" y2="20" stroke="#f2b705" stroke-width="3"/><line x1="0" y1="130" x2="400" y2="130" stroke="#f7f7f2" stroke-width="3"/><line x1="0" y1="75" x2="400" y2="75" stroke="#f7f7f2" stroke-width="3" stroke-dasharray="24 30"/>
+            {[0,1,2,3,4,5,6,7].map((i) => <circle cx={150 + i * 16} cy={126 - i * 6.5} r="5" fill="#f26a1b"/>)}
+            {[0,1,2,3,4].map((i) => <circle cx={280 + i * 24} cy={79} r="5" fill="#f26a1b"/>)}
+            <rect x="268" y="95" width="30" height="22" rx="3" fill="#f2b705"/>
+          </svg>
+          <h3>Work zone builder</h3>
+          <p>Pick the road, speed and lanes. See the taper, buffer and signs laid out to MUTCD spacing, with a full equipment count.</p>
+        </a>
+        <a href="/tools/watercade-planner" class="tool">
+          <h3>WATERCADE planner</h3>
+          <p>Lay out a barrier run or event perimeter and get the count, weight and water needed.</p>
+        </a>
+        <a href="/tools/3d-showroom" class="tool">
+          <h3>3D showroom</h3>
+          <p>Spin our cones, drums, barricades and barriers. Try your colors and logo.</p>
+        </a>
+        <a href="/tools/rent-vs-buy" class="tool">
+          <h3>Rent or buy calculator</h3>
+          <p>See where buying starts beating renting for your crew's real usage.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="row-head">
+        <h2>Shop by category</h2>
+        <a class="textlink" href="/collections">All categories</a>
+      </div>
+      <div class="cats">
+        {cats.map((c) => (
+          <a href={`/collections/${c.handle}`} class="cat">
+            <span class="cat__img">{c.cover && <img src={img(c.cover.url, 420)} alt="" loading="lazy" />}</span>
+            <span class="cat__t">{c.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="row-head">
+        <h2>Contractor favorites</h2>
+        <a class="textlink" href="/collections/safety-products">Shop all products</a>
+      </div>
+      <div class="grid">{featured.map((p) => <ProductCard p={p} />)}</div>
+    </div>
+  </section>
+
+  {wc && (
+    <section class="section wcband">
+      <div class="wrap wcband__in">
+        <div>
+          <h2>WATERCADE barriers</h2>
+          <p class="lede">Our own 5-foot water-filled barrier. 50 lbs empty so one person can place it, 650 lbs once filled. Interlocking ends, turn pins included, in orange or white.</p>
+          <p>Used by highway contractors, police departments, DPWs, stadiums and festival crews.</p>
+          <div class="hero__cta">
+            <a href={`/products/${wc.handle}`} class="btn">Shop WATERCADE</a>
+            <a href="/tools/watercade-planner" class="btn btn--ghost">Plan a layout</a>
+          </div>
+        </div>
+        <div class="wcband__img">{wc.featuredImage && <img src={img(wc.featuredImage.url, 900)} alt="WATERCADE water-filled barrier in orange" loading="lazy" />}</div>
+      </div>
+    </section>
+  )}
+
+  <section class="section section--dark">
+    <div class="wrap">
+      <div class="row-head">
+        <h2>Rental fleet</h2>
+        <a class="textlink" href="/collections/equipment-rentals">All rentals</a>
+      </div>
+      <div class="fleet">
+        {fleet.map((p) => (
+          <a href={`/products/${p.handle}`} class="fleet__i">
+            <span class="fleet__img">{p.featuredImage && <img src={img(p.featuredImage.url, 500)} alt="" loading="lazy" />}</span>
+            <span class="fleet__t">{p.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap why">
+      <h2>Why contractors and agencies call us first</h2>
+      <dl>
+        <div><dt>Since 1971</dt><dd>Three generations of setting up work zones in the Northeast.</dd></div>
+        <div><dt>Union crews</dt><dd>Trained, ATSSA-certified flaggers and laborers on every job.</dd></div>
+        <div><dt>24/7 response</dt><dd>Emergency closures for utilities, water main breaks and incidents.</dd></div>
+        <div><dt>Net terms</dt><dd>Purchase orders and accounts for municipalities, agencies and contractors.</dd></div>
+        <div><dt>One call</dt><dd>Products, rentals and crews from the same yard, on one invoice.</dd></div>
+        <div><dt>Custom work</dt><dd>Your colors, logos and stenciling on cones, drums, barriers and signs.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap final__in sign sign--orange">
+      <div>
+        <h2>Tell us about the job</h2>
+        <p>Products, rentals or a full crew. A real person replies, usually the same business day.</p>
+      </div>
+      <div class="final__cta">
+        <a href="/pages/request-a-quote" class="btn btn--dark">Get a quote</a>
+        <a href="tel:+19085614800" class="btn btn--ghost">Call 908-561-4800</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const f = document.querySelector('[data-hero-ask]');
+  const ask = (q) => { if (q && window.TSSChat) window.TSSChat.ask(q); };
+  f?.addEventListener('submit', (e) => { e.preventDefault(); const q = f.q.value.trim(); ask(q); f.q.value = ''; });
+  f?.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => ask(b.dataset.q)));
+</script>
+
+<style>
+  .hero { background: var(--asphalt); color: var(--white-line); overflow: hidden; }
+  .hero__in { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: end; padding-top: clamp(48px, 7vw, 96px); padding-bottom: clamp(28px, 4vw, 48px); }
+  .hero__kicker { color: var(--yellow); font-weight: 800; margin-bottom: 18px; }
+  .hero__h { font-size: clamp(3rem, 8.5vw, 7rem); line-height: .92; letter-spacing: -0.035em; }
+  .hero__sub { font-size: var(--fs-2); color: #c5c9cf; margin: 24px 0 30px; max-width: 34ch; line-height: 1.4; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .hero__ask { background: var(--asphalt-deep); border-radius: var(--sign-r); padding: 20px; display: grid; gap: 12px; }
+  .hero__ask label { font-weight: 800; }
+  .hero__askrow { display: flex; gap: 8px; }
+  .hero__askrow input { flex: 1; min-width: 0; min-height: 46px; padding: 10px 14px 8px; border-radius: 8px; border: 2px solid var(--asphalt-line); background: var(--asphalt); color: #fff; }
+  .hero__askrow input:focus { outline: none; border-color: var(--orange); }
+  .hero__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hero__chips button { background: none; border: 1.5px solid var(--asphalt-line); color: #c5c9cf; border-radius: 999px; padding: 6px 12px 4px; font-size: .85rem; cursor: pointer; }
+  .hero__chips button:hover { border-color: var(--orange); color: #fff; }
+
+  .paths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: clamp(40px, 6vw, 72px); }
+  .path { display: flex; flex-direction: column; gap: 10px; padding: 30px 30px 28px; text-decoration: none; min-height: 250px; transition: translate .2s ease; }
+  .path:hover { translate: 0 -4px; }
+  .path h2 { font-size: var(--fs-4); }
+  .path p { margin: 0; }
+  .path__go { margin-top: auto; font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+  .tools__head { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: end; margin-bottom: 32px; }
+  .tools__head .lede { margin: 0; }
+  .tools__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: auto auto auto; gap: 16px; }
+  .tool { background: var(--paper); border-radius: var(--sign-r); padding: 24px; text-decoration: none; display: flex; flex-direction: column; gap: 8px; border: 2px solid transparent; transition: border-color .15s; }
+  .tool:hover { border-color: var(--asphalt); }
+  .tool h3 { font-size: var(--fs-2); }
+  .tool p { margin: 0; color: var(--ink-soft); }
+  .tool--big { grid-row: span 3; background: var(--asphalt); color: #fff; }
+  .tool--big p { color: #c5c9cf; }
+  .tool--big:hover { border-color: var(--orange); }
+  .tool__art { width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px; }
+  .tools__grid .tool:not(.tool--big) { grid-column: 2 / span 2; }
+
+  .row-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; }
+  .cats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .cat { background: #fff; border-radius: var(--sign-r); padding: 16px 14px 14px; text-decoration: none; display: grid; gap: 8px; text-align: center; border: 1px solid var(--concrete-dark); }
+  .cat__img { aspect-ratio: 1; display: grid; place-items: center; }
+  .cat__img img { width: 100%; height: 100%; object-fit: contain; transition: transform .3s ease; }
+  .cat:hover .cat__img img { transform: translateY(-4px) scale(1.06); }
+  .cat__t { font-weight: 800; }
+
+  .wcband { background: var(--orange); }
+  .wcband__in { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .wcband .lede { color: var(--ink); }
+  .wcband .btn--ghost { color: var(--ink); }
+  .wcband__img img { width: 100%; max-height: 460px; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(0,0,0,.25)); }
+
+  .fleet { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .fleet__i { background: var(--asphalt-deep); border-radius: var(--sign-r); padding: 14px; text-decoration: none; display: grid; gap: 10px; border: 2px solid transparent; }
+  .fleet__i:hover { border-color: var(--orange); }
+  .fleet__img { aspect-ratio: 4/3; background: #fff; border-radius: 6px; display: grid; place-items: center; overflow: hidden; }
+  .fleet__img img { width: 100%; height: 100%; object-fit: contain; }
+  .fleet__t { font-weight: 800; line-height: 1.25; }
+
+  .why h2 { max-width: 20ch; margin-bottom: 36px; }
+  .why dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 0; border-top: 3px solid var(--asphalt); }
+  .why dl div { padding: 22px 24px 22px 0; border-bottom: 1px solid var(--concrete-dark); }
+  .why dt { font-weight: 900; font-size: var(--fs-3); margin-bottom: 6px; }
+  .why dd { margin: 0; color: var(--ink-soft); max-width: 32ch; }
+
+  .final { padding: 0 0 clamp(56px, 8vw, 112px); }
+  .final__in { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 40px clamp(24px, 4vw, 48px); }
+  .final h2 { font-size: var(--fs-5); }
+  .final p { margin: 8px 0 0; }
+  .final__cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 960px) {
+    .hero__in, .tools__head, .wcband__in { grid-template-columns: 1fr; }
+    .paths { grid-template-columns: 1fr; }
+    .path { min-height: 0; }
+    .tools__grid { grid-template-columns: 1fr; }
+    .tool--big { grid-row: auto; }
+    .tools__grid .tool:not(.tool--big) { grid-column: auto; }
+    .cats { grid-template-columns: repeat(3, 1fr); }
+    .why dl { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) { .cats { grid-template-columns: repeat(2, 1fr); } .why dl { grid-template-columns: 1fr; } }
+</style>

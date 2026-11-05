@@ -1,0 +1,141 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Viewer3D from '../../components/tools/viewer3d/Viewer3D.astro';
+
+const items = [
+  {
+    id: 'cone', name: '28" traffic cone', handle: 'cone28inch',
+    colors: ['Orange', 'Lime', 'Pink', 'Navy Blue', 'White'],
+    facts: [
+      'Standard 28 inch height for highway and street work zones',
+      'Reflective 6 inch and 4 inch collars, or plain',
+      '7 lb or 10 lb base, wide or slim body',
+      'Nine colors, plus custom branding on bulk orders'
+    ],
+    buy: 'Buy online or rent', ask: 'Can you help me with 28 inch traffic cones? I want to know bulk pricing, colors, and whether you can add our logo.'
+  },
+  {
+    id: 'drum', name: 'Traffic drum with tire ring', handle: 'traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring',
+    colors: [],
+    facts: [
+      '6 inch hi-intensity reflective stripes',
+      'Includes one tire ring per drum to keep it planted',
+      'Used for channelizing traffic on highways and long closures'
+    ],
+    buy: 'Buy online or rent', ask: 'Can you tell me about your traffic drums with tire rings, and pricing for a large order?'
+  },
+  {
+    id: 'barricade', name: 'Type III barricade', handle: 'type-iii-breakaway-barricade-hi-intensity-left-stripes',
+    colors: [],
+    facts: [
+      'Breakaway design with three striped rails',
+      'Hi-intensity reflectivity',
+      'Left or right stripe direction',
+      'Used for road and lane closures'
+    ],
+    buy: 'Buy online or rent', ask: 'I need Type III barricades for a road closure. What do you recommend and can I rent them?'
+  },
+  {
+    id: 'watercade', name: 'WATERCADE water-filled barrier', handle: 'waterbarriertss590rparent',
+    colors: ['Orange', 'White'],
+    facts: [
+      '5 feet long, 50 lbs empty for one-person handling',
+      'About 650 lbs once filled with water',
+      'Interlocking ends, with a 90° turn pin included',
+      'Orange or white, with your logo on the side panels'
+    ],
+    buy: 'Buy online or rent', ask: 'I am interested in WATERCADE water-filled barriers. Can you help me figure out how many I need and whether you can put our logo on them?'
+  },
+  {
+    id: 'arrowboard', name: 'Arrow board', handle: 'arrow-board',
+    colors: [],
+    facts: [
+      'Trailer-mounted, solar-assisted flashing arrow panel',
+      'Advance warning and direction for lane closures and detours',
+      'Daily, weekly or monthly rentals, plus emergency deployments',
+      'Rental only, in NJ, NY, PA and CT'
+    ],
+    buy: 'Rental only', ask: 'I need an arrow board for a lane closure. Can you help me with rental availability and rates?'
+  }
+];
+const first = items[0];
+---
+<Layout title="3D showroom" description="Spin, zoom and customize traffic cones, drums, Type III barricades, WATERCADE water-filled barriers and arrow boards in 3D. Preview your logo and colors before you order.">
+  <section class="sr-hero">
+    <div class="wrap">
+      <h1>3D showroom</h1>
+      <p class="lede">Turn our most-ordered equipment around, try colors, and see how your logo will look before you order.</p>
+    </div>
+  </section>
+
+  <section class="sr-body">
+    <div class="wrap sr-grid">
+      <div class="sr-pick" role="group" aria-label="Choose a product">
+        {items.map((it, i) => (
+          <button type="button" class="sr-pick__btn" data-pick={it.id} aria-pressed={i === 0 ? 'true' : 'false'}>{it.name}</button>
+        ))}
+      </div>
+
+      <div class="sr-stage">
+        <Viewer3D model="cone" colors={first.colors} customize controls="full" height="clamp(340px, 62vh, 640px)" />
+      </div>
+
+      <aside class="sr-info">
+        {items.map((it, i) => (
+          <div class="sign sr-spec" data-spec={it.id} hidden={i !== 0}>
+            <h2>{it.name}</h2>
+            <p class="sr-spec__buy">{it.buy}</p>
+            <ul>{it.facts.map((f) => <li>{f}</li>)}</ul>
+            <div class="sr-spec__act">
+              <a class="btn" href={`/products/${it.handle}`}>{it.id === 'arrowboard' ? 'See rental details' : 'View product'}</a>
+              <button type="button" class="btn btn--ghost" data-ask={it.ask}>Ask Coney about this product</button>
+            </div>
+          </div>
+        ))}
+        <p class="sr-note">Need custom colors or printed logos? We handle branded cones and WATERCADE barriers for agencies, venues and contractors. <a class="textlink" href="/pages/request-a-quote">Request a quote</a></p>
+      </aside>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ items: items.map(({ id, colors }) => ({ id, colors })) }}>
+  const viewer = document.querySelector('.sr-stage [data-viewer3d]');
+  const byId = Object.fromEntries(items.map((i) => [i.id, i]));
+  document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
+    const id = b.dataset.pick;
+    document.querySelectorAll('[data-pick]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll('[data-spec]').forEach((s) => { s.hidden = s.dataset.spec !== id; });
+    if (viewer?.tssViewer) {
+      viewer.tssViewer.setModel(id);
+      viewer.tssViewer.setSwatches(byId[id].colors);
+    }
+  }));
+  document.querySelectorAll('[data-ask]').forEach((b) => b.addEventListener('click', () => {
+    if (window.TSSChat) window.TSSChat.ask(b.dataset.ask);
+    else window.location.href = 'tel:+19085614800';
+  }));
+</script>
+
+<style>
+  .sr-hero { background: var(--asphalt); color: var(--white-line); padding: clamp(40px, 6vw, 72px) 0 clamp(32px, 4vw, 48px); }
+  .sr-hero .lede { color: #c5c9cf; margin: 14px 0 0; }
+  .sr-body { padding: clamp(28px, 4vw, 48px) 0 clamp(56px, 8vw, 96px); }
+  .sr-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: 'pick pick' 'stage info'; gap: 20px 28px; align-items: start; }
+  .sr-pick { grid-area: pick; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+  .sr-pick__btn { flex: none; min-height: 46px; padding: 11px 18px 9px; border: 2px solid var(--concrete-dark); border-radius: 8px; background: #fff; font-weight: 800; cursor: pointer; white-space: nowrap; }
+  .sr-pick__btn:hover { border-color: var(--asphalt); }
+  .sr-pick__btn[aria-pressed=true] { background: var(--asphalt); color: #fff; border-color: var(--asphalt); }
+  .sr-stage { grid-area: stage; min-width: 0; }
+  .sr-info { grid-area: info; display: grid; gap: 18px; }
+  .sr-spec { padding: 26px 26px 24px; }
+  .sr-spec[hidden] { display: none; }
+  .sr-spec h2 { font-size: var(--fs-3); }
+  .sr-spec__buy { margin: 8px 0 12px; font-weight: 800; color: var(--orange-deep); }
+  .sr-spec ul { margin: 0 0 20px; padding-left: 1.1em; display: grid; gap: 6px; }
+  .sr-spec__act { display: grid; gap: 10px; }
+  .sr-spec__act .btn { width: 100%; position: relative; z-index: 1; }
+  .sr-note { font-size: .95rem; color: var(--ink-soft); margin: 0; }
+  @media (max-width: 960px) {
+    .sr-grid { grid-template-columns: 1fr; grid-template-areas: 'pick' 'stage' 'info'; }
+  }
+</style>

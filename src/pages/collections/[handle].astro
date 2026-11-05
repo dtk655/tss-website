@@ -1,0 +1,83 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { loadCatalog } from '../../lib/shopify.js';
+
+export async function getStaticPaths() {
+  const { collections } = await loadCatalog();
+  return collections.map((c) => ({ params: { handle: c.handle }, props: { handle: c.handle } }));
+}
+const { handle } = Astro.props;
+const { colByHandle, collections } = await loadCatalog();
+const c = colByHandle.get(handle);
+const rentalOnly = c.products.every((p) => p.isRental);
+// Sub-collections: other collections whose products are all inside this one
+const subs = collections.filter((o) => o.handle !== handle && o.products.length < c.products.length && o.products.every((p) => c.products.includes(p)));
+---
+<Layout title={c.title} description={c.description || `${c.title} from Traffic Safety Service. ${rentalOnly ? 'Rentals across NJ, NY, PA and CT.' : 'Ships nationwide. Rentals in NJ, NY, PA and CT.'}`}>
+  <section class="chead">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/collections">Shop</a></nav>
+      <h1>{c.title}</h1>
+      <p class="lede">{c.description || (rentalOnly ? 'Delivered, set up and picked up across NJ, NY, PA and CT. Request a quote for daily, weekly or monthly rates.' : `${c.products.length} products. Buy online and we ship anywhere in the U.S., or rent them in NJ, NY, PA and CT.`)}</p>
+      {subs.length > 0 && (
+        <div class="subs" aria-label="Narrow down">
+          {subs.map((s) => <a href={`/collections/${s.handle}`} class="subs__a">{s.title}</a>)}
+        </div>
+      )}
+    </div>
+  </section>
+  <section class="wrap clist">
+    <div class="ctools">
+      <p data-count>{c.products.length} products</p>
+      <label class="sort">Sort
+        <select data-sort>
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price, low to high</option>
+          <option value="price-desc">Price, high to low</option>
+          <option value="title">Name</option>
+        </select>
+      </label>
+    </div>
+    <div class="grid" data-grid>
+      {c.products.map((p, i) => (
+        <div data-i={i} data-price={p.isRental ? 1e9 : p.minPrice} data-title={p.title}><ProductCard p={p} /></div>
+      ))}
+    </div>
+    {!rentalOnly && (
+      <aside class="sign sign--dark cta-rent">
+        <div>
+          <h2>Need these for a job, not forever?</h2>
+          <p>Everything here can be rented, delivered and set up across NJ, NY, PA and CT.</p>
+        </div>
+        <a href="/tools/rent-vs-buy" class="btn btn--orange">Compare renting and buying</a>
+      </aside>
+    )}
+  </section>
+</Layout>
+<script>
+  const grid = document.querySelector('[data-grid]');
+  document.querySelector('[data-sort]')?.addEventListener('change', (e) => {
+    const v = e.target.value;
+    const items = [...grid.children];
+    const key = { featured: (a, b) => a.dataset.i - b.dataset.i, 'price-asc': (a, b) => a.dataset.price - b.dataset.price, 'price-desc': (a, b) => (b.dataset.price % 1e9) - (a.dataset.price % 1e9), title: (a, b) => a.dataset.title.localeCompare(b.dataset.title) }[v];
+    items.sort(key).forEach((el) => grid.appendChild(el));
+  });
+</script>
+<style>
+  .chead { background: var(--asphalt); color: var(--white-line); padding: 36px 0 44px; }
+  .chead .crumbs { margin-bottom: 10px; color: #aab0b7; }
+  .chead .crumbs a { color: inherit; }
+  .chead .lede { margin-top: 12px; }
+  .subs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .subs__a { padding: 9px 14px 7px; border: 2px solid var(--asphalt-line); border-radius: 8px; text-decoration: none; font-weight: 700; }
+  .subs__a:hover { border-color: var(--orange); }
+  .clist { padding-top: 28px; padding-bottom: 80px; }
+  .ctools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .ctools p { margin: 0; color: var(--ink-soft); }
+  .sort { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+  .sort select { min-height: 42px; padding: 8px 10px; border-radius: 8px; border: 2px solid var(--concrete-dark); background: #fff; }
+  .cta-rent { margin-top: 48px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 30px 32px; }
+  .cta-rent h2 { font-size: var(--fs-3); margin-bottom: 6px; }
+  .cta-rent p { margin: 0; color: #c5c9cf; }
+</style>

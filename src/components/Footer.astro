@@ -1,0 +1,57 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="lane" aria-hidden="true"></div>
+  <div class="wrap ftr__grid">
+    <div>
+      <p class="ftr__name">Traffic Safety Service</p>
+      <p>Traffic control products, equipment rentals and lane closure crews. Family-run in New Jersey since 1971.</p>
+      <p><a href="tel:+19085614800" class="textlink">908-561-4800</a><br /><a href="mailto:info@trafficsafetyservice.com" class="textlink">info@trafficsafetyservice.com</a></p>
+    </div>
+    <nav aria-label="Shop">
+      <h2>Shop</h2>
+      <a href="/collections/cones">Cones</a>
+      <a href="/collections/barricades">Barricades</a>
+      <a href="/collections/water-filled-barriers">Water-filled barriers</a>
+      <a href="/collections/sign-shop">Signs</a>
+      <a href="/collections/safety-gear">Safety gear</a>
+      <a href="/collections">All categories</a>
+    </nav>
+    <nav aria-label="Services">
+      <h2>Services</h2>
+      <a href="/pages/lane-closure">Lane closures and flaggers</a>
+      <a href="/collections/equipment-rentals">Equipment rentals</a>
+      <a href="/collections/truck-rentals">Truck fleet</a>
+      <a href="/pages/water-filled-barrier">WATERCADE barriers</a>
+      <a href="/pages/request-a-quote">Request a quote</a>
+    </nav>
+    <nav aria-label="Planning tools">
+      <h2>Planning tools</h2>
+      <a href="/tools/work-zone-builder">Work zone builder</a>
+      <a href="/tools/watercade-planner">WATERCADE planner</a>
+      <a href="/tools/rent-vs-buy">Rent or buy calculator</a>
+      <a href="/tools/3d-showroom">3D showroom</a>
+    </nav>
+  </div>
+  <div class="wrap ftr__base">
+    <span>© {year} Traffic Safety Service, L.L.C.</span>
+    <span>Rentals and crews in NJ, NY, PA and CT. Products ship nationwide.</span>
+    <a href="https://trafficsafetyservice.com/policies/privacy-policy">Privacy</a>
+    <a href="https://trafficsafetyservice.com/policies/terms-of-service">Terms</a>
+  </div>
+</footer>
+<style>
+  .ftr { background: var(--asphalt-deep); color: #c5c9cf; padding-bottom: 28px; }
+  .lane { height: 6px; background: repeating-linear-gradient(90deg, var(--white-line) 0 48px, transparent 48px 96px); opacity: .85; }
+  .ftr__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; padding-top: 56px; padding-bottom: 40px; }
+  .ftr__name { font-weight: 900; font-size: var(--fs-2); color: #fff; margin-bottom: 8px; }
+  .ftr h2 { font-size: 1rem; color: #fff; margin-bottom: 12px; font-weight: 800; letter-spacing: 0; }
+  .ftr nav { display: grid; align-content: start; gap: 8px; }
+  .ftr nav a { text-decoration: none; }
+  .ftr nav a:hover { color: #fff; text-decoration: underline; }
+  .ftr .textlink { color: #fff; }
+  .ftr__base { display: flex; flex-wrap: wrap; gap: 8px 24px; border-top: 1px solid var(--asphalt-line); padding-top: 20px; font-size: .9rem; }
+  .ftr__base a { color: inherit; }
+  @media (max-width: 860px) { .ftr__grid { grid-template-columns: 1fr 1fr; } .ftr__grid > div:first-child { grid-column: 1 / -1; } }
+</style>

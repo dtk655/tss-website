@@ -1,0 +1,72 @@
+<div class="drawer" data-drawer hidden>
+  <div class="drawer__scrim" data-close-drawer></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer__head">
+      <h2 id="drawer-title" class="sr-only">Cart and quote list</h2>
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="cart" aria-selected="true">Cart <span data-cart-count-inline></span></button>
+        <button role="tab" data-tab="quote" aria-selected="false">Quote list <span data-quote-count-inline></span></button>
+      </div>
+      <button class="drawer__x" data-close-drawer aria-label="Close">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <section class="pane" data-pane="cart">
+      <ul class="lines" data-cart-lines></ul>
+      <div class="empty" data-cart-empty>
+        <p><strong>Your cart is empty.</strong></p>
+        <p>Products you buy online ship nationwide. For rentals, crews or bulk pricing, use the quote list.</p>
+        <a href="/collections" class="btn btn--sm btn--dark">Shop products</a>
+      </div>
+      <div class="foot" data-cart-foot hidden>
+        <div class="total"><span>Subtotal</span><strong data-cart-subtotal></strong></div>
+        <p class="note">Shipping and tax are calculated at checkout.</p>
+        <a class="btn" data-checkout href="#">Check out</a>
+      </div>
+    </section>
+
+    <section class="pane" data-pane="quote" hidden>
+      <p class="pane__intro">Build a list of what you need to rent or buy, then send it to our team. A real person replies with pricing, usually the same business day.</p>
+      <ul class="lines" data-quote-lines></ul>
+      <div class="empty" data-quote-empty>
+        <p><strong>Your quote list is empty.</strong></p>
+        <p>Add items from any product page, or plan a job with the work zone builder and add the whole equipment list at once.</p>
+        <a href="/tools/work-zone-builder" class="btn btn--sm btn--dark">Open the work zone builder</a>
+      </div>
+      <div class="foot" data-quote-foot hidden>
+        <a class="btn" href="/pages/request-a-quote">Request a quote for this list</a>
+      </div>
+    </section>
+  </aside>
+</div>
+<style is:global>
+  .drawer { position: fixed; inset: 0; z-index: 90; }
+  .drawer[hidden] { display: none; }
+  .drawer__scrim { position: absolute; inset: 0; background: rgba(20,22,25,.55); animation: fadeIn .2s ease; }
+  .drawer__panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: var(--concrete); display: flex; flex-direction: column; animation: slideIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } }
+  @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } }
+  .drawer__head { display: flex; align-items: center; gap: 8px; padding: 14px 14px 0 18px; background: var(--asphalt); color: #fff; }
+  .tabs { display: flex; gap: 4px; flex: 1; }
+  .tabs button { background: none; border: 0; color: #c5c9cf; font-weight: 800; padding: 12px 12px 12px; cursor: pointer; border-bottom: 4px solid transparent; }
+  .tabs button[aria-selected=true] { color: #fff; border-bottom-color: var(--orange); }
+  .drawer__x { background: none; border: 0; color: #fff; width: 44px; height: 44px; display: grid; place-items: center; cursor: pointer; border-radius: 8px; }
+  .pane { flex: 1; overflow: auto; display: flex; flex-direction: column; padding: 18px; gap: 14px; }
+  .pane[hidden] { display: none; }
+  .pane__intro { color: var(--ink-soft); font-size: .95rem; margin: 0; }
+  .lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .line { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; background: #fff; border-radius: 10px; padding: 10px; }
+  .line img { width: 64px; height: 64px; object-fit: contain; background: #f6f6f3; border-radius: 6px; }
+  .line__t { font-weight: 800; font-size: .95rem; line-height: 1.25; }
+  .line__s { font-size: .85rem; color: var(--ink-soft); }
+  .line__q { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .line__q button, .line__q select { min-width: 30px; height: 30px; border: 1.5px solid var(--concrete-dark); background: #fff; border-radius: 6px; cursor: pointer; font-weight: 800; }
+  .line__q input { width: 64px; height: 30px; border: 1.5px solid var(--concrete-dark); border-radius: 6px; text-align: center; }
+  .line__rm { background: none; border: 0; color: var(--ink-soft); text-decoration: underline; cursor: pointer; font-size: .85rem; align-self: start; }
+  .empty p { margin: 0 0 10px; }
+  .foot { margin-top: auto; display: grid; gap: 10px; padding-top: 12px; border-top: 2px solid var(--concrete-dark); }
+  .total { display: flex; justify-content: space-between; font-size: 1.15rem; }
+  .note { font-size: .85rem; color: var(--ink-soft); margin: 0; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 95; background: var(--asphalt-deep); color: #fff; padding: 14px 20px 12px; border-radius: 10px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,.25); animation: fadeIn .2s ease; }
+</style>
