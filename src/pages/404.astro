@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Page not found" description="This page is closed. Take the detour back to Traffic Safety Service.">
+  <section class="nf">
+    <div class="wrap nf__in">
+      <svg class="nf__art" viewBox="0 0 320 200" role="img" aria-label="A Type III barricade blocking the road">
+        <line x1="10" y1="188" x2="310" y2="188" stroke="#3b4047" stroke-width="4" />
+        <g>
+          <rect x="70" y="40" width="180" height="26" rx="3" fill="#f7f7f2" />
+          <path d="M70 66 L96 40 L118 40 L92 66 Z M114 66 L140 40 L162 40 L136 66 Z M158 66 L184 40 L206 40 L180 66 Z M202 66 L228 40 L250 40 L224 66 Z" fill="#f26a1b" />
+          <rect x="70" y="86" width="180" height="26" rx="3" fill="#f7f7f2" />
+          <path d="M70 112 L96 86 L118 86 L92 112 Z M114 112 L140 86 L162 86 L136 112 Z M158 112 L184 86 L206 86 L180 112 Z M202 112 L228 86 L250 86 L224 112 Z" fill="#f26a1b" />
+          <rect x="70" y="132" width="180" height="26" rx="3" fill="#f7f7f2" />
+          <path d="M70 158 L96 132 L118 132 L92 158 Z M114 158 L140 132 L162 132 L136 158 Z M158 158 L184 132 L206 132 L180 158 Z M202 158 L228 132 L250 132 L224 158 Z" fill="#f26a1b" />
+          <rect x="84" y="40" width="10" height="148" fill="#2a2e33" />
+          <rect x="226" y="40" width="10" height="148" fill="#2a2e33" />
+          <rect x="64" y="182" width="50" height="8" rx="3" fill="#2a2e33" />
+          <rect x="206" y="182" width="50" height="8" rx="3" fill="#2a2e33" />
+        </g>
+        <g class="nf__light">
+          <rect x="146" y="14" width="28" height="22" rx="4" fill="#1d2024" />
+          <circle cx="160" cy="25" r="7" fill="#f2b705" />
+        </g>
+      </svg>
+      <p class="nf__code">404</p>
+      <h1>This page is closed</h1>
+      <p class="lede">The address you followed doesn't exist anymore, or never did. Take the detour.</p>
+      <nav class="nf__links" aria-label="Detour">
+        <a class="btn" href="/">Back to the homepage</a>
+        <a class="btn btn--ghost" href="/collections">Shop products</a>
+        <a class="btn btn--ghost" href="/collections/equipment-rentals">Rentals</a>
+        <a class="btn btn--ghost" href="/pages/lane-closure">Lane closures</a>
+        <button class="btn btn--ghost" type="button" data-coney>Ask Coney for directions</button>
+      </nav>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelector('[data-coney]')?.addEventListener('click', () => {
+    window.TSSChat?.ask("I hit a page that doesn't exist. Can you help me find what I was looking for?");
+  });
+</script>
+
+<style>
+  .nf { background: var(--asphalt); color: var(--white-line); min-height: calc(100dvh - var(--header-h)); display: grid; align-items: center; }
+  .nf__in { text-align: center; display: grid; justify-items: center; gap: 14px; padding-top: 48px; padding-bottom: 64px; }
+  .nf__art { width: min(340px, 72vw); }
+  .nf__light { transform-box: fill-box; transform-origin: center; animation: nfblink 1.2s steps(2, jump-none) infinite; }
+  @keyframes nfblink { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .nf__light { animation: none; } }
+  .nf__code { margin: 0; font-weight: 900; font-size: 1.2rem; color: var(--yellow); letter-spacing: .1em; }
+  .nf h1 { font-size: var(--fs-5); }
+  .nf .lede { margin: 0; max-width: 44ch; color: #c5c9cf; }
+  .nf__links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
+</style>

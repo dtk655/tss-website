@@ -12,9 +12,11 @@ const { handle } = Astro.props;
 const { byHandle, colByHandle } = await loadCatalog();
 const p = byHandle.get(handle);
 
-// Optional 3D viewer (built separately); loads only if present.
+// Optional 3D viewer and WATERCADE planner (built separately); load only if present.
 const viewerMods = import.meta.glob('../../components/tools/viewer3d/Viewer3D.astro', { eager: true });
 const Viewer3D = Object.values(viewerMods)[0]?.default;
+const plannerMods = import.meta.glob('../../components/tools/watercade/WatercadePlanner.astro', { eager: true });
+const WatercadePlanner = handle === 'waterbarriertss590rparent' ? Object.values(plannerMods)[0]?.default : null;
 const inCol = (h) => p.collections.includes(h);
 const model =
   handle.includes('waterbarriertss590r') ? 'watercade' :
@@ -152,6 +154,16 @@ const firstImg = p.featuredImage?.url;
           <p class="lede">Drag to rotate, pinch or scroll to zoom.{customizable && ' Pick a color or upload your logo above to preview it.'}</p>
         </div>
         <Viewer3D model={model} colors={viewerColors} customize={customizable} controls="minimal" height="min(70vh, 560px)" />
+      </section>
+    )}
+
+    {WatercadePlanner && (
+      <section class="pdp__3d" aria-labelledby="hplan">
+        <div class="pdp__3dhead">
+          <h2 id="hplan">Plan your layout</h2>
+          <p class="lede">See how many barriers your run or perimeter needs.</p>
+        </div>
+        <WatercadePlanner heading="" variants={p.variants.map((v) => ({ id: v.id, title: v.title, price: v.price }))} image={firstImg} />
       </section>
     )}
 

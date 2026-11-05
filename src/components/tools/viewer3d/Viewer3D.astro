@@ -169,7 +169,8 @@ const aria = label || `Interactive 3D model of a ${NAMES[model]}. Drag or use ar
   document.querySelectorAll<HTMLElement>('[data-viewer3d]').forEach(setup);
 </script>
 
-<style>
+<style is:global>
+  /* global: swatches are injected at runtime, so scoped styles would not reach them. All classes are v3d-prefixed. */
   .v3d { display: grid; gap: 14px; }
   .v3d__stage { position: relative; height: var(--v3d-h, clamp(320px, 56vw, 560px)); border-radius: var(--sign-r, 10px); overflow: hidden; background: #ecebe6; border: 1px solid var(--concrete-dark, #d9d7d0); }
   .v3d canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; }

@@ -185,11 +185,6 @@ function barricade() {
     const foot = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2, 34), tube);
     foot.position.set(x, 1, -railT / 2 - 1);
     g.add(foot);
-    // diagonal brace
-    const brace = new THREE.Mesh(new THREE.BoxGeometry(1.4, 22, 1.4), tube);
-    brace.position.set(x, 9, -8);
-    brace.rotation.x = -0.75;
-    g.add(brace);
     // rubber end caps on the foot
     [-17, 17].forEach((z) => {
       const capm = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.4, 1), rubber());
@@ -403,10 +398,10 @@ function arrowboard() {
     [26, -8], [18, -15], [10, -21]                                                  // lower head
   ];
   cells.push([40, 0]);
-  const lampOn = new THREE.MeshStandardMaterial({ color: 0xffb300, emissive: 0xffa000, emissiveIntensity: 2.2, roughness: 0.3 });
+  const lampOn = new THREE.MeshBasicMaterial({ color: 0xffa21a, toneMapped: false });
   const lampOff = new THREE.MeshStandardMaterial({ color: 0x3a2c12, emissive: 0x000000, roughness: 0.4 });
-  const lampGeo = new THREE.CylinderGeometry(2.6, 2.6, 1.4, 24);
-  const hoodGeo = new THREE.CylinderGeometry(3.2, 3.2, 2.4, 24, 1, true, Math.PI * 0.15, Math.PI * 0.7);
+  const lampGeo = new THREE.CylinderGeometry(3.1, 3.1, 1.4, 24);
+  const hoodGeo = new THREE.CylinderGeometry(3.7, 3.7, 2.4, 24, 1, true, Math.PI * 0.15, Math.PI * 0.7);
   const hoodMat = new THREE.MeshStandardMaterial({ color: 0x0c0d0f, side: THREE.DoubleSide, roughness: 0.8 });
   const lamps = [];
   cells.forEach(([x, y]) => {

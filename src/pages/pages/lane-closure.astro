@@ -1,0 +1,350 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import QuoteWizard from '../../components/QuoteWizard.astro';
+import { PHONE, PHONE_TEL, YEARS } from '../../lib/config.js';
+
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const photos = {
+  job: CDN + 'thumbnail_IMG_0308.jpg',
+  fleet: CDN + 'tss.jpg',
+  tma: CDN + 'TMA_192_Rear.jpg',
+  team: CDN + 'thumbnail_Safety_Day_Team_Photo.jpg',
+  roadClosure: CDN + 'Road_Closures_1.svg'
+};
+const services = [
+  ['Lane and road closures', 'Single lane to full detours, set up to MUTCD and each state’s standards.'],
+  ['Flagging operations', 'ATSSA-certified flaggers who keep traffic and your crew moving safely.'],
+  ['24/7 emergency response', 'Water main breaks, downed lines, incidents. We dispatch around the clock.'],
+  ['Sign and barricade installs', 'Delivered, installed and maintained for the life of the project.'],
+  ['Traffic control plans', 'Drawings and permits-ready plans prepared by certified traffic experts.'],
+  ['Special events', 'Parades, festivals, races and game days, planned and staffed.'],
+  ['Equipment sales and rentals', 'Cones to crash trucks from our own yard, on the same invoice.']
+];
+const certs = [
+  ['OSHA Trained & Certified', 'Untitled_design_14.png'],
+  ['ATSSA Flagger Certified', 'Untitled_design_18.png'],
+  ['Rutgers-Certified TCCs', 'Untitled_design_16.png'],
+  ['S.W.A.C. Clearance', 'Untitled_design_15.png'],
+  ['MUTCD Compliant', 'Untitled_design_17.png'],
+  ['MASH Tested Equipment', 'Untitled_design_22.png']
+].map(([t, f]) => [t, CDN + f]);
+const agencies = [
+  ['NJ Garden State Parkway', 'Untitled_design_23.png'],
+  ['Port Authority of NY & NJ', 'Untitled_design_28.png'],
+  ['PennDOT Roadways & Interstates', 'Untitled_design_30.png'],
+  ['New York State Thruway Authority', 'Untitled_design_24.png'],
+  ['NJ DOT Roadways & Interstates', 'Untitled_design_27.png'],
+  ['NY DOT Roadways & Interstates', 'Untitled_design_29.png'],
+  ['NJ Turnpike Authority', 'Untitled_design_26.png']
+].map(([t, f]) => [t, CDN + f]);
+const faq = [
+  ['What is the furthest TSS will go for a job?', 'We complete lane closures within the states of New Jersey, New York, Pennsylvania, Connecticut, Delaware, and other surrounding areas. If you are located elsewhere, please call or submit an inquiry and we can discuss further.'],
+  ['What size crews does TSS offer?', 'We provide crews of all sizes depending on the job and needs of our customer.'],
+  ['How can I book a job?', `Either call our team at ${PHONE} or use the form above to submit an inquiry with a description of what your job entails. We typically get back to you within 24 hours.`],
+  ['Does TSS supply traffic control devices?', 'Yes. We are a full service provider offering sales and rentals on all traffic control devices for your next job. These devices include traffic cones, crash trucks, arrow boards, water barriers, signs, and much more.'],
+  ['What certifications does TSS have?', 'Each crew is led by a Rutgers-Certified Traffic Control Captain (TCC) and all crew members are OSHA trained. We follow all guidelines enlisted by the MUTCD and remain compliant with each state’s regulations. In addition, our lane closure division has S.W.A.C clearance.'],
+  ['What type of experience does TSS have?', 'We have had extensive work on all major roadways and interstates including the NJDOT, NJTA, GSP, PANYNJ, NYSDOT, NYSTA, and PennDOT. In addition, we have performed closures on many local roads and special venues for concerts and sporting events.']
+];
+const stats = [
+  [String(YEARS), 'Years in the industry'],
+  ['10,578', 'Lane closures completed'],
+  ['35,017', 'Customers served'],
+  ['3,100,345', 'Cones sold']
+];
+---
+<Layout title="Lane closure services" description={`MUTCD-compliant lane closures, ATSSA-certified flaggers and 24/7 emergency response in NJ, NY, PA, CT and DE. 10,000+ closures since ${2026 - YEARS}. Free quotes within 1 business day.`} image={photos.job}>
+  <section class="lc-hero">
+    <div class="wrap lc-hero__in">
+      <div class="lc-hero__copy">
+        <p class="lc-hero__kicker">Lane closure division</p>
+        <h1>10,000 closures in.<br />Zero shortcuts.</h1>
+        <p class="lc-hero__sub">Union crews, ATSSA-certified flaggers and a modern fleet, setting up MUTCD-compliant work zones across New Jersey, New York, Pennsylvania, Connecticut and Delaware for {YEARS} years.</p>
+        <div class="lc-hero__cta">
+          <a href="#quote-form" class="btn">Reserve a crew</a>
+          <a href={PHONE_TEL} class="btn btn--ghost">Call {PHONE}</a>
+        </div>
+      </div>
+      <div class="lc-hero__pics" aria-hidden="true">
+        <img src={photos.job} alt="" loading="eager" />
+        <img src={photos.tma} alt="" loading="lazy" />
+        <img src={photos.fleet} alt="" loading="lazy" />
+        <img src={photos.team} alt="" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>What our crews handle</h2>
+      <ul class="lc-services">
+        {services.map(([t, d]) => <li><h3>{t}</h3><p>{d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--dark lc-anim" data-lc-anim>
+    <div class="wrap">
+      <h2>How a closure goes in</h2>
+      <p class="lede">Every setup follows the same discipline: warn traffic early, move it over gradually, protect the crew, and close it all out clean.</p>
+    </div>
+    <svg class="lc-road" viewBox="0 0 1500 320" role="img" aria-label="Top-down diagram of a right lane closure: advance warning signs, a taper of cones guiding traffic left, an arrow board, a crash truck buffer, then the protected work area.">
+      <defs>
+        <pattern id="lcHatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="14" height="14" fill="#33383e" /><rect width="6" height="14" fill="#3d434a" />
+        </pattern>
+        <g id="lcCone"><circle r="8" fill="#f26a1b" /><circle r="4.6" fill="#fff" /><circle r="2.6" fill="#f26a1b" /></g>
+      </defs>
+      <rect width="1500" height="320" fill="#24282d" />
+      <rect y="60" width="1500" height="200" fill="#2e3338" />
+      <line x1="0" y1="60" x2="1500" y2="60" stroke="#f2b705" stroke-width="5" />
+      <line x1="0" y1="260" x2="1500" y2="260" stroke="#f7f7f2" stroke-width="5" />
+      <line x1="0" y1="160" x2="1500" y2="160" stroke="#f7f7f2" stroke-width="4" stroke-dasharray="44 66" opacity=".9" />
+      <!-- stage 1: advance warning signs on the shoulder -->
+      {[90, 240, 390].map((x, i) => (
+        <g class="lc-s lc-s1" style={`--d:${i * 120}ms`} transform={`translate(${x} 288)`}>
+          <rect x="-15" y="-15" width="30" height="30" transform="rotate(45)" fill="#f26a1b" stroke="#16181b" stroke-width="2" />
+          <rect x="-2.5" y="14" width="5" height="16" fill="#c5c9cf" />
+        </g>
+      ))}
+      <!-- stage 2: taper -->
+      {Array.from({ length: 12 }, (_, i) => (
+        <use href="#lcCone" class="lc-s lc-s2" style={`--d:${360 + i * 70}ms`} x={520 + i * 26} y={252 - i * 7.6} />
+      ))}
+      <g class="lc-s lc-s2" style="--d:1200ms" transform="translate(805 200)">
+        <rect width="64" height="48" rx="4" fill="#16181b" />
+        <path class="lc-chev" d="M12 24h30M34 13l11 11-11 11" stroke="#f2b705" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+      <!-- stage 3: buffer + TMA -->
+      {Array.from({ length: 5 }, (_, i) => (
+        <use href="#lcCone" class="lc-s lc-s3" style={`--d:${1300 + i * 70}ms`} x={880 + i * 44} y={164} />
+      ))}
+      <g class="lc-s lc-s3" style="--d:1600ms" transform="translate(1065 180)">
+        <rect width="92" height="52" rx="5" fill="#f7f7f2" />
+        <rect x="64" y="6" width="24" height="40" rx="3" fill="#d9d7d0" />
+        <rect x="-22" y="4" width="24" height="44" rx="3" fill="#16181b" />
+        <path d="M-22 10h24v7h-24zM-22 26h24v7h-24zM-22 42h24v6h-24z" fill="#f2b705" />
+      </g>
+      <!-- stage 4: work area -->
+      <g class="lc-s lc-s4" style="--d:1800ms">
+        <rect x="1190" y="170" width="280" height="76" fill="url(#lcHatch)" />
+        {Array.from({ length: 6 }, (_, i) => <use href="#lcCone" x={1200 + i * 52} y={164} />)}
+        <g transform="translate(1270 190)"><rect width="110" height="40" rx="5" fill="#f26a1b" /><rect x="78" y="4" width="28" height="32" rx="3" fill="#d9d7d0" /></g>
+      </g>
+      <!-- stage labels -->
+      <g class="lc-lbl" font-family="Overpass, sans-serif" font-size="19" font-weight="700" fill="#c5c9cf">
+        <text x="240" y="40" text-anchor="middle">1. Advance warning</text>
+        <text x="670" y="40" text-anchor="middle">2. Taper and arrow board</text>
+        <text x="990" y="40" text-anchor="middle">3. Buffer and crash truck</text>
+        <text x="1330" y="40" text-anchor="middle">4. Protected work area</text>
+      </g>
+    </svg>
+    <div class="wrap lc-anim__foot">
+      <p>Want this planned for your road? <a class="textlink" href="/tools/work-zone-builder">Try the work zone builder</a> or <button type="button" class="lc-coney" data-lc-ask="How does TSS set up a lane closure, and what equipment comes with a crew?">ask Coney a question about closures</button>.</p>
+    </div>
+  </section>
+
+  <section class="lc-stats" aria-label="Track record">
+    <div class="wrap lc-stats__in">
+      {stats.map(([n, l]) => <div class="lc-stat"><strong>{n}</strong><span>{l}</span></div>)}
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <h2>Our certifications</h2>
+      <p class="lede">Every crew is led by a Rutgers-Certified Traffic Control Captain.</p>
+      <ul class="lc-badges">
+        {certs.map(([t, src]) => <li><img src={src} alt="" loading="lazy" width="160" height="160" /><span>{t}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Where we've worked</h2>
+      <p class="lede">From the Garden State Parkway to the G.W. Bridge, we have been tested in all areas.</p>
+      <ul class="lc-badges lc-badges--agency">
+        {agencies.map(([t, src]) => <li><img src={src} alt="" loading="lazy" width="150" height="150" /><span>{t}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap lc-rows">
+      <article class="lc-row">
+        <div class="lc-row__txt">
+          <h2>On the road, experience matters</h2>
+          <p>For the last 25 years, our lane closure division has been dedicated to providing reliable and professional services in traffic control management. With a focus on safety and efficiency, our highly trained crews ensure that each project is handled with precision. We take pride in our team's expertise and are proud to say we have Rutgers-Certified TCCs and S.W.A.C clearance.</p>
+          <p>Over the years, we've built a reputation for excellence, prioritizing the well-being of both our workers and the public. Our commitment to safety and operational compliance with the MUTCD remains at the core of everything we do.</p>
+        </div>
+        <img src={photos.team} alt="The TSS crew at a company Safety Day" loading="lazy" />
+      </article>
+      <article class="lc-row lc-row--flip">
+        <div class="lc-row__txt">
+          <h2>A modern fleet of equipment and vehicles</h2>
+          <p>With state-of-the-art truck mounted attenuators (TMA) and a variety of new, efficient lane closure equipment, we ensure an effective job.</p>
+          <a class="btn btn--dark" href="/collections/equipment-rentals">Explore our certified fleet</a>
+        </div>
+        <img src={photos.fleet} alt="TSS trucks lined up in the yard" loading="lazy" />
+      </article>
+      <article class="lc-row">
+        <div class="lc-row__txt">
+          <h2>25+ years. 10,000+ closures. Zero excuses.</h2>
+          <p>Over the last 25 years, we have completed upwards of 10,000 lane closure jobs across the tri-state and other surrounding areas. From the Garden State Parkway to the G.W. Bridge, we have been tested in all areas.</p>
+        </div>
+        <img src={photos.job} alt="A TSS lane closure in place on an active roadway" loading="lazy" />
+      </article>
+      <article class="lc-row lc-row--flip">
+        <div class="lc-row__txt">
+          <h2>Start planning your next project with certified traffic experts</h2>
+          <p>We offer free quotes and you can expect to receive feedback on your inquiry within 1 business day of submittal. We handle both large and small projects for all types of businesses.</p>
+          <a class="btn" href="#quote-form">Reserve a certified crew</a>
+        </div>
+        <img src={photos.tma} alt="Rear of a TSS truck mounted attenuator crash truck" loading="lazy" />
+      </article>
+      <article class="lc-row">
+        <div class="lc-row__txt">
+          <h2>Rather talk it through? Call now</h2>
+          <p>Get in touch with one of our specialists to discuss your next job and its requirements. We offer a quote after the conclusion of the call.</p>
+          <a class="btn btn--dark" href={PHONE_TEL}>Talk to a safety coordinator</a>
+        </div>
+        <img src={photos.roadClosure} alt="Illustration of a road closure layout" loading="lazy" />
+      </article>
+    </div>
+  </section>
+
+  <section class="section lc-form" id="quote-form">
+    <div class="wrap lc-form__in">
+      <QuoteWizard preset="lane-closure" heading="Reserve a crew" />
+      <aside class="lc-form__aside">
+        <div class="sign sign--dark">
+          <h3>Emergency right now?</h3>
+          <p>We dispatch 24/7 for incidents, main breaks and downed lines.</p>
+          <a class="btn btn--orange" href={PHONE_TEL}>Call {PHONE}</a>
+        </div>
+        <div class="sign">
+          <h3>What happens after you send it</h3>
+          <p>A coordinator reviews the job, calls with any questions, and sends a formal quote, usually within 1 business day. Agencies and contractors can pay by PO or Net terms.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap lc-faq">
+      <h2>Lane closure questions, answered</h2>
+      <div class="lc-faq__list">
+        {faq.map(([q, a]) => (
+          <details class="lc-q">
+            <summary><span>{q}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg></summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+      <p>Something we didn't cover? <button type="button" class="lc-coney" data-lc-ask="I have a question about lane closure services.">Ask Coney</button> or call <a class="textlink" href={PHONE_TEL}>{PHONE}</a>.</p>
+    </div>
+  </section>
+
+  <div class="lc-sticky" data-lc-sticky hidden>
+    <a href="#quote-form" class="btn">Need a quote? Tap here</a>
+  </div>
+</Layout>
+
+<script>
+  // One orchestrated reveal of the closure diagram when it scrolls into view.
+  const anim = document.querySelector('[data-lc-anim]');
+  if (anim && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    anim.classList.add('lc-wait');
+    new IntersectionObserver((es, io) => {
+      es.forEach((e) => { if (e.isIntersecting) { anim.classList.add('lc-go'); io.disconnect(); } });
+    }, { threshold: 0.35 }).observe(anim);
+  }
+  // Coney buttons
+  document.querySelectorAll('[data-lc-ask]').forEach((b) => b.addEventListener('click', () => window.TSSChat?.ask(b.dataset.lcAsk)));
+  // Sticky mobile CTA: show after the hero, hide while the form is on screen.
+  const sticky = document.querySelector('[data-lc-sticky]');
+  const form = document.getElementById('quote-form');
+  if (sticky && form) {
+    let pastHero = false, formVisible = false;
+    const apply = () => { sticky.hidden = !(pastHero && !formVisible); };
+    new IntersectionObserver((es) => { es.forEach((e) => { formVisible = e.isIntersecting; apply(); }); }, { rootMargin: '0px 0px -30% 0px' }).observe(form);
+    addEventListener('scroll', () => { pastHero = scrollY > 420; apply(); }, { passive: true });
+  }
+</script>
+
+<style>
+  .lc-hero { background: var(--asphalt); color: var(--white-line); overflow: hidden; }
+  .lc-hero__in { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; padding-top: clamp(44px, 6vw, 88px); padding-bottom: clamp(44px, 6vw, 88px); }
+  .lc-hero__kicker { color: var(--yellow); font-weight: 800; margin-bottom: 16px; }
+  .lc-hero h1 { font-size: clamp(2.6rem, 6.2vw, 4.6rem); line-height: .95; letter-spacing: -0.03em; }
+  .lc-hero__sub { font-size: var(--fs-2); color: #c5c9cf; margin: 22px 0 28px; max-width: 44ch; line-height: 1.4; }
+  .lc-hero__cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .lc-hero__pics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lc-hero__pics img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--sign-r); }
+  .lc-hero__pics img:nth-child(2) { translate: 0 18px; }
+  .lc-hero__pics img:nth-child(3) { translate: 0 -6px; }
+
+  .lc-services { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0 32px; border-top: 3px solid var(--asphalt); }
+  .lc-services li { padding: 18px 0 16px; border-bottom: 1px solid var(--concrete-dark); }
+  .lc-services h3 { font-size: 1.2rem; margin-bottom: 4px; position: relative; padding-left: 16px; }
+  .lc-services h3::before { content: ''; position: absolute; left: 0; top: .18em; bottom: .18em; width: 5px; border-radius: 3px; background: var(--red); }
+  .lc-services p { margin: 0; color: var(--ink-soft); font-size: .98rem; }
+
+  .lc-road { display: block; width: 100%; height: auto; margin-top: 28px; }
+  .lc-anim .lede { max-width: 58ch; }
+  .lc-anim__foot { margin-top: 14px; }
+  .lc-anim__foot p { margin: 0; color: #c5c9cf; }
+  .lc-coney { background: none; border: 0; padding: 0; font: inherit; font-weight: 800; color: inherit; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; }
+  .lc-coney:hover { color: var(--orange); }
+  .lc-wait .lc-s { opacity: 0; }
+  .lc-go .lc-s { animation: lcDrop .5s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: var(--d, 0ms); }
+  @keyframes lcDrop { from { opacity: 0; transform: translateY(-34px); } to { opacity: 1; transform: none; } }
+  .lc-go .lc-chev { animation: lcBlink 1s steps(2, jump-none) 2s infinite; }
+  @keyframes lcBlink { 50% { opacity: .15; } }
+
+  .lc-stats { background: var(--yellow); color: var(--ink); }
+  .lc-stats__in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-top: 34px; padding-bottom: 30px; }
+  .lc-stat { display: grid; justify-items: start; }
+  .lc-stat strong { font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1; }
+  .lc-stat span { font-weight: 700; margin-top: 4px; }
+
+  .lc-badges { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+  .lc-badges li { display: grid; gap: 10px; justify-items: center; text-align: center; }
+  .lc-badges img { width: 110px; height: 110px; object-fit: contain; }
+  .lc-badges span { font-weight: 800; font-size: .95rem; }
+
+  .lc-rows { display: grid; gap: clamp(40px, 6vw, 72px); }
+  .lc-row { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: center; }
+  .lc-row--flip .lc-row__txt { order: 2; }
+  .lc-row--flip img { order: 1; }
+  .lc-row img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--sign-r); }
+  .lc-row h2 { font-size: var(--fs-4); margin-bottom: 12px; }
+  .lc-row .btn { margin-top: 6px; }
+
+  .lc-form { scroll-margin-top: var(--header-h); }
+  .lc-form__in { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
+  .lc-form__aside { display: grid; gap: 16px; position: sticky; top: calc(var(--header-h) + 20px); }
+  .lc-form__aside h3 { margin-bottom: 6px; }
+  .lc-form__aside p { margin: 0 0 10px; }
+
+  .lc-faq h2 { margin-bottom: 24px; }
+  .lc-faq__list { display: grid; gap: 10px; margin-bottom: 22px; max-width: 860px; }
+  .lc-q { background: #fff; border: 2px solid var(--concrete-dark); border-radius: var(--sign-r); }
+  .lc-q summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 16px 18px 14px; cursor: pointer; font-weight: 800; font-size: 1.05rem; }
+  .lc-q summary::-webkit-details-marker { display: none; }
+  .lc-q summary svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: rotate .2s; }
+  .lc-q[open] summary svg { rotate: 180deg; }
+  .lc-q p { margin: 0; padding: 0 18px 16px; max-width: 75ch; }
+
+  .lc-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: rgba(29, 32, 36, .92); backdrop-filter: blur(4px); display: none; }
+  .lc-sticky .btn { width: 100%; }
+
+  @media (max-width: 900px) {
+    .lc-hero__in, .lc-row, .lc-form__in { grid-template-columns: 1fr; }
+    .lc-row--flip .lc-row__txt { order: 0; }
+    .lc-row--flip img { order: 0; }
+    .lc-stats__in { grid-template-columns: 1fr 1fr; }
+    .lc-form__aside { position: static; }
+    .lc-sticky:not([hidden]) { display: block; }
+  }
+</style>

@@ -1,0 +1,397 @@
+---
+// Multi-step quote form: the site's main conversion path.
+// Props: preset = 'lane-closure' | 'rental' | 'products' | 'general', heading, fromParam.
+// Field definitions live in the script below (FIELDS) so they're easy to edit.
+import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../lib/config.js';
+const { preset = 'general', heading = 'Request a quote', fromParam = false } = Astro.props;
+---
+<section class="qw" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
+  <header class="qw-head">
+    <h2 class="qw-title">{heading}</h2>
+    <p class="qw-progress" data-qw-progress aria-live="polite"></p>
+    <div class="qw-bar" aria-hidden="true"><span data-qw-bar></span></div>
+  </header>
+  <div class="qw-body" data-qw-body>
+    <noscript>
+      <p><strong>This form needs JavaScript.</strong> You can also call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> with what you need, where, and when.</p>
+    </noscript>
+  </div>
+  <p class="qw-talk">Prefer to talk? Call <a href={PHONE_TEL}>{PHONE}</a>, 24/7.</p>
+</section>
+
+<style is:global>
+  .qw { background: var(--paper); border-radius: var(--sign-r); padding: clamp(20px, 3.5vw, 40px); max-width: 860px; }
+  .qw-head { margin-bottom: 22px; }
+  .qw-title { font-size: var(--fs-4); margin-bottom: 10px; }
+  .qw-progress { margin: 0 0 8px; font-weight: 800; font-size: .95rem; color: var(--ink-soft); }
+  .qw-bar { height: 8px; border-radius: 4px; background: var(--concrete); overflow: hidden; }
+  .qw-bar span { display: block; height: 100%; width: 0; background: var(--orange); border-radius: 4px; transition: width .3s ease; }
+  .qw-step { display: grid; gap: 20px; }
+  .qw-lead { margin: 0; color: var(--ink-soft); }
+  .qw-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .qw-card { position: relative; }
+  .qw-card input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0; }
+  .qw-card span { display: grid; gap: 4px; height: 100%; padding: 18px 16px 16px; border: 2px solid var(--concrete-dark); border-radius: var(--sign-r); background: #fff; cursor: pointer; transition: border-color .15s; }
+  .qw-card b { font-size: 1.1rem; }
+  .qw-card small { color: var(--ink-soft); }
+  .qw-card input:checked + span { border-color: var(--asphalt); background: var(--asphalt); color: #fff; }
+  .qw-card input:checked + span small { color: #c5c9cf; }
+  .qw-card input:focus-visible + span { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .qw-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .qw-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 640px) { .qw-grid2, .qw-grid3 { grid-template-columns: 1fr; } }
+  .qw-err { color: var(--red); font-weight: 700; font-size: .92rem; margin: 2px 0 0; }
+  .qw-field-err input, .qw-field-err select, .qw-field-err textarea { border-color: var(--red); }
+  .qw-note { background: var(--concrete); border-left: 4px solid var(--orange); border-radius: 6px; padding: 12px 14px 10px; font-size: .95rem; margin: 0; }
+  .qw-note button { background: none; border: 0; padding: 0; font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; color: inherit; }
+  .qw-emergency { background: var(--red); color: #fff; border-radius: var(--sign-r); padding: 18px 20px; display: grid; gap: 10px; }
+  .qw-emergency p { margin: 0; }
+  .qw-emergency .btn { --b-bg: #fff; --b-fg: var(--red); --b-hover: var(--concrete); justify-self: start; }
+  .qw-items { display: grid; gap: 10px; }
+  .qw-item { display: grid; grid-template-columns: 1fr 96px 44px; gap: 8px; }
+  .qw-item input { min-height: 50px; padding: 12px 14px 10px; background: #fff; border: 2px solid var(--concrete-dark); border-radius: 8px; width: 100%; }
+  .qw-item [data-qw-rm] { border: 2px solid var(--concrete-dark); background: #fff; border-radius: 8px; cursor: pointer; font-size: 1.2rem; line-height: 1; }
+  .qw-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+  .qw-back { background: none; border: 0; font: inherit; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; padding: 10px 0; }
+  .qw-review { display: grid; gap: 16px; }
+  .qw-rsec { border: 2px solid var(--concrete-dark); border-radius: var(--sign-r); padding: 16px 18px; }
+  .qw-rsec header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .qw-rsec h3 { font-size: 1.15rem; margin: 0; }
+  .qw-rsec dl { margin: 0; display: grid; gap: 8px; }
+  .qw-rsec dt { font-weight: 800; font-size: .9rem; color: var(--ink-soft); }
+  .qw-rsec dd { margin: 0 0 2px; white-space: pre-wrap; }
+  .qw-edit { background: none; border: 0; font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; color: var(--red); padding: 0; }
+  .qw-consent { margin: 0; color: var(--ink-soft); font-size: .95rem; }
+  .qw-done { text-align: center; padding: 28px 10px; display: grid; gap: 12px; justify-items: center; }
+  .qw-done svg { width: 64px; height: 64px; }
+  .qw-done h3 { font-size: var(--fs-3); }
+  .qw-done p { margin: 0; max-width: 46ch; }
+  .qw-fail { background: #fdf0ef; border: 2px solid var(--red); border-radius: var(--sign-r); padding: 18px 20px; display: grid; gap: 8px; }
+  .qw-fail p { margin: 0; }
+  .qw-talk { margin: 18px 0 0; color: var(--ink-soft); font-size: .95rem; }
+  .qw-talk a { font-weight: 800; }
+  .qw [data-qw-hidden] { display: none; }
+</style>
+
+<script>
+  const STATES = ['New Jersey', 'New York', 'Pennsylvania', 'Connecticut', 'Delaware', 'Other'];
+  const TYPES = [
+    { id: 'lane-closure', b: 'Lane closure crew', s: 'Flaggers, full closures, traffic control plans' },
+    { id: 'rental', b: 'Rent equipment', s: 'Cones to crash trucks, delivered in NJ, NY, PA, CT' },
+    { id: 'products', b: 'Buy products', s: 'Ships nationwide. Bulk, PO and custom branding' },
+    { id: 'general', b: 'Something else', s: 'Not sure yet? Start here' }
+  ];
+  const FIELDS = {
+    'lane-closure': [
+      { id: 'location', label: 'Job address or route, plus the nearest cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd', hint: 'An exact spot helps us plan the right setup and drive time.' },
+      { id: 'town', label: 'Town or city', type: 'text', req: true, half: true },
+      { id: 'state', label: 'State', type: 'select', req: true, opts: STATES, half: true, hint: 'We close lanes in NJ, NY, PA, CT, DE and nearby. Elsewhere, ask us.' },
+      { id: 'roadType', label: 'Road type', type: 'radio', req: true, opts: ['Local road', 'County road', 'State highway', 'Interstate or parkway'] },
+      { id: 'speed', label: 'Posted speed limit', type: 'select', opts: ['25 mph or less', '30 mph', '35 mph', '40 mph', '45 mph', '50 mph', '55 mph', '60 mph', '65 mph or more', 'Not sure'], half: true },
+      { id: 'lanes', label: 'What needs to close?', type: 'check', opts: ['Right lane', 'Left lane', 'Center lane', 'Shoulder', 'Full road', 'Sidewalk or crosswalk', 'Not sure yet'] },
+      { id: 'work', label: 'Describe the work being done', type: 'textarea', req: true, ph: 'e.g. Crane pick over the right lane for rooftop HVAC units, need the lane and sidewalk closed', hint: 'The more detail here, the faster and more accurate your price.' },
+      { id: 'shift', label: 'When does the work happen?', type: 'radio', opts: ['Day work', 'Night work', '24-hour'] },
+      { id: 'startDate', label: 'Start date', type: 'date', req: true, third: true },
+      { id: 'endDate', label: 'Expected end date', type: 'date', third: true },
+      { id: 'startTime', label: 'Start time', type: 'time', third: true },
+      { id: 'crew', label: 'What should our crew handle?', type: 'radio', opts: ['Flaggers only', 'Full closure setup', 'Closure plus maintenance during the work', 'Traffic control plan drawings'] },
+      { id: 'equipment', label: 'Equipment you need from us', type: 'check', opts: ['TMA crash truck', 'Arrow board', 'VMS board', 'Cones or drums', 'Barricades', 'Signs', 'Lights', 'We have our own equipment'] },
+      { id: 'permit', label: 'Is a police detail or permit already arranged?', type: 'radio', opts: ['Yes', 'No', 'Not sure'] },
+      { id: 'authority', label: 'Road authority, if you know it', type: 'select', opts: ['NJDOT', 'County', 'Town or municipality', 'Utility authority', 'Turnpike or parkway authority', 'Not sure'], half: true },
+      { id: 'recur', label: 'Is this a one-time job?', type: 'radio', opts: ['One-time', 'Recurring work', 'Emergency, I need a crew now'] }
+    ],
+    rental: [
+      { id: 'items', label: 'What do you want to rent?', type: 'items', req: true, hint: 'Name the item and how many. Rough counts are fine.' },
+      { id: 'address', label: 'Delivery address', type: 'text', req: true, ph: 'Street address, or the jobsite if different' },
+      { id: 'town', label: 'Town or city', type: 'text', req: true, half: true },
+      { id: 'state', label: 'State', type: 'select', req: true, opts: STATES, half: true, hint: 'We rent, deliver and pick up in NJ, NY, PA and CT.' },
+      { id: 'deliverDate', label: 'Delivery date', type: 'date', req: true, half: true },
+      { id: 'pickupDate', label: 'Pickup date', type: 'date', half: true, hint: 'A guess is fine. Daily, weekly and monthly rates.' },
+      { id: 'setup', label: 'Should our crew set it up?', type: 'radio', opts: ['Yes, deliver and set up', 'Just deliver', 'Not sure yet'] },
+      { id: 'contact', label: 'On-site contact, name and phone', type: 'text', ph: 'Who meets the truck?' },
+      { id: 'notes', label: 'Anything else about the job?', type: 'textarea' }
+    ],
+    products: [
+      { id: 'items', label: 'What do you need?', type: 'items', req: true, hint: 'Name the product and quantity. Rough counts are fine.' },
+      { id: 'shipTo', label: 'Ship-to city and state', type: 'text', req: true, ph: 'Products ship anywhere in the U.S.', half: true },
+      { id: 'needBy', label: 'Needed by', type: 'date', half: true },
+      { id: 'po', label: 'Bulk order or purchase order?', type: 'radio', opts: ['Bulk order', 'Purchase order', 'Both', 'Neither', 'Not sure'] },
+      { id: 'custom', label: 'Custom colors or your logo on the products?', type: 'radio', opts: ['Yes', 'No'] },
+      { id: 'customDesc', label: 'Describe the customization', type: 'textarea', ph: 'e.g. 200 orange cones stenciled "CITY OF NEWARK DPW", logo on both sides', showIf: { custom: 'Yes' } },
+      { id: 'notes', label: 'Anything else?', type: 'textarea' }
+    ],
+    general: [
+      { id: 'what', label: 'Tell us what you need', type: 'textarea', req: true, ph: 'Describe the job, the event or the problem. Plain words are perfect.' },
+      { id: 'where', label: 'Where is the job or delivery?', type: 'text', half: true },
+      { id: 'when', label: 'When do you need it?', type: 'text', half: true, ph: 'A date, or "ASAP"' }
+    ]
+  };
+  const ABOUT = [
+    { id: 'name', label: 'Your name', type: 'text', req: true, half: true },
+    { id: 'company', label: 'Company or agency', type: 'text', half: true },
+    { id: 'role', label: 'Which best describes you?', type: 'radio', opts: ['Contractor', 'Municipality or agency', 'Utility', 'Event organizer', 'Other'] },
+    { id: 'email', label: 'Email', type: 'text', half: true, ph: 'you@company.com' },
+    { id: 'phone', label: 'Phone', type: 'text', half: true, ph: '(908) 555-0123' },
+    { id: 'prefer', label: 'Best way to reach you', type: 'radio', opts: ['Phone call', 'Email', 'Text'] },
+    { id: 'urgency', label: 'How soon do you need pricing?', type: 'radio', opts: ['Today', 'This week', 'Just planning ahead'] },
+    { id: 'account', label: 'Do you have a TSS account or Net terms?', type: 'radio', opts: ['Yes', 'No', 'No, but I want to set one up'] },
+    { id: 'extra', label: 'Anything else we should know?', type: 'textarea' }
+  ];
+  const STEP_NAMES = ['What you need', 'The job', 'About you', 'Review and send'];
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const today = () => new Date().toISOString().slice(0, 10);
+
+  let uid = 0;
+  document.querySelectorAll('[data-qw]').forEach((root) => {
+    const ns = 'qw' + uid++;
+    const body = root.querySelector('[data-qw-body]');
+    const PHONE = root.dataset.phone, TEL = root.dataset.tel, EMAIL = root.dataset.email, HOOK = root.dataset.webhook;
+    let state = { type: root.dataset.preset || 'general', job: {}, about: {}, step: 2, planApplied: false, listApplied: false };
+    if (!FIELDS[state.type]) state.type = 'general';
+
+    try {
+      const d = JSON.parse(sessionStorage.getItem('tss_quote_draft') || 'null');
+      if (d && FIELDS[d.type]) state = { ...state, ...d };
+    } catch {}
+    if (root.dataset.fromParam && new URLSearchParams(location.search).get('from') === 'builder') { state.type = 'lane-closure'; state.step = 2; }
+    if (!root.dataset.preset || root.dataset.preset === 'general') { if (!state.touched) state.step = 1; }
+
+    const save = () => { try { sessionStorage.setItem('tss_quote_draft', JSON.stringify(state)); } catch {} };
+    const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
+
+    const fieldHtml = (f, scope) => {
+      const v = state[scope][f.id];
+      const id = `${ns}-${f.id}`;
+      const w = f.half ? ' qw-half' : f.third ? ' qw-third' : '';
+      const hint = f.hint ? `<p class="hint">${esc(f.hint)}</p>` : '';
+      const err = `<p class="qw-err" data-qw-err="${f.id}" hidden></p>`;
+      let ctrl = '';
+      if (f.type === 'text' || f.type === 'date' || f.type === 'time') {
+        const min = f.type === 'date' ? ` min="${today()}"` : '';
+        ctrl = `<input id="${id}" type="${f.type}" data-qw-f="${f.id}" value="${esc(v || '')}" ${f.ph ? `placeholder="${esc(f.ph)}"` : ''}${min} />`;
+      } else if (f.type === 'textarea') {
+        ctrl = `<textarea id="${id}" rows="4" data-qw-f="${f.id}" ${f.ph ? `placeholder="${esc(f.ph)}"` : ''}>${esc(v || '')}</textarea>`;
+      } else if (f.type === 'select') {
+        ctrl = `<select id="${id}" data-qw-f="${f.id}"><option value="">Choose</option>${f.opts.map((o) => `<option${v === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+      } else if (f.type === 'radio' || f.type === 'check') {
+        const multi = f.type === 'check';
+        const vals = multi ? (Array.isArray(v) ? v : []) : v;
+        ctrl = `<div class="choice-row" role="group" aria-labelledby="${id}-l">${f.opts.map((o, i) =>
+          `<label class="choice"><input type="${multi ? 'checkbox' : 'radio'}" name="${id}" value="${esc(o)}" data-qw-f="${f.id}" data-qw-multi="${multi ? 1 : ''}" ${multi ? (vals.includes(o) ? 'checked' : '') : (vals === o ? 'checked' : '')} /><span>${esc(o)}</span></label>`).join('')}</div>`;
+        return `<div class="field${w}" data-qw-field="${f.id}"><span class="field" style="display:contents"><label id="${id}-l">${esc(f.label)}${f.req ? '' : ' <span style="font-weight:400;color:var(--ink-soft)">(optional)</span>'}</label></span>${ctrl}${hint}${err}</div>`;
+      } else if (f.type === 'items') {
+        const rows = (Array.isArray(v) && v.length ? v : [{ desc: '', qty: '' }]);
+        ctrl = `<div class="qw-items" data-qw-items="${f.id}">${rows.map((r) => itemRow(r)).join('')}</div>
+          <button type="button" class="btn btn--ghost btn--sm" data-qw-additem="${f.id}">Add another item</button>`;
+      }
+      return `<div class="field${w}" data-qw-field="${f.id}"><label for="${id}">${esc(f.label)}${f.req ? '' : ' <span style="font-weight:400;color:var(--ink-soft)">(optional)</span>'}</label>${ctrl}${hint}${err}</div>`;
+    };
+    const itemRow = (r) => `<div class="qw-item"><input type="text" placeholder="Item, e.g. 28-inch reflective cones" value="${esc(r.desc || '')}" data-qw-idesc aria-label="Item" /><input type="number" min="1" placeholder="Qty" value="${esc(r.qty || '')}" data-qw-iqty aria-label="Quantity" /><button type="button" data-qw-rm aria-label="Remove item">&times;</button></div>`;
+
+    const visible = (f) => !f.showIf || Object.entries(f.showIf).every(([k, val]) => state.job[k] === val);
+
+    function render() {
+      const totalSteps = 4;
+      root.querySelector('[data-qw-progress]').textContent = `Step ${state.step} of ${totalSteps}: ${STEP_NAMES[state.step - 1]}`;
+      root.querySelector('[data-qw-bar]').style.width = (state.step / totalSteps) * 100 + '%';
+      if (state.step === 1) renderType();
+      else if (state.step === 2) renderJob();
+      else if (state.step === 3) renderAbout();
+      else renderReview();
+      body.querySelector('input, select, textarea, button')?.focus({ preventScroll: true });
+    }
+
+    function nav(backStep, nextLabel = 'Continue') {
+      return `<div class="qw-nav">${backStep ? `<button type="button" class="qw-back" data-qw-back="${backStep}">Back</button>` : '<span></span>'}<button type="button" class="btn" data-qw-next>${nextLabel}</button></div>`;
+    }
+
+    function renderType() {
+      body.innerHTML = `<div class="qw-step">
+        <p class="qw-lead">Pick the closest fit. You can change it later.</p>
+        <div class="qw-cards">${TYPES.map((t) => `<label class="qw-card"><input type="radio" name="${ns}-type" value="${t.id}" ${state.type === t.id ? 'checked' : ''} /><span><b>${t.b}</b><small>${t.s}</small></span></label>`).join('')}</div>
+        ${nav(0)}</div>`;
+      body.querySelectorAll(`[name="${ns}-type"]`).forEach((r) => r.addEventListener('change', () => { state.type = r.value; state.touched = true; save(); }));
+      body.querySelector('[data-qw-next]').addEventListener('click', () => { state.step = 2; state.touched = true; save(); render(); });
+    }
+
+    function renderJob() {
+      const fs = FIELDS[state.type];
+      let banners = '';
+      if (state.type === 'lane-closure' && plan && !state.planApplied) {
+        banners += `<p class="qw-note">You built a work zone plan. <button type="button" data-qw-useplan>Use it to fill in this form</button></p>`;
+      }
+      const list = (window.TSSQuote?.items() || []);
+      if ((state.type === 'rental' || state.type === 'products' || state.type === 'general') && list.length && !state.listApplied) {
+        banners += `<p class="qw-note">You have ${list.length} item${list.length > 1 ? 's' : ''} in your quote list. <button type="button" data-qw-uselist>Add them to this request</button></p>`;
+      }
+      body.innerHTML = `<div class="qw-step">${banners}
+        <div class="qw-grid" data-qw-fields>${fs.map((f) => fieldHtml(f, 'job')).join('')}</div>
+        <div class="qw-emergency" data-qw-sos hidden>
+          <p><strong>If crews or the public are at risk right now, don't wait on a form.</strong></p>
+          <p>Our emergency line answers 24/7 and we dispatch immediately.</p>
+          <a class="btn" href="${TEL}">Call ${PHONE} now</a>
+        </div>
+        ${nav(1)}</div>`;
+      wireFields('job');
+      syncConditional();
+      body.querySelector('[data-qw-useplan]')?.addEventListener('click', () => {
+        const eq = (plan.equipment || []).map((e) => (typeof e === 'string' ? e : e.title || '')).join(', ');
+        const map = { 'TMA': 'TMA crash truck', 'attenuator': 'TMA crash truck', 'arrow': 'Arrow board', 'cone': 'Cones or drums', 'drum': 'Cones or drums', 'barricade': 'Barricades', 'sign': 'Signs', 'light': 'Lights' };
+        const checks = new Set(state.job.equipment || []);
+        Object.entries(map).forEach(([k, v]) => { if (new RegExp(k, 'i').test(eq)) checks.add(v); });
+        state.job.equipment = [...checks];
+        state.job.work = ((state.job.work || '') + '\n\nWork zone plan: ' + (plan.summary || '')).trim();
+        if (plan.inputs?.speed) state.job.speed = undefined;
+        state.planApplied = true; save(); renderJob();
+      });
+      body.querySelector('[data-qw-uselist]')?.addEventListener('click', () => {
+        const rows = list.map((it) => ({ desc: `${it.title}${it.variant ? ` (${it.variant})` : ''}${it.mode ? `, ${it.mode}` : ''}${it.note ? `. ${it.note}` : ''}`, qty: it.qty || 1 }));
+        if (state.type === 'general') {
+          state.job.what = ((state.job.what || '') + '\nQuote list: ' + rows.map((r) => `${r.qty} x ${r.desc}`).join('; ')).trim();
+        } else {
+          state.job.items = [...rows, ...(state.job.items || []).filter((r) => r.desc)];
+        }
+        state.listApplied = true; save(); renderJob();
+      });
+      body.querySelector('[data-qw-next]').addEventListener('click', () => { if (validate(FIELDS[state.type], 'job')) { state.step = 3; save(); render(); window.scrollTo({ top: root.offsetTop - 90, behavior: 'smooth' }); } });
+      wireBack();
+    }
+
+    function renderAbout() {
+      body.innerHTML = `<div class="qw-step">
+        <p class="qw-lead">Who should the quote go to?</p>
+        <div data-qw-fields>${ABOUT.map((f) => fieldHtml(f, 'about')).join('')}</div>
+        ${nav(2, 'Review my request')}</div>`;
+      wireFields('about');
+      body.querySelector('[data-qw-next]').addEventListener('click', () => {
+        if (!validate(ABOUT, 'about')) return;
+        const a = state.about;
+        if (!a.email && !a.phone) return showErr('email', 'Give us an email or a phone number so the quote can reach you.');
+        if (a.email && !/^\S+@\S+\.\S+$/.test(a.email)) return showErr('email', 'That email doesn’t look complete.');
+        state.step = 4; save(); render(); window.scrollTo({ top: root.offsetTop - 90, behavior: 'smooth' });
+      });
+      wireBack();
+    }
+
+    const label = (fs, id) => fs.find((f) => f.id === id)?.label || id;
+    const fmtVal = (v) => Array.isArray(v) ? (v[0]?.desc !== undefined ? v.filter((r) => r.desc).map((r) => `${r.qty || 1} x ${r.desc}`).join('\n') : v.join(', ')) : v;
+
+    function summaryPairs() {
+      const fs = FIELDS[state.type];
+      const job = fs.filter((f) => visible(f) && state.job[f.id] && String(fmtVal(state.job[f.id])).trim()).map((f) => [f.label, fmtVal(state.job[f.id])]);
+      const about = ABOUT.filter((f) => state.about[f.id] && String(state.about[f.id]).trim()).map((f) => [f.label, fmtVal(state.about[f.id])]);
+      return { job, about };
+    }
+
+    function renderReview() {
+      const t = TYPES.find((x) => x.id === state.type);
+      const { job, about } = summaryPairs();
+      const dl = (pairs) => `<dl>${pairs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;
+      body.innerHTML = `<div class="qw-step qw-review">
+        <div class="qw-rsec"><header><h3>What you need</h3><button class="qw-edit" data-qw-goto="1">Edit</button></header><p style="margin:0">${esc(t.b)}</p></div>
+        <div class="qw-rsec"><header><h3>The job</h3><button class="qw-edit" data-qw-goto="2">Edit</button></header>${job.length ? dl(job) : '<p style="margin:0">Nothing filled in yet.</p>'}</div>
+        <div class="qw-rsec"><header><h3>About you</h3><button class="qw-edit" data-qw-goto="3">Edit</button></header>${dl(about)}</div>
+        <p class="qw-consent">A TSS team member will contact you, usually within 1 business day. Nothing is booked or charged by sending this.</p>
+        <div class="qw-fail" data-qw-fail hidden></div>
+        <div class="qw-nav"><button type="button" class="qw-back" data-qw-back="3">Back</button><button type="button" class="btn" data-qw-send>Send my request</button></div>
+      </div>`;
+      body.querySelectorAll('[data-qw-goto]').forEach((b) => b.addEventListener('click', () => { state.step = +b.dataset.qwGoto; save(); render(); }));
+      wireBack();
+      body.querySelector('[data-qw-send]').addEventListener('click', submit);
+    }
+
+    function summaryText() {
+      const t = TYPES.find((x) => x.id === state.type);
+      const { job, about } = summaryPairs();
+      return [`Quote request: ${t.b}`, '', 'THE JOB', ...job.map(([k, v]) => `${k}: ${v}`), '', 'CONTACT', ...about.map(([k, v]) => `${k}: ${v}`)].join('\n');
+    }
+
+    async function submit() {
+      const btn = body.querySelector('[data-qw-send]');
+      btn.disabled = true; btn.textContent = 'Sending';
+      const payload = { type: state.type, answers: { job: state.job, about: state.about }, summary: summaryText(), quoteList: window.TSSQuote?.items() || [], page: location.pathname, submittedAt: new Date().toISOString() };
+      try {
+        if (!HOOK) throw new Error('no webhook');
+        const r = await fetch(HOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        try { sessionStorage.removeItem('tss_quote_draft'); } catch {}
+        window.TSSQuote?.clear();
+        body.innerHTML = `<div class="qw-done">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="var(--ok)"/><path d="M19 33l9 9 17-19" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Request sent</h3>
+          <p>A TSS team member is on it. You'll hear from us, usually within 1 business day, often sooner.</p>
+          <p>Need it faster? Call <a href="${TEL}"><strong>${PHONE}</strong></a> and mention you just sent a request.</p>
+        </div>`;
+        root.querySelector('[data-qw-progress]').textContent = 'Done';
+        root.querySelector('[data-qw-bar]').style.width = '100%';
+      } catch (e) {
+        const fail = body.querySelector('[data-qw-fail]');
+        fail.hidden = false;
+        fail.innerHTML = `<p><strong>That didn't go through.</strong> Your answers are still here, so nothing is lost.</p>
+          <p><a class="textlink" href="mailto:${EMAIL}?subject=${encodeURIComponent('Quote request from the website')}&body=${encodeURIComponent(summaryText())}">Email this request instead</a>, try again in a minute, or call <a href="${TEL}"><strong>${PHONE}</strong></a>.</p>`;
+        btn.disabled = false; btn.textContent = 'Try again';
+      }
+    }
+
+    function wireBack() { body.querySelectorAll('[data-qw-back]').forEach((b) => b.addEventListener('click', () => { state.step = +b.dataset.qwBack; save(); render(); })); }
+
+    function wireFields(scope) {
+      body.querySelectorAll('[data-qw-f]').forEach((el) => {
+        el.addEventListener(el.matches('select, [type=radio], [type=checkbox]') ? 'change' : 'input', () => {
+          const id = el.dataset.qwF;
+          if (el.dataset.qwMulti) {
+            const set = new Set(state[scope][id] || []);
+            el.checked ? set.add(el.value) : set.delete(el.value);
+            state[scope][id] = [...set];
+          } else state[scope][id] = el.value;
+          save();
+          clearErr(id);
+          if (scope === 'job') syncConditional();
+        });
+      });
+      body.querySelectorAll('[data-qw-items]').forEach((wrap) => {
+        const fid = wrap.dataset.qwItems;
+        const sync = () => {
+          state[scope][fid] = [...wrap.querySelectorAll('.qw-item')].map((r) => ({ desc: r.querySelector('[data-qw-idesc]').value.trim(), qty: r.querySelector('[data-qw-iqty]').value }));
+          save(); clearErr(fid);
+        };
+        wrap.addEventListener('input', sync);
+        wrap.addEventListener('click', (e) => { if (e.target.closest('[data-qw-rm]')) { const rows = wrap.querySelectorAll('.qw-item'); if (rows.length > 1) e.target.closest('.qw-item').remove(); else rows[0].querySelectorAll('input').forEach((i) => (i.value = '')); sync(); } });
+        body.querySelector(`[data-qw-additem="${fid}"]`)?.addEventListener('click', () => { wrap.insertAdjacentHTML('beforeend', itemRow({})); wrap.lastElementChild.querySelector('input').focus(); });
+      });
+    }
+
+    function syncConditional() {
+      (FIELDS[state.type] || []).forEach((f) => {
+        if (f.showIf) { const el = body.querySelector(`[data-qw-field="${f.id}"]`); if (el) el.toggleAttribute('data-qw-hidden', !visible(f)); }
+      });
+      const sos = body.querySelector('[data-qw-sos]');
+      if (sos) sos.hidden = !/Emergency/.test(state.job.recur || '');
+    }
+
+    function showErr(id, msg) {
+      const p = body.querySelector(`[data-qw-err="${id}"]`);
+      const wrap = body.querySelector(`[data-qw-field="${id}"]`);
+      if (p) { p.hidden = false; p.textContent = msg; }
+      wrap?.classList.add('qw-field-err');
+      wrap?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return false;
+    }
+    function clearErr(id) {
+      const p = body.querySelector(`[data-qw-err="${id}"]`); if (p) p.hidden = true;
+      body.querySelector(`[data-qw-field="${id}"]`)?.classList.remove('qw-field-err');
+    }
+    function validate(fs, scope) {
+      for (const f of fs) {
+        if (!f.req || !visible(f)) continue;
+        const v = state[scope][f.id];
+        if (f.type === 'items') { if (!Array.isArray(v) || !v.some((r) => r.desc)) return showErr(f.id, 'List at least one item.'); continue; }
+        if (f.type === 'check') { if (!Array.isArray(v) || !v.length) return showErr(f.id, 'Pick at least one.'); continue; }
+        if (!v || !String(v).trim()) return showErr(f.id, f.type === 'date' ? 'Pick a date. A best guess is fine.' : 'We need this one to price the job.');
+      }
+      return true;
+    }
+
+    render();
+  });
+</script>

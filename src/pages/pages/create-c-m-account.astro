@@ -1,0 +1,214 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../../lib/config.js';
+
+const benefits = [
+  'Place orders faster',
+  'Work directly with a TSS rep for all orders and questions',
+  'Use purchase orders',
+  'Apply for NET terms',
+  'Save billing and shipping info',
+  'Access contractor and municipal pricing',
+  'Cost-effective shipping rates'
+];
+const faq = [
+  {
+    q: 'What do I need to complete this form?',
+    a: `<p>Have the following ready:</p><ul><li>Company contact info</li><li>Company address</li><li>Preferred ordering and payment terms</li><li>Tax exempt form (if applicable)</li></ul><p>Takes less than 2 minutes.</p>`
+  },
+  {
+    q: 'Why should I open an account?',
+    a: `<p>Creating an account allows you to:</p><ul><li>Place orders faster</li><li>Work directly with a TSS rep for all orders and questions</li><li>Use purchase orders</li><li>Apply for NET terms</li><li>Save billing &amp; shipping info</li><li>Access contractor / municipal pricing</li><li>Cost-effective shipping rates</li></ul>`
+  },
+  {
+    q: 'Is there a cost to open an account?',
+    a: `<p>No. Opening an account is completely free. Its purpose is to give our team and customers a quicker, more efficient sales and delivery process.</p>`
+  },
+  {
+    q: 'How do I place orders after my account is created?',
+    a: `<p>Once you submit your account details, one of our team members will finalize your account in our system. We will reach out to you with confirmation and any questions regarding your preferred payment terms.</p><p>You'll be able to:</p><ul><li>Call in orders to our sales team and speak with any specific rep you'd like</li><li>Email orders and quote requests</li><li>Submit POs by email</li></ul>`
+  },
+  {
+    q: 'Do you offer NET terms?',
+    a: `<p>Yes. We offer NET30 and NET60 terms depending on your credit application or if you are a government agency.</p>`
+  },
+  {
+    q: 'What is the difference in pricing?',
+    a: `<p>Approved accounts may receive:</p><ul><li>Volume pricing</li><li>Contract pricing</li><li>Bid &amp; project quotes</li></ul>`
+  },
+  {
+    q: 'Do you offer project-based pricing?',
+    a: `<p>Yes — we provide quotes for:</p><ul><li>Traffic control setups</li><li>Long-term rentals</li><li>Large material orders</li></ul>`
+  },
+  {
+    q: 'Can multiple people from my company use the same account?',
+    a: `<p>Yes. Anyone from your team can use the account to place orders.</p>`
+  }
+];
+---
+<Layout
+  title="Contractor and municipal accounts"
+  description="Open a free TSS account for NET30 or NET60 terms, purchase orders, volume and contract pricing, and a direct line to your own rep. The application takes under 2 minutes."
+>
+  <section class="ac-hero">
+    <div class="wrap ac-hero__in">
+      <div>
+        <h1>Accounts built for crews that order all year</h1>
+        <p class="lede">Free for contractors, municipalities, utilities and agencies. NET terms, POs, and contractor pricing, with one rep who knows your jobs.</p>
+        <a class="btn" href="#apply">Apply in under 2 minutes</a>
+      </div>
+      <ul class="ac-benefits sign sign--dark">
+        {benefits.map((b) => <li>{b}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="apply">
+    <div class="wrap ac-grid">
+      <form class="ac-form" data-account-form novalidate>
+        <h2>Account application</h2>
+        <p class="ac-form__sub">A team member finalizes your account and confirms your payment terms by email, usually the same business day.</p>
+        <div class="field">
+          <label for="af-company">Company or agency name</label>
+          <input id="af-company" name="company" required autocomplete="organization" />
+        </div>
+        <div class="ac-two">
+          <div class="field">
+            <label for="af-name">Contact name</label>
+            <input id="af-name" name="name" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="af-role">Your role</label>
+            <input id="af-role" name="role" placeholder="e.g. Project manager, purchasing" />
+          </div>
+        </div>
+        <div class="ac-two">
+          <div class="field">
+            <label for="af-email">Work email</label>
+            <input id="af-email" name="email" type="email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="af-phone">Phone</label>
+            <input id="af-phone" name="phone" type="tel" required autocomplete="tel" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="af-address">Company address</label>
+          <input id="af-address" name="address" required autocomplete="street-address" />
+        </div>
+        <fieldset class="field">
+          <legend>What will you mostly buy or rent?</legend>
+          <div class="choice-row">
+            {['Safety products', 'Equipment rentals', 'Truck fleet', 'Lane closure crews', 'Signs and custom work'].map((v) => (
+              <label class="choice"><input type="checkbox" name="interests" value={v} /><span>{v}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset class="field">
+          <legend>Preferred payment terms</legend>
+          <div class="choice-row">
+            {['Credit card', 'Purchase orders', 'NET30', 'NET60', 'Not sure yet'].map((v) => (
+              <label class="choice"><input type="radio" name="terms" value={v} required /><span>{v}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset class="field">
+          <legend>Are you tax exempt?</legend>
+          <div class="choice-row">
+            <label class="choice"><input type="radio" name="taxExempt" value="Yes" /><span>Yes</span></label>
+            <label class="choice"><input type="radio" name="taxExempt" value="No" checked /><span>No</span></label>
+          </div>
+          <p class="hint">If yes, just attach your exemption form when we email you. Nothing to upload now.</p>
+        </fieldset>
+        <div class="field">
+          <label for="af-heard">How did you hear about us? (optional)</label>
+          <input id="af-heard" name="heard" />
+        </div>
+        <button class="btn" type="submit" data-submit>Submit application</button>
+        <p class="ac-form__ok" data-ok hidden>Application received. We'll email you to confirm your account and terms.</p>
+        <p class="ac-form__err" data-err hidden>That didn't go through. Your email app should have opened with the application instead, or call us at {PHONE}.</p>
+      </form>
+
+      <aside class="ac-faq">
+        <h2>Any questions before creating an account?</h2>
+        {faq.map((f) => (
+          <details class="ac-q">
+            <summary>{f.q}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg></summary>
+            <div class="ac-q__a" set:html={f.a} />
+          </details>
+        ))}
+        <p class="ac-faq__more">Anything else? Call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+      </aside>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline define:vars={{ FORM_WEBHOOK, EMAIL }}>
+  const form = document.querySelector('[data-account-form]');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const btn = form.querySelector('[data-submit]');
+    const ok = form.querySelector('[data-ok]');
+    const err = form.querySelector('[data-err]');
+    ok.hidden = true; err.hidden = true;
+    const fd = new FormData(form);
+    const answers = {};
+    for (const [k, v] of fd.entries()) {
+      if (k === 'interests') { (answers.interests ||= []).push(v); } else { answers[k] = v; }
+    }
+    btn.disabled = true; btn.textContent = 'Submitting';
+    try {
+      if (!FORM_WEBHOOK) throw new Error('no webhook');
+      const r = await fetch(FORM_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'account', page: location.pathname, submittedAt: new Date().toISOString(), answers })
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      ok.hidden = false;
+      form.reset();
+    } catch {
+      const lines = Object.entries(answers).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('\n');
+      location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Account application: ' + (answers.company || ''))}&body=${encodeURIComponent(lines)}`;
+      err.hidden = false;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Submit application';
+    }
+  });
+</script>
+
+<style>
+  .ac-hero { background: var(--asphalt); color: var(--white-line); }
+  .ac-hero__in { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; padding-top: clamp(44px, 6vw, 88px); padding-bottom: clamp(44px, 6vw, 88px); }
+  .ac-hero h1 { max-width: 18ch; }
+  .ac-hero .lede { margin: 16px 0 26px; max-width: 48ch; color: #c5c9cf; }
+  .ac-benefits { list-style: none; margin: 0; padding: 26px 28px; display: grid; gap: 10px; }
+  .ac-benefits li { padding-left: 26px; position: relative; font-weight: 600; }
+  .ac-benefits li::before { content: ''; position: absolute; left: 0; top: 5px; width: 13px; height: 13px; border-radius: 3px; background: var(--orange); transform: rotate(45deg) scale(.85); }
+
+  .ac-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(28px, 4vw, 64px); align-items: start; }
+  .ac-form { background: var(--paper); border-radius: var(--sign-r); padding: clamp(20px, 3vw, 34px); display: grid; gap: 18px; }
+  .ac-form fieldset { border: 0; padding: 0; margin: 0; }
+  .ac-form legend { padding: 0; margin-bottom: 8px; }
+  .ac-form h2 { font-size: var(--fs-3); }
+  .ac-form__sub { margin: -8px 0 0; color: var(--ink-soft); }
+  .ac-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ac-form__ok { margin: 0; font-weight: 700; color: var(--ok); }
+  .ac-form__err { margin: 0; font-weight: 700; color: var(--red); }
+
+  .ac-faq h2 { font-size: var(--fs-3); margin-bottom: 16px; }
+  .ac-q { background: var(--paper); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--concrete-dark); }
+  .ac-q summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px 14px; cursor: pointer; font-weight: 800; }
+  .ac-q summary::-webkit-details-marker { display: none; }
+  .ac-q summary svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: rotate .2s; }
+  .ac-q[open] summary svg { rotate: 180deg; }
+  .ac-q__a { padding: 0 18px 16px; }
+  .ac-q__a :global(ul) { margin: .4em 0 .8em; padding-left: 1.2em; }
+  .ac-q__a :global(p) { margin: 0 0 .6em; }
+  .ac-faq__more { margin-top: 18px; }
+  .ac-faq__more a { font-weight: 800; }
+
+  @media (max-width: 920px) { .ac-hero__in, .ac-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .ac-two { grid-template-columns: 1fr; } }
+</style>

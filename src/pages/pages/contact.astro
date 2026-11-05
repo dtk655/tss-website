@@ -1,0 +1,123 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PHONE, PHONE_TEL, EMAIL, ADDRESS, FORM_WEBHOOK } from '../../lib/config.js';
+---
+<Layout
+  title="Contact us"
+  description={`Call Traffic Safety Service at ${PHONE}, email ${EMAIL}, or send us a message. Based in South Plainfield, NJ with 24/7 emergency response.`}
+>
+  <section class="ct-hero">
+    <div class="wrap">
+      <h1>Talk to a real person</h1>
+      <p class="lede">Questions about products, rentals, crews or an order. For a job quote with pricing, the <a href="/pages/request-a-quote">quote form</a> is the fastest route.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap ct-grid">
+      <div class="ct-ways">
+        <a class="ct-way sign" href={PHONE_TEL}>
+          <h2>Call our office</h2>
+          <p class="ct-way__big">{PHONE}</p>
+          <p>24/7 emergency response for utilities, incidents and water main breaks.</p>
+        </a>
+        <a class="ct-way sign sign--dark" href={`mailto:${EMAIL}`}>
+          <h2>Email our team</h2>
+          <p class="ct-way__big">{EMAIL}</p>
+          <p>Orders, quotes, POs and general questions.</p>
+        </a>
+        <div class="ct-way sign sign--orange">
+          <h2>Visit the yard</h2>
+          <p class="ct-way__big">{ADDRESS}</p>
+          <p>Will-call pickup and returns by arrangement.</p>
+        </div>
+        <button class="ct-way sign sign--green" type="button" data-ask-coney>
+          <h2>Ask Coney</h2>
+          <p class="ct-way__big">Instant answers</p>
+          <p>Our AI assistant can check products, rentals and service areas right now.</p>
+        </button>
+      </div>
+
+      <form class="ct-form" data-contact-form novalidate>
+        <h2>Send us a message</h2>
+        <div class="field">
+          <label for="cf-name">Your name</label>
+          <input id="cf-name" name="name" required autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="cf-phone">Phone</label>
+          <input id="cf-phone" name="phone" type="tel" autocomplete="tel" />
+          <p class="hint">Optional, but the fastest way for us to reach you.</p>
+        </div>
+        <div class="field">
+          <label for="cf-msg">What can we help with?</label>
+          <textarea id="cf-msg" name="message" required rows="5"></textarea>
+        </div>
+        <button class="btn" type="submit" data-submit>Send message</button>
+        <p class="ct-form__ok" data-ok hidden>Thanks, your message is on its way. We reply within one business day, usually sooner.</p>
+        <p class="ct-form__err" data-err hidden>That didn't go through. Your email app should have opened with the message instead, or call us at {PHONE}.</p>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline define:vars={{ FORM_WEBHOOK, EMAIL }}>
+  document.querySelector('[data-ask-coney]')?.addEventListener('click', () => {
+    window.TSSChat?.ask('Hi, I have a question for Traffic Safety Service.');
+  });
+
+  const form = document.querySelector('[data-contact-form]');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const btn = form.querySelector('[data-submit]');
+    const ok = form.querySelector('[data-ok]');
+    const err = form.querySelector('[data-err]');
+    ok.hidden = true; err.hidden = true;
+    const answers = Object.fromEntries(new FormData(form).entries());
+    btn.disabled = true; btn.textContent = 'Sending';
+    try {
+      if (!FORM_WEBHOOK) throw new Error('no webhook');
+      const r = await fetch(FORM_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'contact', page: location.pathname, submittedAt: new Date().toISOString(), answers })
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      ok.hidden = false;
+      form.reset();
+    } catch {
+      const body = encodeURIComponent(`Name: ${answers.name}\nEmail: ${answers.email}\nPhone: ${answers.phone || ''}\n\n${answers.message}`);
+      location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('Website contact from ' + answers.name)}&body=${body}`;
+      err.hidden = false;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Send message';
+    }
+  });
+</script>
+
+<style>
+  .ct-hero { background: var(--asphalt); color: var(--white-line); padding: clamp(44px, 6vw, 80px) 0; }
+  .ct-hero .lede { margin-top: 14px; max-width: 56ch; color: #c5c9cf; }
+  .ct-hero a { color: var(--yellow); }
+
+  .ct-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .ct-ways { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ct-way { display: block; text-align: left; text-decoration: none; cursor: pointer; border: 0; font: inherit; transition: translate .15s ease; }
+  .ct-way:hover { translate: 0 -3px; }
+  .ct-way h2 { font-size: var(--fs-2); margin-bottom: 8px; }
+  .ct-way__big { font-weight: 900; font-size: 1.15rem; margin: 0 0 6px; word-break: break-word; }
+  .ct-way p:last-child { margin: 0; font-size: .95rem; opacity: .85; }
+
+  .ct-form { background: var(--paper); border-radius: var(--sign-r); padding: clamp(20px, 3vw, 32px); display: grid; gap: 16px; }
+  .ct-form h2 { font-size: var(--fs-3); }
+  .ct-form__ok { margin: 0; font-weight: 700; color: var(--ok); }
+  .ct-form__err { margin: 0; font-weight: 700; color: var(--red); }
+
+  @media (max-width: 880px) { .ct-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .ct-ways { grid-template-columns: 1fr; } }
+</style>

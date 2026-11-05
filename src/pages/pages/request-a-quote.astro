@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import QuoteWizard from '../../components/QuoteWizard.astro';
+import { PHONE, PHONE_TEL, YEARS } from '../../lib/config.js';
+---
+<Layout title="Request a quote" description={`Free quotes on traffic control products, equipment rentals and lane closure crews. A TSS team member replies within 1 business day. Call ${PHONE} any time.`}>
+  <section class="rq-head">
+    <div class="wrap">
+      <h1>Request a quote</h1>
+      <p class="lede">Tell us what the job needs and a real person prices it, usually within 1 business day. Quotes are free, nothing is booked by asking, and we've been doing this for {YEARS} years.</p>
+    </div>
+  </section>
+  <section class="rq-body">
+    <div class="wrap rq-grid">
+      <QuoteWizard preset="general" fromParam={true} />
+      <aside class="rq-aside">
+        <div class="sign sign--dark rq-card">
+          <h2>In a hurry?</h2>
+          <p>Our line answers 24/7, including emergency dispatch.</p>
+          <a href={PHONE_TEL} class="btn btn--orange">Call {PHONE}</a>
+        </div>
+        <div class="sign rq-card">
+          <h2>Agencies and contractors</h2>
+          <p>Open a free account for Net 30 or Net 60 terms, PO ordering and contract pricing.</p>
+          <a class="textlink" href="/pages/create-c-m-account">Open an account</a>
+        </div>
+        <div class="sign rq-card">
+          <h2>Not sure what the job needs?</h2>
+          <p>Plan it first and the equipment list fills this form for you.</p>
+          <a class="textlink" href="/tools/work-zone-builder">Open the work zone builder</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Layout>
+<style>
+  .rq-head { background: var(--asphalt); color: var(--white-line); padding: 44px 0 52px; }
+  .rq-head .lede { margin-top: 12px; max-width: 62ch; }
+  .rq-body { padding: 32px 0 96px; }
+  .rq-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
+  .rq-aside { display: grid; gap: 16px; position: sticky; top: calc(var(--header-h) + 20px); }
+  .rq-card h2 { font-size: 1.25rem; margin-bottom: 6px; }
+  .rq-card p { margin: 0 0 10px; }
+  @media (max-width: 920px) { .rq-grid { grid-template-columns: 1fr; } .rq-aside { position: static; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+</style>

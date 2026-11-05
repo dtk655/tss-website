@@ -1,0 +1,125 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PHONE, PHONE_TEL } from '../../lib/config.js';
+
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const offerings = [
+  {
+    title: 'Custom cones',
+    text: 'Personalize traffic cones with business or department names and logos so that your equipment stands out in all environments.',
+    image: CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg',
+    alt: 'Traffic cones stenciled with a department name'
+  },
+  {
+    title: 'Custom barricades',
+    text: 'Bring visibility and dependability to your work site with custom barricades, personalized with business or department names and logos.',
+    image: CDN + 'thumbnail_IMG_2840.jpg',
+    alt: 'Custom-stenciled barricades'
+  },
+  {
+    title: 'Personalized safety gear',
+    text: 'Have your team wearing gear that represents your company in a professional way.',
+    image: CDN + 'construction-worker-holding-blueprints.jpg',
+    alt: 'Construction worker in branded safety gear'
+  },
+  {
+    title: 'Custom signage',
+    text: 'Our full-capability sign shop allows you to create the perfect sign for your next job.',
+    image: CDN + 'thumbnail_IMG_1158.jpg',
+    alt: 'Custom signs made in the TSS sign shop'
+  }
+];
+---
+<Layout
+  title="Custom stenciling and branding"
+  description="TSS stencils any product with your logo, colors or department name at a low per-unit cost: cones, barricades, safety gear and custom signs from our in-house sign shop."
+>
+  <section class="cs-hero">
+    <div class="wrap cs-hero__in">
+      <div>
+        <h1>Customized products and services</h1>
+        <p class="lede">We offer full customization on all our products, allowing you to add your logo or business or department name with ease. Personalization comes at a low cost per unit, making it simple and affordable to represent your brand or agency.</p>
+        <div class="cs-hero__cta">
+          <a class="btn" href="/pages/request-a-quote">Request custom work</a>
+          <a class="btn btn--ghost" href="/tools/3d-showroom">Try your logo in 3D</a>
+        </div>
+      </div>
+      <svg class="cs-hero__art" viewBox="0 0 220 240" aria-hidden="true">
+        <rect x="30" y="218" width="160" height="16" rx="5" fill="#1d2024" />
+        <path d="M96 24 Q110 12 124 24 L178 220 L42 220 Z" fill="#f26a1b" />
+        <path d="M84.5 68 L135.5 68 L142 92 L78 92 Z" fill="#f7f7f2" />
+        <path d="M66 136 L154 136 L162 166 L58 166 Z" fill="#f7f7f2" />
+        <text x="110" y="157" text-anchor="middle" font-family="Overpass, sans-serif" font-weight="800" font-size="19" fill="#1d2024">YOUR LOGO</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cs-head">
+        <h2>We can stencil any product</h2>
+        <p class="lede">Your colors, your logo, your department name. On one cone or a thousand.</p>
+      </div>
+      <div class="cs-grid">
+        {offerings.map((o) => (
+          <article class="cs-card">
+            <img src={o.image} alt={o.alt} loading="lazy" />
+            <div class="cs-card__body">
+              <h3>{o.title}</h3>
+              <p>{o.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap cs-how">
+      <h2>How custom orders work</h2>
+      <ol class="cs-steps">
+        <li><strong>Send us your artwork.</strong> A logo file, department name, or even a photo of what you want. Any common format works.</li>
+        <li><strong>Approve your proof.</strong> We send a proof of the placement and colors before anything goes to production.</li>
+        <li><strong>We produce it in-house.</strong> Stenciling and signage are done in our own shop, so bulk runs stay fast and consistent.</li>
+      </ol>
+      <div class="cs-how__cta sign sign--dark">
+        <div>
+          <h3>Ready when you are</h3>
+          <p>Tell us what you need and we'll quote it, usually the same business day.</p>
+        </div>
+        <div class="cs-how__btns">
+          <a class="btn" href="/pages/request-a-quote">Request a quote</a>
+          <a class="btn btn--ghost" href={PHONE_TEL}>Call {PHONE}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .cs-hero { background: var(--asphalt); color: var(--white-line); }
+  .cs-hero__in { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; padding-top: clamp(48px, 7vw, 96px); padding-bottom: clamp(48px, 7vw, 96px); }
+  .cs-hero h1 { max-width: 14ch; }
+  .cs-hero .lede { margin: 18px 0 26px; max-width: 54ch; color: #c5c9cf; }
+  .cs-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .cs-hero__art { width: min(260px, 60vw); justify-self: center; }
+
+  .cs-head { margin-bottom: 30px; }
+  .cs-head .lede { margin: 10px 0 0; }
+  .cs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .cs-card { background: var(--paper); border-radius: var(--sign-r); overflow: hidden; border: 1px solid var(--concrete-dark); display: flex; flex-direction: column; }
+  .cs-card img { aspect-ratio: 4/3; object-fit: cover; width: 100%; }
+  .cs-card__body { padding: 16px 18px 20px; }
+  .cs-card h3 { font-size: var(--fs-2); margin-bottom: 6px; }
+  .cs-card p { margin: 0; color: var(--ink-soft); }
+
+  .cs-how h2 { margin-bottom: 24px; }
+  .cs-steps { margin: 0 0 32px; padding: 0 0 0 1.2em; display: grid; gap: 14px; max-width: 70ch; }
+  .cs-steps li { padding-left: 6px; }
+  .cs-how__cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 28px 30px; }
+  .cs-how__cta h3 { margin-bottom: 6px; }
+  .cs-how__cta p { margin: 0; color: #c5c9cf; }
+  .cs-how__btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 760px) { .cs-hero__in { grid-template-columns: 1fr; } .cs-hero__art { display: none; } }
+</style>
