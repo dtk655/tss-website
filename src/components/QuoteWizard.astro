@@ -44,6 +44,7 @@ const { preset = 'general', heading = 'Request a quote', fromParam = false } = A
   .qw-field-err input, .qw-field-err select, .qw-field-err textarea { border-color: var(--red); }
   .qw-note { background: var(--concrete); border-left: 4px solid var(--orange); border-radius: 6px; padding: 12px 14px 10px; font-size: .95rem; margin: 0; }
   .qw-note button { background: none; border: 0; padding: 0; font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; color: inherit; }
+  .qw-emergency[hidden], .qw-fail[hidden] { display: none !important; }
   .qw-emergency { background: var(--red); color: #fff; border-radius: var(--sign-r); padding: 18px 20px; display: grid; gap: 10px; }
   .qw-emergency p { margin: 0; }
   .qw-emergency .btn { --b-bg: #fff; --b-fg: var(--red); --b-hover: var(--concrete); justify-self: start; }

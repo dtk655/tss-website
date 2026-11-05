@@ -8,7 +8,7 @@ import { STOREFRONT_TOKEN, ENDPOINT } from '../lib/shopify.js';
 interface Props { title: string; description?: string; image?: string; dark?: boolean }
 const { title, description = 'Traffic control products, equipment rentals and lane closure crews from Traffic Safety Service. Serving NJ, NY, PA and CT since 1971. Products ship nationwide.', image, dark = false } = Astro.props;
 const fullTitle = title.includes('Traffic Safety Service') ? title : `${title} | Traffic Safety Service`;
-const canonical = new URL(Astro.url.pathname, 'https://trafficsafetyservice.com');
+const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/'), 'https://trafficsafetyservice.com');
 ---
 <!doctype html>
 <html lang="en">
