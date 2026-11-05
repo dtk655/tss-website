@@ -56,7 +56,7 @@ const stats = [
   <section class="lc-hero">
     <div class="wrap lc-hero__in">
       <div class="lc-hero__copy">
-        <p class="lc-hero__kicker">Lane closure division</p>
+        <p class="kicker">Lane closure division</p>
         <h1>10,000 closures in.<br />Zero shortcuts.</h1>
         <p class="lc-hero__sub">Union crews, ATSSA-certified flaggers and a modern fleet, setting up MUTCD-compliant work zones across New Jersey, New York, Pennsylvania, Connecticut and Delaware for {YEARS} years.</p>
         <div class="lc-hero__cta">
@@ -96,7 +96,7 @@ const stats = [
       </defs>
       <rect width="1500" height="320" fill="#24282d" />
       <rect y="60" width="1500" height="200" fill="#2e3338" />
-      <line x1="0" y1="60" x2="1500" y2="60" stroke="#f2b705" stroke-width="5" />
+      <line x1="0" y1="60" x2="1500" y2="60" stroke="#f5b800" stroke-width="5" />
       <line x1="0" y1="260" x2="1500" y2="260" stroke="#f7f7f2" stroke-width="5" />
       <line x1="0" y1="160" x2="1500" y2="160" stroke="#f7f7f2" stroke-width="4" stroke-dasharray="44 66" opacity=".9" />
       <!-- stage 1: advance warning signs on the shoulder -->
@@ -112,7 +112,7 @@ const stats = [
       ))}
       <g transform="translate(805 200)"><g class="lc-s lc-s2" style="--d:1200ms">
         <rect width="64" height="48" rx="4" fill="#16181b" />
-        <path class="lc-chev" d="M12 24h30M34 13l11 11-11 11" stroke="#f2b705" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <path class="lc-chev" d="M12 24h30M34 13l11 11-11 11" stroke="#f5b800" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
       </g></g>
       <!-- stage 3: buffer + TMA -->
       {Array.from({ length: 5 }, (_, i) => (
@@ -122,7 +122,7 @@ const stats = [
         <rect width="92" height="52" rx="5" fill="#f7f7f2" />
         <rect x="64" y="6" width="24" height="40" rx="3" fill="#d9d7d0" />
         <rect x="-22" y="4" width="24" height="44" rx="3" fill="#16181b" />
-        <path d="M-22 10h24v7h-24zM-22 26h24v7h-24zM-22 42h24v6h-24z" fill="#f2b705" />
+        <path d="M-22 10h24v7h-24zM-22 26h24v7h-24zM-22 42h24v6h-24z" fill="#f5b800" />
       </g></g>
       <!-- stage 4: work area -->
       <g class="lc-s lc-s4" style="--d:1800ms">
@@ -131,7 +131,7 @@ const stats = [
         <g transform="translate(1270 190)"><rect width="110" height="40" rx="5" fill="#f26a1b" /><rect x="78" y="4" width="28" height="32" rx="3" fill="#d9d7d0" /></g>
       </g>
       <!-- stage labels -->
-      <g class="lc-lbl" font-family="Overpass, sans-serif" font-size="19" font-weight="700" fill="#c5c9cf">
+      <g class="lc-lbl" font-family="Archivo Variable, Archivo, sans-serif" font-size="19" font-weight="600" fill="#c3c8cd">
         <text x="240" y="40" text-anchor="middle">1. Advance warning</text>
         <text x="670" y="40" text-anchor="middle">2. Taper and arrow board</text>
         <text x="990" y="40" text-anchor="middle">3. Buffer and crash truck</text>
@@ -149,7 +149,7 @@ const stats = [
     </div>
   </section>
 
-  <section class="section section--paper">
+  <section class="section section--haze">
     <div class="wrap">
       <h2>Our certifications</h2>
       <p class="lede">Every crew is led by a Rutgers-Certified Traffic Control Captain.</p>
@@ -159,7 +159,7 @@ const stats = [
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section--paper">
     <div class="wrap">
       <h2>Where we've worked</h2>
       <p class="lede">From the Garden State Parkway to the G.W. Bridge, we have been tested in all areas.</p>
@@ -220,7 +220,7 @@ const stats = [
         <div class="sign sign--dark">
           <h3>Emergency right now?</h3>
           <p>We dispatch 24/7 for incidents, main breaks and downed lines.</p>
-          <a class="btn btn--orange" href={PHONE_TEL}>Call {PHONE}</a>
+          <a class="btn" href={PHONE_TEL}>Call {PHONE}</a>
         </div>
         <div class="sign">
           <h3>What happens after you send it</h3>
@@ -236,7 +236,7 @@ const stats = [
       <div class="lc-faq__list">
         {faq.map(([q, a]) => (
           <details class="lc-q">
-            <summary><span>{q}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg></summary>
+            <summary><span>{q}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>
             <p>{a}</p>
           </details>
         ))}
@@ -274,15 +274,13 @@ const stats = [
 
 <style>
   .lc-hero { background: var(--asphalt); color: var(--white-line); overflow: hidden; }
-  .lc-hero__in { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; padding-top: clamp(44px, 6vw, 88px); padding-bottom: clamp(44px, 6vw, 88px); }
-  .lc-hero__kicker { color: var(--yellow); font-weight: 800; margin-bottom: 16px; }
-  .lc-hero h1 { font-size: clamp(2.6rem, 6.2vw, 4.6rem); line-height: .95; letter-spacing: -0.03em; }
-  .lc-hero__sub { font-size: var(--fs-2); color: #c5c9cf; margin: 22px 0 28px; max-width: 44ch; line-height: 1.4; }
+  .lc-hero .kicker { color: #ff8a8a; }
+  .lc-hero__in { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; padding-top: clamp(48px, 6vw, 92px); padding-bottom: clamp(48px, 6vw, 92px); }
+  .lc-hero h1 { font-size: clamp(2.6rem, 5.4vw, 4.2rem); line-height: .98; letter-spacing: -0.028em; }
+  .lc-hero__sub { font-size: var(--fs-2); color: #c3c8cd; margin: 22px 0 30px; max-width: 44ch; line-height: 1.45; }
   .lc-hero__cta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .lc-hero__pics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .lc-hero__pics img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--sign-r); }
-  .lc-hero__pics img:nth-child(2) { translate: 0 18px; }
-  .lc-hero__pics img:nth-child(3) { translate: 0 -6px; }
+  .lc-hero__pics { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-radius: var(--r-l); overflow: hidden; box-shadow: var(--shadow-l); }
+  .lc-hero__pics img { width: 100%; height: 100%; aspect-ratio: 4/3; object-fit: cover; }
 
   .lc-services { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0 32px; border-top: 3px solid var(--asphalt); }
   .lc-services li { padding: 18px 0 16px; border-bottom: 1px solid var(--concrete-dark); }
@@ -295,24 +293,25 @@ const stats = [
   .lc-anim .lede { max-width: 58ch; }
   .lc-anim__foot { margin-top: 14px; }
   .lc-anim__foot p { margin: 0; color: #c5c9cf; }
-  .lc-coney { background: none; border: 0; padding: 0; font: inherit; font-weight: 800; color: inherit; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; }
-  .lc-coney:hover { color: var(--orange); }
+  .lc-coney { background: none; border: 0; padding: 0; font: inherit; font-variation-settings: 'wght' 640; color: inherit; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; }
+  .lc-coney:hover { color: #ff9d9d; }
   .lc-wait .lc-s { opacity: 0; }
   .lc-go .lc-s { animation: lcDrop .5s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: var(--d, 0ms); }
   @keyframes lcDrop { from { opacity: 0; transform: translateY(-34px); } to { opacity: 1; transform: none; } }
   .lc-go .lc-chev { animation: lcBlink 1s steps(2, jump-none) 2s infinite; }
   @keyframes lcBlink { 50% { opacity: .15; } }
 
-  .lc-stats { background: var(--yellow); color: var(--ink); }
-  .lc-stats__in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-top: 34px; padding-bottom: 30px; }
-  .lc-stat { display: grid; justify-items: start; }
-  .lc-stat strong { font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1; }
-  .lc-stat span { font-weight: 700; margin-top: 4px; }
+  .lc-stats { background: var(--paper); border-block: 1px solid var(--line); }
+  .lc-stats__in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 44px; padding-bottom: 40px; }
+  .lc-stat { display: grid; justify-items: start; padding-left: 20px; border-left: 1px solid var(--line); }
+  .lc-stat:first-child { border-left: 0; padding-left: 0; }
+  .lc-stat strong { font-size: clamp(2.2rem, 3.6vw, 3.4rem); font-variation-settings: 'wght' 740; letter-spacing: -0.02em; line-height: 1; color: var(--red); }
+  .lc-stat span { color: var(--steel); margin-top: 6px; font-size: .95rem; }
 
-  .lc-badges { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-  .lc-badges li { display: grid; gap: 10px; justify-items: center; text-align: center; }
-  .lc-badges img { width: 110px; height: 110px; object-fit: contain; }
-  .lc-badges span { font-weight: 800; font-size: .95rem; }
+  .lc-badges { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px; }
+  .lc-badges li { display: grid; gap: 12px; justify-items: center; text-align: center; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); padding: 22px 14px 18px; }
+  .lc-badges img { width: 96px; height: 96px; object-fit: contain; }
+  .lc-badges span { font-variation-settings: 'wght' 640; font-size: .92rem; line-height: 1.35; }
 
   .lc-rows { display: grid; gap: clamp(40px, 6vw, 72px); }
   .lc-row { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: center; }
@@ -330,12 +329,13 @@ const stats = [
 
   .lc-faq h2 { margin-bottom: 24px; }
   .lc-faq__list { display: grid; gap: 10px; margin-bottom: 22px; max-width: 860px; }
-  .lc-q { background: #fff; border: 2px solid var(--concrete-dark); border-radius: var(--sign-r); }
-  .lc-q summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 16px 18px 14px; cursor: pointer; font-weight: 800; font-size: 1.05rem; }
+  .lc-q { background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); transition: border-color .15s; }
+  .lc-q:hover { border-color: var(--line-dark); }
+  .lc-q summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 17px 18px 15px; cursor: pointer; font-variation-settings: 'wght' 640; font-size: 1.04rem; }
   .lc-q summary::-webkit-details-marker { display: none; }
-  .lc-q summary svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: rotate .2s; }
-  .lc-q[open] summary svg { rotate: 180deg; }
-  .lc-q p { margin: 0; padding: 0 18px 16px; max-width: 75ch; }
+  .lc-q summary svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--red); stroke-width: 2.2; stroke-linecap: round; transition: rotate .2s; }
+  .lc-q[open] summary svg { rotate: 45deg; }
+  .lc-q p { margin: 0; padding: 0 18px 17px; max-width: 75ch; color: var(--ink-2); }
 
   .lc-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: rgba(29, 32, 36, .92); backdrop-filter: blur(4px); display: none; }
   .lc-sticky .btn { width: 100%; }

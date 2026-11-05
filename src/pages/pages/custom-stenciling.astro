@@ -49,7 +49,7 @@ const offerings = [
         <path d="M96 24 Q110 12 124 24 L178 220 L42 220 Z" fill="#f26a1b" />
         <path d="M84.5 68 L135.5 68 L142 92 L78 92 Z" fill="#f7f7f2" />
         <path d="M66 136 L154 136 L162 166 L58 166 Z" fill="#f7f7f2" />
-        <text x="110" y="157" text-anchor="middle" font-family="Overpass, sans-serif" font-weight="800" font-size="19" fill="#1d2024">YOUR LOGO</text>
+        <text x="110" y="156" text-anchor="middle" font-family="Archivo Variable, Archivo, sans-serif" font-weight="700" font-size="14" fill="#1d2024">YOUR LOGO</text>
       </svg>
     </div>
   </section>
@@ -97,17 +97,18 @@ const offerings = [
 </Layout>
 
 <style>
-  .cs-hero { background: var(--asphalt); color: var(--white-line); }
-  .cs-hero__in { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; padding-top: clamp(48px, 7vw, 96px); padding-bottom: clamp(48px, 7vw, 96px); }
+  .cs-hero { background: var(--haze); border-bottom: 1px solid var(--line); }
+  .cs-hero__in { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; padding-top: clamp(44px, 6vw, 84px); padding-bottom: clamp(44px, 6vw, 84px); }
   .cs-hero h1 { max-width: 14ch; }
-  .cs-hero .lede { margin: 18px 0 26px; max-width: 54ch; color: #c5c9cf; }
+  .cs-hero .lede { margin: 18px 0 26px; max-width: 54ch; }
   .cs-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
   .cs-hero__art { width: min(260px, 60vw); justify-self: center; }
 
   .cs-head { margin-bottom: 30px; }
   .cs-head .lede { margin: 10px 0 0; }
   .cs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-  .cs-card { background: var(--paper); border-radius: var(--sign-r); overflow: hidden; border: 1px solid var(--concrete-dark); display: flex; flex-direction: column; }
+  .cs-card { background: var(--paper); border-radius: var(--r-m); overflow: hidden; border: 1px solid var(--line); display: flex; flex-direction: column; transition: border-color .15s, box-shadow .15s; }
+  .cs-card:hover { border-color: var(--line-dark); box-shadow: var(--shadow-m); }
   .cs-card img { aspect-ratio: 4/3; object-fit: cover; width: 100%; }
   .cs-card__body { padding: 16px 18px 20px; }
   .cs-card h3 { font-size: var(--fs-2); margin-bottom: 6px; }

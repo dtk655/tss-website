@@ -77,20 +77,17 @@ const specs = [
 >
   <section class="wc-hero">
     <div class="wrap wc-hero__in">
-      <img class="wc-hero__logo" src={WATERCADE_LOGO} alt="WATERCADE" width="900" height="130" />
-      <h1>The nation's premier water-filled barrier</h1>
-      <p class="lede">Designed, sold and rented by Traffic Safety Service. MASH TL-3 crash tested, one-person handling when empty, and 650 lbs of stability once filled.</p>
-      <div class="wc-hero__cta">
-        <a class="btn" href="/products/waterbarriertss590rparent">Shop WATERCADE</a>
-        <a class="btn btn--ghost" href="/tools/watercade-planner">Plan your layout</a>
+      <div class="wc-hero__copy">
+        <img class="wc-hero__logo" src={WATERCADE_LOGO} alt="WATERCADE" width="900" height="130" />
+        <h1>The nation's premier water-filled barrier</h1>
+        <p class="lede">Designed, sold and rented by Traffic Safety Service. MASH TL-3 crash tested, one-person handling when empty, and 650 lbs of stability once filled.</p>
+        <div class="wc-hero__cta">
+          <a class="btn" href="/products/waterbarriertss590rparent">Shop WATERCADE</a>
+          <a class="btn btn--ghost" href="/tools/watercade-planner">Plan your layout</a>
+        </div>
+        <p class="wc-hero__note">Ships nationwide. Rentals, delivery and setup in NJ, NY, PA and CT.</p>
       </div>
-      <p class="wc-hero__note">Ships nationwide. Rentals, delivery and setup in NJ, NY, PA and CT.</p>
-    </div>
-    <div class="wc-hero__water" aria-hidden="true">
-      <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
-        <path d="M0 45 C 180 85, 360 5, 540 45 S 900 85, 1080 45 S 1380 10, 1440 45 V 90 H 0 Z" fill="#28a1ce" opacity=".5" />
-        <path d="M0 55 C 240 15, 480 90, 720 55 S 1200 15, 1440 55 V 90 H 0 Z" fill="#28a1ce" />
-      </svg>
+      <div class="wc-hero__img"><img src={CDN + 'SHOPIFY_WATERCADE_ORANGE_1.svg'} alt="Orange WATERCADE water-filled barrier" width="900" height="1000" /></div>
     </div>
   </section>
 
@@ -143,20 +140,20 @@ const specs = [
 </Layout>
 
 <style>
-  .wc-hero { background: #0c2d45; color: #f7f7f2; position: relative; overflow: hidden; }
-  .wc-hero__in { padding: clamp(48px, 7vw, 96px) var(--gutter) clamp(90px, 10vw, 140px); display: grid; justify-items: start; gap: 20px; position: relative; z-index: 1; }
-  .wc-hero__logo { width: min(520px, 86vw); height: auto; }
+  .wc-hero { background: var(--haze); border-bottom: 3px solid #28a1ce; }
+  .wc-hero__in { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(28px, 4vw, 64px); align-items: center; padding-top: clamp(44px, 6vw, 80px); padding-bottom: clamp(44px, 6vw, 80px); }
+  .wc-hero__copy { display: grid; justify-items: start; gap: 20px; }
+  .wc-hero__logo { width: min(400px, 80vw); height: auto; border-radius: 8px; }
   .wc-hero h1 { max-width: 16ch; }
-  .wc-hero .lede { color: #bcd7e6; max-width: 52ch; margin: 0; }
+  .wc-hero .lede { max-width: 52ch; margin: 0; }
   .wc-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .wc-hero__note { margin: 0; color: #8fb8cf; font-size: .95rem; }
-  .wc-hero__water { position: absolute; left: 0; right: 0; bottom: -2px; }
-  .wc-hero__water svg { display: block; width: 100%; height: clamp(40px, 6vw, 90px); }
+  .wc-hero__note { margin: 0; color: var(--steel); font-size: .95rem; }
+  .wc-hero__img img { width: 100%; max-height: 420px; object-fit: contain; filter: drop-shadow(0 26px 24px rgba(20, 23, 26, .18)); }
 
   .wc-rows__h { margin-bottom: clamp(28px, 4vw, 48px); max-width: 18ch; }
   .wcrow { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(24px, 4vw, 64px); align-items: center; padding: clamp(24px, 3.5vw, 44px) 0; border-top: 1px solid var(--concrete-dark); }
   .wcrow--flip .wcrow__img { order: 2; }
-  .wcrow__img { background: var(--paper); border-radius: var(--sign-r); padding: clamp(16px, 2.5vw, 32px); display: grid; place-items: center; }
+  .wcrow__img { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-m); padding: clamp(16px, 2.5vw, 32px); display: grid; place-items: center; }
   .wcrow__img img { max-height: 300px; width: 100%; object-fit: contain; }
   .wcrow__copy h3 { margin-bottom: 12px; }
   .wcrow__copy p { margin-bottom: .8em; }
@@ -166,7 +163,8 @@ const specs = [
   .wc-specs__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
   .wc-table { width: 100%; border-collapse: collapse; }
   .wc-table th, .wc-table td { text-align: left; padding: 12px 14px 10px; border-bottom: 1px solid var(--asphalt-line); vertical-align: top; }
-  .wc-table th { white-space: nowrap; padding-right: 24px; color: var(--yellow); font-weight: 800; }
+  .wc-table th { white-space: nowrap; padding-right: 24px; color: #fff; font-variation-settings: 'wght' 640; }
+  .wc-table td { color: #c3c8cd; }
 
   .wc-next { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 36px clamp(24px, 4vw, 44px); }
   .wc-next h2 { font-size: var(--fs-4); margin-bottom: 8px; }
@@ -175,7 +173,8 @@ const specs = [
   .wc-next .btn--ghost { color: var(--ink); }
 
   @media (max-width: 880px) {
-    .wcrow, .wc-specs__in { grid-template-columns: 1fr; }
+    .wc-hero__in, .wcrow, .wc-specs__in { grid-template-columns: 1fr; }
     .wcrow--flip .wcrow__img { order: 0; }
+    .wc-hero__img img { max-height: 280px; }
   }
 </style>

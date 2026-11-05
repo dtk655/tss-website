@@ -101,22 +101,22 @@ import { PHONE, PHONE_TEL, EMAIL, ADDRESS, FORM_WEBHOOK } from '../../lib/config
 </script>
 
 <style>
-  .ct-hero { background: var(--asphalt); color: var(--white-line); padding: clamp(44px, 6vw, 80px) 0; }
-  .ct-hero .lede { margin-top: 14px; max-width: 56ch; color: #c5c9cf; }
-  .ct-hero a { color: var(--yellow); }
+  .ct-hero { background: var(--haze); border-bottom: 1px solid var(--line); padding: clamp(40px, 5.5vw, 72px) 0; }
+  .ct-hero .lede { margin-top: 14px; max-width: 56ch; }
+  .ct-hero a { color: var(--red); }
 
   .ct-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
   .ct-ways { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .ct-way { display: block; text-align: left; text-decoration: none; cursor: pointer; border: 0; font: inherit; transition: translate .15s ease; }
-  .ct-way:hover { translate: 0 -3px; }
+  .ct-way { display: block; text-align: left; text-decoration: none; cursor: pointer; font: inherit; transition: translate .15s ease, box-shadow .15s ease; }
+  .ct-way:hover { translate: 0 -3px; box-shadow: var(--shadow-m); }
   .ct-way h2 { font-size: var(--fs-2); margin-bottom: 8px; }
-  .ct-way__big { font-weight: 900; font-size: 1.15rem; margin: 0 0 6px; word-break: break-word; }
+  .ct-way__big { font-variation-settings: 'wght' 720; font-size: 1.15rem; margin: 0 0 6px; overflow-wrap: anywhere; }
   .ct-way p:last-child { margin: 0; font-size: .95rem; opacity: .85; }
 
-  .ct-form { background: var(--paper); border-radius: var(--sign-r); padding: clamp(20px, 3vw, 32px); display: grid; gap: 16px; }
+  .ct-form { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-l); box-shadow: var(--shadow-s); padding: clamp(22px, 3vw, 34px); display: grid; gap: 16px; }
   .ct-form h2 { font-size: var(--fs-3); }
-  .ct-form__ok { margin: 0; font-weight: 700; color: var(--ok); }
-  .ct-form__err { margin: 0; font-weight: 700; color: var(--red); }
+  .ct-form__ok { margin: 0; font-variation-settings: 'wght' 640; color: var(--ok); }
+  .ct-form__err { margin: 0; font-variation-settings: 'wght' 640; color: var(--red); }
 
   @media (max-width: 880px) { .ct-grid { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .ct-ways { grid-template-columns: 1fr; } }

@@ -44,14 +44,14 @@ import Layout from '../layouts/Layout.astro';
 </script>
 
 <style>
-  .nf { background: var(--asphalt); color: var(--white-line); min-height: calc(100dvh - var(--header-h)); display: grid; align-items: center; }
+  .nf { background: var(--haze); min-height: calc(100dvh - var(--header-h)); display: grid; align-items: center; }
   .nf__in { text-align: center; display: grid; justify-items: center; gap: 14px; padding-top: 48px; padding-bottom: 64px; }
   .nf__art { width: min(340px, 72vw); }
   .nf__light { transform-box: fill-box; transform-origin: center; animation: nfblink 1.2s steps(2, jump-none) infinite; }
   @keyframes nfblink { 50% { opacity: .35; } }
   @media (prefers-reduced-motion: reduce) { .nf__light { animation: none; } }
-  .nf__code { margin: 0; font-weight: 900; font-size: 1.2rem; color: var(--yellow); letter-spacing: .1em; }
+  .nf__code { margin: 0; font-variation-settings: 'wght' 740; font-size: 1.2rem; color: var(--red); letter-spacing: .1em; }
   .nf h1 { font-size: var(--fs-5); }
-  .nf .lede { margin: 0; max-width: 44ch; color: #c5c9cf; }
+  .nf .lede { margin: 0; max-width: 44ch; }
   .nf__links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
 </style>

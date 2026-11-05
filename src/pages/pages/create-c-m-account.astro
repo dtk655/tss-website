@@ -133,7 +133,7 @@ const faq = [
         <h2>Any questions before creating an account?</h2>
         {faq.map((f) => (
           <details class="ac-q">
-            <summary>{f.q}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg></summary>
+            <summary>{f.q}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>
             <div class="ac-q__a" set:html={f.a} />
           </details>
         ))}
@@ -179,35 +179,36 @@ const faq = [
 </script>
 
 <style>
-  .ac-hero { background: var(--asphalt); color: var(--white-line); }
+  .ac-hero { background: var(--haze); border-bottom: 1px solid var(--line); }
   .ac-hero__in { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; padding-top: clamp(44px, 6vw, 88px); padding-bottom: clamp(44px, 6vw, 88px); }
   .ac-hero h1 { max-width: 18ch; }
-  .ac-hero .lede { margin: 16px 0 26px; max-width: 48ch; color: #c5c9cf; }
+  .ac-hero .lede { margin: 16px 0 26px; max-width: 48ch; }
   .ac-benefits { list-style: none; margin: 0; padding: 26px 28px; display: grid; gap: 10px; }
   .ac-benefits li { padding-left: 26px; position: relative; font-weight: 600; }
   .ac-benefits li::before { content: ''; position: absolute; left: 0; top: 5px; width: 13px; height: 13px; border-radius: 3px; background: var(--orange); transform: rotate(45deg) scale(.85); }
 
   .ac-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(28px, 4vw, 64px); align-items: start; }
-  .ac-form { background: var(--paper); border-radius: var(--sign-r); padding: clamp(20px, 3vw, 34px); display: grid; gap: 18px; }
+  .ac-form { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-l); box-shadow: var(--shadow-s); padding: clamp(22px, 3vw, 34px); display: grid; gap: 18px; }
   .ac-form fieldset { border: 0; padding: 0; margin: 0; }
   .ac-form legend { padding: 0; margin-bottom: 8px; }
   .ac-form h2 { font-size: var(--fs-3); }
   .ac-form__sub { margin: -8px 0 0; color: var(--ink-soft); }
   .ac-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .ac-form__ok { margin: 0; font-weight: 700; color: var(--ok); }
-  .ac-form__err { margin: 0; font-weight: 700; color: var(--red); }
+  .ac-form__ok { margin: 0; font-variation-settings: 'wght' 640; color: var(--ok); }
+  .ac-form__err { margin: 0; font-variation-settings: 'wght' 640; color: var(--red); }
 
   .ac-faq h2 { font-size: var(--fs-3); margin-bottom: 16px; }
-  .ac-q { background: var(--paper); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--concrete-dark); }
-  .ac-q summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px 14px; cursor: pointer; font-weight: 800; }
+  .ac-q { background: var(--paper); border-radius: var(--r-m); margin-bottom: 10px; border: 1px solid var(--line); transition: border-color .15s; }
+  .ac-q:hover { border-color: var(--line-dark); }
+  .ac-q summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px 14px; cursor: pointer; font-variation-settings: 'wght' 640; }
   .ac-q summary::-webkit-details-marker { display: none; }
-  .ac-q summary svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: rotate .2s; }
-  .ac-q[open] summary svg { rotate: 180deg; }
+  .ac-q summary svg { width: 19px; height: 19px; flex: none; fill: none; stroke: var(--red); stroke-width: 2.2; stroke-linecap: round; transition: rotate .2s; }
+  .ac-q[open] summary svg { rotate: 45deg; }
   .ac-q__a { padding: 0 18px 16px; }
   .ac-q__a :global(ul) { margin: .4em 0 .8em; padding-left: 1.2em; }
   .ac-q__a :global(p) { margin: 0 0 .6em; }
   .ac-faq__more { margin-top: 18px; }
-  .ac-faq__more a { font-weight: 800; }
+  .ac-faq__more a { font-variation-settings: 'wght' 640; }
 
   @media (max-width: 920px) { .ac-hero__in, .ac-grid { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .ac-two { grid-template-columns: 1fr; } }
