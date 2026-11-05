@@ -3,7 +3,7 @@
   window.__tssChatLoaded = true;
 
   var WEBHOOK = 'https://dylan-tss.app.n8n.cloud/webhook/dfdd5bcb-7e22-4c54-aaca-b2a725b67b61/chat';
-  var BOT_NAME = 'Coney';
+  var BOT_NAME = 'Conner';
   var PHONE = '908-561-4800';
   var EMAIL = 'info@trafficsafetyservice.com';
   var WELCOME = [
@@ -30,7 +30,7 @@
   var mq = window.matchMedia ? window.matchMedia('(max-width: 640px)') : { matches: false };
   function isMobile() { return mq.matches; }
 
-  /* ---------- Coney ---------- */
+  /* ---------- Conner ---------- */
   var CONE_ID = 0;
   function cone(cls) {
     var g = 'tssConeGrad' + (CONE_ID++);

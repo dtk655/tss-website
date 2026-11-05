@@ -112,7 +112,7 @@
       <div class="wz-actions">
         <button type="button" class="btn" data-wz-quote>Add equipment to quote list</button>
         <a class="btn btn--dark" href="/pages/lane-closure?from=builder" data-wz-crew>Have TSS set this up</a>
-        <button type="button" class="btn btn--ghost" data-wz-ask>Ask Coney to review this plan</button>
+        <button type="button" class="btn btn--ghost" data-wz-ask>Ask Conner to review this plan</button>
       </div>
 
       <p class="wz-disclaimer">This is a planning estimate, not an engineered traffic control plan. Final layouts depend on site conditions, sight distance, side streets and the permit. TSS crews set up every closure to the MUTCD and your state DOT's requirements.</p>
@@ -226,7 +226,7 @@
     const w = window as any;
     const text = `Can you review my work zone plan from the builder? ${plan.summary}`;
     if (w.TSSChat) w.TSSChat.ask(text);
-    else w.TSSToast?.('Coney is still loading. Try again in a moment.');
+    else w.TSSToast?.('Conner is still loading. Try again in a moment.');
   });
 
   // mobile: start zoomed in so lanes are readable

@@ -139,7 +139,7 @@ const stats = [
       </g>
     </svg></div>
     <div class="wrap lc-anim__foot">
-      <p>Want this planned for your road? <a class="textlink" href="/tools/work-zone-builder">Try the work zone builder</a> or <button type="button" class="lc-coney" data-lc-ask="How does TSS set up a lane closure, and what equipment comes with a crew?">ask Coney a question about closures</button>.</p>
+      <p>Want this planned for your road? <a class="textlink" href="/tools/work-zone-builder">Try the work zone builder</a> or <button type="button" class="lc-coney" data-lc-ask="How does TSS set up a lane closure, and what equipment comes with a crew?">ask Conner a question about closures</button>.</p>
     </div>
   </section>
 
@@ -241,7 +241,7 @@ const stats = [
           </details>
         ))}
       </div>
-      <p>Something we didn't cover? <button type="button" class="lc-coney" data-lc-ask="I have a question about lane closure services.">Ask Coney</button> or call <a class="textlink" href={PHONE_TEL}>{PHONE}</a>.</p>
+      <p>Something we didn't cover? <button type="button" class="lc-coney" data-lc-ask="I have a question about lane closure services.">Ask Conner</button> or call <a class="textlink" href={PHONE_TEL}>{PHONE}</a>.</p>
     </div>
   </section>
 
@@ -259,7 +259,7 @@ const stats = [
       es.forEach((e) => { if (e.isIntersecting) { anim.classList.add('lc-go'); io.disconnect(); } });
     }, { threshold: 0.3 }).observe(anim.querySelector('.lc-road'));
   }
-  // Coney buttons
+  // Conner buttons
   document.querySelectorAll('[data-lc-ask]').forEach((b) => b.addEventListener('click', () => window.TSSChat?.ask(b.dataset.lcAsk)));
   // Sticky mobile CTA: show after the hero, hide while the form is on screen.
   const sticky = document.querySelector('[data-lc-sticky]');

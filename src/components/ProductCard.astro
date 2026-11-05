@@ -1,15 +1,52 @@
 ---
-import { priceLabel, img } from '../lib/shopify.js';
+import { money, img } from '../lib/shopify.js';
 const { p } = Astro.props;
 const src = p.featuredImage?.url;
+const single = !p.isRental && p.variants.length === 1 && p.variants[0].availableForSale;
+const compare = single && p.variants[0].compareAtPrice ? +p.variants[0].compareAtPrice.amount : null;
 ---
-<a class="pcard" href={`/products/${p.handle}`}>
-  <div class="pcard__img">
-    {src ? <img src={img(src, 480)} alt={p.featuredImage.altText || p.title} loading="lazy" width="400" height="400" /> : <span aria-hidden="true"></span>}
-  </div>
+<div class="pcard" data-price={p.isRental ? '' : p.minPrice} data-rental={p.isRental ? '1' : ''} data-title={p.title}>
+  <a class="pcard__media" href={`/products/${p.handle}`} tabindex="-1" aria-hidden="true">
+    {src ? <img src={img(src, 480)} alt="" loading="lazy" width="400" height="400" /> : <span></span>}
+    {p.isRental && <span class="tag-rent pcard__tag">Rental</span>}
+    {compare && compare > p.minPrice && <span class="pcard__tag pcard__tag--sale">Sale</span>}
+  </a>
   <div class="pcard__body">
-    {p.isRental && <span class="tag-rent">Rental</span>}
-    <span class="pcard__title">{p.title}</span>
-    <span class="pcard__price">{p.isRental ? 'Request a rental quote' : <strong>{priceLabel(p)}</strong>}</span>
+    <a class="pcard__title" href={`/products/${p.handle}`}>{p.title}</a>
+    <p class="pcard__price">
+      {p.isRental
+        ? <span>Priced per job</span>
+        : <><strong>{p.minPrice === p.maxPrice ? money(p.minPrice) : `From ${money(p.minPrice)}`}</strong>{compare && compare > p.minPrice && <s>{money(compare)}</s>}</>}
+    </p>
+    {single
+      ? <button class="btn btn--sm pcard__cta" data-quick-add={p.variants[0].id}>Add to cart</button>
+      : <a class="btn btn--sm pcard__cta" class:list={[{ 'btn--ghost': false }]} href={`/products/${p.handle}`}>{p.isRental ? 'Request rental quote' : 'Select options'}</a>}
   </div>
-</a>
+</div>
+<style>
+  .pcard { position: relative; }
+  .pcard__media { position: relative; display: grid; place-items: center; aspect-ratio: 1; padding: 20px; background: #fff; border-bottom: 1px solid var(--haze-2); }
+  .pcard__media img { width: 100%; height: 100%; object-fit: contain; transition: transform .22s ease; }
+  .pcard:hover .pcard__media img { transform: scale(1.04); }
+  .pcard__tag { position: absolute; top: 12px; left: 12px; }
+  .pcard__tag--sale { display: inline-block; font-size: .78rem; font-variation-settings: 'wght' 680; padding: 4px 9px 3px; border-radius: 5px; background: var(--red); color: #fff; }
+  .pcard__body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .pcard__cta { margin-top: auto; }
+  .pcard__title { text-decoration: none; font-variation-settings: 'wght' 640; line-height: 1.32; font-size: .99rem; min-height: 2.6em; }
+  .pcard__title::after { content: ''; position: absolute; inset: 0; }
+  .pcard__title:hover { color: var(--red); }
+  .pcard__price { margin: 0; display: flex; align-items: baseline; gap: 8px; font-size: .95rem; color: var(--steel); }
+  .pcard__price strong { color: var(--ink); font-size: 1.05rem; }
+  .pcard__price s { color: var(--steel); }
+  .pcard__cta { position: relative; z-index: 1; width: 100%; }
+</style>
+<script>
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-quick-add]');
+    if (!b || b.dataset.busy) return;
+    b.dataset.busy = '1';
+    const t = b.textContent;
+    b.textContent = 'Adding';
+    try { await window.TSSCart.add(b.dataset.quickAdd, 1); } finally { b.textContent = t; delete b.dataset.busy; }
+  });
+</script>
