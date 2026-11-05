@@ -11,22 +11,21 @@ const pin = pinProduct?.variants?.[0] ? { id: pinProduct.variants[0].id, title: 
 const image = product?.featuredImage?.url ? img(product.featuredImage.url, 200) : '';
 ---
 <Layout title="WATERCADE planner" description="Plan a WATERCADE water-filled barrier layout. See how many barriers you need, the filled weight, water and fill time, then buy online or request a rental.">
-  <section class="wcp-hero section--dark">
-    <div class="wrap wcp-hero__in">
-      <div>
-        <h1>WATERCADE planner</h1>
-        <p class="lede">Pick a layout and enter your dimensions. You'll see exactly how the barriers link up, how many you need, and how much water it takes to fill them.</p>
-        <p class="wcp-hero__links"><a class="textlink" href="/products/waterbarriertss590rparent">See the WATERCADE product page</a></p>
-      </div>
+  <section class="chead">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/tools">Planning tools</a><span aria-hidden="true">/</span><span>WATERCADE planner</span></nav>
+      <h1>WATERCADE planner</h1>
+      <p class="lede">Pick a layout and enter your dimensions. You'll see exactly how the barriers link up, how many you need, and how much water it takes to fill them.</p>
       <dl class="wcp-facts">
-        <div class="sign sign--orange"><dt>Empty</dt><dd>50 lbs</dd><p>Light enough for one person to carry and place.</p></div>
-        <div class="sign"><dt>Filled</dt><dd>About 650 lbs</dd><p>Around 72 gallons of water anchors each barrier.</p></div>
-        <div class="sign"><dt>Length</dt><dd>5 ft each</dd><p>Interlocking ends, with a 90° pin for corners.</p></div>
+        <div><dt>Empty</dt><dd>50 lbs</dd><p>One person can carry and place it.</p></div>
+        <div><dt>Filled</dt><dd>650 lbs</dd><p>About 72 gallons of water anchors each barrier.</p></div>
+        <div><dt>Length</dt><dd>5 ft</dd><p>Interlocking ends, with a 90° pin for corners.</p></div>
+        <div><dt>More</dt><dd class="wcp-facts__link"><a class="textlink" href="/products/waterbarriertss590rparent">Product page</a></dd><p>Specs, colors and custom branding.</p></div>
       </dl>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section--tight section">
     <div class="wrap">
       {product
         ? <WatercadePlanner variants={variants} image={image} pin={pin} heading="" />
@@ -49,17 +48,18 @@ const image = product?.featuredImage?.url ? img(product.featuredImage.url, 200) 
 </Layout>
 
 <style>
-  .wcp-hero { padding: clamp(48px, 7vw, 88px) 0; }
-  .wcp-hero__in { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
-  .wcp-hero h1 { font-size: var(--fs-6); margin-bottom: 18px; }
-  .wcp-hero__links { margin: 0; }
-  .wcp-facts { display: grid; gap: 12px; margin: 0; }
-  .wcp-facts .sign { display: grid; grid-template-columns: auto 1fr; gap: 0 16px; align-items: baseline; padding: 18px 22px; }
-  .wcp-facts dt { font-weight: 700; font-size: .95rem; }
-  .wcp-facts dd { margin: 0; font-weight: 900; font-size: var(--fs-3); }
-  .wcp-facts p { grid-column: 1 / -1; margin: 4px 0 0; font-size: .95rem; }
+  .chead { background: var(--haze); border-bottom: 1px solid var(--line); padding: 36px 0 44px; }
+  .crumbs { display: flex; gap: 8px; font-size: .92rem; color: var(--steel); margin-bottom: 14px; }
+  .crumbs a { color: inherit; }
+  .chead .lede { margin: 12px 0 0; max-width: 64ch; }
+  .wcp-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin: 30px 0 0; border-top: 1px solid var(--line-dark); padding-top: 20px; max-width: 880px; }
+  .wcp-facts dt { font-size: .9rem; color: var(--steel); }
+  .wcp-facts dd { margin: 2px 0 0; font-variation-settings: 'wght' 740; font-size: var(--fs-3); letter-spacing: -0.015em; }
+  .wcp-facts__link { font-size: var(--fs-1); }
+  .wcp-facts p { margin: 4px 0 0; font-size: .9rem; color: var(--steel); }
   .wcp-uses { display: grid; gap: 18px; }
-  .wcp-uses ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
-  .wcp-uses li { border-top: 4px solid var(--orange); padding-top: 12px; }
-  @media (max-width: 860px) { .wcp-hero__in { grid-template-columns: 1fr; } }
+  .wcp-uses ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+  .wcp-uses li { border-top: 1px solid var(--line-dark); padding-top: 14px; color: var(--steel); line-height: 1.55; }
+  .wcp-uses li strong { color: var(--ink); display: block; margin-bottom: 2px; }
+  @media (max-width: 760px) { .wcp-facts { grid-template-columns: 1fr 1fr; gap: 18px; } }
 </style>

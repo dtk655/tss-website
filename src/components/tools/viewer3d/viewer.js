@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { buildModel } from './models.js';
 
-const BG = 0xecebe6;
+const BG = 0xf5f6f7;
 
 export function mountViewer(el, state) {
   const stage = el.querySelector('.v3d__stage');

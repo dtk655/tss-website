@@ -95,7 +95,7 @@
     </form>
 
     <section class="wz-results" aria-live="polite" aria-label="Plan results">
-      <div class="wz-total sign sign--orange">
+      <div class="wz-total">
         <span>Total zone length</span>
         <strong data-wz-total>0 ft</strong>
         <small>First warning sign to end of the termination taper</small>
@@ -111,7 +111,7 @@
 
       <div class="wz-actions">
         <button type="button" class="btn" data-wz-quote>Add equipment to quote list</button>
-        <a class="btn btn--dark" href="/pages/lane-closure?from=builder" data-wz-crew>Have TSS set this up</a>
+        <a class="btn btn--ghost" href="/pages/lane-closure?from=builder" data-wz-crew>Have TSS set this up</a>
         <button type="button" class="btn btn--ghost" data-wz-ask>Ask Conner to review this plan</button>
       </div>
 
@@ -239,7 +239,7 @@
   .wz > *, .wz-body > * { min-width: 0; }
 
   /* ---------- stage ---------- */
-  .wz-stage { background: var(--asphalt-deep); color: var(--white-line); border-radius: 14px; padding: 18px 18px 14px; }
+  .wz-stage { background: var(--asphalt-deep); color: var(--white-line); border-radius: var(--r-l); padding: 18px 18px 14px; border: 1px solid var(--line); box-shadow: var(--shadow-l); }
   .wz-stage__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
   .wz-stage__title { margin: 0; font-weight: 800; font-size: 1.1rem; }
   .wz-zoom { display: flex; background: var(--asphalt); border-radius: 8px; padding: 3px; }
@@ -278,7 +278,7 @@
 
   /* ---------- body ---------- */
   .wz-body { display: grid; grid-template-columns: minmax(300px, 400px) 1fr; gap: 40px; align-items: start; }
-  .wz-controls { display: grid; gap: 22px; background: var(--paper); border-radius: 14px; padding: 24px; }
+  .wz-controls { display: grid; gap: 22px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-l); padding: 26px 24px; }
   .wz-controls fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   .wz-controls legend { padding: 0; margin-bottom: 8px; }
   .wz-controls .choice span { font-size: .95rem; }
@@ -296,10 +296,10 @@
   .wz-unit span { font-weight: 700; color: var(--ink-soft); }
 
   .wz-results { display: grid; gap: 22px; }
-  .wz-total { display: grid; gap: 2px; padding: 22px 26px; }
-  .wz-total span { font-weight: 800; }
-  .wz-total strong { font-size: var(--fs-5); font-weight: 900; line-height: 1; letter-spacing: -.02em; }
-  .wz-total small { font-size: .9rem; }
+  .wz-total { display: grid; gap: 2px; padding: 22px 26px 20px; background: var(--haze); border: 1px solid var(--line); border-radius: var(--r-l); }
+  .wz-total span { font-variation-settings: 'wght' 640; color: var(--steel); font-size: .95rem; }
+  .wz-total strong { font-size: clamp(2.4rem, 4vw, 3.4rem); font-variation-settings: 'wght' 740; line-height: 1.05; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .wz-total small { font-size: .9rem; color: var(--steel); }
 
   .wz-nums { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
   .wz-nums div { padding: 12px 14px 12px 0; border-bottom: 1px solid var(--concrete-dark); }
@@ -308,7 +308,7 @@
   .wz-nums dd.h { font-weight: 400; font-size: .82rem; color: var(--ink-soft); }
 
   .wz-h { font-size: var(--fs-2); }
-  .wz-table { width: 100%; border-collapse: collapse; background: var(--paper); border-radius: 12px; overflow: hidden; }
+  .wz-table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; }
   .wz-table th { text-align: left; font-size: .85rem; color: var(--ink-soft); font-weight: 700; padding: 12px 16px 8px; border-bottom: 2px solid var(--concrete); }
   .wz-table td { padding: 12px 16px 10px; border-bottom: 1px solid var(--concrete); vertical-align: top; }
   .wz-table tr:last-child td { border-bottom: 0; }
@@ -317,7 +317,7 @@
   .wz-table .n { display: block; font-size: .85rem; color: var(--ink-soft); }
 
   .wz-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-  .wz-disclaimer { font-size: .9rem; color: var(--ink-soft); border-left: 4px solid var(--orange); padding: 4px 0 4px 14px; margin: 0; }
+  .wz-disclaimer { font-size: .9rem; color: var(--steel); border-left: 3px solid var(--line-dark); padding: 4px 0 4px 14px; margin: 0; }
 
   @media (max-width: 960px) {
     .wz-body { grid-template-columns: 1fr; gap: 28px; }

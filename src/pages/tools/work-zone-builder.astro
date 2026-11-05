@@ -6,12 +6,10 @@ import WorkZoneBuilder from '../../components/tools/workzone/WorkZoneBuilder.ast
   title="Work zone builder"
   description="Plan a lane closure in minutes. Pick the road, speed and work length to see the taper, buffer, sign spacing and equipment list, drawn to MUTCD rules. Then rent the equipment or have TSS set it up."
 >
-  <section class="wzp-intro">
-    <div class="wrap wzp-intro__in">
-      <div>
-        <p class="wzp-crumb"><a href="/tools">Planning tools</a></p>
-        <h1>Work zone builder</h1>
-      </div>
+  <section class="chead">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/tools">Planning tools</a><span aria-hidden="true">/</span><span>Work zone builder</span></nav>
+      <h1>Work zone builder</h1>
       <p class="lede">Tell us the road, the speed and how much room your crew needs. The builder lays out the taper, buffer and warning signs using MUTCD spacing, counts the equipment, and puts it on your quote list in one click.</p>
     </div>
   </section>
@@ -33,19 +31,17 @@ import WorkZoneBuilder from '../../components/tools/workzone/WorkZoneBuilder.ast
 </Layout>
 
 <style>
-  .wzp-intro { padding: clamp(36px, 6vw, 72px) 0 28px; }
-  .wzp-intro__in { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 48px; align-items: end; }
-  .wzp-intro .lede { margin: 0; }
-  .wzp-crumb { margin: 0 0 10px; font-weight: 700; font-size: .95rem; }
-  .wzp-crumb a { color: var(--ink-soft); }
-  .wzp-tool { padding: 8px 0 clamp(56px, 8vw, 96px); }
-  .wzp-how { background: var(--paper); padding: clamp(48px, 7vw, 88px) 0; }
+  .chead { background: var(--haze); border-bottom: 1px solid var(--line); padding: 36px 0 44px; }
+  .crumbs { display: flex; gap: 8px; font-size: .92rem; color: var(--steel); margin-bottom: 14px; }
+  .crumbs a { color: inherit; }
+  .chead .lede { margin: 12px 0 0; max-width: 72ch; }
+  .wzp-tool { padding: clamp(28px, 4vw, 44px) 0 clamp(56px, 8vw, 96px); }
+  .wzp-how { border-top: 1px solid var(--line); padding: clamp(48px, 7vw, 88px) 0; }
   .wzp-how h2 { font-size: var(--fs-4); margin-bottom: 24px; }
   .wzp-how__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-  .wzp-how__cols p { margin: 0; color: var(--ink-soft); }
+  .wzp-how__cols p { margin: 0; color: var(--steel); line-height: 1.6; }
   .wzp-how__cols strong { color: var(--ink); }
   @media (max-width: 860px) {
-    .wzp-intro__in { grid-template-columns: 1fr; }
     .wzp-how__cols { grid-template-columns: 1fr; gap: 18px; }
   }
 </style>

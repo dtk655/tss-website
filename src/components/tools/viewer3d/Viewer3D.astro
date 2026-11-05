@@ -172,32 +172,32 @@ const aria = label || `Interactive 3D model of a ${NAMES[model]}. Drag or use ar
 <style is:global>
   /* global: swatches are injected at runtime, so scoped styles would not reach them. All classes are v3d-prefixed. */
   .v3d { display: grid; gap: 14px; }
-  .v3d__stage { position: relative; height: var(--v3d-h, clamp(320px, 56vw, 560px)); border-radius: var(--sign-r, 10px); overflow: hidden; background: #ecebe6; border: 1px solid var(--concrete-dark, #d9d7d0); }
+  .v3d__stage { position: relative; height: var(--v3d-h, clamp(320px, 56vw, 560px)); border-radius: var(--sign-r, 10px); overflow: hidden; background: var(--haze, #f5f6f7); border: 1px solid var(--line, #e4e7ea); }
   .v3d canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; }
   .v3d canvas:active { cursor: grabbing; }
-  .v3d canvas:focus-visible { box-shadow: inset 0 0 0 3px var(--orange, #f26a1b); }
+  .v3d canvas:focus-visible { box-shadow: inset 0 0 0 3px var(--gold, #f5b800); }
   .v3d__loading { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; color: var(--ink-soft, #545a61); font-weight: 700; }
-  .v3d__loading span { width: 34px; height: 34px; border-radius: 50%; border: 4px solid var(--concrete-dark, #d9d7d0); border-top-color: var(--orange, #f26a1b); animation: v3dspin .9s linear infinite; }
+  .v3d__loading span { width: 34px; height: 34px; border-radius: 50%; border: 4px solid var(--concrete-dark, #d9d7d0); border-top-color: var(--red, #b60606); animation: v3dspin .9s linear infinite; }
   @keyframes v3dspin { to { transform: rotate(1turn); } }
   .v3d__loading[hidden], .v3d__fallback[hidden] { display: none; }
-  .v3d__fallback { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; padding: 24px; text-align: center; background: #ecebe6; }
+  .v3d__fallback { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; padding: 24px; text-align: center; background: var(--haze, #f5f6f7); }
   .v3d__fallback img { max-height: 70%; object-fit: contain; }
-  .v3d__reset { position: absolute; top: 12px; right: 12px; min-height: 40px; padding: 9px 14px 7px; border: 2px solid var(--asphalt, #2a2e33); border-radius: 8px; background: rgba(255,255,255,.85); font-weight: 800; font-size: .9rem; cursor: pointer; }
+  .v3d__reset { position: absolute; top: 12px; right: 12px; min-height: 40px; padding: 9px 14px 7px; border: 1.5px solid var(--line-dark, #cfd4d9); border-radius: 8px; background: rgba(255,255,255,.92); font-weight: 800; font-size: .9rem; cursor: pointer; }
   .v3d__reset:hover { background: #fff; }
   .v3d__hint { position: absolute; left: 14px; bottom: 10px; margin: 0; font-size: .85rem; color: var(--ink-soft, #545a61); pointer-events: none; }
   .v3d:not(.is-ready) .v3d__reset, .v3d:not(.is-ready) .v3d__hint { visibility: hidden; }
   .v3d__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
   .v3d__controls[hidden], .v3d__swatches[hidden], .v3d__custom[hidden], .v3d__rmlogo[hidden] { display: none; }
   .v3d__swatches { display: flex; flex-wrap: wrap; gap: 8px; }
-  .v3d__sw { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 12px 4px 6px; border: 2px solid var(--concrete-dark, #d9d7d0); border-radius: 8px; background: #fff; font-weight: 700; font-size: .9rem; cursor: pointer; }
+  .v3d__sw { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 12px 4px 6px; border: 1.5px solid var(--line-dark, #cfd4d9); border-radius: 8px; background: #fff; font-weight: 700; font-size: .9rem; cursor: pointer; }
   .v3d__sw i { width: 24px; height: 24px; border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
-  .v3d__sw[aria-pressed=true] { border-color: var(--asphalt, #2a2e33); box-shadow: inset 0 0 0 1px var(--asphalt, #2a2e33); }
-  .v3d__custom { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 12px 2px 4px; border: 2px dashed var(--concrete-dark, #d9d7d0); border-radius: 8px; background: #fff; font-weight: 700; font-size: .9rem; cursor: pointer; }
+  .v3d__sw[aria-pressed=true] { border-color: var(--ink, #14171a); box-shadow: inset 0 0 0 1px var(--ink, #14171a); }
+  .v3d__custom { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 12px 2px 4px; border: 1.5px dashed var(--line-dark, #cfd4d9); border-radius: 8px; background: #fff; font-weight: 700; font-size: .9rem; cursor: pointer; }
   .v3d__custom input { width: 32px; height: 30px; padding: 0; border: 0; background: none; cursor: pointer; }
   .v3d__logo { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .v3d__upload { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 10px 16px 8px; border-radius: 8px; background: var(--asphalt, #2a2e33); color: #fff; font-weight: 800; font-size: .92rem; cursor: pointer; }
+  .v3d__upload { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 10px 16px 8px; border-radius: 8px; background: var(--ink, #14171a); color: #fff; font-weight: 800; font-size: .92rem; cursor: pointer; }
   .v3d__upload:hover { background: var(--asphalt-deep, #1d2024); }
-  .v3d__upload:focus-within { outline: 3px solid var(--orange, #f26a1b); outline-offset: 2px; }
+  .v3d__upload:focus-within { outline: 2.5px solid var(--red, #b60606); outline-offset: 2px; }
   .v3d__rmlogo { background: none; border: 0; padding: 8px 4px; text-decoration: underline; text-underline-offset: 3px; font-weight: 700; color: var(--ink-soft, #545a61); cursor: pointer; }
   .v3d__msg { margin: 0; min-height: 1.2em; font-size: .9rem; color: var(--ink-soft, #545a61); }
   @media (max-width: 480px) { .v3d__hint { display: none; } .v3d__sw span { display: none; } .v3d__sw { padding: 6px; } }

@@ -104,7 +104,7 @@ const uid = 'wc' + Math.random().toString(36).slice(2, 8);
       <p class="wc__mix" data-out="mix"></p>
       <div class="wc__actions">
         <button type="button" class="btn" data-act="buy">Buy online</button>
-        <button type="button" class="btn btn--orange" data-act="rent">Rent for my event or job</button>
+        <button type="button" class="btn btn--ghost" data-act="rent">Rent for my event or job</button>
         <button type="button" class="btn btn--ghost" data-act="ask">Ask Conner about this setup</button>
       </div>
       <p class="wc__fine">Rentals with delivery and setup in NJ, NY, PA and CT. Purchases ship nationwide.</p>
@@ -339,16 +339,18 @@ const uid = 'wc' + Math.random().toString(36).slice(2, 8);
   .wc__layouts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .wc__lay { position: relative; }
   .wc__lay input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-  .wc__lay span { display: grid; justify-items: center; gap: 6px; padding: 12px 8px 10px; border: 2px solid var(--concrete-dark); border-radius: 8px; background: #fff; font-weight: 700; font-size: .92rem; cursor: pointer; }
+  .wc__lay span { display: grid; justify-items: center; gap: 6px; padding: 12px 8px 10px; border: 1.5px solid var(--line-dark); border-radius: var(--r-s); background: #fff; font-variation-settings: 'wght' 620; font-size: .92rem; cursor: pointer; transition: border-color .12s; }
+  .wc__lay span:hover { border-color: var(--steel); }
   .wc__lay svg { width: 44px; height: 36px; color: var(--orange); }
-  .wc__lay input:checked + span { border-color: var(--asphalt); background: var(--asphalt); color: #fff; }
-  .wc__lay input:focus-visible + span { outline: 3px solid var(--orange); outline-offset: 2px; }
+  .wc__lay input:checked + span { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .wc__lay input:checked + span svg { color: var(--gold); }
+  .wc__lay input:focus-visible + span { outline: 2.5px solid var(--red); outline-offset: 2px; }
   .wc__dims { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .wc__dims [hidden] { display: none; }
-  .wc__tip { margin: 0; font-size: .92rem; color: var(--ink-soft); border-left: 4px solid var(--yellow); padding: 4px 0 2px 12px; }
+  .wc__tip { margin: 0; font-size: .92rem; color: var(--steel); border-left: 3px solid var(--line-dark); padding: 4px 0 2px 12px; }
 
   .wc__stage { grid-area: stage; display: grid; gap: 10px; }
-  .wc__canvas { background: #f4f3ef; border-radius: var(--sign-r); border: 1px solid var(--concrete-dark); padding: 10px; }
+  .wc__canvas { background: var(--haze); border-radius: var(--r-l); border: 1px solid var(--line); padding: 10px; }
   .wc__canvas svg { width: 100%; height: auto; max-height: 460px; min-height: 180px; display: block; }
   .wc__legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .88rem; color: var(--ink-soft); }
   .wc__legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -359,8 +361,8 @@ const uid = 'wc' + Math.random().toString(36).slice(2, 8);
 
   .wc__results { grid-area: results; padding: 26px 28px 24px; display: grid; gap: 14px; }
   .wc__count { margin: 0; display: flex; align-items: baseline; gap: 10px; }
-  .wc__count strong { font-size: var(--fs-6); font-weight: 900; line-height: .9; color: var(--orange); font-variant-numeric: tabular-nums; }
-  .wc__count span { font-size: var(--fs-3); font-weight: 800; }
+  .wc__count strong { font-size: clamp(2.6rem, 4.5vw, 3.8rem); font-variation-settings: 'wght' 740; line-height: .95; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .wc__count span { font-size: var(--fs-3); font-variation-settings: 'wght' 640; color: #c3c8cd; }
   .wc__run { margin: 0; color: #c5c9cf; }
   .wc__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 20px; margin: 4px 0 0; }
   .wc__stats div { border-top: 1px solid var(--asphalt-line); padding-top: 8px; }
