@@ -14,12 +14,6 @@ const fleet = pick(['truck-mounted-attenuator-tma', 'arrow-board', 'variable-mes
 const fleetTints = ['#ffe7d2', '#fff1c9', '#e2edf8', '#ebebe8', '#e3f3d8', '#ffdede'];
 const agencies = ['NJDOT', 'NJ Turnpike Authority', 'Garden State Parkway', 'Port Authority of NY & NJ', 'NYSDOT', 'NYS Thruway', 'PennDOT'];
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
-const board = [
-  { t: 'Lane closure crew', p: 'Route 287 NB · Edison', steps: ['Scheduled', 'En route', 'Zone set'], ico: 'crew' },
-  { t: '200 cones + 40 drums', p: 'Delivery · Newark', steps: ['Picking', 'Loaded', 'Delivered'], ico: 'cone' },
-  { t: 'Arrow board rental', p: 'Drop-off · Woodbridge', steps: ['Reserved', 'Dropped off', 'Running'], ico: 'arrow' },
-  { t: 'WATERCADE × 60', p: 'Event perimeter', steps: ['Staged', 'Filled', 'Linked'], ico: 'barrier' }
-];
 const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure on a state highway', 'Rent an arrow board for 3 days'];
 ---
 <Layout title="Traffic Safety Service: traffic control products, rentals and lane closures">
@@ -29,9 +23,9 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
     <span class="hhero__scrim" aria-hidden="true"></span>
     <div class="wrap hhero__in">
       <div class="hhero__copy">
-        <p class="hhero__k">Family-run in New Jersey since 1971</p>
+        <p class="hhero__k">Traffic Safety Service · New Jersey</p>
         <h1>Work zones, set up right.</h1>
-        <p class="hhero__lede">Traffic control products shipped nationwide. Rentals and union lane closure crews across NJ, NY, PA and CT.</p>
+        <p class="hhero__lede">Products, rentals and union lane closure crews. One call, one yard, since 1971.</p>
         <div class="hhero__cta">
           <a href="/pages/request-a-quote" class="hbtn hbtn--solid">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
@@ -44,42 +38,29 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
         </div>
       </div>
 
-      <div class="hhero__art" aria-hidden="true">
-        <div class="dsp" data-dsp>
-          <div class="dsp__head">
-            <div><b>Today's board</b><small>TSS dispatch · South Plainfield</small></div>
-            <span class="dsp__live"><i></i>Live</span>
-          </div>
-          {board.map((r, i) => (
-            <div class={`dsp__row${i === 3 ? ' dsp__row--x' : ''}`} data-steps={r.steps.join('|')}>
-              <span class="dsp__ico">
-                {r.ico === 'crew' && <svg viewBox="0 0 24 24"><path d="M8 4.5h8l2 4v11H6v-11z M8 4.5v6 M16 4.5v6 M10.5 13h3" /></svg>}
-                {r.ico === 'cone' && <svg viewBox="0 0 24 24"><path d="M10.4 4.5 L13.6 4.5 L18 19.5 L6 19.5 Z M8.3 12.5 L15.7 12.5" /></svg>}
-                {r.ico === 'arrow' && <svg viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="12" rx="1.5" /><path d="M8 12h7 M12.5 9.2L15.6 12l-3.1 2.8" /></svg>}
-                {r.ico === 'barrier' && <svg viewBox="0 0 24 24"><path d="M3 9h18v8H3z M7 9v8 M12 9v8 M17 9v8 M3 13h18" /></svg>}
-              </span>
-              <span class="dsp__txt"><b>{r.t}</b><small>{r.p}</small></span>
-              <span class="dsp__st" data-st>{r.steps[0]}</span>
-              <span class="dsp__bar"><i></i></span>
-            </div>
-          ))}
-          <div class="dsp__road">
-            <svg class="dsp__truck" viewBox="0 0 64 30"><rect x="1" y="6" width="38" height="17" rx="2" fill="#b60606"/><path d="M39 11h12l8 7v5H39z" fill="#d81b1b"/><rect x="43" y="13" width="8" height="5" rx="1" fill="#cfe3f5"/><rect x="5" y="10" width="22" height="3" fill="#f5b800"/><circle cx="12" cy="25" r="4" fill="#1a1d21"/><circle cx="50" cy="25" r="4" fill="#1a1d21"/></svg>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="hhero__stats">
-      <ul class="wrap hstats">
-        <li><b><span data-countup>{YEARS}</span></b><span class="hstats__l">years in business</span></li>
-        <li><b><span data-countup>10,578</span></b><span class="hstats__l">lane closures completed</span></li>
-        <li><b><span data-countup>35,017</span></b><span class="hstats__l">customers served</span></li>
-        <li><b><span data-countup>3.1</span>M</b><span class="hstats__l">cones sold</span></li>
-        <li><b>24/7</b><span class="hstats__l">emergency response</span></li>
-      </ul>
+      <nav class="svt" aria-label="What we do" data-svt>
+        <a href="/collections" class="svt__tile">
+          <span class="svt__img"><img src="/cats/cones.svg" alt="" /></span>
+          <span class="svt__txt"><b>Products</b><small>Cones, drums, barricades, signs</small></span>
+        </a>
+        <a href="/collections/equipment-rentals" class="svt__tile">
+          <span class="svt__img"><img src="/cats/hero-rentals.png" alt="" /></span>
+          <span class="svt__txt"><b>Rentals</b><small>Message boards, arrow boards, trucks</small></span>
+        </a>
+        <a href="/pages/lane-closure" class="svt__tile">
+          <span class="svt__img">
+            <svg viewBox="0 0 80 110" aria-hidden="true"><rect x="37" y="58" width="6" height="50" rx="2" fill="#5b6670"/><path d="M23 6h34l17 17v34L57 74H23L6 57V23z" fill="#c8102e" stroke="#fff" stroke-width="3"/><text x="40" y="47" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-size="19" font-weight="800" fill="#fff">STOP</text></svg>
+          </span>
+          <span class="svt__txt"><b>Lane closures</b><small>Union flaggers, 24/7 crews</small></span>
+        </a>
+        <a href="/watercade/" class="svt__tile">
+          <span class="svt__img"><img src="/cats/water-filled-barriers.png" alt="" /></span>
+          <span class="svt__txt"><b>WATERCADE</b><small>Crash-tested water barriers</small></span>
+        </a>
+      </nav>
     </div>
   </section>
+
 
   <!-- ============ SERVICES ============ -->
   <section class="wrap svc">
@@ -240,6 +221,12 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
         <p class="why__k">Why crews choose TSS</p>
         <h2>The yard, the fleet and the crew. One call.</h2>
       </div>
+      <ul class="hstats">
+        <li><b><span data-countup>{YEARS}</span></b><span class="hstats__l">years in business</span></li>
+        <li><b><span data-countup>10,578</span></b><span class="hstats__l">lane closures completed</span></li>
+        <li><b><span data-countup>35,017</span></b><span class="hstats__l">customers served</span></li>
+        <li><b><span data-countup>3.1</span>M</b><span class="hstats__l">cones sold</span></li>
+      </ul>
       <ul class="why__grid">
         {[
           { h: 'Union crews', p: 'Trained, ATSSA-certified flaggers and laborers on every job.', ico: 'M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z M8.5 12l2.4 2.4L15.5 9.8' },
@@ -289,41 +276,16 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
   /* Conner prompt chips */
   document.querySelectorAll('[data-ask]').forEach((b) => b.addEventListener('click', () => window.TSSChat?.ask(b.getAttribute('data-ask'))));
 
-  /* hero dispatch board: jobs move through their stages on a loop */
-  const dsp = document.querySelector('[data-dsp]');
-  if (dsp) {
-    const rows = [...dsp.querySelectorAll('.dsp__row')].map((el) => ({ el, steps: el.dataset.steps.split('|'), st: el.querySelector('[data-st]'), at: 0 }));
-    const paint = (r) => {
-      r.st.textContent = r.steps[r.at];
-      r.el.dataset.at = String(r.at);
-      r.el.style.setProperty('--p', String(r.at / (r.steps.length - 1)));
-    };
-    rows.forEach(paint);
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      rows.forEach((r) => { r.at = r.steps.length - 1; paint(r); });
-    } else {
-      let order = [];
-      const plan = () => { order = []; for (let s = 1; s < 3; s++) rows.forEach((r, i) => order.push(i)); };
-      plan();
-      let k = 0;
-      const tick = () => {
-        const live = rows.filter((r) => r.el.offsetParent !== null);
-        if (k < order.length) {
-          const r = rows[order[k++]];
-          if (r.el.offsetParent !== null && r.at < r.steps.length - 1) { r.at++; paint(r); setTimeout(tick, 850); }
-          else setTimeout(tick, 0);
-        } else {
-          dsp.classList.add('is-done');
-          setTimeout(() => {
-            dsp.classList.remove('is-done');
-            live.forEach((r) => { r.at = 0; paint(r); });
-            k = 0; plan();
-            setTimeout(tick, 900);
-          }, 2600);
-        }
-      };
-      setTimeout(tick, 900);
-    }
+  /* hero service tiles: highlight steps through what we do */
+  const svt = document.querySelector('[data-svt]');
+  if (svt && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const tiles = [...svt.querySelectorAll('.svt__tile')];
+    let i = 0, paused = false;
+    const show = () => { tiles.forEach((t, k) => t.classList.toggle('is-on', k === i)); };
+    show();
+    setInterval(() => { if (!paused) { i = (i + 1) % tiles.length; show(); } }, 2200);
+    svt.addEventListener('pointerenter', () => { paused = true; tiles.forEach((t) => t.classList.remove('is-on')); });
+    svt.addEventListener('pointerleave', () => { paused = false; show(); });
   }
 </script>
 
@@ -332,12 +294,12 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
   .hhero { position: relative; color: #fff; overflow: hidden; background: #8a0404; }
   .hhero__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 45%; }
   .hhero__scrim { position: absolute; inset: 0; background:
-    linear-gradient(90deg, rgba(122, 3, 3, .96) 0%, rgba(160, 5, 5, .86) 38%, rgba(160, 5, 5, .55) 64%, rgba(90, 2, 2, .45) 100%),
-    linear-gradient(0deg, rgba(60, 0, 0, .55) 0%, transparent 40%); }
-  .hhero__in { position: relative; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); align-items: center; gap: clamp(24px, 4vw, 64px); padding-block: clamp(44px, 5vw, 76px) clamp(36px, 4vw, 60px); }
+    linear-gradient(90deg, rgba(122, 3, 3, .93) 0%, rgba(150, 5, 5, .74) 36%, rgba(120, 4, 4, .28) 62%, rgba(40, 0, 0, .25) 100%),
+    linear-gradient(0deg, rgba(40, 0, 0, .45) 0%, transparent 35%); }
+  .hhero__in { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center; gap: clamp(24px, 5vw, 90px); min-height: min(640px, calc(100vh - 200px)); padding-block: clamp(48px, 6vw, 88px); }
   .hhero__k { color: var(--gold); font-size: clamp(.95rem, 1.1vw, 1.12rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 14px; }
   .hhero h1 { font-size: clamp(2.3rem, 4.4vw, 4.4rem); line-height: 1; letter-spacing: -.03em; font-variation-settings: 'wght' 790; margin: 0 0 18px; text-wrap: balance; }
-  .hhero__lede { color: #fde0db; font-size: clamp(1.05rem, 1.45vw, 1.32rem); line-height: 1.5; max-width: 50ch; margin: 0 0 28px; }
+  .hhero__lede { color: #fde0db; font-size: clamp(1.05rem, 1.45vw, 1.32rem); line-height: 1.5; max-width: 44ch; margin: 0 0 28px; text-wrap: balance; }
   .hhero__cta { display: flex; flex-wrap: wrap; gap: 14px; }
 
   .hbtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; padding: 16px 30px 15px; border-radius: 12px; font-size: 1.1rem; font-variation-settings: 'wght' 680; text-decoration: none; white-space: nowrap; transition: background .15s, color .15s, border-color .15s, translate .15s, box-shadow .15s; }
@@ -352,42 +314,24 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
   .hbtn--outline { border: 2px solid var(--line-dark); color: var(--ink); background: #fff; }
   .hbtn--outline:hover { border-color: var(--ink); }
 
-  /* dispatch board */
-  .hhero__art { display: grid; place-items: center; }
-  .dsp { position: relative; width: min(440px, 100%); background: rgba(255, 255, 255, .97); color: var(--ink); border-radius: 18px; padding: 18px 20px 0; box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .6); overflow: hidden; animation: dspbob 7s ease-in-out infinite; }
-  @keyframes dspbob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
-  .dsp__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 2px solid var(--haze-2); }
-  .dsp__head b { display: block; font-size: 1.06rem; font-variation-settings: 'wght' 740; }
-  .dsp__head small { color: var(--steel); font-size: .82rem; }
-  .dsp__live { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px 5px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-size: .78rem; font-variation-settings: 'wght' 780; letter-spacing: .08em; text-transform: uppercase; }
-  .dsp__live i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: livepulse 1.4s ease-out infinite; }
-  @keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(182, 6, 6, .55); } 100% { box-shadow: 0 0 0 9px rgba(182, 6, 6, 0); } }
-  .dsp__row { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 12px; padding: 12px 0 14px; border-bottom: 1px solid var(--haze-2); }
-  .dsp__ico { grid-row: span 2; width: 38px; height: 38px; border-radius: 10px; background: var(--haze); display: grid; place-items: center; color: var(--ink-2); transition: background .3s, color .3s; }
-  .dsp__ico svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
-  .dsp__row[data-at="2"] .dsp__ico { background: #e3f5ea; color: #1d9e4b; }
-  .dsp__txt { display: grid; line-height: 1.25; min-width: 0; }
-  .dsp__txt b { font-size: .95rem; font-variation-settings: 'wght' 680; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dsp__txt small { color: var(--steel); font-size: .8rem; }
-  .dsp__st { justify-self: end; padding: 5px 10px 4px; border-radius: 999px; font-size: .76rem; font-variation-settings: 'wght' 740; letter-spacing: .02em; white-space: nowrap; background: var(--haze-2); color: var(--steel); transition: background .3s, color .3s; }
-  .dsp__row[data-at="1"] .dsp__st { background: #fff1c9; color: #8a5a00; }
-  .dsp__row[data-at="2"] .dsp__st { background: #1d9e4b; color: #fff; }
-  .dsp__bar { grid-column: 2 / -1; height: 5px; border-radius: 3px; background: var(--haze-2); overflow: hidden; }
-  .dsp__bar i { display: block; height: 100%; width: calc(8% + var(--p, 0) * 92%); border-radius: 3px; background: linear-gradient(90deg, #f5b800, #1d9e4b); transition: width .7s cubic-bezier(.3, .8, .3, 1); }
-  .dsp__road { position: relative; height: 46px; margin: 0 -20px; background: #2a2e33 repeating-linear-gradient(90deg, #f5b800 0 26px, transparent 26px 52px) 0 50% / 100% 3px no-repeat; }
-  .dsp__truck { position: absolute; bottom: 6px; left: -70px; width: 64px; animation: truck 7.5s linear infinite; }
-  @keyframes truck { to { left: calc(100% + 10px); } }
-  .dsp.is-done .dsp__live { background: #1d9e4b; color: #fff; }
-  .dsp.is-done .dsp__live i { background: #fff; }
+  /* service tiles */
+  .svt { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-self: center; justify-self: end; width: min(100%, 500px); }
+  .svt__tile { display: grid; grid-template-rows: 96px auto; gap: 8px; padding: 14px 16px 16px; border-radius: 18px; text-decoration: none; color: #fff; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .28); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: background .35s ease, color .35s ease, translate .35s ease, box-shadow .35s ease, border-color .35s ease; }
+  .svt__img { display: grid; place-items: center; }
+  .svt__img img, .svt__img svg { max-height: 88px; max-width: 88%; object-fit: contain; filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .3)); transition: scale .35s ease; }
+  .svt__txt { display: grid; gap: 2px; }
+  .svt__txt b { font-size: 1.12rem; font-variation-settings: 'wght' 760; letter-spacing: -.01em; }
+  .svt__txt small { font-size: .84rem; line-height: 1.35; color: #fde0db; transition: color .35s ease; }
+  .svt__tile.is-on, .svt__tile:hover { background: #fff; color: var(--ink); border-color: #fff; translate: 0 -6px; box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .55); }
+  .svt__tile.is-on small, .svt__tile:hover small { color: var(--steel); }
+  .svt__tile.is-on b, .svt__tile:hover b { color: var(--red); }
+  .svt__tile.is-on .svt__img img, .svt__tile.is-on .svt__img svg, .svt__tile:hover .svt__img img, .svt__tile:hover .svt__img svg { scale: 1.08; }
 
-  /* stats band inside hero */
-  .hhero__stats { position: relative; border-top: 1px solid rgba(255, 255, 255, .18); background: rgba(70, 0, 0, .35); backdrop-filter: blur(6px); }
-  .hstats { display: grid; grid-template-columns: repeat(5, 1fr); list-style: none; margin: 0 auto; padding-block: 20px; gap: 16px; }
-  .hstats li { display: grid; gap: 2px; padding-left: 18px; border-left: 2px solid rgba(245, 184, 0, .7); }
-  .hstats b { font-size: clamp(1.6rem, 2.3vw, 2.3rem); line-height: 1.05; font-variation-settings: 'wght' 780; letter-spacing: -.02em; }
-  .hstats__l { color: #fbd2cc; font-size: .9rem; }
-
-  @media (prefers-reduced-motion: reduce) { .dsp, .dsp__truck, .dsp__live i { animation: none; } }
+  /* stats (now in the why band) */
+  .hstats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); list-style: none; margin: 0; padding: 0 0 8px; gap: 16px; border-bottom: 1px solid rgba(255, 255, 255, .22); padding-bottom: 28px; }
+  .hstats li { display: grid; gap: 2px; padding-left: 18px; border-left: 2px solid rgba(245, 184, 0, .8); }
+  .hstats b { font-size: clamp(1.8rem, 2.8vw, 2.7rem); line-height: 1.05; font-variation-settings: 'wght' 780; letter-spacing: -.02em; }
+  .hstats__l { color: #fbd2cc; font-size: .92rem; }
 
   /* =================== SHARED SECTION HEAD =================== */
   .shead { display: flex; justify-content: space-between; align-items: end; gap: 24px 48px; flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 36px); }
@@ -478,7 +422,8 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
 
   /* =================== WHY =================== */
   .why { margin-top: clamp(56px, 6vw, 84px); background: radial-gradient(120% 170% at 88% -30%, #e13a1a 0%, #b60606 42%, #8a0404 100%); color: #fff; }
-  .why__in { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 2fr); gap: clamp(28px, 4vw, 64px); align-items: center; padding-block: clamp(48px, 5.5vw, 76px); }
+  .why__in { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 2fr); gap: 32px clamp(28px, 4vw, 64px); align-items: center; padding-block: clamp(48px, 5.5vw, 76px); }
+  .why__in .hstats { order: -1; }
   .why__k { color: var(--gold); font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; font-variation-settings: 'wght' 720; margin: 0 0 10px; }
   .why__head h2 { font-size: clamp(1.8rem, 2.6vw, 2.5rem); line-height: 1.08; letter-spacing: -.02em; margin: 0; }
   .why__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; list-style: none; margin: 0; padding: 0; }
@@ -513,35 +458,27 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
   @media (max-width: 1180px) {
     .favs__grid { grid-template-columns: repeat(4, 1fr); }
     .favs__grid > :global(.reveal:nth-child(5)) { display: none; }
-    .hstats { grid-template-columns: repeat(3, 1fr); row-gap: 14px; }
-    .hstats li:nth-child(n+4) { display: none; }
     .trust { flex-direction: column; align-items: flex-start; gap: 10px; }
     .trust__list { justify-content: flex-start; }
   }
   @media (max-width: 920px) {
-    .hhero__in { grid-template-columns: 1fr; padding-block: 30px 30px; gap: 22px; }
+    .hhero__in { grid-template-columns: 1fr; min-height: 0; padding-block: 32px 28px; gap: 22px; }
+    .hhero__scrim { background: linear-gradient(180deg, rgba(122, 3, 3, .9) 0%, rgba(140, 5, 5, .82) 60%, rgba(90, 2, 2, .7) 100%); }
+    .svt { grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 560px; justify-self: center; }
+    .svt__tile { grid-template-rows: 46px auto; gap: 6px; padding: 10px 4px 9px; border-radius: 12px; text-align: center; }
+    .svt__img img, .svt__img svg { max-height: 42px; max-width: 80%; }
+    .svt__txt b { font-size: .74rem; letter-spacing: 0; line-height: 1.15; }
+    .svt__txt small { display: none; }
+    .svt__tile.is-on, .svt__tile:hover { translate: 0 -3px; }
+    .hstats { grid-template-columns: repeat(2, 1fr); row-gap: 18px; padding-bottom: 22px; }
+    .hstats b { font-size: 1.7rem; }
+    .hstats__l { font-size: .82rem; }
     .hhero__copy { text-align: center; }
     .hhero h1 { font-size: clamp(1.9rem, 8.4vw, 2.6rem); margin-bottom: 10px; }
     .hhero__lede { margin-inline: auto; margin-bottom: 18px; text-wrap: balance; font-size: 1rem; }
     .hhero__k { font-size: .78rem; margin-bottom: 8px; }
     .hhero__cta { justify-content: center; gap: 10px; }
     .hbtn { flex: 1 1 0; min-height: 48px; padding: 12px 12px 11px; font-size: .98rem; }
-    .dsp { width: 100%; max-width: 440px; padding: 13px 15px 0; }
-    .dsp__row--x { display: none; }
-    .dsp__row { padding: 9px 0 11px; gap: 3px 10px; }
-    .dsp__ico { width: 32px; height: 32px; }
-    .dsp__ico svg { width: 18px; height: 18px; }
-    .dsp__txt b { font-size: .86rem; }
-    .dsp__txt small { font-size: .74rem; }
-    .dsp__st { font-size: .7rem; padding: 4px 8px 3px; }
-    .dsp__road { height: 38px; margin: 0 -15px; }
-    .dsp__truck { width: 54px; }
-    .hstats { grid-template-columns: repeat(2, 1fr); padding-block: 16px; }
-    .hstats li:nth-child(n+4) { display: grid; }
-    .hstats li:nth-child(5) { display: none; }
-    .hstats li { padding-left: 12px; }
-    .hstats b { font-size: 1.5rem; }
-    .hstats__l { font-size: .8rem; }
     .svc__grid { grid-template-columns: 1fr; gap: 14px; }
     .svc__card { min-height: 250px; }
     .favs__grid { grid-template-columns: repeat(3, 1fr); }
