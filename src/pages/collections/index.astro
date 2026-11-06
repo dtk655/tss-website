@@ -261,6 +261,7 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
   /* animated job sheet */
   .job { position: relative; width: min(390px, 100%); background: #fff; border-radius: 16px; box-shadow: 0 40px 80px -24px rgba(0, 0, 0, .5); padding: 16px 20px 18px; rotate: -2deg; animation: jobbob 6s ease-in-out infinite; }
   @keyframes jobbob { 0%, 100% { translate: 0 0; rotate: -2deg; } 50% { translate: 0 -10px; rotate: -1.2deg; } }
+  @keyframes jobbobm { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
   .job__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 2px solid var(--haze-2); padding-bottom: 14px; margin-bottom: 8px; }
   .job__head b { display: block; color: var(--ink); font-size: 1.04rem; font-variation-settings: 'wght' 720; }
   .job__head small { color: var(--steel); font-size: .85rem; }
@@ -375,14 +376,16 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     .perks__in { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 920px) {
-    .phero__in { grid-template-columns: 1fr; padding-block: 24px 26px; gap: 16px; }
+    .phero__in { grid-template-columns: 1fr; padding-block: 24px 30px; gap: 18px; }
+    .phero__copy { text-align: center; }
     .phero h1 { font-size: 1.7rem; margin-bottom: 10px; }
-    .phero__lede { margin-bottom: 0; }
+    .phero__lede { margin-bottom: 0; margin-inline: auto; }
     .phero__k { margin-bottom: 8px; font-size: .8rem; }
     .crumbs { display: none; }
     .phero__chips { display: none; }
     .phero__art { order: 2; min-height: 0; margin-top: 2px; }
-    .job { rotate: -1deg; width: min(300px, 100%); padding: 12px 15px 14px; justify-self: start; }
+    .phero__glow { width: 110%; }
+    .job { rotate: 0deg; width: 100%; max-width: 420px; padding: 13px 16px 15px; justify-self: center; animation: jobbobm 6s ease-in-out infinite; }
     .job__head { padding-bottom: 9px; margin-bottom: 4px; }
     .job__head b { font-size: .9rem; }
     .job__head small { font-size: .76rem; }

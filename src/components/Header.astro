@@ -56,10 +56,14 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
         </div>
       </div>
       <div class="search" data-search>
-        <input type="search" placeholder="Search cones, barricades, signs, rentals…" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="search-results" />
-        <span class="search__btn" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        <span class="search__coney" aria-hidden="true">
+          <svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg>
         </span>
+        <input type="search" placeholder="Ask Conner anything — products, prices, quotes…" aria-label="Ask Conner or search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="search-results" />
+        <span class="search__ai" aria-hidden="true">AI</span>
+        <button type="button" class="search__btn" data-ask-send aria-label="Ask Conner">
+          <svg viewBox="0 0 24 24"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
         <div class="search__panel" id="search-results" role="listbox" hidden data-search-panel></div>
       </div>
       <div class="hdr__act">
@@ -81,10 +85,13 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
     </div>
     <div class="msearch" data-msearch>
       <div class="wrap"><div class="search search--mobile" data-search>
-        <input type="search" placeholder="Search cones, barricades, signs…" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="msearch-results" />
-        <span class="search__btn" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        <span class="search__coney" aria-hidden="true">
+          <svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg>
         </span>
+        <input type="search" placeholder="Ask Conner or search products…" aria-label="Ask Conner or search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="msearch-results" />
+        <button type="button" class="search__btn" data-ask-send aria-label="Ask Conner">
+          <svg viewBox="0 0 24 24"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
         <div class="search__panel" id="msearch-results" role="listbox" hidden data-search-panel></div>
       </div></div>
     </div>
@@ -156,22 +163,24 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   document.querySelectorAll('[data-search]').forEach((root) => {
     const input = root.querySelector('[data-search-input]');
     const panel = root.querySelector('[data-search-panel]');
-    let items = [], active = -1;
+    let active = -1;
     const close = () => { panel.hidden = true; input.setAttribute('aria-expanded', 'false'); active = -1; };
+    const ask = () => {
+      const q = input.value.trim();
+      close();
+      if (window.TSSChat) { q ? window.TSSChat.ask(q) : window.TSSChat.open(); input.value = ''; }
+      else location.href = '/pages/request-a-quote';
+    };
+    const go = (row) => { row.hasAttribute('data-ask-row') ? ask() : location.href = row.getAttribute('href'); };
     const render = () => {
       const q = input.value.trim().toLowerCase();
       if (!q || !idx) { close(); return; }
       const cats = idx.cats.map((c) => [score(c.t, q), c]).filter(([s]) => s).sort((a, b) => b[0] - a[0]).slice(0, 3);
       const prods = idx.prods.map((p) => [score(p.t, q), p]).filter(([s]) => s).sort((a, b) => b[0] - a[0]).slice(0, 6);
-      items = [...cats.map(([, c]) => ({ href: '/collections/' + c.h })), ...prods.map(([, p]) => ({ href: '/products/' + p.h }))];
-      if (!items.length) {
-        panel.innerHTML = '<div class="search__none">Nothing matches “' + esc(input.value.trim()) + '”.<br><a href="/pages/request-a-quote">Ask us for a quote</a> or call 908-561-4800.</div>';
-        panel.hidden = false; input.setAttribute('aria-expanded', 'true');
-        return;
-      }
-      let html = '';
-      if (cats.length) html += '<p class="search__h">Categories</p>' + cats.map(([, c], i) => `<a role="option" data-i="${i}" class="search__row search__row--cat" href="/collections/${c.h}"><span class="search__cathumb"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>${mark(c.t, q)}</span><small>${c.n}</small></a>`).join('');
-      if (prods.length) html += '<p class="search__h">Products</p>' + prods.map(([, p], i) => `<a role="option" data-i="${cats.length + i}" class="search__row" href="/products/${p.h}">${p.i ? `<img src="${p.i}" alt="" loading="lazy">` : '<span class="search__cathumb"></span>'}<span>${mark(p.t, q)}</span><small>${p.r ? 'Rental' : p.pr != null ? fmt(p.pr) : ''}</small></a>`).join('');
+      let html = `<button type="button" class="search__row search__row--ask" data-ask-row role="option"><span class="search__askthumb"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z M18.5 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z" fill="currentColor"/></svg></span><span>Ask Conner: “${esc(input.value.trim())}”</span><small>AI assistant</small></button>`;
+      if (cats.length) html += '<p class="search__h">Categories</p>' + cats.map(([, c]) => `<a role="option" class="search__row search__row--cat" href="/collections/${c.h}"><span class="search__cathumb"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>${mark(c.t, q)}</span><small>${c.n}</small></a>`).join('');
+      if (prods.length) html += '<p class="search__h">Products</p>' + prods.map(([, p]) => `<a role="option" class="search__row" href="/products/${p.h}">${p.i ? `<img src="${p.i}" alt="" loading="lazy">` : '<span class="search__cathumb"></span>'}<span>${mark(p.t, q)}</span><small>${p.r ? 'Rental' : p.pr != null ? fmt(p.pr) : ''}</small></a>`).join('');
+      if (!cats.length && !prods.length) html += '<div class="search__none">No product matches — Conner can still help, or <a href="/pages/request-a-quote">ask us for a quote</a> / call 908-561-4800.</div>';
       panel.innerHTML = html;
       panel.hidden = false; input.setAttribute('aria-expanded', 'true'); active = -1;
     };
@@ -186,10 +195,13 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
         rows.forEach((r, i) => r.classList.toggle('is-active', i === active));
         rows[active].scrollIntoView({ block: 'nearest' });
       } else if (e.key === 'Enter') {
-        if (active >= 0 && rows[active]) { e.preventDefault(); location.href = rows[active].href; }
-        else if (rows[0]) { e.preventDefault(); location.href = rows[0].href; }
+        e.preventDefault();
+        if (!panel.hidden && active >= 0 && rows[active]) go(rows[active]);
+        else ask();
       } else if (e.key === 'Escape') close();
     });
+    panel.addEventListener('click', (e) => { const r = e.target.closest('[data-ask-row]'); if (r) ask(); });
+    root.querySelector('[data-ask-send]')?.addEventListener('click', ask);
     document.addEventListener('click', (e) => { if (!root.contains(e.target)) close(); });
   });
 </script>
@@ -241,7 +253,7 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   /* ---------- search bar (always visible, commerce-style) ---------- */
   .search { position: relative; flex: 1; min-width: 0; max-width: 640px; height: 50px; }
   .search input {
-    width: 100%; height: 100%; padding: 12px 56px 11px 20px;
+    width: 100%; height: 100%; padding: 12px 84px 11px 52px;
     border: 1.5px solid var(--line-dark); border-radius: 999px; background: var(--haze);
     font-size: .98rem; color: var(--ink);
     transition: background .15s, border-color .15s, box-shadow .15s;
@@ -250,7 +262,11 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .search input:hover { background: var(--haze-2); }
   .search input:focus { outline: none; background: #fff; border-color: var(--ink); box-shadow: var(--shadow-m); }
   .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
-  .search__btn { position: absolute; right: 5px; top: 5px; bottom: 5px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--red); color: #fff; pointer-events: none; }
+  .search__coney { position: absolute; left: 16px; top: 50%; translate: 0 -50%; width: 25px; height: 29px; pointer-events: none; }
+  .search__coney svg { width: 100%; height: 100%; display: block; }
+  .search__ai { position: absolute; right: 52px; top: 50%; translate: 0 -50%; padding: 3px 7px 2px; border-radius: 6px; background: var(--gold); color: #3a2c00; font-size: .68rem; letter-spacing: .06em; font-variation-settings: 'wght' 800; pointer-events: none; }
+  .search__btn { position: absolute; right: 5px; top: 5px; bottom: 5px; aspect-ratio: 1; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--red); color: #fff; cursor: pointer; transition: background .15s, scale .15s; }
+  .search__btn:hover { background: var(--red-press); scale: 1.06; }
   .search__btn svg { width: 18px; height: 18px; }
   .search__panel { position: absolute; top: calc(100% + 10px); left: 0; right: 0; max-height: min(66vh, 540px); overflow: auto; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow-l); padding: 8px; z-index: 59; }
   .msearch { display: none; border-top: 1px solid var(--line); padding-block: 10px; }
@@ -306,13 +322,18 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   @media (min-width: 1011px) { .mnav { display: none !important; } }
 </style>
 <style is:global>
+  .search__row--ask { width: 100%; border: 0; background: var(--red-tint); font: inherit; cursor: pointer; text-align: left; margin-bottom: 4px; }
+  .search__row--ask:hover, .search__row--ask.is-active { background: #f6dede; }
+  .search__askthumb { width: 40px; height: 40px; border-radius: 7px; background: var(--red); color: #fff; display: grid; place-items: center; flex: none; }
+  .search__askthumb svg { width: 20px; height: 20px; }
+  .search__row--ask > span:not(.search__askthumb) { color: var(--red); font-variation-settings: 'wght' 680 !important; }
   .search__h { margin: 6px 10px 4px; font-size: .78rem; letter-spacing: .04em; color: var(--steel); font-variation-settings: 'wght' 680; text-transform: uppercase; }
   .search__row { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 9px; text-decoration: none; }
   .search__row:hover, .search__row.is-active { background: var(--haze); }
   .search__row img { width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--haze-2); border-radius: 7px; background: #fff; flex: none; }
   .search__cathumb { width: 40px; height: 40px; border-radius: 7px; background: var(--haze); color: var(--steel); display: grid; place-items: center; flex: none; }
   .search__cathumb svg { width: 18px; height: 18px; }
-  .search__row > span:not(.search__cathumb) { flex: 1; font-size: .95rem; font-variation-settings: 'wght' 580; line-height: 1.3; color: var(--ink); }
+  .search__row > span:not(.search__cathumb):not(.search__askthumb) { flex: 1; font-size: .95rem; font-variation-settings: 'wght' 580; line-height: 1.3; color: var(--ink); }
   .search__row mark { background: none; color: var(--red); font-variation-settings: 'wght' 720; }
   .search__row small { color: var(--steel); font-size: .85rem; white-space: nowrap; }
   .search__none { padding: 16px 14px; color: var(--steel); font-size: .95rem; line-height: 1.5; }
