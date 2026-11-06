@@ -153,66 +153,6 @@ const faq = [
     </div>
   </section>
 
-  <section class="section section--dark lc-anim" data-lc-anim>
-    <div class="wrap">
-      <h2>How a closure goes in</h2>
-      <p class="lede">Every setup follows the same discipline: warn traffic early, move it over gradually, protect the crew, and close it all out clean.</p>
-    </div>
-    <div class="lc-roadwrap"><svg class="lc-road" viewBox="0 0 1500 320" role="img" aria-label="Top-down diagram of a right lane closure: advance warning signs, a taper of cones guiding traffic left, an arrow board, a crash truck buffer, then the protected work area.">
-      <defs>
-        <pattern id="lcHatch" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <rect width="14" height="14" fill="#33383e" /><rect width="6" height="14" fill="#3d434a" />
-        </pattern>
-        <g id="lcCone"><circle r="8" fill="#f26a1b" /><circle r="4.6" fill="#fff" /><circle r="2.6" fill="#f26a1b" /></g>
-      </defs>
-      <rect width="1500" height="320" fill="#24282d" />
-      <rect y="60" width="1500" height="200" fill="#2e3338" />
-      <line x1="0" y1="60" x2="1500" y2="60" stroke="#f5b800" stroke-width="5" />
-      <line x1="0" y1="260" x2="1500" y2="260" stroke="#f7f7f2" stroke-width="5" />
-      <line x1="0" y1="160" x2="1500" y2="160" stroke="#f7f7f2" stroke-width="4" stroke-dasharray="44 66" opacity=".9" />
-      <!-- stage 1: advance warning signs on the shoulder -->
-      {[90, 240, 390].map((x, i) => (
-        <g transform={`translate(${x} 288)`}><g class="lc-s lc-s1" style={`--d:${i * 120}ms`}>
-          <rect x="-15" y="-15" width="30" height="30" transform="rotate(45)" fill="#f26a1b" stroke="#16181b" stroke-width="2" />
-          <rect x="-2.5" y="14" width="5" height="16" fill="#c5c9cf" />
-        </g></g>
-      ))}
-      <!-- stage 2: taper -->
-      {Array.from({ length: 12 }, (_, i) => (
-        <use href="#lcCone" class="lc-s lc-s2" style={`--d:${360 + i * 70}ms`} x={520 + i * 26} y={252 - i * 7.6} />
-      ))}
-      <g transform="translate(805 200)"><g class="lc-s lc-s2" style="--d:1200ms">
-        <rect width="64" height="48" rx="4" fill="#16181b" />
-        <path class="lc-chev" d="M12 24h30M34 13l11 11-11 11" stroke="#f5b800" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-      </g></g>
-      <!-- stage 3: buffer + TMA -->
-      {Array.from({ length: 5 }, (_, i) => (
-        <use href="#lcCone" class="lc-s lc-s3" style={`--d:${1300 + i * 70}ms`} x={880 + i * 44} y={164} />
-      ))}
-      <g transform="translate(1065 180)"><g class="lc-s lc-s3" style="--d:1600ms">
-        <rect width="92" height="52" rx="5" fill="#f7f7f2" />
-        <rect x="64" y="6" width="24" height="40" rx="3" fill="#d9d7d0" />
-        <rect x="-22" y="4" width="24" height="44" rx="3" fill="#16181b" />
-        <path d="M-22 10h24v7h-24zM-22 26h24v7h-24zM-22 42h24v6h-24z" fill="#f5b800" />
-      </g></g>
-      <!-- stage 4: work area -->
-      <g class="lc-s lc-s4" style="--d:1800ms">
-        <rect x="1190" y="170" width="280" height="76" fill="url(#lcHatch)" />
-        {Array.from({ length: 6 }, (_, i) => <use href="#lcCone" x={1200 + i * 52} y={164} />)}
-        <g transform="translate(1270 190)"><rect width="110" height="40" rx="5" fill="#f26a1b" /><rect x="78" y="4" width="28" height="32" rx="3" fill="#d9d7d0" /></g>
-      </g>
-      <!-- stage labels -->
-      <g class="lc-lbl" font-family="Archivo Variable, Archivo, sans-serif" font-size="19" font-weight="600" fill="#c3c8cd">
-        <text x="240" y="40" text-anchor="middle">1. Advance warning</text>
-        <text x="670" y="40" text-anchor="middle">2. Taper and arrow board</text>
-        <text x="990" y="40" text-anchor="middle">3. Buffer and crash truck</text>
-        <text x="1330" y="40" text-anchor="middle">4. Protected work area</text>
-      </g>
-    </svg></div>
-    <div class="wrap lc-anim__foot">
-      <p>Want this planned for your road? <a class="textlink" href="/tools/work-zone-builder">Try the work zone builder</a> or <button type="button" class="lc-coney" data-lc-ask="How does TSS set up a lane closure, and what equipment comes with a crew?">ask Conner a question about closures</button>.</p>
-    </div>
-  </section>
 
   <TmaTruck />
 
@@ -389,14 +329,6 @@ const faq = [
     }
   }
 
-  // One orchestrated reveal of the closure diagram when it scrolls into view.
-  const anim = document.querySelector('[data-lc-anim]');
-  if (anim && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    anim.classList.add('lc-wait');
-    new IntersectionObserver((es, io) => {
-      es.forEach((e) => { if (e.isIntersecting) { anim.classList.add('lc-go'); io.disconnect(); } });
-    }, { threshold: 0.3 }).observe(anim.querySelector('.lc-road'));
-  }
   // Conner buttons
   document.querySelectorAll('[data-lc-ask]').forEach((b) => b.addEventListener('click', () => window.TSSChat?.ask(b.dataset.lcAsk)));
   // Sticky mobile CTA: show after the hero, hide while the form is on screen.
@@ -552,18 +484,8 @@ const faq = [
   .lc-services h3::before { content: ''; position: absolute; left: 0; top: .18em; bottom: .18em; width: 5px; border-radius: 3px; background: var(--red); }
   .lc-services p { margin: 0; color: var(--ink-soft); font-size: .98rem; }
 
-  .lc-roadwrap { margin-top: 28px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .lc-road { display: block; width: 100%; min-width: 980px; height: auto; }
-  .lc-anim .lede { max-width: 58ch; }
-  .lc-anim__foot { margin-top: 14px; }
-  .lc-anim__foot p { margin: 0; color: #c5c9cf; }
   .lc-coney { background: none; border: 0; padding: 0; font: inherit; font-variation-settings: 'wght' 640; color: inherit; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; }
   .lc-coney:hover { color: #ff9d9d; }
-  .lc-wait .lc-s { opacity: 0; }
-  .lc-go .lc-s { animation: lcDrop .5s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: var(--d, 0ms); }
-  @keyframes lcDrop { from { opacity: 0; transform: translateY(-34px); } to { opacity: 1; transform: none; } }
-  .lc-go .lc-chev { animation: lcBlink 1s steps(2, jump-none) 2s infinite; }
-  @keyframes lcBlink { 50% { opacity: .15; } }
 
 
   .lc-badges { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px; }
