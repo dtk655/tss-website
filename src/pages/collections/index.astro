@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import QuickView from '../../components/QuickView.astro';
-import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../../lib/shopify.js';
+import { loadCatalog, PRODUCT_COLLECTIONS, img, money } from '../../lib/shopify.js';
 const { colByHandle, byHandle } = await loadCatalog();
 const cats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const blurbs = {
@@ -22,6 +22,14 @@ const hero = colByHandle.get('cones');
 const heroChips = ['cones', 'barricades', 'traffic-drums', 'sign-shop', 'lights', 'safety-gear'].map((h) => colByHandle.get(h)).filter(Boolean);
 const best = ['cone28inch', 'waterbarriertss590rparent', 'traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring', 'type-iii-breakaway-barricade-hi-intensity-left-stripes', 'class3safetyvest'].map((h) => byHandle.get(h)).filter(Boolean);
 const count = (c) => `${c.products.length} ${c.products.length === 1 ? 'product' : 'products'}`;
+const picks = cats
+  .map((c) => {
+    const pool = c.products.filter((p) => p.featuredImage && !p.isRental);
+    const p = pool[1] || pool[0];
+    return p ? { c, p } : null;
+  })
+  .filter(Boolean);
+const priceOf = (p) => (p.minPrice === p.maxPrice ? money(p.minPrice) : `From ${money(p.minPrice)}`);
 const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg` : `/cats/${h}.png`);
 ---
 <Layout title="Products" description="Traffic cones, barricades, WATERCADE barriers, drums, signs, lights, reflectors and safety gear. Buy online with nationwide shipping, or rent in NJ, NY, PA and CT.">
@@ -89,7 +97,7 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
       </div>
     </div>
     <div class="railwrap">
-      <div class="rail" data-rail>
+      <div class="rail" data-rail data-dir="1">
         {cats.map((c, i) => (
           <a href={`/collections/${c.handle}`} class="rcard" style={`--tint:${tints[c.handle] || '#ececea'}`} data-tilt>
             <img class="rcard__img" src={catImg(c.handle)} alt="" loading={i < 4 ? 'eager' : 'lazy'} />
@@ -104,7 +112,22 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
         ))}
       </div>
     </div>
-    <div class="wrap"><div class="railbar"><span data-rail-bar></span></div></div>
+    <div class="railwrap">
+      <div class="rail rail--prod" data-rail data-dir="-1" aria-label="Featured products by category">
+        {picks.map(({ c, p }) => (
+          <a href={`/products/${p.handle}`} class="rcard rcard--prod" style={`--tint:${tints[c.handle] || '#ececea'}`} data-tilt>
+            <span class="rcard__photo"><img src={img(p.featuredImage.url, 420)} alt="" loading="lazy" /></span>
+            <span class="rcard__body">
+              <span class="rcard__kick">{c.title}</span>
+              <b class="rcard__pt">{p.title}</b>
+              <span class="rcard__n"><strong>{priceOf(p)}</strong>
+                <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
   </section>
 
   <div class="perks" role="list">
@@ -213,13 +236,12 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     }
   }
 
-  /* category rail: endless auto-drift left, pauses on touch/hover/swipe, resumes 1s after */
-  const rail = document.querySelector('[data-rail]');
-  if (rail) {
-    const bar = document.querySelector('[data-rail-bar]');
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* category rails: endless auto-drift (row 1 left, row 2 right), pause on touch/hover/swipe, resume 1s after */
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rails = [...document.querySelectorAll('[data-rail]')].map((rail) => {
+    const dirn = +(rail.dataset.dir || 1);
     const originals = [...rail.children];
-    if (!reduce) {
+    if (!reduceMotion) {
       originals.forEach((c) => {
         const k = c.cloneNode(true);
         k.setAttribute('aria-hidden', 'true');
@@ -227,25 +249,25 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
         rail.appendChild(k);
       });
     }
-    const cycle = () => (reduce ? 0 : rail.children[originals.length].offsetLeft - rail.children[0].offsetLeft);
+    const cycle = () => (reduceMotion || !originals.length ? 0 : rail.children[originals.length].offsetLeft - rail.children[0].offsetLeft);
     let setW = cycle();
-    const step = () => (rail.querySelector('.rcard')?.getBoundingClientRect().width || 320) + 20;
-
-    const SPEED = 38; // px per second
+    const step = () => (rail.querySelector('.rcard')?.getBoundingClientRect().width || 300) + 18;
+    const SPEED = 34; // px per second
     let pos = 0, last = 0, running = false, userHold = false, visible = true, resumeT = 0, raf = 0;
     const wrap = (x) => (setW > 0 ? ((x % setW) + setW) % setW : x);
+    // row going right starts mid-loop so it has room to move
+    if (dirn < 0 && setW) rail.scrollLeft = setW / 2;
     const frame = (t) => {
       raf = 0;
       if (!running) return;
       const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
       last = t;
-      pos = wrap(pos + SPEED * dt);
+      pos = wrap(pos + dirn * SPEED * dt);
       rail.scrollLeft = pos;
-      upd();
       raf = requestAnimationFrame(frame);
     };
     const start = () => {
-      if (reduce || userHold || !visible || running) return;
+      if (reduceMotion || userHold || !visible || running || document.hidden) return;
       pos = wrap(rail.scrollLeft);
       rail.scrollLeft = pos;
       running = true; last = 0;
@@ -255,57 +277,37 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     const hold = () => { userHold = true; clearTimeout(resumeT); stop(); };
     const release = (ms = 1000) => { clearTimeout(resumeT); resumeT = setTimeout(() => { userHold = false; start(); }, ms); };
 
-    // touch / pen / mouse drag
     rail.addEventListener('pointerdown', hold);
     rail.addEventListener('pointerup', () => release());
     rail.addEventListener('pointercancel', () => release());
     rail.addEventListener('touchstart', hold, { passive: true });
     rail.addEventListener('touchend', () => release(), { passive: true });
-    // desktop hover pauses while the cursor is on the row
     rail.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hold(); });
     rail.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') release(); });
     rail.addEventListener('wheel', () => { hold(); release(); }, { passive: true });
     rail.addEventListener('focusin', hold);
     rail.addEventListener('focusout', () => release());
-    // user scrolling (swipe momentum, trackpad): keep paused until 1s after it settles
-    rail.addEventListener('scroll', () => {
-      if (!running) {
-        if (userHold) release();
-      }
-      upd();
-    }, { passive: true });
+    rail.addEventListener('scroll', () => { if (!running && userHold) release(); }, { passive: true });
 
-    // arrows: pause, glide, resume 1s later (with seamless wrap at either end)
-    const glide = (dir) => {
+    const glide = (d) => {
       hold();
       if (setW) {
-        if (dir < 0 && rail.scrollLeft - step() * 2 < 0) rail.scrollLeft += setW;
-        if (dir > 0 && rail.scrollLeft + step() * 2 > setW * 2 - rail.clientWidth) rail.scrollLeft -= setW;
+        if (d < 0 && rail.scrollLeft - step() * 2 < 0) rail.scrollLeft += setW;
+        if (d > 0 && rail.scrollLeft + step() * 2 > setW * 2 - rail.clientWidth) rail.scrollLeft -= setW;
       }
-      rail.scrollBy({ left: dir * step() * 2, behavior: 'smooth' });
+      rail.scrollBy({ left: d * step() * 2, behavior: 'smooth' });
       release(1400);
     };
-    document.querySelector('[data-rail-prev]')?.addEventListener('click', () => glide(-1));
-    document.querySelector('[data-rail-next]')?.addEventListener('click', () => glide(1));
-
-    function upd() {
-      if (!bar) return;
-      if (setW) bar.style.width = (8 + (wrap(rail.scrollLeft) / setW) * 92) + '%';
-      else {
-        const max = rail.scrollWidth - rail.clientWidth;
-        bar.style.width = max > 0 ? (8 + (rail.scrollLeft / max) * 92) + '%' : '100%';
-      }
-    }
-
-    // only run while the row is on screen and the tab is visible
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible ? start() : stop(); }, { threshold: 0.15 }).observe(rail);
     }
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-    addEventListener('resize', () => { setW = cycle(); pos = wrap(rail.scrollLeft); upd(); });
-    upd();
+    addEventListener('resize', () => { setW = cycle(); pos = wrap(rail.scrollLeft); });
     start();
-  }
+    return { glide };
+  });
+  document.querySelector('[data-rail-prev]')?.addEventListener('click', () => rails.forEach((r) => r.glide(-1)));
+  document.querySelector('[data-rail-next]')?.addEventListener('click', () => rails.forEach((r) => r.glide(1)));
 
   /* cursor tilt on rail cards */
   if (matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
@@ -384,28 +386,38 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
   @media (min-width: 1600px) { .rail { padding-inline: calc((100vw - var(--wrap)) / 2 + var(--gutter)); scroll-padding-inline: calc((100vw - var(--wrap)) / 2 + var(--gutter)); } }
   .rail::-webkit-scrollbar { display: none; }
   .rcard {
-    position: relative; flex: none; width: clamp(280px, 23vw, 350px);
-    display: flex; flex-direction: column; justify-content: flex-end; min-height: 350px;
+    position: relative; flex: none; width: clamp(240px, 18.5vw, 290px);
+    display: flex; flex-direction: column; justify-content: flex-end; min-height: 298px;
     background: linear-gradient(185deg, var(--tint, #ececea) 0%, #ffffff 72%);
     border: 1px solid var(--line); border-radius: 18px; text-decoration: none;
-    padding: 24px 26px 22px;
+    padding: 20px 22px 18px;
     transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
   }
   .rcard:hover { box-shadow: var(--shadow-l); border-color: var(--line-dark); }
-  .rcard__img { position: absolute; top: -48px; left: 50%; translate: -50% 0; height: 248px; max-width: 86%; object-fit: contain; transition: translate .25s ease, scale .25s ease; z-index: 1; }
-  .rcard::after { content: ''; position: absolute; top: 196px; left: 50%; translate: -50% 0; width: 62%; height: 30px; background: radial-gradient(closest-side, rgba(20, 23, 26, .24), transparent); }
+  .rcard__img { position: absolute; top: -40px; left: 50%; translate: -50% 0; height: 205px; max-width: 86%; object-fit: contain; transition: translate .25s ease, scale .25s ease; z-index: 1; }
+  .rcard::after { content: ''; position: absolute; top: 158px; left: 50%; translate: -50% 0; width: 62%; height: 30px; background: radial-gradient(closest-side, rgba(20, 23, 26, .24), transparent); }
   .rcard:hover .rcard__img { translate: -50% -12px; scale: 1.05; }
   .rcard__body { display: grid; gap: 5px; }
-  .rcard__body b { font-size: 1.32rem; font-variation-settings: 'wght' 740; letter-spacing: -.015em; color: var(--ink); }
+  .rcard__body b { font-size: 1.18rem; font-variation-settings: 'wght' 740; letter-spacing: -.015em; color: var(--ink); }
   .rcard:hover .rcard__body b { color: var(--red); }
   .rcard__body small { color: var(--steel); font-size: .9rem; line-height: 1.4; min-height: 2.5em; }
   .rcard__n { display: flex; align-items: center; gap: 6px; margin-top: 6px; color: var(--ink-2); font-size: .9rem; font-variation-settings: 'wght' 650; }
   .rcard__n svg { width: 15px; height: 15px; transition: translate .15s ease; }
   .rcard:hover .rcard__n { color: var(--red); }
   .rcard:hover .rcard__n svg { translate: 4px 0; }
-  .railbar { height: 3px; background: var(--haze-2); border-radius: 2px; overflow: hidden; }
-  .railbar span { display: block; height: 100%; width: 8%; background: var(--red); border-radius: 2px; transition: width .15s ease; }
+
+
+  /* row 2: specific products (image sits inside the card) */
+  .rail--prod { padding-top: 6px; margin-top: 0; }
+  .rcard--prod { justify-content: flex-start; min-height: 0; padding: 14px 16px 16px; gap: 12px; }
+  .rcard--prod::after { display: none; }
+  .rcard__photo { display: grid; place-items: center; height: 160px; border-radius: 12px; }
+  .rcard__photo img { max-width: 82%; max-height: 146px; object-fit: contain; mix-blend-mode: multiply; transition: scale .25s ease; }
+  .rcard--prod:hover .rcard__photo img { scale: 1.06; }
+  .rcard__kick { font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 720; }
+  .rcard__body .rcard__pt { font-size: .98rem; line-height: 1.3; font-variation-settings: 'wght' 660; letter-spacing: 0; min-height: 2.6em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .rcard--prod .rcard__n strong { color: var(--ink); font-size: 1rem; font-variation-settings: 'wght' 720; }
 
   /* ---------------- perks ---------------- */
   .perks { margin-top: clamp(36px, 4.5vw, 56px); border-block: 1px solid var(--line); background: var(--haze); }
@@ -492,9 +504,15 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     .perks__in { grid-template-columns: 1fr 1fr; gap: 10px; }
     .perks p > b + span { display: none; }
     .rail { gap: 14px; padding-top: 44px; padding-bottom: 18px; }
-    .rcard { width: min(56vw, 215px); min-height: 236px; padding: 16px 16px 14px; border-radius: 14px; }
-    .rcard__img { top: -30px; height: 150px; max-width: 80%; }
-    .rcard::after { top: 112px; height: 20px; }
+    .rcard { width: min(50vw, 190px); min-height: 212px; padding: 14px 14px 12px; border-radius: 14px; }
+    .rcard__img { top: -26px; height: 132px; max-width: 80%; }
+    .rcard::after { top: 98px; height: 18px; }
+    .rail--prod { gap: 14px; padding-top: 4px; }
+    .rcard--prod { min-height: 0; padding: 10px 12px 12px; gap: 8px; }
+    .rcard__photo { height: 118px; }
+    .rcard__photo img { max-height: 106px; }
+    .rcard__body .rcard__pt { font-size: .86rem; }
+    .rcard__kick { font-size: .66rem; }
     .rcard__body { gap: 3px; }
     .rcard__body b { font-size: 1.04rem; }
     .rcard__body small { font-size: .8rem; min-height: 2.4em; }
