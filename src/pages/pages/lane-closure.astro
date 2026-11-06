@@ -40,12 +40,12 @@ const agencies = [
   ['PennDOT', 'Untitled_design_30.png']
 ].map(([t, f]) => [t, CDN + f]);
 ---
-<Layout title="Lane closure services" description={`MUTCD-compliant lane closures with certified, experienced crews and ATSSA-certified flaggers in NJ, NY, PA, CT and DE. 10,000+ closures since ${2026 - YEARS}. Free closure plans and quotes.`} image={photos.job}>
+<Layout title="Lane closure services" description={`MUTCD-compliant lane closures with certified, experienced crews and ATSSA-certified flaggers in NJ, NY, PA, CT and DE. 25,000+ closures since ${2026 - YEARS}. Free closure plans and quotes.`} image={photos.job}>
   <section class="lch">
     <div class="wrap lch__in">
       <div class="lch__copy">
         <p class="lch__k">Lane closure division</p>
-        <h1>10,000+ closures. Zero shortcuts.</h1>
+        <h1>25,000+ closures. Zero shortcuts.</h1>
         <p class="lch__lede">Certified, experienced crews setting up MUTCD-compliant work zones across NJ, NY, PA, CT and DE.</p>
         <div class="lch__ways">
           <a href="/tools/lane-closure-plan" class="lway lway--solid">
@@ -62,23 +62,18 @@ const agencies = [
         <p class="lch__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
       </div>
 
-      <div class="cc" data-cc>
-        <div class="cc__head">
-          <span class="cc__title">Every TSS crew</span>
-          <span class="cc__status" data-cc-status><i></i><em>Checking credentials</em></span>
+      <div class="cx" data-cx>
+        <div class="cx__col">
+          <p class="cx__k"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M8.6 12l2.3 2.3 4.5-4.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Certified</p>
+          <p class="cx__num"><b>6</b><span>certifications on every crew</span></p>
+          <ul class="cx__logos">{certs.map(([t, src], i) => <li data-name={t}><img src={src} alt={t} width="44" height="44" /></li>)}</ul>
+          <p class="cx__cap" data-cap>{certs[0][0]}</p>
         </div>
-        <ul class="cc__list">
-          {certs.map(([t, src], i) => (
-            <li style={`--i:${i}`}>
-              <span class="cc__logo"><img src={src} alt="" width="40" height="40" /></span>
-              <b>{t}</b>
-              <span class="cc__chk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            </li>
-          ))}
-        </ul>
-        <div class="cc__exp">
-          <div class="cc__big"><b><span data-cc-count>10,000</span>+</b><span>closures for state agencies, authorities, towns and venues</span></div>
-          <ul class="cc__ag">{agencies.map(([t, src]) => <li title={t}><img src={src} alt={t} width="36" height="36" loading="lazy" /></li>)}</ul>
+        <div class="cx__col">
+          <p class="cx__k"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V9l8-5 8 5v10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 19v-5h6v5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg></i>Experienced</p>
+          <p class="cx__num"><b><span data-cx-count>25,000</span>+</b><span>closures by our crews</span></p>
+          <ul class="cx__logos">{agencies.map(([t, src]) => <li data-name={t}><img src={src} alt={t} width="44" height="44" loading="lazy" /></li>)}</ul>
+          <p class="cx__cap" data-cap>{agencies[0][0]}</p>
         </div>
       </div>
     </div>
@@ -86,7 +81,7 @@ const agencies = [
     <div class="lch__band">
       <ul class="wrap lch__stats">
         <li><b><span data-countup>25</span>+</b><span>years running lane closures</span></li>
-        <li><b><span data-countup>10,000</span>+</b><span>closures completed</span></li>
+        <li><b><span data-countup>25,000</span>+</b><span>closures completed</span></li>
         <li><b>7</b><span>state agencies &amp; authorities</span></li>
         <li><b>5</b><span>states covered</span></li>
       </ul>
@@ -121,34 +116,26 @@ const agencies = [
 </Layout>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-cc]').forEach((cc) => {
-    const rows = [...cc.querySelectorAll<HTMLElement>('.cc__list li')];
-    const status = cc.querySelector<HTMLElement>('[data-cc-status]')!;
-    const label = status.querySelector('em')!;
-    const count = cc.querySelector<HTMLElement>('[data-cc-count]')!;
-    cc.querySelectorAll<HTMLElement>('.cc__ag li').forEach((li, j) => li.style.setProperty('--j', String(j)));
-    const timers: number[] = [];
-    const later = (fn: () => void, ms: number) => { timers.push(window.setTimeout(fn, ms)); };
-    const finish = () => { rows.forEach((r) => r.classList.add('is-ok')); status.classList.add('is-ok'); label.textContent = 'Fully certified'; cc.classList.add('is-exp'); };
-    const reset = () => { rows.forEach((r) => r.classList.remove('is-ok')); status.classList.remove('is-ok'); label.textContent = 'Checking credentials'; cc.classList.remove('is-exp'); count.textContent = '0'; };
-    const run = () => {
-      reset();
-      rows.forEach((r, i) => later(() => r.classList.add('is-ok'), 400 + i * 420));
-      const done = 400 + rows.length * 420;
-      later(() => {
-        finish();
-        const t0 = performance.now(), D = 1300;
-        const tick = (now: number) => { const p = Math.min(1, (now - t0) / D); count.textContent = Math.round(10000 * (1 - Math.pow(1 - p, 3))).toLocaleString('en-US'); if (p < 1) requestAnimationFrame(tick); };
-        requestAnimationFrame(tick);
-      }, done);
-      later(run, done + 7000);
+  document.querySelectorAll<HTMLElement>('[data-cx]').forEach((cx) => {
+    const cols = [...cx.querySelectorAll<HTMLElement>('.cx__col')].map((c) => ({ items: [...c.querySelectorAll<HTMLElement>('.cx__logos li')], cap: c.querySelector<HTMLElement>('[data-cap]')! }));
+    const count = cx.querySelector<HTMLElement>('[data-cx-count]')!;
+    let step = 0, timer = 0, counted = false;
+    const show = () => cols.forEach(({ items, cap }) => {
+      const k = step % items.length;
+      items.forEach((li, j) => { li.classList.toggle('is-on', j === k); li.classList.toggle('is-seen', j <= k || step >= items.length); });
+      cap.classList.remove('is-in'); void cap.offsetWidth; cap.textContent = items[k].dataset.name || ''; cap.classList.add('is-in');
+    });
+    const countUp = () => {
+      if (counted) return; counted = true;
+      const t0 = performance.now(), D = 1500;
+      const tick = (now: number) => { const p = Math.min(1, (now - t0) / D); count.textContent = Math.round(25000 * (1 - Math.pow(1 - p, 3))).toLocaleString('en-US'); if (p < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
     };
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
-    let on = false;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { cols.forEach(({ items }) => items.forEach((li) => li.classList.add('is-seen'))); return; }
     new IntersectionObserver(([en]) => {
-      if (en.isIntersecting && !on) { on = true; run(); }
-      else if (!en.isIntersecting && on) { on = false; timers.forEach(clearTimeout); timers.length = 0; finish(); count.textContent = '10,000'; }
-    }, { threshold: 0.35 }).observe(cc);
+      if (en.isIntersecting && !timer) { countUp(); show(); timer = window.setInterval(() => { step++; show(); }, 1700); }
+      else if (!en.isIntersecting && timer) { clearInterval(timer); timer = 0; }
+    }, { threshold: 0.3 }).observe(cx);
   });
 </script>
 
@@ -210,7 +197,7 @@ const agencies = [
     .lch__stats b { font-size: 1.5rem; }
     .lch__stats li > span { font-size: .8rem; }
   }
-  @media (prefers-reduced-motion: reduce) { .cc__list li, .cc__chk, .cc__ag li { transition: none !important; } }
+  @media (prefers-reduced-motion: reduce) { .cx__logos li, .cx__cap { transition: none !important; animation: none !important; } }
 
   .lc-services { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0 32px; border-top: 3px solid var(--asphalt); }
   .lc-services li { padding: 18px 0 16px; border-bottom: 1px solid var(--concrete-dark); }
@@ -222,42 +209,32 @@ const agencies = [
   .lc-badges li { display: grid; gap: 12px; justify-items: center; text-align: center; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); padding: 22px 14px 18px; }
   .lc-badges img { width: 96px; height: 96px; object-fit: contain; }
   .lc-badges span { font-variation-settings: 'wght' 640; font-size: .92rem; line-height: 1.35; }
-  /* credentials card */
-  .cc { position: relative; background: #fff; color: var(--ink); border-radius: 22px; padding: 22px 22px 20px; box-shadow: 0 40px 70px -40px rgba(0,0,0,.65); text-align: left; }
-  .cc__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
-  .cc__title { white-space: nowrap; font-size: .84rem; letter-spacing: .1em; text-transform: uppercase; font-variation-settings: 'wght' 760; color: var(--red); }
-  .cc__status { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 5px; border-radius: 999px; background: #fff7e0; color: #7a5a00; font-size: .82rem; font-variation-settings: 'wght' 680; transition: background .3s, color .3s; }
-  .cc__status em { font-style: normal; }
-  .cc__status i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: ccBlink 1s ease-in-out infinite; }
-  .cc__status.is-ok { background: #e7f6ec; color: #157a39; }
-  .cc__status.is-ok i { background: #1d9e4b; animation: none; }
-  @keyframes ccBlink { 50% { opacity: .3; } }
-  .cc__list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
-  .cc__list li { display: grid; grid-template-columns: 40px 1fr 24px; align-items: center; gap: 10px; padding: 8px 0; opacity: .38; transition: opacity .35s; }
-  .cc__list li.is-ok { opacity: 1; }
-  .cc__logo { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); display: grid; place-items: center; overflow: hidden; background: #fff; }
-  .cc__logo img { width: 100%; height: 100%; object-fit: contain; }
-  .cc__list b { font-size: .92rem; line-height: 1.25; font-variation-settings: 'wght' 660; }
-  .cc__chk { width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line-dark); color: transparent; transition: background .25s, border-color .25s, color .25s, transform .3s cubic-bezier(.2,.8,.2,1.6); }
-  .cc__chk svg { width: 14px; height: 14px; }
-  .cc__list li.is-ok .cc__chk { background: #1d9e4b; border-color: #1d9e4b; color: #fff; transform: scale(1.12); }
-  .cc__exp { margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 12px; }
-  .cc__big { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px; }
-  .cc__big b { font-size: clamp(2rem, 3vw, 2.7rem); line-height: 1; letter-spacing: -.03em; color: var(--red); font-variation-settings: 'wght' 800; font-variant-numeric: tabular-nums; }
-  .cc__big > span { font-size: .9rem; color: var(--steel); line-height: 1.35; }
-  .cc__ag { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; }
-  .cc__ag li { width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: grid; place-items: center; overflow: hidden; opacity: 0; transform: scale(.6); transition: opacity .3s, transform .4s cubic-bezier(.2,.8,.2,1.5); transition-delay: calc(var(--j, 0) * 90ms); }
-  .cc__ag li img { width: 100%; height: 100%; object-fit: contain; }
-  .cc.is-exp .cc__ag li { opacity: 1; transform: none; }
-  @media (max-width: 1100px) { .cc { max-width: 720px; width: 100%; justify-self: center; box-sizing: border-box; } }
+  /* certified + experienced card */
+  .cx { display: grid; grid-template-columns: 1fr 1fr; background: #fff; color: var(--ink); border-radius: 20px; box-shadow: 0 40px 70px -40px rgba(0,0,0,.65); overflow: hidden; text-align: left; }
+  .cx__col { padding: 22px 24px 18px; min-width: 0; }
+  .cx__col + .cx__col { border-left: 1px solid var(--line); }
+  .cx__k { display: flex; align-items: center; gap: 8px; margin: 0; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; font-variation-settings: 'wght' 760; color: var(--red); }
+  .cx__k i { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--red-tint); }
+  .cx__k svg { width: 16px; height: 16px; }
+  .cx__num { display: grid; gap: 4px; margin: 12px 0 14px; }
+  .cx__num b { font-size: clamp(2rem, 2.8vw, 2.6rem); line-height: 1; letter-spacing: -.03em; font-variation-settings: 'wght' 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cx__num > span { font-size: .86rem; line-height: 1.3; color: var(--steel); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cx__logos { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
+  .cx__logos li { flex: 1 1 0; max-width: 46px; aspect-ratio: 1; border-radius: 10px; border: 1.5px solid var(--line); background: #fff; display: grid; place-items: center; overflow: hidden; opacity: .35; filter: grayscale(1); transition: opacity .35s, filter .35s, border-color .25s, transform .35s cubic-bezier(.2,.8,.2,1.5), box-shadow .25s; }
+  .cx__logos li.is-seen { opacity: 1; filter: none; }
+  .cx__logos li.is-on { border-color: var(--red); transform: translateY(-3px) scale(1.08); box-shadow: 0 8px 16px -8px rgba(182,6,6,.55); }
+  .cx__logos img { width: 100%; height: 100%; object-fit: contain; }
+  .cx__cap { margin: 12px 0 0; min-height: 1.3em; font-size: .88rem; font-variation-settings: 'wght' 650; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cx__cap.is-in { animation: cxCap .35s ease both; }
+  @keyframes cxCap { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 1100px) { .cx { max-width: 720px; width: 100%; justify-self: center; box-sizing: border-box; } }
   @media (max-width: 640px) {
-    .cc { order: 3; margin-top: 10px !important; padding: 18px 16px 16px; border-radius: 18px; }
-    .cc__title { font-size: .76rem; }
-    .cc__status { font-size: .76rem; padding: 5px 10px 4px; }
-    .cc__list { grid-template-columns: 1fr; gap: 0; }
-    .cc__list li { grid-template-columns: 34px 1fr 22px; padding: 6px 0; }
-    .cc__logo { width: 34px; height: 34px; }
-    .cc__ag { justify-content: space-between; }
-    .cc__ag li { width: 38px; height: 38px; }
+    .cx { order: 3; margin-top: 10px !important; grid-template-columns: 1fr; border-radius: 18px; }
+    .cx__col { padding: 16px 16px 14px; }
+    .cx__col + .cx__col { border-left: 0; border-top: 1px solid var(--line); }
+    .cx__num { margin: 8px 0 12px; grid-template-columns: auto 1fr; align-items: baseline; gap: 10px; }
+    .cx__num > span { white-space: normal; }
+    .cx__num b { font-size: 1.9rem; }
+    .cx__logos { justify-content: space-between; }
   }
 </style>
