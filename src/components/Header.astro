@@ -11,6 +11,15 @@ const nav = [
   { href: '/pages/custom-stenciling', label: 'Custom shop' },
   { href: '/pages/contact', label: 'Contact' }
 ];
+const icons = {
+  Products: 'M4.5 4.5h6v6h-6z M13.5 4.5h6v6h-6z M4.5 13.5h6v6h-6z M13.5 13.5h6v6h-6z',
+  Rentals: 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01',
+  'Lane closures': 'M10.4 3.5h3.2L18 18.5H6z M8.4 12h7.2 M4 20.5h16',
+  WATERCADE: 'M3 9h18v8H3z M7 9v8 M12 9v8 M17 9v8 M3 13h18',
+  'Planning tools': 'M4 20l5.5-5.5 M14 4l6 6-9.5 9.5-6-6z M12 9l3 3',
+  'Custom shop': 'M4 20c3 0 5-2 5-5l9-9a2.1 2.1 0 0 0-3-3l-9 9c-3 0-5 2-5 5 M13 6l5 5',
+  Contact: 'M4 5h16v11H9l-5 4z M8 10h8 M8 13h5'
+};
 const path = Astro.url.pathname.replace(/\.html$/, '');
 const current = (href) => (href === '/collections' ? path === '/collections' || (path.startsWith('/collections/') && !path.includes('rentals')) || path.startsWith('/products/') : path.startsWith(href));
 ---
@@ -106,20 +115,113 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
       <p class="hdr__tag">Ships nationwide · Rentals &amp; crews in NJ, NY, PA, CT</p>
     </div>
   </div>
-  <nav id="mnav" class="mnav" aria-label="Mobile" hidden>
-    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
-    <a href="/pages/request-a-quote" class="mnav__cta">Request a quote</a>
-    <a href="tel:+19085614800">Call 908-561-4800 (24/7)</a>
-  </nav>
+  <div class="mdrw" id="mnav" hidden data-mdrw>
+    <div class="mdrw__bg" data-mclose></div>
+    <aside class="mdrw__panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mdrw__top">
+        <a href="/" class="mdrw__logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo-420.png" alt="TSS" width="420" height="210" /></a>
+        <button type="button" class="mdrw__x" data-mclose aria-label="Close menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="mdrw__scroll">
+        <button type="button" class="mdrw__ask mdrw__in" style="--i:0" data-mask>
+          <span class="mdrw__askcone" aria-hidden="true"><svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg></span>
+          <span class="mdrw__asktxt"><b>Ask Conner</b><small>Products, prices, quotes — answered fast</small></span>
+          <span class="mdrw__ai">AI</span>
+        </button>
+        <nav class="mdrw__nav" aria-label="Mobile">
+          {nav.map((n, i) => n.mega ? (
+            <div class="mdrw__grp mdrw__in" style={`--i:${i + 1}`}>
+              <button type="button" class={`mdrw__link${current(n.href) ? ' is-cur' : ''}`} aria-expanded="false" aria-controls="mdrw-cats" data-macc>
+                <span class="mdrw__ico"><svg viewBox="0 0 24 24"><path d={icons[n.label]} /></svg></span>
+                <span class="mdrw__lbl">{n.label}</span>
+                <svg class="mdrw__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="mdrw__sub" id="mdrw-cats">
+                <div class="mdrw__subin">
+                  <div class="mdrw__cats">
+                    {megaCats.map((c) => (
+                      <a href={`/collections/${c.handle}`} class="mdrw__cat">
+                        <span class="mdrw__catimg"><img src={c.handle === 'cones' || c.handle === 'traffic-drums' ? `/cats/${c.handle}.svg` : `/cats/${c.handle}.png`} alt="" loading="lazy" /></span>
+                        <span>{c.title}</span>
+                      </a>
+                    ))}
+                  </div>
+                  <a href="/collections" class="mdrw__all">Browse all products
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <a href={n.href} class={`mdrw__link mdrw__in${current(n.href) ? ' is-cur' : ''}`} style={`--i:${i + 1}`}>
+              <span class="mdrw__ico"><svg viewBox="0 0 24 24"><path d={icons[n.label]} /></svg></span>
+              <span class="mdrw__lbl">{n.label}</span>
+              <svg class="mdrw__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          ))}
+        </nav>
+        <div class="mdrw__quick mdrw__in" style={`--i:${nav.length + 1}`}>
+          <a href="tel:+19085614800" class="mdrw__qa">
+            <span class="mdrw__qaico"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg></span>
+            <span><small>Call us 24/7</small><b>908-561-4800</b></span>
+          </a>
+          <a href="/pages/request-a-quote" class="mdrw__qa mdrw__qa--red">
+            <span class="mdrw__qaico"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6"/></svg></span>
+            <span><small>Products, rentals or crews</small><b>Build a quote</b></span>
+          </a>
+        </div>
+        <p class="mdrw__foot mdrw__in" style={`--i:${nav.length + 2}`}>Ships nationwide · Rentals &amp; crews in NJ, NY, PA and CT · Since 1971</p>
+      </div>
+    </aside>
+  </div>
 </header>
 <script>
+  /* mobile slide-in menu */
   const btn = document.querySelector('.menu-btn');
-  const m = document.getElementById('mnav');
-  btn?.addEventListener('click', () => {
-    const open = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!open));
-    if (m) m.hidden = open;
-  });
+  const drw = document.querySelector('[data-mdrw]');
+  if (btn && drw) {
+    let closeT = 0;
+    const chat = () => document.getElementById('tss-chat-assistant');
+    const open = () => {
+      clearTimeout(closeT);
+      drw.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => drw.classList.add('is-open')));
+      btn.setAttribute('aria-expanded', 'true');
+      document.documentElement.style.overflow = 'hidden';
+      const c = chat(); if (c) c.style.visibility = 'hidden';
+      setTimeout(() => drw.querySelector('.mdrw__x')?.focus(), 60);
+    };
+    const close = () => {
+      drw.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      document.documentElement.style.overflow = '';
+      const c = chat(); if (c) c.style.visibility = '';
+      closeT = setTimeout(() => { drw.hidden = true; }, 380);
+      btn.focus();
+    };
+    btn.addEventListener('click', () => (drw.classList.contains('is-open') ? close() : open()));
+    drw.querySelectorAll('[data-mclose]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drw.classList.contains('is-open')) close(); });
+    drw.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setTimeout(close, 50)));
+    drw.querySelector('[data-mask]')?.addEventListener('click', () => { close(); setTimeout(() => window.TSSChat?.open(), 250); });
+    const acc = drw.querySelector('[data-macc]');
+    acc?.addEventListener('click', () => {
+      const on = acc.getAttribute('aria-expanded') !== 'true';
+      acc.setAttribute('aria-expanded', String(on));
+      acc.closest('.mdrw__grp').classList.toggle('is-exp', on);
+    });
+    // swipe left on the panel to close
+    let sx = 0, sy = 0;
+    const panel = drw.querySelector('.mdrw__panel');
+    panel.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+    panel.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+      if (dx < -70 && Math.abs(dy) < 60) close();
+    }, { passive: true });
+    addEventListener('resize', () => { if (innerWidth > 1010 && drw.classList.contains('is-open')) close(); });
+  }
   const hdr = document.querySelector('.hdr');
   const onScroll = () => hdr.classList.toggle('is-stuck', window.scrollY > 56);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
@@ -294,10 +396,6 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .nav__item--mega.is-open .nav__chev { rotate: 180deg; }
   .hdr__tag { margin: 0; color: var(--steel); font-size: .86rem; white-space: nowrap; }
 
-  .mnav[hidden] { display: none; }
-  .mnav { background: #fff; padding: 6px var(--gutter) 20px; display: grid; border-top: 1px solid var(--line); box-shadow: var(--shadow-m); }
-  .mnav a { padding: 15px 2px 13px; text-decoration: none; font-variation-settings: 'wght' 640; font-size: 1.12rem; border-bottom: 1px solid var(--haze-2); color: var(--ink); }
-  .mnav__cta { color: var(--red); }
 
   @media (max-width: 1420px) { .hdr__tag { display: none; } }
   @media (max-width: 1230px) { .hdr__phonetxt { display: none; } .hdr__phone { gap: 0; } }
@@ -313,7 +411,73 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
     .hdr.is-stuck .logo__img { height: 60px; }
     .msearch { display: block; }
   }
-  @media (min-width: 1011px) { .mnav { display: none !important; } }
+  @media (min-width: 1011px) { .mdrw { display: none !important; } }
+
+  /* ---------- mobile drawer ---------- */
+  .mdrw { position: fixed; inset: 0; z-index: 90; }
+  .mdrw[hidden] { display: none; }
+  .mdrw__bg { position: absolute; inset: 0; background: rgba(20, 23, 26, .5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; transition: opacity .32s ease; }
+  .mdrw__panel { position: absolute; top: 0; bottom: 0; left: 0; width: min(88vw, 410px); display: flex; flex-direction: column; background: #fff; box-shadow: 30px 0 80px -30px rgba(0, 0, 0, .5); translate: -104% 0; transition: translate .38s cubic-bezier(.22, .9, .25, 1); }
+  .mdrw.is-open .mdrw__bg { opacity: 1; }
+  .mdrw.is-open .mdrw__panel { translate: 0 0; }
+  .mdrw__top { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 12px 18px; border-bottom: 1px solid var(--line); }
+  .mdrw__logo img { height: 52px; width: auto; display: block; }
+  .mdrw__x { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--haze); color: var(--ink); cursor: pointer; transition: background .15s, rotate .3s ease; }
+  .mdrw__x:hover { background: var(--haze-2); rotate: 90deg; }
+  .mdrw__x svg { width: 20px; height: 20px; }
+  .mdrw__scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); display: grid; gap: 14px; align-content: start; }
+
+  .mdrw__in { opacity: 0; translate: -18px 0; transition: opacity .35s ease, translate .4s cubic-bezier(.22, .9, .25, 1); transition-delay: 0s; }
+  .mdrw.is-open .mdrw__in { opacity: 1; translate: 0 0; transition-delay: calc(80ms + var(--i, 0) * 38ms); }
+
+  .mdrw__ask { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1.5px solid var(--line-dark); border-radius: 14px; background: var(--haze); font: inherit; text-align: left; cursor: pointer; transition: border-color .15s, background .15s; }
+  .mdrw__ask:hover { border-color: var(--ink); background: #fff; }
+  .mdrw__askcone { width: 30px; height: 35px; flex: none; }
+  .mdrw__askcone svg { width: 100%; height: 100%; display: block; }
+  .mdrw__asktxt { flex: 1; display: grid; line-height: 1.25; }
+  .mdrw__asktxt b { color: var(--ink); font-size: 1rem; font-variation-settings: 'wght' 720; }
+  .mdrw__asktxt small { color: var(--steel); font-size: .8rem; }
+  .mdrw__ai { padding: 3px 7px 2px; border-radius: 6px; background: var(--gold); color: #3a2c00; font-size: .68rem; letter-spacing: .06em; font-variation-settings: 'wght' 800; }
+
+  .mdrw__nav { display: grid; gap: 2px; }
+  .mdrw__link { display: flex; align-items: center; gap: 13px; width: 100%; padding: 11px 10px; border: 0; border-radius: 12px; background: none; font: inherit; text-align: left; text-decoration: none; color: var(--ink); cursor: pointer; transition: background .15s; }
+  .mdrw__link:hover, .mdrw__link:active { background: var(--haze); }
+  .mdrw__ico { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 11px; background: var(--haze); color: var(--ink-2); transition: background .2s, color .2s; }
+  .mdrw__ico svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+  .mdrw__link:hover .mdrw__ico, .mdrw__link.is-cur .mdrw__ico, .mdrw__grp.is-exp .mdrw__ico { background: var(--red-tint); color: var(--red); }
+  .mdrw__lbl { flex: 1; font-size: 1.08rem; font-variation-settings: 'wght' 680; }
+  .mdrw__link.is-cur .mdrw__lbl { color: var(--red); }
+  .mdrw__arr, .mdrw__chev { width: 18px; height: 18px; color: var(--steel); flex: none; transition: rotate .25s ease, translate .2s ease; }
+  .mdrw__link:hover .mdrw__arr { translate: 3px 0; color: var(--red); }
+  .mdrw__grp.is-exp .mdrw__chev { rotate: 180deg; color: var(--red); }
+
+  .mdrw__sub { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.22, .9, .25, 1); }
+  .mdrw__grp.is-exp .mdrw__sub { grid-template-rows: 1fr; }
+  .mdrw__subin { overflow: hidden; min-height: 0; }
+  .mdrw__cats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 6px 4px 8px 4px; }
+  .mdrw__cat { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 8px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); font-size: .88rem; line-height: 1.2; font-variation-settings: 'wght' 640; background: #fff; transition: border-color .15s, background .15s; }
+  .mdrw__cat:hover { border-color: var(--red); background: var(--red-tint); }
+  .mdrw__catimg { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 9px; background: var(--haze); }
+  .mdrw__catimg img { max-width: 32px; max-height: 32px; object-fit: contain; }
+  .mdrw__all { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 4px 10px; padding: 12px; border-radius: 12px; background: var(--ink); color: #fff; text-decoration: none; font-size: .95rem; font-variation-settings: 'wght' 700; }
+  .mdrw__all svg { width: 18px; height: 18px; }
+
+  .mdrw__quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 6px; border-top: 1px solid var(--line); margin-top: 4px; padding-top: 16px; }
+  .mdrw__qa { display: grid; gap: 10px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--haze); color: var(--ink); text-decoration: none; transition: translate .15s, box-shadow .15s; }
+  .mdrw__qa:active { translate: 0 1px; }
+  .mdrw__qa small { display: block; color: var(--steel); font-size: .74rem; }
+  .mdrw__qa b { display: block; font-size: 1rem; font-variation-settings: 'wght' 740; white-space: nowrap; }
+  .mdrw__qaico { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--red-tint); color: var(--red); }
+  .mdrw__qaico svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linejoin: round; stroke-linecap: round; }
+  .mdrw__qa--red { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 14px 30px -16px rgba(182, 6, 6, .7); }
+  .mdrw__qa--red small { color: #fbd2cc; }
+  .mdrw__qa--red .mdrw__qaico { background: rgba(255, 255, 255, .18); color: #fff; }
+  .mdrw__foot { margin: 2px 4px 0; color: var(--steel); font-size: .8rem; line-height: 1.5; text-align: center; }
+
+  /* hamburger morphs to X while open */
+  .menu-btn svg path { transition: d .3s ease; }
+  .menu-btn[aria-expanded="true"] svg path { d: path("M6 6L18 18M18 6L6 18"); }
+  @media (prefers-reduced-motion: reduce) { .mdrw__panel, .mdrw__bg, .mdrw__in, .mdrw__sub { transition: none; } }
 </style>
 <style is:global>
   .search__row--ask { width: 100%; border: 0; background: var(--red-tint); font: inherit; cursor: pointer; text-align: left; margin-bottom: 4px; }

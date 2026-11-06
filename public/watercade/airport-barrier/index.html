@@ -73,15 +73,79 @@
 .tsshdr-menu svg{width:23px;height:23px}
 .tsshdr-msearch{display:none;border-top:1px solid #e4e7ea;padding-block:10px}
 .tsshdr-msearch .tsshdr-search{max-width:none;height:46px}
-.tsshdr-mnav[hidden]{display:none}
-.tsshdr-mnav{background:#fff;padding:6px clamp(18px,4vw,44px) 20px;display:grid;border-top:1px solid #e4e7ea;box-shadow:0 12px 32px -16px rgba(20,23,26,.18)}
-.tsshdr-mnav a{padding:15px 2px 13px;text-decoration:none;font-variation-settings:'wght' 640;font-size:1.12rem;border-bottom:1px solid #eceef0;color:#14171a}
-.tsshdr-mcta{color:#b60606!important}
 @media(max-width:1420px){.tsshdr-tag{display:none}}
 @media(max-width:1230px){.tsshdr-phonetxt{display:none}.tsshdr-phone{gap:0}}
 @media(max-width:640px){.tsshdr-ai{display:none}}
 @media(max-width:1010px){.tsshdr-navrow,.tsshdr-cta,.tsshdr-phone,.tsshdr-in>.tsshdr-search{display:none}.tsshdr-menu{display:grid;justify-self:start}.tsshdr-in{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;height:82px}.tsshdr.is-stuck .tsshdr-in{height:72px}.tsshdr-logo{justify-self:center}.tsshdr-act{justify-self:end;margin-left:0}.tsshdr-logo img{height:68px}.tsshdr.is-stuck .tsshdr-logo img{height:60px}.tsshdr-msearch{display:block}}
-@media(min-width:1011px){.tsshdr-mnav{display:none!important}}
+@media(min-width:1011px){.tssd{display:none!important}}
+.tssd{--ink:#14171a;--ink-2:#353b41;--steel:#5b6670;--haze:#f5f6f7;--haze-2:#eceef0;--line:#e4e7ea;--line-dark:#cfd4d9;--red:#b60606;--red-tint:#fbeeee;--gold:#f5b800;font-family:'Archivo Variable','Archivo','Helvetica Neue',Arial,sans-serif;line-height:1.4}
+.tssd *,.tssd *::before,.tssd *::after{box-sizing:border-box}
+.tssd p{margin:0}
+.tssd a,.tssd button{color:var(--ink)!important;text-decoration:none!important}.tssd a.tssd__all,.tssd a.tssd__qa--red{color:#fff!important}.tssd .tssd__link.is-cur .tssd__lbl{color:var(--red)!important}
+  /* ---------- mobile drawer ---------- */
+  .tssd { position: fixed; inset: 0; z-index: 90; }
+  .tssd[hidden] { display: none; }
+  .tssd__bg { position: absolute; inset: 0; background: rgba(20, 23, 26, .5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; transition: opacity .32s ease; }
+  .tssd__panel { position: absolute; top: 0; bottom: 0; left: 0; width: min(88vw, 410px); display: flex; flex-direction: column; background: #fff; box-shadow: 30px 0 80px -30px rgba(0, 0, 0, .5); translate: -104% 0; transition: translate .38s cubic-bezier(.22, .9, .25, 1); }
+  .tssd.is-open .tssd__bg { opacity: 1; }
+  .tssd.is-open .tssd__panel { translate: 0 0; }
+  .tssd__top { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 12px 18px; border-bottom: 1px solid var(--line); }
+  .tssd__logo img { height: 52px; width: auto; display: block; }
+  .tssd__x { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--haze); color: var(--ink); cursor: pointer; transition: background .15s, rotate .3s ease; }
+  .tssd__x:hover { background: var(--haze-2); rotate: 90deg; }
+  .tssd__x svg { width: 20px; height: 20px; }
+  .tssd__scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); display: grid; gap: 14px; align-content: start; }
+
+  .tssd__in { opacity: 0; translate: -18px 0; transition: opacity .35s ease, translate .4s cubic-bezier(.22, .9, .25, 1); transition-delay: 0s; }
+  .tssd.is-open .tssd__in { opacity: 1; translate: 0 0; transition-delay: calc(80ms + var(--i, 0) * 38ms); }
+
+  .tssd__ask { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1.5px solid var(--line-dark); border-radius: 14px; background: var(--haze); font: inherit; text-align: left; cursor: pointer; transition: border-color .15s, background .15s; }
+  .tssd__ask:hover { border-color: var(--ink); background: #fff; }
+  .tssd__askcone { width: 30px; height: 35px; flex: none; }
+  .tssd__askcone svg { width: 100%; height: 100%; display: block; }
+  .tssd__asktxt { flex: 1; display: grid; line-height: 1.25; }
+  .tssd__asktxt b { color: var(--ink); font-size: 1rem; font-variation-settings: 'wght' 720; }
+  .tssd__asktxt small { color: var(--steel); font-size: .8rem; }
+  .tssd__ai { padding: 3px 7px 2px; border-radius: 6px; background: var(--gold); color: #3a2c00; font-size: .68rem; letter-spacing: .06em; font-variation-settings: 'wght' 800; }
+
+  .tssd__nav { display: grid; gap: 2px; }
+  .tssd__link { display: flex; align-items: center; gap: 13px; width: 100%; padding: 11px 10px; border: 0; border-radius: 12px; background: none; font: inherit; text-align: left; text-decoration: none; color: var(--ink); cursor: pointer; transition: background .15s; }
+  .tssd__link:hover, .tssd__link:active { background: var(--haze); }
+  .tssd__ico { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 11px; background: var(--haze); color: var(--ink-2); transition: background .2s, color .2s; }
+  .tssd__ico svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+  .tssd__link:hover .tssd__ico, .tssd__link.is-cur .tssd__ico, .tssd__grp.is-exp .tssd__ico { background: var(--red-tint); color: var(--red); }
+  .tssd__lbl { flex: 1; font-size: 1.08rem; font-variation-settings: 'wght' 680; }
+  .tssd__link.is-cur .tssd__lbl { color: var(--red); }
+  .tssd__arr, .tssd__chev { width: 18px; height: 18px; color: var(--steel); flex: none; transition: rotate .25s ease, translate .2s ease; }
+  .tssd__link:hover .tssd__arr { translate: 3px 0; color: var(--red); }
+  .tssd__grp.is-exp .tssd__chev { rotate: 180deg; color: var(--red); }
+
+  .tssd__sub { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.22, .9, .25, 1); }
+  .tssd__grp.is-exp .tssd__sub { grid-template-rows: 1fr; }
+  .tssd__subin { overflow: hidden; min-height: 0; }
+  .tssd__cats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 6px 4px 8px 4px; }
+  .tssd__cat { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 8px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); font-size: .88rem; line-height: 1.2; font-variation-settings: 'wght' 640; background: #fff; transition: border-color .15s, background .15s; }
+  .tssd__cat:hover { border-color: var(--red); background: var(--red-tint); }
+  .tssd__catimg { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 9px; background: var(--haze); }
+  .tssd__catimg img { max-width: 32px; max-height: 32px; object-fit: contain; }
+  .tssd__all { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 4px 10px; padding: 12px; border-radius: 12px; background: var(--ink); color: #fff; text-decoration: none; font-size: .95rem; font-variation-settings: 'wght' 700; }
+  .tssd__all svg { width: 18px; height: 18px; }
+
+  .tssd__quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 6px; border-top: 1px solid var(--line); margin-top: 4px; padding-top: 16px; }
+  .tssd__qa { display: grid; gap: 10px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--haze); color: var(--ink); text-decoration: none; transition: translate .15s, box-shadow .15s; }
+  .tssd__qa:active { translate: 0 1px; }
+  .tssd__qa small { display: block; color: var(--steel); font-size: .74rem; }
+  .tssd__qa b { display: block; font-size: 1rem; font-variation-settings: 'wght' 740; white-space: nowrap; }
+  .tssd__qaico { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--red-tint); color: var(--red); }
+  .tssd__qaico svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linejoin: round; stroke-linecap: round; }
+  .tssd__qa--red { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 14px 30px -16px rgba(182, 6, 6, .7); }
+  .tssd__qa--red small { color: #fbd2cc; }
+  .tssd__qa--red .tssd__qaico { background: rgba(255, 255, 255, .18); color: #fff; }
+  .tssd__foot { margin: 2px 4px 0; color: var(--steel); font-size: .8rem; line-height: 1.5; text-align: center; }
+
+.tsshdr-menu svg path{transition:d .3s ease}.tsshdr-menu[aria-expanded="true"] svg path{d:path("M6 6L18 18M18 6L6 18")}
+@media (prefers-reduced-motion: reduce){.tssd__panel,.tssd__bg,.tssd__in,.tssd__sub{transition:none}}
+
 </style></head><body>
 <header class="tsshdr">
 <div class="tsshdr-main"><div class="tsshdr-wrap tsshdr-in">
@@ -118,21 +182,32 @@
 </nav>
 <p class="tsshdr-tag">Ships nationwide &middot; Rentals &amp; crews in NJ, NY, PA, CT</p>
 </div></div>
-<nav id="tssmnav" class="tsshdr-mnav" aria-label="Mobile" hidden>
-<a href="/collections">Products</a>
-<a href="/collections/equipment-rentals">Rentals</a>
-<a href="/pages/lane-closure">Lane closures</a>
-<a href="/watercade/">WATERCADE</a>
-<a href="/tools">Planning tools</a>
-<a href="/pages/custom-stenciling">Custom shop</a>
-<a href="/pages/contact">Contact</a>
-<a href="/pages/request-a-quote" class="tsshdr-mcta">Request a quote</a>
-<a href="tel:+19085614800">Call 908-561-4800 (24/7)</a>
-</nav>
+<div class="tssd" id="tssmnav" hidden data-mdrw>
+<div class="tssd__bg" data-mclose></div>
+<aside class="tssd__panel" role="dialog" aria-modal="true" aria-label="Menu">
+<div class="tssd__top"><a href="/" class="tssd__logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo-420.png" alt="TSS" width="420" height="210"></a><button type="button" class="tssd__x" data-mclose aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+<div class="tssd__scroll">
+<button type="button" class="tssd__ask tssd__in" style="--i:0" data-mask><span class="tssd__askcone" aria-hidden="true"><svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg></span><span class="tssd__asktxt"><b>Ask Conner</b><small>Products, prices, quotes &mdash; answered fast</small></span><span class="tssd__ai">AI</span></button>
+<nav class="tssd__nav" aria-label="Mobile"><div class="tssd__grp tssd__in" style="--i:1"><button type="button" class="tssd__link" aria-expanded="false" data-macc><span class="tssd__ico"><svg viewBox="0 0 24 24"><path d="M4.5 4.5h6v6h-6z M13.5 4.5h6v6h-6z M4.5 13.5h6v6h-6z M13.5 13.5h6v6h-6z"/></svg></span><span class="tssd__lbl">Products</span><svg class="tssd__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="tssd__sub"><div class="tssd__subin"><div class="tssd__cats"><a href="/collections/cones" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/cones.svg" alt="" loading="lazy"></span><span>Cones</span></a><a href="/collections/barricades" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/barricades.png" alt="" loading="lazy"></span><span>Barricades</span></a><a href="/collections/water-filled-barriers" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/water-filled-barriers.png" alt="" loading="lazy"></span><span>Water-Filled Barriers</span></a><a href="/collections/traffic-drums" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/traffic-drums.svg" alt="" loading="lazy"></span><span>Traffic Drums</span></a><a href="/collections/sign-shop" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/sign-shop.png" alt="" loading="lazy"></span><span>Sign Shop</span></a><a href="/collections/lights" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/lights.png" alt="" loading="lazy"></span><span>Lights</span></a><a href="/collections/reflectors" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/reflectors.png" alt="" loading="lazy"></span><span>Reflectors</span></a><a href="/collections/safety-gear" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/safety-gear.png" alt="" loading="lazy"></span><span>Safety Gear</span></a><a href="/collections/sign-stands" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/sign-stands.png" alt="" loading="lazy"></span><span>Sign Stands</span></a><a href="/collections/deliniators" class="tssd__cat"><span class="tssd__catimg"><img src="/cats/deliniators.png" alt="" loading="lazy"></span><span>Delineators</span></a></div><a href="/collections" class="tssd__all">Browse all products <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div></div><a href="/collections/equipment-rentals" class="tssd__link tssd__in" style="--i:2"><span class="tssd__ico"><svg viewBox="0 0 24 24"><path d="M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01"/></svg></span><span class="tssd__lbl">Rentals</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/pages/lane-closure" class="tssd__link tssd__in" style="--i:3"><span class="tssd__ico"><svg viewBox="0 0 24 24"><path d="M10.4 3.5h3.2L18 18.5H6z M8.4 12h7.2 M4 20.5h16"/></svg></span><span class="tssd__lbl">Lane closures</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/watercade/" class="tssd__link tssd__in is-cur" style="--i:4"><span class="tssd__ico"><svg viewBox="0 0 24 24"><path d="M3 9h18v8H3z M7 9v8 M12 9v8 M17 9v8 M3 13h18"/></svg></span><span class="tssd__lbl">WATERCADE</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/tools" class="tssd__link tssd__in" style="--i:5"><span class="tssd__ico"><svg viewBox="0 0 24 24"><path d="M4 20l5.5-5.5 M14 4l6 6-9.5 9.5-6-6z M12 9l3 3"/></svg></span><span class="tssd__lbl">Planning tools</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/pages/custom-stenciling" class="tssd__link tssd__in" style="--i:6"><span class="tssd__ico"><svg viewBox="0 0 24 24"><path d="M4 20c3 0 5-2 5-5l9-9a2.1 2.1 0 0 0-3-3l-9 9c-3 0-5 2-5 5 M13 6l5 5"/></svg></span><span class="tssd__lbl">Custom shop</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/pages/contact" class="tssd__link tssd__in" style="--i:7"><span class="tssd__ico"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z M8 10h8 M8 13h5"/></svg></span><span class="tssd__lbl">Contact</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></nav>
+<div class="tssd__quick tssd__in" style="--i:8"><a href="tel:+19085614800" class="tssd__qa"><span class="tssd__qaico"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg></span><span><small>Call us 24/7</small><b>908-561-4800</b></span></a><a href="/pages/request-a-quote" class="tssd__qa tssd__qa--red"><span class="tssd__qaico"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6"/></svg></span><span><small>Products, rentals or crews</small><b>Build a quote</b></span></a></div>
+<p class="tssd__foot tssd__in" style="--i:9">Ships nationwide &middot; Rentals &amp; crews in NJ, NY, PA and CT &middot; Since 1971</p>
+</div>
+</aside>
+</div>
 </header>
 <script id="tss-shell-js">(function(){
-var b=document.querySelector('.tsshdr-menu'),m=document.getElementById('tssmnav');
-b&&b.addEventListener('click',function(){var o=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',String(!o));if(m)m.hidden=o;});
+var b=document.querySelector('.tsshdr-menu'),d=document.querySelector('[data-mdrw]');
+if(b&&d){var ct=0;function chat(){return document.getElementById('tss-chat-assistant')}
+function op(){clearTimeout(ct);d.hidden=false;requestAnimationFrame(function(){requestAnimationFrame(function(){d.classList.add('is-open')})});b.setAttribute('aria-expanded','true');document.documentElement.style.overflow='hidden';var c=chat();if(c)c.style.visibility='hidden';setTimeout(function(){var x=d.querySelector('.tssd__x');x&&x.focus()},60)}
+function cl(){d.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.documentElement.style.overflow='';var c=chat();if(c)c.style.visibility='';ct=setTimeout(function(){d.hidden=true},380);b.focus()}
+b.addEventListener('click',function(){d.classList.contains('is-open')?cl():op()});
+d.querySelectorAll('[data-mclose]').forEach(function(e){e.addEventListener('click',cl)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.classList.contains('is-open'))cl()});
+d.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setTimeout(cl,50)})});
+var mk=d.querySelector('[data-mask]');mk&&mk.addEventListener('click',function(){cl();setTimeout(function(){window.TSSChat&&window.TSSChat.open()},250)});
+var ac=d.querySelector('[data-macc]');ac&&ac.addEventListener('click',function(){var on=ac.getAttribute('aria-expanded')!=='true';ac.setAttribute('aria-expanded',String(on));ac.closest('.tssd__grp').classList.toggle('is-exp',on)});
+var sx=0,sy=0,pn=d.querySelector('.tssd__panel');pn.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});pn.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(dx<-70&&Math.abs(dy)<60)cl()},{passive:true});
+addEventListener('resize',function(){if(innerWidth>1010&&d.classList.contains('is-open'))cl()});}
 var h=document.querySelector('.tsshdr');function s(){h.classList.toggle('is-stuck',window.scrollY>56)}addEventListener('scroll',s,{passive:true});s();
 var idx=null,loading=null;function load(){return loading||(loading=fetch('/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d}).catch(function(){idx={cats:[],prods:[]}}))}
 function fmt(n){return Number(n).toLocaleString('en-US',{style:'currency',currency:'USD'})}
@@ -163,6 +238,9 @@ var sb=root.querySelector('[data-ask-send]');sb&&sb.addEventListener('click',ask
 document.addEventListener('click',function(e){if(!root.contains(e.target))close()});
 });
 })();</script><script src="/coney.js" defer></script>
+<script src="/coney.js" defer></script>
+<script src="/coney.js" defer></script>
+<script src="/coney.js" defer></script>
 <script src="/coney.js" defer></script>
 <script src="/coney.js" defer></script>
 <script src="/coney.js" defer></script>
