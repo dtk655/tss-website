@@ -1,16 +1,43 @@
 ---
 import { money, img } from '../lib/shopify.js';
-const { p } = Astro.props;
+const { p, qv = true } = Astro.props;
 const src = p.featuredImage?.url;
+const second = p.images && p.images[1] && p.images[1].url !== src ? img(p.images[1].url, 480) : null;
 const single = !p.isRental && p.variants.length === 1 && p.variants[0].availableForSale;
 const compare = single && p.variants[0].compareAtPrice ? +p.variants[0].compareAtPrice.amount : null;
+// Lean payload for the quick-view dialog.
+const payload = qv ? JSON.stringify({
+  h: p.handle,
+  t: p.title,
+  r: p.isRental ? 1 : 0,
+  imgs: (p.images || []).slice(0, 4).map((i) => img(i.url, 600)),
+  opts: p.options.filter((o) => !(o.name === 'Title' && o.values[0] === 'Default Title')).map((o) => ({ n: o.name, v: o.values })),
+  vars: p.variants.map((v) => ({
+    id: v.id,
+    ti: v.title,
+    pr: +v.price.amount,
+    cp: v.compareAtPrice ? +v.compareAtPrice.amount : null,
+    av: v.availableForSale ? 1 : 0,
+    o: Object.fromEntries(v.selectedOptions.map((s) => [s.name, s.value])),
+    im: v.image?.url ? img(v.image.url, 600) : null
+  }))
+}) : null;
 ---
-<div class="pcard" data-price={p.isRental ? '' : p.minPrice} data-rental={p.isRental ? '1' : ''} data-title={p.title}>
-  <a class="pcard__media" href={`/products/${p.handle}`} tabindex="-1" aria-hidden="true">
-    {src ? <img src={img(src, 480)} alt="" loading="lazy" width="400" height="400" /> : <span></span>}
-    {p.isRental && <span class="tag-rent pcard__tag">Rental</span>}
-    {compare && compare > p.minPrice && <span class="pcard__tag pcard__tag--sale">Sale</span>}
-  </a>
+<div class="pcard" data-price={p.isRental ? '' : p.minPrice} data-rental={p.isRental ? '1' : ''} data-title={p.title} data-qv={payload}>
+  <div class="pcard__mediawrap">
+    <a class="pcard__media" href={`/products/${p.handle}`} tabindex="-1" aria-hidden="true">
+      {src ? <img src={img(src, 480)} alt="" loading="lazy" width="400" height="400" /> : <span></span>}
+      {second && <img class="pcard__img2" data-img2={second} alt="" aria-hidden="true" width="400" height="400" />}
+      {p.isRental && <span class="tag-rent pcard__tag">Rental</span>}
+      {compare && compare > p.minPrice && <span class="pcard__tag pcard__tag--sale">Sale</span>}
+    </a>
+    {qv && (
+      <button type="button" class="pcard__qv" data-qv-open aria-label={`Quick view: ${p.title}`}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>
+        <span>Quick view</span>
+      </button>
+    )}
+  </div>
   <div class="pcard__body">
     <a class="pcard__title" href={`/products/${p.handle}`}>{p.title}</a>
     <p class="pcard__price">
@@ -20,27 +47,46 @@ const compare = single && p.variants[0].compareAtPrice ? +p.variants[0].compareA
     </p>
     {single
       ? <button class="btn btn--sm pcard__cta" data-quick-add={p.variants[0].id}>Add to cart</button>
-      : <a class="btn btn--sm pcard__cta" class:list={[{ 'btn--ghost': false }]} href={`/products/${p.handle}`}>{p.isRental ? 'Request rental quote' : 'Select options'}</a>}
+      : <a class="btn btn--sm pcard__cta" href={`/products/${p.handle}`}>{p.isRental ? 'Request rental quote' : 'Select options'}</a>}
   </div>
 </div>
 <style>
   .pcard { position: relative; }
+  .pcard__mediawrap { position: relative; }
   .pcard__media { position: relative; display: grid; place-items: center; aspect-ratio: 1; padding: 20px; background: #fff; border-bottom: 1px solid var(--haze-2); }
-  .pcard__media img { width: 100%; height: 100%; object-fit: contain; transition: transform .22s ease; }
+  .pcard__media img { width: 100%; height: 100%; object-fit: contain; transition: transform .22s ease, opacity .3s ease; }
   .pcard:hover .pcard__media img { transform: scale(1.04); }
-  .pcard__tag { position: absolute; top: 12px; left: 12px; }
+  .pcard__img2 { position: absolute; inset: 20px; width: calc(100% - 40px) !important; height: calc(100% - 40px) !important; opacity: 0; pointer-events: none; }
+  .pcard.has-img2:hover .pcard__img2 { opacity: 1; }
+  .pcard.has-img2:hover .pcard__media img:first-child { opacity: 0; }
+  .pcard__tag { position: absolute; top: 12px; left: 12px; z-index: 1; }
   .pcard__tag--sale { display: inline-block; font-size: .78rem; font-variation-settings: 'wght' 680; padding: 4px 9px 3px; border-radius: 5px; background: var(--red); color: #fff; }
+  .pcard__qv {
+    position: absolute; z-index: 2; left: 50%; bottom: 14px; translate: -50% 6px;
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 255, 255, .96); backdrop-filter: blur(6px);
+    color: var(--ink); font-variation-settings: 'wght' 640; font-size: .86rem; padding: 9px 15px 8px;
+    box-shadow: var(--shadow-m); cursor: pointer; opacity: 0; transition: opacity .18s ease, translate .18s ease, border-color .15s;
+  }
+  .pcard:hover .pcard__qv, .pcard__qv:focus-visible { opacity: 1; translate: -50% 0; }
+  .pcard__qv svg { width: 16px; height: 16px; color: var(--steel); }
+  .pcard__qv:hover { border-color: var(--ink); }
+  .pcard__qv:hover svg { color: var(--red); }
+  @media (hover: none) {
+    .pcard__qv { opacity: 1; translate: -50% 0; left: auto; right: 10px; bottom: 10px; padding: 9px 10px 8px; }
+    .pcard__qv span { display: none; }
+  }
   .pcard__body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-  .pcard__cta { margin-top: auto; }
   .pcard__title { text-decoration: none; font-variation-settings: 'wght' 640; line-height: 1.32; font-size: .99rem; min-height: 2.6em; }
   .pcard__title::after { content: ''; position: absolute; inset: 0; }
   .pcard__title:hover { color: var(--red); }
   .pcard__price { margin: 0; display: flex; align-items: baseline; gap: 8px; font-size: .95rem; color: var(--steel); }
   .pcard__price strong { color: var(--ink); font-size: 1.05rem; }
   .pcard__price s { color: var(--steel); }
-  .pcard__cta { position: relative; z-index: 1; width: 100%; }
+  .pcard__cta { position: relative; z-index: 1; width: 100%; margin-top: auto; }
 </style>
 <script>
+  // single-variant quick add
   document.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-quick-add]');
     if (!b || b.dataset.busy) return;
@@ -49,4 +95,14 @@ const compare = single && p.variants[0].compareAtPrice ? +p.variants[0].compareA
     b.textContent = 'Adding';
     try { await window.TSSCart.add(b.dataset.quickAdd, 1); } finally { b.textContent = t; delete b.dataset.busy; }
   });
+  // second-image preload + crossfade (first hover only)
+  document.addEventListener('pointerover', (e) => {
+    const card = e.target.closest?.('.pcard');
+    if (!card || card.dataset.swapReady) return;
+    const im2 = card.querySelector('[data-img2]');
+    if (!im2) return;
+    card.dataset.swapReady = '1';
+    im2.src = im2.dataset.img2;
+    im2.addEventListener('load', () => card.classList.add('has-img2'), { once: true });
+  }, { passive: true });
 </script>

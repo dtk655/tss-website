@@ -2,6 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import ProductGallery from '../../components/ProductGallery.astro';
 import ProductCard from '../../components/ProductCard.astro';
+import QuickView from '../../components/QuickView.astro';
+import RecentlyViewed from '../../components/RecentlyViewed.astro';
 import { loadCatalog, money, img } from '../../lib/shopify.js';
 
 export async function getStaticPaths() {
@@ -58,7 +60,7 @@ const firstImg = p.featuredImage?.url;
     <div class="pdp__grid">
       <ProductGallery images={p.images} title={p.title} />
 
-      <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
+      <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
         {p.isRental && <span class="tag-rent">Rental equipment</span>}
         <h1 class="buy__title">{p.title}</h1>
 
@@ -181,6 +183,20 @@ const firstImg = p.featuredImage?.url;
       </section>
     )}
   </div>
+
+  <RecentlyViewed exclude={p.handle} />
+  <QuickView />
+
+  <div class="buybar" data-buybar>
+    <div class="wrap buybar__in">
+      {firstImg && <img class="buybar__img" src={img(firstImg, 160)} alt="" />}
+      <div class="buybar__txt">
+        <b>{p.title}</b>
+        <span data-bar-price>{p.isRental ? 'Priced per job' : money(first.price)}</span>
+      </div>
+      <button type="button" class="btn buybar__btn" data-bar-add>{p.isRental ? 'Add to rental quote' : 'Add to cart'}</button>
+    </div>
+  </div>
 </Layout>
 
 <script>
@@ -200,6 +216,7 @@ const firstImg = p.featuredImage?.url;
       const v = selected();
       root.querySelectorAll('[data-option]').forEach((fs) => { fs.querySelector('[data-opt-val]').textContent = fs.querySelector('input:checked')?.value || ''; });
       const pr = root.querySelector('[data-price]'); if (pr) pr.textContent = fmt(v.price);
+      const bp = document.querySelector('[data-bar-price]'); if (bp && !root.dataset.rental) bp.textContent = fmt(v.price);
       const add = root.querySelector('[data-add-cart]'); if (add) add.disabled = !v.available;
       root.querySelector('[data-unavail]').hidden = v.available;
       if (v.image) document.querySelector('[data-gallery]')?.tssGallery?.show(v.image);
@@ -254,6 +271,25 @@ const firstImg = p.featuredImage?.url;
       logoData = ''; root.querySelector('[data-cc-preview]').hidden = true; root.querySelector('[data-cc-logo]').value = '';
       viewer()?.tssViewer?.setLogo?.(null);
     });
+    // sticky buy bar: appears when the main buy controls scroll out of view
+    const bar = document.querySelector('[data-buybar]');
+    const qtyRow = root.querySelector('.qty-row');
+    if (bar && qtyRow && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([en]) => {
+        bar.classList.toggle('is-on', !en.isIntersecting && en.boundingClientRect.top < 0);
+      }, { threshold: 0 }).observe(qtyRow);
+      bar.querySelector('[data-bar-add]').addEventListener('click', () => {
+        (root.querySelector('[data-add-cart]') || root.querySelector('[data-add-quote="rent"]'))?.click();
+      });
+    }
+
+    // record for the "Recently viewed" strip
+    try {
+      const list = JSON.parse(localStorage.getItem('tss_recent') || '[]').filter((it) => it && it.h !== root.dataset.handle);
+      list.unshift({ h: root.dataset.handle, t: root.dataset.title, i: root.dataset.image ? root.dataset.image.split('?')[0] + '?width=300' : '', p: root.dataset.minprice ? +root.dataset.minprice : null, r: root.dataset.rental ? 1 : 0 });
+      localStorage.setItem('tss_recent', JSON.stringify(list.slice(0, 8)));
+    } catch {}
+
     root.querySelector('[data-cc-add]')?.addEventListener('click', () => {
       const v = selected();
       const colorText = root.querySelector('[data-cc-colortext]').value.trim();
@@ -333,4 +369,16 @@ const firstImg = p.featuredImage?.url;
     .pdp__grid, .pdp__desc { grid-template-columns: 1fr; }
     .buy { position: static; }
   }
+
+  /* sticky buy bar */
+  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: rgba(255, 255, 255, .96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--line); box-shadow: 0 -16px 40px -28px rgba(20, 23, 26, .4); translate: 0 110%; transition: translate .25s cubic-bezier(.3, .8, .3, 1); }
+  .buybar.is-on { translate: 0 0; }
+  @media (prefers-reduced-motion: reduce) { .buybar { transition: none; } }
+  .buybar__in { display: flex; align-items: center; gap: 14px; padding-block: 10px; }
+  .buybar__img { width: 48px; height: 48px; object-fit: contain; border: 1px solid var(--haze-2); border-radius: 8px; background: #fff; flex: none; }
+  .buybar__txt { display: grid; line-height: 1.25; min-width: 0; margin-right: auto; }
+  .buybar__txt b { font-variation-settings: 'wght' 660; font-size: .98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .buybar__txt span { color: var(--steel); font-size: .92rem; font-variation-settings: 'wght' 620; }
+  .buybar__btn { min-height: 46px; padding: 12px 22px 11px; white-space: nowrap; }
+  @media (max-width: 560px) { .buybar__img { display: none; } .buybar__btn { padding-inline: 16px; font-size: .95rem; } }
 </style>

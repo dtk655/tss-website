@@ -1,0 +1,188 @@
+---
+// Singleton quick-view dialog. Include once per page that renders ProductCards.
+// Opens from any [data-qv-open] inside a .pcard[data-qv] and builds its UI from
+// the card's JSON payload — no navigation, no extra requests.
+---
+<dialog class="qv" data-qv-dialog aria-label="Quick view">
+  <div class="qv__frame">
+    <button type="button" class="qv__x" data-qv-close aria-label="Close quick view">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="qv__gal">
+      <div class="qv__stage"><img data-qv-img alt="" /></div>
+      <div class="qv__thumbs" data-qv-thumbs></div>
+    </div>
+    <div class="qv__buy">
+      <span class="tag-rent" data-qv-rtag hidden>Rental</span>
+      <h2 class="qv__title" data-qv-title></h2>
+      <p class="qv__price"><strong data-qv-price></strong><s data-qv-compare hidden></s><span class="qv__unit" data-qv-unit>each</span></p>
+      <div data-qv-opts></div>
+      <div class="qv__row">
+        <div class="qv__qty">
+          <button type="button" data-qv-dec aria-label="Decrease quantity">−</button>
+          <input type="number" min="1" value="1" data-qv-qty inputmode="numeric" aria-label="Quantity" />
+          <button type="button" data-qv-inc aria-label="Increase quantity">+</button>
+        </div>
+        <button type="button" class="btn qv__add" data-qv-add>Add to cart</button>
+      </div>
+      <p class="qv__unavail" data-qv-unavail hidden>This combination is sold out online. Add it to your quote list instead and we'll source it.</p>
+      <a class="qv__full textlink" data-qv-link href="#">View full details</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dlg = document.querySelector('[data-qv-dialog]');
+  if (dlg && !window.__tssQV) {
+    window.__tssQV = true;
+    const $ = (s) => dlg.querySelector(s);
+    const fmt = (n) => Number(n).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    const SWATCH = { orange: '#f26a1b', lime: '#c6e33b', 'dark green': '#1f5d3a', green: '#2e8b3d', 'navy blue': '#1f2f5c', navy: '#1f2f5c', blue: '#1f5fbf', 'sky blue': '#6cc4ee', pink: '#ff6fae', red: '#c8102e', white: '#f7f7f2', yellow: '#f6d10b', black: '#1d2024', silver: '#c0c4c8', gray: '#8a9097', grey: '#8a9097' };
+    const isColor = (n) => /colou?r/i.test(n);
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    let p = null, chosen = {}, lastFocus = null;
+
+    const selected = () => p.vars.find((v) => Object.entries(chosen).every(([k, val]) => v.o[k] === val)) || p.vars[0];
+
+    const setImage = (src) => {
+      if (!src) return;
+      $('[data-qv-img]').src = src;
+      dlg.querySelectorAll('.qv__thumb').forEach((t) => t.classList.toggle('is-on', t.dataset.src === src));
+    };
+
+    const update = () => {
+      const v = selected();
+      $('[data-qv-price]').textContent = p.r ? 'Priced per job' : fmt(v.pr);
+      $('[data-qv-unit]').hidden = !!p.r;
+      const cp = $('[data-qv-compare]');
+      cp.hidden = !(v.cp && v.cp > v.pr);
+      if (!cp.hidden) cp.textContent = fmt(v.cp);
+      const add = $('[data-qv-add]');
+      add.textContent = p.r ? 'Add to rental quote' : 'Add to cart';
+      add.disabled = !p.r && !v.av;
+      $('[data-qv-unavail]').hidden = p.r || !!v.av;
+      dlg.querySelectorAll('[data-qv-opt]').forEach((fs) => {
+        fs.querySelector('[data-qv-val]').textContent = chosen[fs.dataset.qvOpt] || '';
+      });
+      if (v.im) setImage(v.im);
+    };
+
+    const open = (card) => {
+      try { p = JSON.parse(card.dataset.qv); } catch { return; }
+      lastFocus = document.activeElement;
+      const first = p.vars.find((v) => v.av) || p.vars[0];
+      chosen = { ...first.o };
+      $('[data-qv-title]').textContent = p.t;
+      $('[data-qv-rtag]').hidden = !p.r;
+      $('[data-qv-link]').href = '/products/' + p.h;
+      $('[data-qv-qty]').value = 1;
+      // gallery
+      const thumbs = $('[data-qv-thumbs]');
+      thumbs.innerHTML = p.imgs.map((s, i) => `<button type="button" class="qv__thumb${i === 0 ? ' is-on' : ''}" data-src="${esc(s)}" aria-label="Image ${i + 1}"><img src="${esc(s)}" alt="" loading="lazy"></button>`).join('');
+      thumbs.hidden = p.imgs.length < 2;
+      $('[data-qv-img]').src = p.imgs[0] || '';
+      // options
+      $('[data-qv-opts]').innerHTML = p.opts.map((o) => `
+        <fieldset class="qv__opt" data-qv-opt="${esc(o.n)}">
+          <legend>${esc(o.n[0].toUpperCase() + o.n.slice(1))}: <span data-qv-val></span></legend>
+          <div class="${isColor(o.n) ? 'qv__swatches' : 'qv__pills'}">
+            ${o.v.map((val) => isColor(o.n)
+              ? `<label class="qv__sw" title="${esc(val)}"><input type="radio" name="qv-${esc(o.n)}" value="${esc(val)}"${chosen[o.n] === val ? ' checked' : ''}><span style="--c:${SWATCH[val.toLowerCase()] || '#ccc'}"></span></label>`
+              : `<label class="qv__pill"><input type="radio" name="qv-${esc(o.n)}" value="${esc(val)}"${chosen[o.n] === val ? ' checked' : ''}><span>${esc(val)}</span></label>`).join('')}
+          </div>
+        </fieldset>`).join('');
+      update();
+      dlg.showModal();
+      $('[data-qv-x]');
+    };
+
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-qv-open]');
+      if (b) {
+        const card = b.closest('.pcard');
+        if (card?.dataset.qv) { e.preventDefault(); open(card); }
+        return;
+      }
+      if (e.target.closest('[data-qv-close]')) { dlg.close(); return; }
+      if (e.target === dlg) dlg.close(); // backdrop
+      const th = e.target.closest('.qv__thumb');
+      if (th && dlg.contains(th)) setImage(th.dataset.src);
+    });
+    dlg.addEventListener('close', () => { lastFocus?.focus?.(); });
+    dlg.addEventListener('change', (e) => {
+      const fs = e.target.closest('[data-qv-opt]');
+      if (!fs) return;
+      chosen[fs.dataset.qvOpt] = e.target.value;
+      update();
+    });
+    $('[data-qv-dec]').addEventListener('click', () => { const q = $('[data-qv-qty]'); q.value = Math.max(1, (+q.value || 1) - 1); });
+    $('[data-qv-inc]').addEventListener('click', () => { const q = $('[data-qv-qty]'); q.value = Math.max(1, (+q.value || 1) + 1); });
+    $('[data-qv-add]').addEventListener('click', async () => {
+      const v = selected();
+      const qty = Math.max(1, parseInt($('[data-qv-qty]').value, 10) || 1);
+      const b = $('[data-qv-add]');
+      if (p.r) {
+        window.TSSQuote?.add([{ title: p.t, handle: p.h, image: p.imgs[0] || '', variant: v.ti === 'Default Title' ? '' : v.ti, qty, mode: 'rent' }]);
+        dlg.close();
+        return;
+      }
+      b.disabled = true; const t = b.textContent; b.textContent = 'Adding';
+      try { await window.TSSCart.add(v.id, qty); dlg.close(); }
+      catch {} finally { b.disabled = false; b.textContent = t; }
+    });
+  }
+</script>
+
+<style is:global>
+  .qv { width: min(880px, calc(100vw - 28px)); max-height: calc(100dvh - 48px); border: 0; border-radius: var(--r-l); padding: 0; background: #fff; box-shadow: var(--shadow-l); }
+  .qv::backdrop { background: rgba(20, 23, 26, .5); backdrop-filter: blur(3px); }
+  .qv[open] { animation: qv-in .22s cubic-bezier(.2, .8, .25, 1); }
+  @keyframes qv-in { from { opacity: 0; transform: translateY(10px) scale(.985); } }
+  @media (prefers-reduced-motion: reduce) { .qv[open] { animation: none; } }
+  .qv__frame { display: grid; grid-template-columns: 1.05fr 1fr; position: relative; }
+  .qv__x { position: absolute; top: 12px; right: 12px; z-index: 3; width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); cursor: pointer; transition: border-color .15s; }
+  .qv__x:hover { border-color: var(--ink); }
+  .qv__x svg { width: 18px; height: 18px; }
+  .qv__gal { border-right: 1px solid var(--haze-2); padding: 22px; display: grid; gap: 12px; align-content: start; }
+  .qv__stage { aspect-ratio: 1; display: grid; place-items: center; }
+  .qv__stage img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .qv__thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .qv__thumb { width: 60px; height: 60px; padding: 5px; border: 1.5px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; transition: border-color .12s; }
+  .qv__thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .qv__thumb.is-on { border-color: var(--red); }
+  .qv__buy { padding: 30px 28px 26px; display: grid; gap: 14px; align-content: start; overflow: auto; max-height: calc(100dvh - 48px); }
+  .qv__buy .tag-rent { width: max-content; }
+  .qv__title { font-size: 1.45rem; line-height: 1.15; letter-spacing: -.015em; padding-right: 34px; }
+  .qv__price { margin: 0; display: flex; align-items: baseline; gap: 9px; font-size: 1.3rem; }
+  .qv__price strong { font-variation-settings: 'wght' 740; }
+  .qv__price s { color: var(--steel); font-size: 1rem; }
+  .qv__unit { font-size: .9rem; color: var(--steel); }
+  .qv__opt { border: 0; padding: 0; margin: 0 0 4px; }
+  .qv__opt legend { font-variation-settings: 'wght' 660; font-size: .95rem; margin-bottom: 8px; }
+  .qv__opt legend span { font-variation-settings: 'wght' 420; color: var(--steel); }
+  .qv__swatches, .qv__pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .qv__sw, .qv__pill { position: relative; }
+  .qv__sw input, .qv__pill input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+  .qv__sw span { display: block; width: 32px; height: 32px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .13s; }
+  .qv__sw input:checked + span { outline-color: var(--red); }
+  .qv__sw input:focus-visible + span { outline-color: var(--ink); }
+  .qv__pill span { display: block; padding: 8px 13px 7px; border: 1.5px solid var(--line-dark); border-radius: var(--r-s); background: #fff; font-variation-settings: 'wght' 600; font-size: .9rem; cursor: pointer; transition: border-color .12s, background .12s; }
+  .qv__pill input:checked + span { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .qv__pill input:focus-visible + span { outline: 2.5px solid var(--red); outline-offset: 2px; }
+  .qv__row { display: flex; gap: 10px; margin-top: 4px; }
+  .qv__qty { display: flex; align-items: stretch; border: 1.5px solid var(--line-dark); border-radius: var(--r-s); background: #fff; overflow: hidden; }
+  .qv__qty button { width: 38px; border: 0; background: none; font-size: 1.2rem; cursor: pointer; color: var(--steel); }
+  .qv__qty button:hover { background: var(--haze); color: var(--ink); }
+  .qv__qty input { width: 52px; border: 0; text-align: center; font-variation-settings: 'wght' 680; -moz-appearance: textfield; }
+  .qv__qty input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .qv__add { flex: 1; }
+  .qv__unavail { margin: 0; color: var(--red); font-variation-settings: 'wght' 640; font-size: .95rem; }
+  .qv__full { width: max-content; font-size: .95rem; }
+  @media (max-width: 760px) {
+    .qv__frame { grid-template-columns: 1fr; }
+    .qv { width: min(520px, calc(100vw - 20px)); }
+    .qv__gal { border-right: 0; border-bottom: 1px solid var(--haze-2); padding: 16px 16px 12px; }
+    .qv__stage { aspect-ratio: auto; height: 220px; }
+    .qv__buy { padding: 18px 18px 20px; max-height: none; }
+  }
+</style>

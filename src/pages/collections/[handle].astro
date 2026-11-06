@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
+import QuickView from '../../components/QuickView.astro';
+import RecentlyViewed from '../../components/RecentlyViewed.astro';
 import { loadCatalog, PRODUCT_COLLECTIONS, RENTAL_COLLECTIONS, money } from '../../lib/shopify.js';
 
 export async function getStaticPaths() {
@@ -71,7 +73,8 @@ const desc = c.description || (rentalOnly
     </aside>
 
     <div class="main">
-      <div class="toolbar">
+      <div class="toolbar__sentinel" data-tb-sentinel aria-hidden="true"></div>
+      <div class="toolbar" data-toolbar>
         <p class="toolbar__count" aria-live="polite"><span data-count>{c.products.length}</span> {c.products.length === 1 ? 'product' : 'products'}</p>
         <div class="toolbar__right">
           <label class="sort">Sort
@@ -89,11 +92,13 @@ const desc = c.description || (rentalOnly
         </div>
       </div>
       <div class="grid grid--cols4" data-grid>
-        {c.products.map((p, i) => <div class="cell" data-i={i}><ProductCard p={p} /></div>)}
+        {c.products.map((p, i) => <div class="cell reveal" data-i={i} style={`--d:${(i % 8) * 45}ms`}><ProductCard p={p} /></div>)}
       </div>
       <p class="noresults" data-noresults hidden>No products match these filters. <button class="textlink" data-f-clear2>Clear the filters</button> or <a class="textlink" href="/pages/request-a-quote">ask us for a quote</a>.</p>
     </div>
   </div>
+  <RecentlyViewed />
+  <QuickView />
 </Layout>
 
 <script>
@@ -155,6 +160,13 @@ const desc = c.description || (rentalOnly
     grid.classList.toggle('grid--cols4', b.dataset.cols === '4');
     root.querySelectorAll('[data-cols]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
   }));
+
+  // frosted sticky state for the toolbar
+  const tb = root.querySelector('[data-toolbar]');
+  const sentinel = root.querySelector('[data-tb-sentinel]');
+  if (tb && sentinel && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => tb.classList.toggle('is-stuck', !e.isIntersecting), { rootMargin: '-80px 0px 0px 0px' }).observe(sentinel);
+  }
 </script>
 
 <style>
@@ -190,7 +202,9 @@ const desc = c.description || (rentalOnly
   .side__note p { margin: 0 0 6px; color: var(--steel); }
   .side__note strong { color: var(--ink); }
 
-  .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .toolbar__sentinel { height: 1px; }
+  .toolbar { position: sticky; top: 74px; z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0 -10px 20px; padding: 10px; border-radius: var(--r-s); flex-wrap: wrap; transition: box-shadow .2s ease, background .2s ease; }
+  .toolbar.is-stuck { background: rgba(255, 255, 255, .92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line), 0 14px 28px -22px rgba(20, 23, 26, .3); }
   .toolbar__count { margin: 0; color: var(--steel); font-size: .95rem; }
   .toolbar__right { display: flex; align-items: center; gap: 14px; }
   .sort { display: flex; align-items: center; gap: 10px; font-variation-settings: 'wght' 600; font-size: .95rem; }
