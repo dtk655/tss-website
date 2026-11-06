@@ -167,6 +167,7 @@ const { preset = 'general', heading = 'Request a quote', fromParam = false } = A
     } catch {}
     if (root.dataset.fromParam && new URLSearchParams(location.search).get('from') === 'builder') { state.type = 'lane-closure'; state.step = 2; }
     if (!root.dataset.preset || root.dataset.preset === 'general') { if (!state.touched) state.step = 1; }
+    { const qt = root.dataset.fromParam && new URLSearchParams(location.search).get('type'); if (qt && FIELDS[qt]) { state.type = qt; state.step = 2; } }
 
     const save = () => { try { sessionStorage.setItem('tss_quote_draft', JSON.stringify(state)); } catch {} };
     const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();

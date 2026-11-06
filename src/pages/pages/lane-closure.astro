@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import QuoteWizard from '../../components/QuoteWizard.astro';
 import TmaTruck from '../../components/TmaTruck.astro';
 import CoverageMap from '../../components/CoverageMap.astro';
 import FreePlanBand from '../../components/FreePlanBand.astro';
@@ -40,14 +39,6 @@ const agencies = [
   ['NY DOT Roadways & Interstates', 'Untitled_design_29.png', 'NYSDOT'],
   ['NJ Turnpike Authority', 'Untitled_design_26.png', 'NJ Turnpike']
 ].map(([t, f, k]) => [t, CDN + f, k]);
-const faq = [
-  ['What is the furthest TSS will go for a job?', 'We complete lane closures within the states of New Jersey, New York, Pennsylvania, Connecticut, Delaware, and other surrounding areas. If you are located elsewhere, please call or submit an inquiry and we can discuss further.'],
-  ['What size crews does TSS offer?', 'We provide crews of all sizes depending on the job and needs of our customer.'],
-  ['How can I book a job?', `Either call our team at ${PHONE} or use the form above to submit an inquiry with a description of what your job entails. We typically get back to you within 24 hours.`],
-  ['Does TSS supply traffic control devices?', 'Yes. We are a full service provider offering sales and rentals on all traffic control devices for your next job. These devices include traffic cones, crash trucks, arrow boards, water barriers, signs, and much more.'],
-  ['What certifications does TSS have?', 'Each crew is led by a Rutgers-Certified Traffic Control Captain (TCC) and all crew members are OSHA trained. We follow all guidelines enlisted by the MUTCD and remain compliant with each state’s regulations. In addition, our lane closure division has S.W.A.C clearance.'],
-  ['What type of experience does TSS have?', 'We have had extensive work on all major roadways and interstates including the NJDOT, NJTA, GSP, PANYNJ, NYSDOT, NYSTA, and PennDOT. In addition, we have performed closures on many local roads and special venues for concerts and sporting events.']
-];
 ---
 <Layout title="Lane closure services" description={`MUTCD-compliant lane closures, ATSSA-certified flaggers and 24/7 emergency response in NJ, NY, PA, CT and DE. 10,000+ closures since ${2026 - YEARS}. Free quotes within 1 business day.`} image={photos.job}>
   <section class="lch">
@@ -59,7 +50,7 @@ const faq = [
         <h1>10,000+ closures. Zero shortcuts.</h1>
         <p class="lch__lede">Certified, experienced crews setting up MUTCD-compliant work zones across NJ, NY, PA, CT and DE. 24/7.</p>
         <div class="lch__cta">
-          <a href="#quote-form" class="lbtn lbtn--solid">
+          <a href="/pages/request-a-quote?type=lane-closure" class="lbtn lbtn--solid">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z M8.5 12l2.4 2.4L15.5 9.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
             Reserve a certified crew
           </a>
@@ -167,86 +158,6 @@ const faq = [
   </section>
 
 <CoverageMap />
-
-  <section class="section section--paper">
-    <div class="wrap lc-rows">
-      <article class="lc-row">
-        <div class="lc-row__txt">
-          <h2>On the road, experience matters</h2>
-          <p>For the last 25 years, our lane closure division has been dedicated to providing reliable and professional services in traffic control management. With a focus on safety and efficiency, our highly trained crews ensure that each project is handled with precision. We take pride in our team's expertise and are proud to say we have Rutgers-Certified TCCs and S.W.A.C clearance.</p>
-          <p>Over the years, we've built a reputation for excellence, prioritizing the well-being of both our workers and the public. Our commitment to safety and operational compliance with the MUTCD remains at the core of everything we do.</p>
-        </div>
-        <img src={photos.team} alt="The TSS crew at a company Safety Day" loading="lazy" />
-      </article>
-      <article class="lc-row lc-row--flip">
-        <div class="lc-row__txt">
-          <h2>A modern fleet of equipment and vehicles</h2>
-          <p>With state-of-the-art truck mounted attenuators (TMA) and a variety of new, efficient lane closure equipment, we ensure an effective job.</p>
-          <a class="btn btn--dark" href="/collections/equipment-rentals">Explore our certified fleet</a>
-        </div>
-        <img src={photos.fleet} alt="TSS trucks lined up in the yard" loading="lazy" />
-      </article>
-      <article class="lc-row">
-        <div class="lc-row__txt">
-          <h2>25+ years. 10,000+ closures. Zero excuses.</h2>
-          <p>Over the last 25 years, we have completed upwards of 10,000 lane closure jobs across the tri-state and other surrounding areas. From the Garden State Parkway to the G.W. Bridge, we have been tested in all areas.</p>
-        </div>
-        <img src={photos.job} alt="A TSS lane closure in place on an active roadway" loading="lazy" />
-      </article>
-      <article class="lc-row lc-row--flip">
-        <div class="lc-row__txt">
-          <h2>Start planning your next project with certified traffic experts</h2>
-          <p>We offer free quotes and you can expect to receive feedback on your inquiry within 1 business day of submittal. We handle both large and small projects for all types of businesses.</p>
-          <a class="btn" href="#quote-form">Reserve a certified crew</a>
-        </div>
-        <img src={photos.tma} alt="Rear of a TSS truck mounted attenuator crash truck" loading="lazy" />
-      </article>
-      <article class="lc-row">
-        <div class="lc-row__txt">
-          <h2>Rather talk it through? Call now</h2>
-          <p>Get in touch with one of our specialists to discuss your next job and its requirements. We offer a quote after the conclusion of the call.</p>
-          <a class="btn btn--dark" href={PHONE_TEL}>Talk to a safety coordinator</a>
-        </div>
-        <img src={photos.roadClosure} alt="Illustration of a road closure layout" loading="lazy" />
-      </article>
-    </div>
-  </section>
-
-  <section class="section lc-form" id="quote-form">
-    <div class="wrap lc-form__in">
-      <QuoteWizard preset="lane-closure" heading="Reserve a crew" />
-      <aside class="lc-form__aside">
-        <div class="sign sign--dark">
-          <h3>Emergency right now?</h3>
-          <p>We dispatch 24/7 for incidents, main breaks and downed lines.</p>
-          <a class="btn" href={PHONE_TEL}>Call {PHONE}</a>
-        </div>
-        <div class="sign">
-          <h3>What happens after you send it</h3>
-          <p>A coordinator reviews the job, calls with any questions, and sends a formal quote, usually within 1 business day. Agencies and contractors can pay by PO or Net terms.</p>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <section class="section section--paper">
-    <div class="wrap lc-faq">
-      <h2>Lane closure questions, answered</h2>
-      <div class="lc-faq__list">
-        {faq.map(([q, a]) => (
-          <details class="lc-q">
-            <summary><span>{q}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>
-            <p>{a}</p>
-          </details>
-        ))}
-      </div>
-      <p>Something we didn't cover? <button type="button" class="lc-coney" data-lc-ask="I have a question about lane closure services.">Ask Conner</button> or call <a class="textlink" href={PHONE_TEL}>{PHONE}</a>.</p>
-    </div>
-  </section>
-
-  <div class="lc-sticky" data-lc-sticky hidden>
-    <a href="#quote-form" class="btn">Need a quote? Tap here</a>
-  </div>
 </Layout>
 
 <script>
@@ -331,15 +242,6 @@ const faq = [
 
   // Conner buttons
   document.querySelectorAll('[data-lc-ask]').forEach((b) => b.addEventListener('click', () => window.TSSChat?.ask(b.dataset.lcAsk)));
-  // Sticky mobile CTA: show after the hero, hide while the form is on screen.
-  const sticky = document.querySelector('[data-lc-sticky]');
-  const form = document.getElementById('quote-form');
-  if (sticky && form) {
-    let pastHero = false, formVisible = false;
-    const apply = () => { sticky.hidden = !(pastHero && !formVisible); };
-    new IntersectionObserver((es) => { es.forEach((e) => { formVisible = e.isIntersecting; apply(); }); }, { rootMargin: '0px 0px -30% 0px' }).observe(form);
-    addEventListener('scroll', () => { pastHero = scrollY > 420; apply(); }, { passive: true });
-  }
 </script>
 
 <style>
