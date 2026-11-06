@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { loadCatalog, NAV_COLLECTIONS, img } from '../../lib/shopify.js';
+import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../../lib/shopify.js';
 const { colByHandle } = await loadCatalog();
-const cols = NAV_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
+const cols = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const blurbs = {
   cones: 'Reflective and plain, 18" to 36", nine colors',
   barricades: 'Type III, A-frame, urbanite and rails',
@@ -10,43 +10,50 @@ const blurbs = {
   'traffic-drums': 'Engineer grade and hi-intensity',
   'sign-shop': 'Stock signs and custom work',
   lights: 'Barricade lights, flares and batons',
-  reflectors: 'Side and top mount, single or double sided',
-  'safety-gear': 'Vests, jackets, hard hats',
+  reflectors: 'Side and top mount reflectors',
+  'safety-gear': 'Vests, jackets and hard hats',
   'sign-stands': 'K-stands, tripods and Windmasters',
-  deliniators: 'Ring-top, knob-top and bases',
-  'equipment-rentals': 'Arrow boards, TMAs, VMS and more',
-  'truck-rentals': 'Crash trucks, bucket trucks and flatbeds'
+  deliniators: 'Ring-top, knob-top and bases'
 };
 ---
-<Layout title="Shop all categories" description="Traffic cones, barricades, WATERCADE barriers, drums, signs, lights and safety gear. Buy online with nationwide shipping, or rent in NJ, NY, PA and CT.">
+<Layout title="Products" description="Traffic cones, barricades, WATERCADE barriers, drums, signs, lights, reflectors and safety gear. Buy online with nationwide shipping, or rent in NJ, NY, PA and CT.">
   <section class="chead">
     <div class="wrap">
-      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Shop</span></nav>
-      <h1>Shop by category</h1>
-      <p class="lede">Buy online and we ship anywhere in the U.S. Need it for one job? Everything can be rented in NJ, NY, PA and CT.</p>
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Products</span></nav>
+      <h1>Products</h1>
+      <p class="lede">Everything your work zone needs, straight from our yard. Buy online and we ship anywhere in the U.S. — or rent any of it in NJ, NY, PA and CT.</p>
     </div>
   </section>
-  <section class="wrap cats">
-    {cols.map((c, i) => (
-      <a href={`/collections/${c.handle}`} class="cat reveal" style={`--d:${(i % 4) * 60}ms`}>
-        <span class="cat__img">{c.cover && <img src={img(c.cover.url, 440)} alt="" loading={i < 4 ? 'eager' : 'lazy'} />}</span>
-        <span class="cat__body">
-          <span class="cat__t">{c.title}</span>
-          <span class="cat__d">{blurbs[c.handle] || ''}</span>
-          <span class="cat__n">{c.products.length} {c.products.every((p) => p.isRental) ? 'rentals' : 'products'}</span>
-        </span>
-      </a>
-    ))}
+  <section class="wrap cats-wrap">
+    <div class="cats">
+      {cols.map((c, i) => (
+        <a href={`/collections/${c.handle}`} class="cat reveal" style={`--d:${(i % 5) * 50}ms`}>
+          <span class="cat__img">{c.cover && <img src={img(c.cover.url, 440)} alt="" loading={i < 5 ? 'eager' : 'lazy'} />}</span>
+          <span class="cat__body">
+            <span class="cat__t">{c.title}</span>
+            <span class="cat__d">{blurbs[c.handle] || ''}</span>
+            <span class="cat__n">{c.products.length} {c.products.length === 1 ? 'product' : 'products'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </span>
+        </a>
+      ))}
+    </div>
   </section>
-  <section class="wrap help">
-    <div class="help__in">
+  <section class="wrap xbands">
+    <div class="xband reveal">
+      <div>
+        <h2>Need trucks or powered equipment?</h2>
+        <p>Crash trucks, arrow boards, VMS boards, light towers and the rest of the fleet live under Rentals.</p>
+      </div>
+      <a class="btn btn--dark" href="/collections/equipment-rentals">See the rental fleet</a>
+    </div>
+    <div class="xband reveal" style="--d:80ms">
       <div>
         <h2>Not sure what the job calls for?</h2>
-        <p>Tell Conner the road, the speed and the dates, or use the work zone builder to lay the whole thing out. Either one ends in a quote request our team prices the same business day.</p>
+        <p>Tell Conner the road, speed and dates, or lay the whole zone out with the work zone builder.</p>
       </div>
-      <div class="help__cta">
+      <div class="xband__cta">
         <button class="btn" data-ask-conner>Ask Conner</button>
-        <a class="btn btn--ghost" href="/tools/work-zone-builder">Open the work zone builder</a>
+        <a class="btn btn--ghost" href="/tools/work-zone-builder">Work zone builder</a>
       </div>
     </div>
   </section>
@@ -58,23 +65,31 @@ const blurbs = {
   .chead { background: var(--haze); border-bottom: 1px solid var(--line); padding: 40px 0 48px; }
   .crumbs { display: flex; gap: 8px; font-size: .92rem; color: var(--steel); margin-bottom: 14px; }
   .crumbs a { color: inherit; }
-  .chead .lede { margin: 12px 0 0; }
-  .cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding-top: 40px; }
-  .cat { display: grid; grid-template-rows: auto 1fr; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; text-decoration: none; transition: border-color .15s ease, box-shadow .15s ease; }
-  .cat:hover { border-color: var(--line-dark); box-shadow: var(--shadow-m); }
-  .cat__img { display: grid; place-items: center; aspect-ratio: 4/3; padding: 22px; background: #fff; border-bottom: 1px solid var(--haze-2); }
-  .cat__img img { width: 100%; height: 100%; object-fit: contain; transition: transform .2s ease; }
+  .chead .lede { margin: 12px 0 0; max-width: 60ch; }
+
+  .cats-wrap { padding-top: 44px; }
+  .cats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .cat { display: grid; grid-template-rows: auto 1fr; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; text-decoration: none; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+  .cat:hover { border-color: var(--line-dark); box-shadow: var(--shadow-m); transform: translateY(-2px); }
+  .cat__img { position: relative; aspect-ratio: 1; background: #fff; border-bottom: 1px solid var(--haze-2); }
+  .cat__img img { position: absolute; inset: 26px; width: calc(100% - 52px); height: calc(100% - 52px); object-fit: contain; transition: transform .2s ease; }
   .cat:hover .cat__img img { transform: scale(1.05); }
-  .cat__body { padding: 15px 18px 17px; display: grid; gap: 3px; align-content: start; }
-  .cat__t { font-variation-settings: 'wght' 680; font-size: 1.08rem; }
-  .cat__d { color: var(--steel); font-size: .9rem; line-height: 1.4; }
-  .cat__n { color: var(--steel); font-size: .85rem; margin-top: 6px; }
+  .cat__body { display: grid; grid-template-rows: 1.5em 2.45em 1.6em; gap: 4px; padding: 16px 18px 14px; align-items: start; }
+  .cat__t { font-variation-settings: 'wght' 690; font-size: 1.03rem; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cat:hover .cat__t { color: var(--red); }
-  .help { padding: clamp(48px, 6vw, 80px) 0 clamp(64px, 8vw, 110px); }
-  .help__in { display: flex; justify-content: space-between; align-items: center; gap: 28px; flex-wrap: wrap; background: var(--haze); border: 1px solid var(--line); border-radius: var(--r-l); padding: 36px clamp(24px, 3.5vw, 44px); }
-  .help h2 { font-size: var(--fs-4); margin-bottom: 8px; }
-  .help p { margin: 0; color: var(--steel); max-width: 56ch; }
-  .help__cta { display: flex; gap: 10px; flex-wrap: wrap; }
-  @media (max-width: 1060px) { .cats { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 760px) { .cats { grid-template-columns: repeat(2, 1fr); gap: 12px; } .cat__img { padding: 14px; } }
+  .cat__d { color: var(--steel); font-size: .88rem; line-height: 1.35; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .cat__n { display: flex; align-items: center; align-self: end; gap: 5px; color: var(--steel); font-size: .85rem; font-variation-settings: 'wght' 580; }
+  .cat__n svg { width: 13px; height: 13px; transition: translate .15s ease; }
+  .cat:hover .cat__n { color: var(--red); }
+  .cat:hover .cat__n svg { translate: 3px 0; }
+
+  .xbands { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-block: clamp(48px, 6vw, 72px) clamp(64px, 8vw, 110px); }
+  .xband { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; background: var(--haze); border: 1px solid var(--line); border-radius: var(--r-l); padding: 28px 30px; }
+  .xband h2 { font-size: var(--fs-2); margin-bottom: 6px; }
+  .xband p { margin: 0; color: var(--steel); font-size: .97rem; max-width: 44ch; }
+  .xband__cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  @media (max-width: 1180px) { .cats { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 980px) { .cats { grid-template-columns: repeat(3, 1fr); } .xbands { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .cats { grid-template-columns: repeat(2, 1fr); gap: 12px; } .cat__img img { inset: 14px; width: calc(100% - 28px); height: calc(100% - 28px); } .cat__body { padding: 12px 14px 12px; } }
 </style>

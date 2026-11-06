@@ -9,11 +9,13 @@ export const STOREFRONT_TOKEN = '10d044d2c1eb893c94c1f357ac7533e1';
 export const ENDPOINT = `https://${SHOP_DOMAIN}/api/${API_VERSION}/graphql.json`;
 
 // Collections shown in navigation and category tiles, in order.
-export const NAV_COLLECTIONS = [
+// Purchasable product categories (the Products page). Fleet and equipment rentals are separate.
+export const PRODUCT_COLLECTIONS = [
   'cones', 'barricades', 'water-filled-barriers', 'traffic-drums', 'sign-shop',
-  'lights', 'reflectors', 'safety-gear', 'sign-stands', 'deliniators',
-  'equipment-rentals', 'truck-rentals'
+  'lights', 'reflectors', 'safety-gear', 'sign-stands', 'deliniators'
 ];
+export const RENTAL_COLLECTIONS = ['equipment-rentals', 'truck-rentals'];
+export const NAV_COLLECTIONS = [...PRODUCT_COLLECTIONS, ...RENTAL_COLLECTIONS];
 // Cover images for category tiles (the same art the current site uses).
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
 const COVERS = {

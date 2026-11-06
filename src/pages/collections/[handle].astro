@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { loadCatalog, NAV_COLLECTIONS, money } from '../../lib/shopify.js';
+import { loadCatalog, PRODUCT_COLLECTIONS, RENTAL_COLLECTIONS, money } from '../../lib/shopify.js';
 
 export async function getStaticPaths() {
   const { collections } = await loadCatalog();
@@ -15,7 +15,8 @@ const hasRentals = c.products.some((p) => p.isRental);
 const hasBuys = c.products.some((p) => !p.isRental);
 const buys = c.products.filter((p) => !p.isRental);
 const maxPrice = Math.ceil(Math.max(0, ...buys.map((p) => p.maxPrice)));
-const navCols = NAV_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
+const navCols = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
+const rentalCols = RENTAL_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const desc = c.description || (rentalOnly
   ? 'Delivered, set up and picked up across NJ, NY, PA and CT. Request a quote for daily, weekly or monthly rates.'
   : 'Buy online and we ship anywhere in the U.S., or rent in NJ, NY, PA and CT.');
@@ -23,7 +24,7 @@ const desc = c.description || (rentalOnly
 <Layout title={c.title} description={`${c.title} from Traffic Safety Service. ${desc}`}>
   <section class="chead">
     <div class="wrap">
-      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/collections">Shop</a><span aria-hidden="true">/</span><span aria-current="page">{c.title}</span></nav>
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/collections">Products</a><span aria-hidden="true">/</span><span aria-current="page">{c.title}</span></nav>
       <h1>{c.title}</h1>
       <p class="lede">{desc}</p>
     </div>
@@ -32,8 +33,10 @@ const desc = c.description || (rentalOnly
   <div class="wrap shop" data-shop>
     <aside class="side">
       <nav class="side__nav" aria-label="Categories">
-        <h2>Categories</h2>
+        <h2>Products</h2>
         {navCols.map((n) => <a href={`/collections/${n.handle}`} aria-current={n.handle === handle ? 'page' : undefined}>{n.title}<span>{n.products.length}</span></a>)}
+        <h2 class="side__h2gap">Rentals</h2>
+        {rentalCols.map((n) => <a href={`/collections/${n.handle}`} aria-current={n.handle === handle ? 'page' : undefined}>{n.title}<span>{n.products.length}</span></a>)}
       </nav>
       <details class="side__filters" open>
         <summary><h2>Filter</h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></summary>
@@ -164,6 +167,7 @@ const desc = c.description || (rentalOnly
   .side h2 { font-size: 1.02rem; font-variation-settings: 'wght' 700; }
   .side__nav { display: grid; gap: 2px; }
   .side__nav h2 { margin-bottom: 8px; }
+  .side__h2gap { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
   .side__nav a { display: flex; justify-content: space-between; gap: 10px; text-decoration: none; padding: 8px 10px 7px; border-radius: 7px; color: var(--ink-2); font-size: .96rem; }
   .side__nav a span { color: var(--steel); font-size: .85rem; }
   .side__nav a:hover { background: var(--haze); color: var(--ink); }
