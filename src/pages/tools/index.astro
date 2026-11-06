@@ -3,6 +3,12 @@ import Layout from '../../layouts/Layout.astro';
 
 const tools = [
   {
+    href: '/tools/lane-closure-plan',
+    title: 'Free lane closure plan',
+    text: 'Answer a few questions about the road, the work and the timing. Get the MUTCD typical application, sign spacing, taper, equipment and crew, plus what the Turnpike, Parkway, NJDOT, NYSDOT or PennDOT typically require.',
+    best: 'Best when you are not sure what closure or crew the job needs.'
+  },
+  {
     href: '/tools/work-zone-builder',
     title: 'Work zone builder',
     text: 'Set the road type, speed and lanes to close. Watch the taper, buffer and advance signs lay themselves out to MUTCD spacing, then take the full equipment count.',
@@ -35,18 +41,19 @@ const tools = [
     <div class="wrap">
       <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Planning tools</span></nav>
       <h1>Plan the job before you call</h1>
-      <p class="lede">Four free tools built from how our crews actually set up work zones. Every one of them ends in an equipment list you can send straight to TSS for a quote.</p>
+      <p class="lede">Five free tools built from how our crews actually set up work zones. Every one of them ends in an equipment list you can send straight to TSS for a quote.</p>
     </div>
   </section>
 
   <section class="section section--tight">
     <div class="wrap tl-grid">
       {tools.map((t) => (
-        <a class="tl-card sign" href={t.href}>
+        <a class:list={["tl-card sign", { "tl-card--hero": t.href.endsWith("lane-closure-plan") }]} href={t.href}>
+          {t.href.endsWith('lane-closure-plan') && <span class="tl-card__new">New · Free</span>}
           <h2>{t.title}</h2>
           <p>{t.text}</p>
           <p class="tl-card__best">{t.best}</p>
-          <span class="tl-card__go">Open the tool</span>
+          <span class="tl-card__go">{t.href.endsWith('lane-closure-plan') ? 'Start my free plan' : 'Open the tool'}</span>
         </a>
       ))}
     </div>
@@ -88,5 +95,11 @@ const tools = [
   .tl-note h2 { font-size: var(--fs-4); margin-bottom: 6px; }
   .tl-note p { margin: 0; color: var(--steel); max-width: 54ch; }
   .tl-note__btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tl-card--hero { grid-column: 1 / -1; color: #fff; border-color: transparent; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); }
+  .tl-card--hero h2, .tl-card--hero:hover h2 { color: #fff; }
+  .tl-card--hero p { color: rgba(255,255,255,.9); max-width: 80ch; }
+  .tl-card--hero .tl-card__best { color: rgba(255,255,255,.78); }
+  .tl-card--hero .tl-card__go { align-self: flex-start; margin-top: 8px; padding: 12px 20px; border-radius: 12px; background: #fff; color: var(--red); }
+  .tl-card__new { align-self: flex-start; padding: 5px 11px 4px; border-radius: 999px; background: var(--gold); color: var(--ink); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
   @media (max-width: 760px) { .tl-grid { grid-template-columns: 1fr; } }
 </style>

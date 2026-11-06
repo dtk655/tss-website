@@ -1,0 +1,947 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../../lib/config.js';
+
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const logos = {
+  njtp: CDN + 'Untitled_design_26.png',
+  gsp: CDN + 'Untitled_design_23.png',
+  njdot: CDN + 'Untitled_design_27.png',
+  thruway: CDN + 'Untitled_design_24.png',
+  nysdot: CDN + 'Untitled_design_29.png',
+  panynj: CDN + 'Untitled_design_28.png',
+  penndot: CDN + 'Untitled_design_30.png'
+};
+---
+<Layout
+  title="Free lane closure plan"
+  description="Not sure what closure or crew your job needs? Answer a few questions and get a free lane closure plan based on MUTCD Part 6 and NJ Turnpike, Garden State Parkway, NJDOT, NYSDOT, PennDOT and other agency standards. Then send it to TSS for a quote.">
+
+  <section class="lcp-hero">
+    <div class="wrap lcp-hero__in">
+      <div class="lcp-hero__copy">
+        <nav class="lcp-crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/pages/lane-closure">Lane closures</a><span aria-hidden="true">/</span><span>Free plan</span></nav>
+        <p class="lcp-kicker"><span class="lcp-kicker__dot" aria-hidden="true"></span>Free · About 2 minutes · No obligation</p>
+        <h1>Free lane closure plan</h1>
+        <p class="lcp-hero__lede">Tell us about the road and the work. We'll show you the setup, sign spacing, equipment and crew MUTCD and the road's agency typically call for, then a certified TSS crew can quote it.</p>
+      </div>
+      <ul class="lcp-hero__std" aria-label="Standards this plan draws on">
+        <li><b>MUTCD Part 6</b><span>Typical applications, tapers, buffers and sign spacing</span></li>
+        <li><b>Agency rules</b><span>NJ Turnpike, Parkway, NJDOT, NYSDOT, Thruway, PennDOT, CTDOT, DelDOT</span></li>
+        <li><b>Reviewed by TSS</b><span>A traffic control specialist checks every plan you send</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="lcp-body">
+    <div class="wrap lcp-grid">
+      <div class="lcp-card" data-lcp data-webhook={FORM_WEBHOOK} data-email={EMAIL} data-phone={PHONE} data-tel={PHONE_TEL} data-logos={JSON.stringify(logos)}>
+        <noscript><p class="lcp-nojs">This planner needs JavaScript. Call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and we'll plan the closure with you.</p></noscript>
+        <ol class="lcp-rail" data-rail aria-label="Progress"></ol>
+        <div class="lcp-stage" data-stage aria-live="polite"></div>
+        <div class="lcp-foot" data-foot>
+          <button type="button" class="lcp-btn lcp-btn--ghost" data-back>Back</button>
+          <span class="lcp-foot__hint" data-hint></span>
+          <button type="button" class="lcp-btn lcp-btn--solid" data-next>Continue</button>
+        </div>
+      </div>
+
+      <aside class="lcp-side" data-side aria-label="Plan preview">
+        <div class="lcp-side__card">
+          <div class="lcp-side__head">
+            <span class="lcp-side__eyebrow">Your plan</span>
+            <span class="lcp-side__meter"><i data-meter></i></span>
+          </div>
+          <dl class="lcp-side__list" data-preview></dl>
+          <div class="lcp-side__calc" data-calc></div>
+        </div>
+        <div class="lcp-side__help">
+          <p><b>Rather talk it through?</b> A traffic control specialist picks up 24/7.</p>
+          <a href={PHONE_TEL} class="lcp-side__call">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
+            {PHONE}
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Layout>
+
+<style is:global>
+  .lcp-hero { position: relative; overflow: hidden; color: #fff; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); }
+  .lcp-hero::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,.035) 0 18px, transparent 18px 36px); pointer-events: none; }
+  .lcp-hero__in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: center; padding-block: clamp(30px, 4vw, 52px) clamp(34px, 4.4vw, 58px); }
+  .lcp-crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: .9rem; color: rgba(255,255,255,.75); margin-bottom: 16px; }
+  .lcp-crumbs a { color: inherit; text-decoration: none; }
+  .lcp-crumbs a:hover { color: #fff; text-decoration: underline; }
+  .lcp-kicker { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 14px; padding: 7px 14px 6px; border-radius: 999px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); font-size: .9rem; font-variation-settings: 'wght' 600; letter-spacing: .01em; }
+  .lcp-kicker__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 rgba(245,184,0,.7); animation: lcpPulse 2s infinite; }
+  @keyframes lcpPulse { 70% { box-shadow: 0 0 0 9px rgba(245,184,0,0); } 100% { box-shadow: 0 0 0 0 rgba(245,184,0,0); } }
+  .lcp-hero h1 { margin: 0; color: #fff; font-size: clamp(2.3rem, 4.6vw, 3.9rem); line-height: 1.02; letter-spacing: -.025em; }
+  .lcp-hero__lede { margin: 16px 0 0; max-width: 58ch; font-size: clamp(1.02rem, 1.3vw, 1.2rem); line-height: 1.55; color: rgba(255,255,255,.9); }
+  .lcp-hero__std { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .lcp-hero__std li { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center; padding: 14px 18px; border-radius: 14px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(6px); }
+  .lcp-hero__std b { font-size: 1.02rem; font-variation-settings: 'wght' 720; }
+  .lcp-hero__std span { font-size: .93rem; line-height: 1.4; color: rgba(255,255,255,.85); }
+
+  .lcp-body { background: var(--haze); padding: clamp(24px, 3.4vw, 44px) 0 clamp(56px, 7vw, 96px); }
+  .lcp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 28px; align-items: start; }
+
+  .lcp-card { background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 1px 2px rgba(20,23,26,.04), 0 18px 48px -22px rgba(20,23,26,.22); overflow: hidden; min-width: 0; }
+  .lcp-nojs { padding: 28px; }
+  .lcp-rail { list-style: none; margin: 0; padding: 18px clamp(18px, 2.6vw, 34px); display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; border-bottom: 1px solid var(--line); background: linear-gradient(#fff, #fbfbfc); }
+  .lcp-rail li { min-width: 0; }
+  .lcp-rail button { all: unset; box-sizing: border-box; display: grid; gap: 8px; width: 100%; cursor: pointer; }
+  .lcp-rail button[disabled] { cursor: default; }
+  .lcp-rail i { display: block; height: 5px; border-radius: 99px; background: var(--haze-2); overflow: hidden; position: relative; }
+  .lcp-rail i::after { content: ''; position: absolute; inset: 0; width: 0; background: var(--red); border-radius: inherit; transition: width .45s cubic-bezier(.2,.8,.2,1); }
+  .lcp-rail .is-done i::after, .lcp-rail .is-on i::after { width: 100%; }
+  .lcp-rail .is-on i::after { background: linear-gradient(90deg, var(--red), #e13a1a); }
+  .lcp-rail span { font-size: .8rem; color: var(--steel); font-variation-settings: 'wght' 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lcp-rail .is-on span { color: var(--ink); }
+  .lcp-rail .is-done span { color: var(--ink-2); }
+
+  .lcp-stage { padding: clamp(22px, 3vw, 38px) clamp(18px, 2.6vw, 38px) 10px; min-height: 420px; }
+  .lcp-step { animation: lcpIn .42s cubic-bezier(.2,.8,.2,1) both; }
+  .lcp-step.is-back { animation-name: lcpInBack; }
+  @keyframes lcpIn { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+  @keyframes lcpInBack { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: none; } }
+  .lcp-step__n { margin: 0 0 6px; font-size: .84rem; letter-spacing: .08em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 700; }
+  .lcp-step h2 { margin: 0; font-size: clamp(1.5rem, 2.3vw, 2.05rem); letter-spacing: -.02em; line-height: 1.15; }
+  .lcp-step__sub { margin: 8px 0 0; color: var(--steel); max-width: 70ch; line-height: 1.5; }
+  .lcp-q { margin-top: 26px; }
+  .lcp-q > label, .lcp-q__label { display: flex; align-items: baseline; gap: 10px; margin: 0 0 12px; font-size: 1.02rem; font-variation-settings: 'wght' 680; color: var(--ink); }
+  .lcp-q__label small, .lcp-q > label small { color: var(--steel); font-variation-settings: 'wght' 480; font-size: .88rem; }
+
+  .lcp-opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 12px; }
+  .lcp-opts--wide { grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); }
+  .lcp-opt { all: unset; box-sizing: border-box; position: relative; display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 15px; border: 1.5px solid var(--line); border-radius: 16px; background: #fff; cursor: pointer; transition: border-color .15s, box-shadow .2s, transform .2s, background .15s; min-width: 0; }
+  .lcp-opt:hover { border-color: var(--line-dark); transform: translateY(-2px); box-shadow: 0 12px 26px -16px rgba(20,23,26,.35); }
+  .lcp-opt:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; }
+  .lcp-opt[aria-pressed="true"] { border-color: var(--red); background: linear-gradient(#fff, #fff8f8); box-shadow: 0 0 0 3px rgba(182,6,6,.1), 0 14px 30px -18px rgba(182,6,6,.45); }
+  .lcp-opt__check { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line-dark); display: grid; place-items: center; transition: all .2s; }
+  .lcp-opt__check svg { width: 12px; height: 12px; opacity: 0; transform: scale(.4); transition: all .2s; }
+  .lcp-opt[aria-pressed="true"] .lcp-opt__check { background: var(--red); border-color: var(--red); }
+  .lcp-opt[aria-pressed="true"] .lcp-opt__check svg { opacity: 1; transform: none; }
+  .lcp-opt__media { height: 52px; display: flex; align-items: center; }
+  .lcp-opt__media img { max-height: 52px; max-width: 120px; object-fit: contain; }
+  .lcp-opt__media svg { height: 46px; width: auto; max-width: 100%; }
+  .lcp-opt b { display: block; font-size: 1rem; line-height: 1.25; font-variation-settings: 'wght' 700; padding-right: 22px; }
+  .lcp-opt span { display: block; font-size: .87rem; line-height: 1.4; color: var(--steel); }
+  .lcp-shield { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 12px; background: var(--ink); color: #fff; font-size: .95rem; font-variation-settings: 'wght' 800; letter-spacing: .02em; }
+  .lcp-opt .lcp-shield { display: grid; font-size: .95rem; color: #fff; line-height: 1; }
+  .lcp-opt .lcp-shield--gold { color: var(--ink); }
+  .lcp-shield--red { background: var(--red); }
+  .lcp-shield--gold { background: var(--gold); color: var(--ink); }
+
+  .lcp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lcp-chip { all: unset; box-sizing: border-box; min-width: 64px; text-align: center; padding: 11px 16px 10px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; font-variation-settings: 'wght' 640; cursor: pointer; transition: all .15s; }
+  .lcp-chip:hover { border-color: var(--line-dark); }
+  .lcp-chip:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; }
+  .lcp-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .lcp-chip small { display: block; font-size: .74rem; color: inherit; opacity: .7; font-variation-settings: 'wght' 500; }
+
+  .lcp-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; margin-top: 24px; }
+  .lcp-field { display: grid; gap: 7px; min-width: 0; }
+  .lcp-field--full { grid-column: 1 / -1; }
+  .lcp-field span { font-size: .92rem; font-variation-settings: 'wght' 650; color: var(--ink-2); }
+  .lcp-field span em { font-style: normal; color: var(--red); }
+  .lcp-field input, .lcp-field select, .lcp-field textarea { font: inherit; font-size: 1rem; width: 100%; box-sizing: border-box; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
+  .lcp-field textarea { min-height: 104px; resize: vertical; }
+  .lcp-field input:focus, .lcp-field select:focus, .lcp-field textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(182,6,6,.12); }
+  .lcp-field.is-bad input { border-color: var(--red); background: var(--red-tint); }
+
+  .lcp-foot { display: flex; align-items: center; gap: 14px; padding: 18px clamp(18px, 2.6vw, 38px) 24px; }
+  .lcp-foot__hint { flex: 1; text-align: center; font-size: .9rem; color: var(--steel); }
+  .lcp-foot.is-hidden { display: none; }
+  .lcp-btn { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 14px 26px 13px; border-radius: 12px; font-size: 1.02rem; font-variation-settings: 'wght' 680; cursor: pointer; transition: background .15s, transform .15s, opacity .15s, border-color .15s; white-space: nowrap; }
+  .lcp-btn:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; }
+  .lcp-btn--solid { background: var(--red); color: #fff; }
+  .lcp-btn--solid:hover { background: var(--red-press); }
+  .lcp-btn--solid[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+  .lcp-btn--ghost { border: 1.5px solid var(--line-dark); color: var(--ink); background: #fff; }
+  .lcp-btn--ghost:hover { border-color: var(--ink); }
+  .lcp-btn--ghost[hidden] { display: inline-flex; visibility: hidden; }
+  .lcp-btn--dark { background: var(--ink); color: #fff; }
+  .lcp-btn--dark:hover { background: #000; }
+  .lcp-btn svg { width: 18px; height: 18px; }
+
+  /* sidebar */
+  .lcp-side { position: sticky; top: 112px; display: grid; gap: 14px; }
+  .lcp-side__card { background: #fff; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; box-shadow: 0 18px 40px -26px rgba(20,23,26,.28); }
+  .lcp-side__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; background: var(--ink); color: #fff; }
+  .lcp-side__eyebrow { font-size: .82rem; text-transform: uppercase; letter-spacing: .1em; font-variation-settings: 'wght' 700; }
+  .lcp-side__meter { width: 110px; height: 6px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+  .lcp-side__meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), #ffd966); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+  .lcp-side__list { margin: 0; padding: 8px 20px 6px; }
+  .lcp-side__list div { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 11px 0; border-bottom: 1px dashed var(--line); font-size: .93rem; }
+  .lcp-side__list div:last-child { border-bottom: 0; }
+  .lcp-side__list dt { color: var(--steel); }
+  .lcp-side__list dd { margin: 0; font-variation-settings: 'wght' 620; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+  .lcp-side__list dd.is-empty { color: #aab2ba; font-variation-settings: 'wght' 450; }
+  .lcp-side__list dd.is-new { animation: lcpFlash .9s ease; }
+  @keyframes lcpFlash { 0% { color: var(--red); } 100% { color: var(--ink); } }
+  .lcp-side__calc { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
+  .lcp-side__calc:empty { display: none; }
+  .lcp-side__calc div { background: #fbfbfc; padding: 13px 16px; }
+  .lcp-side__calc b { display: block; font-size: 1.28rem; letter-spacing: -.01em; font-variation-settings: 'wght' 760; color: var(--ink); }
+  .lcp-side__calc span { font-size: .8rem; color: var(--steel); }
+  .lcp-side__help { padding: 18px 20px; border-radius: 18px; background: #fff; border: 1px solid var(--line); }
+  .lcp-side__help p { margin: 0 0 12px; font-size: .94rem; color: var(--ink-2); line-height: 1.45; }
+  .lcp-side__call { display: inline-flex; align-items: center; gap: 9px; color: var(--red); font-variation-settings: 'wght' 720; font-size: 1.08rem; text-decoration: none; }
+
+  /* results */
+  .lcp-res__top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 24px; }
+  .lcp-res__id { display: inline-flex; gap: 8px; align-items: center; font-size: .84rem; color: var(--steel); font-variation-settings: 'wght' 600; }
+  .lcp-res__id code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--haze); border: 1px solid var(--line); padding: 3px 8px; border-radius: 6px; color: var(--ink); }
+  .lcp-res__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .lcp-tag { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px 6px; border-radius: 999px; background: var(--haze); border: 1px solid var(--line); font-size: .87rem; font-variation-settings: 'wght' 620; color: var(--ink-2); }
+  .lcp-tag--red { background: var(--red-tint); border-color: #f2cccc; color: var(--red); }
+  .lcp-ta { margin-top: 22px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; padding: 18px 20px; border-radius: 16px; background: var(--ink); color: #fff; }
+  .lcp-ta__code { display: grid; place-items: center; min-width: 86px; height: 70px; padding: 0 10px; border-radius: 12px; background: var(--gold); color: var(--ink); font-size: 1.45rem; font-variation-settings: 'wght' 820; letter-spacing: -.01em; }
+  .lcp-ta b { display: block; font-size: 1.12rem; font-variation-settings: 'wght' 700; }
+  .lcp-ta p { margin: 4px 0 0; font-size: .93rem; color: rgba(255,255,255,.78); line-height: 1.45; }
+  .lcp-dia { margin-top: 18px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(#fbfbfc, #f3f4f6); padding: 14px 14px 10px; overflow-x: auto; }
+  .lcp-dia svg { display: block; width: 100%; min-width: 680px; height: auto; }
+  .lcp-dia figcaption { font-size: .8rem; color: var(--steel); padding: 6px 4px 0; }
+  .lcp-dia .cone { animation: lcpCone .5s cubic-bezier(.2,.8,.2,1.4) both; transform-box: fill-box; transform-origin: center bottom; }
+  @keyframes lcpCone { from { opacity: 0; transform: translateY(-10px) scale(.4); } to { opacity: 1; transform: none; } }
+  .lcp-nums { margin-top: 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .lcp-num { padding: 16px 16px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; }
+  .lcp-num b { display: block; font-size: clamp(1.3rem, 1.8vw, 1.65rem); letter-spacing: -.015em; font-variation-settings: 'wght' 780; color: var(--ink); line-height: 1.1; }
+  .lcp-num span { display: block; margin-top: 6px; font-size: .84rem; color: var(--steel); line-height: 1.35; }
+  .lcp-num small { display: block; margin-top: 6px; font-size: .78rem; color: var(--red); font-variation-settings: 'wght' 600; }
+  .lcp-cols { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
+  .lcp-panel { border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; background: #fff; min-width: 0; }
+  .lcp-panel h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 1.06rem; letter-spacing: -.005em; }
+  .lcp-panel h3 i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--red-tint); color: var(--red); font-style: normal; }
+  .lcp-panel h3 i svg { width: 17px; height: 17px; }
+  .lcp-eq { list-style: none; margin: 0; padding: 0; }
+  .lcp-eq li { display: grid; grid-template-columns: 52px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); align-items: start; }
+  .lcp-eq li:first-child { border-top: 0; padding-top: 2px; }
+  .lcp-eq b { display: grid; place-items: center; height: 30px; border-radius: 8px; background: var(--haze); font-size: .92rem; font-variation-settings: 'wght' 760; }
+  .lcp-eq strong { display: block; font-size: .96rem; font-variation-settings: 'wght' 650; }
+  .lcp-eq span { display: block; font-size: .85rem; color: var(--steel); line-height: 1.4; margin-top: 2px; }
+  .lcp-signs { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
+  .lcp-signs li { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border-radius: 10px; background: var(--haze); font-size: .84rem; font-variation-settings: 'wght' 600; }
+  .lcp-signs li i { display: grid; place-items: center; width: 26px; height: 26px; }
+  .lcp-crew { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .lcp-crew li { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: center; }
+  .lcp-crew b { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: #fff; font-variation-settings: 'wght' 760; }
+  .lcp-crew strong { display: block; font-size: .96rem; font-variation-settings: 'wght' 650; }
+  .lcp-crew span { display: block; font-size: .84rem; color: var(--steel); }
+  .lcp-agency { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .lcp-agency li { position: relative; padding-left: 26px; font-size: .93rem; line-height: 1.5; color: var(--ink-2); }
+  .lcp-agency li::before { content: ''; position: absolute; left: 4px; top: .55em; width: 9px; height: 9px; border-radius: 2px; background: var(--red); transform: rotate(45deg); }
+  .lcp-agency__head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .lcp-agency__head img { height: 40px; width: auto; max-width: 110px; object-fit: contain; }
+  .lcp-agency__head b { font-size: .98rem; }
+  .lcp-agency__head span { display: block; font-size: .82rem; color: var(--steel); }
+  .lcp-disc { margin: 16px 0 0; padding: 12px 14px; border-radius: 12px; background: #fff8e1; border: 1px solid #f5e1a4; font-size: .85rem; color: #6b5400; line-height: 1.5; }
+
+  .lcp-send { margin-top: 22px; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); }
+  .lcp-send__head { position: relative; padding: 22px 24px; color: #fff; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); }
+  .lcp-send__head h3 { margin: 0; font-size: clamp(1.3rem, 2vw, 1.65rem); letter-spacing: -.015em; color: #fff; }
+  .lcp-send__head p { margin: 6px 0 0; color: rgba(255,255,255,.88); font-size: .97rem; }
+  .lcp-send__body { padding: 4px 24px 24px; background: #fff; }
+  .lcp-send__body .lcp-fields { margin-top: 18px; }
+  .lcp-send__row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 20px; }
+  .lcp-send__row p { margin: 0; flex: 1; min-width: 220px; font-size: .86rem; color: var(--steel); }
+  .lcp-send__err { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--red-tint); color: var(--red); font-size: .92rem; }
+  .lcp-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .lcp-link { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 10px; border: 1px solid var(--line); background: #fff; font-size: .9rem; font-variation-settings: 'wght' 620; color: var(--ink-2); }
+  .lcp-link:hover { border-color: var(--ink); color: var(--ink); }
+  .lcp-link svg { width: 16px; height: 16px; }
+
+  .lcp-done { text-align: center; padding: 30px 10px 20px; }
+  .lcp-done__mark { width: 84px; height: 84px; margin: 0 auto 18px; border-radius: 50%; background: var(--red); display: grid; place-items: center; box-shadow: 0 0 0 10px var(--red-tint); animation: lcpPop .6s cubic-bezier(.2,.8,.2,1.4) both; }
+  .lcp-done__mark svg { width: 40px; height: 40px; stroke-dasharray: 40; stroke-dashoffset: 40; animation: lcpDraw .5s .35s ease forwards; }
+  @keyframes lcpPop { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes lcpDraw { to { stroke-dashoffset: 0; } }
+  .lcp-done h2 { margin: 0; font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+  .lcp-done p { margin: 10px auto 0; max-width: 54ch; color: var(--steel); line-height: 1.55; }
+  .lcp-done__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
+
+  @media (max-width: 1180px) {
+    .lcp-grid { grid-template-columns: minmax(0, 1fr) 310px; }
+    .lcp-nums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lcp-cols { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 1010px) {
+    .lcp-hero__in { grid-template-columns: 1fr; }
+    .lcp-grid { grid-template-columns: 1fr; }
+    .lcp-side { position: static; }
+    .lcp-side__card { display: none; }
+    .lcp-rail span { display: none; }
+  }
+  @media (max-width: 640px) {
+    .lcp-hero__in { text-align: center; padding-block: 26px 30px; }
+    .lcp-crumbs { justify-content: center; }
+    .lcp-hero__lede { margin-left: auto; margin-right: auto; text-wrap: balance; }
+    .lcp-hero__std { display: none; }
+    .lcp-stage { min-height: 0; }
+    .lcp-opts, .lcp-opts--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .lcp-opt { padding: 13px 12px 12px; gap: 8px; }
+    .lcp-opt__media { height: 40px; }
+    .lcp-opt__media img { max-height: 40px; max-width: 92px; }
+    .lcp-opt__media svg { height: 36px; }
+    .lcp-shield, .lcp-opt .lcp-shield { width: 40px; height: 40px; font-size: .82rem; }
+    .lcp-opt b { font-size: .93rem; }
+    .lcp-opt span { font-size: .8rem; }
+    .lcp-fields { grid-template-columns: 1fr; }
+    .lcp-foot { padding-bottom: 20px; }
+    .lcp-foot__hint { display: none; }
+    .lcp-foot .lcp-btn { flex: 1; padding-left: 14px; padding-right: 14px; }
+    .lcp-ta { grid-template-columns: 1fr; text-align: center; }
+    .lcp-ta__code { margin: 0 auto; }
+    .lcp-nums { gap: 8px; }
+    .lcp-num { padding: 13px 12px 12px; }
+    .lcp-send__head, .lcp-send__body { padding-left: 18px; padding-right: 18px; }
+    .lcp-send__row .lcp-btn { width: 100%; }
+  }
+  @media print {
+    .lcp-hero, .lcp-side, .lcp-rail, .lcp-foot, .lcp-send, .lcp-tools, header, footer, #tss-chat-assistant { display: none !important; }
+    .lcp-body { background: #fff; padding: 0; }
+    .lcp-grid { display: block; }
+    .lcp-card { border: 0; box-shadow: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lcp-step, .lcp-dia .cone, .lcp-done__mark, .lcp-done__mark svg { animation: none !important; stroke-dashoffset: 0; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('[data-lcp]');
+  if (root) init(root);
+
+  function init(root) {
+    const HOOK = root.dataset.webhook, EMAIL = root.dataset.email, PHONE = root.dataset.phone, TEL = root.dataset.tel;
+    const LOGOS = JSON.parse(root.dataset.logos || '{}');
+    const $ = (s, el = root) => el.querySelector(s);
+    const stage = $('[data-stage]'), rail = $('[data-rail]'), foot = $('[data-foot]');
+    const btnNext = $('[data-next]'), btnBack = $('[data-back]'), hint = $('[data-hint]');
+    const side = document.querySelector('[data-side]');
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const fmt = (n) => Number(n).toLocaleString('en-US');
+    const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+
+    /* ---------------- reference data ---------------- */
+    const AUTH = {
+      njtp: { name: 'New Jersey Turnpike', short: 'NJ Turnpike', by: 'NJ Turnpike Authority', state: 'NJ', cls: 'freeway', logo: LOGOS.njtp },
+      gsp: { name: 'Garden State Parkway', short: 'Garden State Pkwy', by: 'NJ Turnpike Authority', state: 'NJ', cls: 'freeway', logo: LOGOS.gsp },
+      njdot: { name: 'NJDOT state highway or interstate', short: 'NJDOT', by: 'NJ Department of Transportation', state: 'NJ', cls: 'state', logo: LOGOS.njdot },
+      thruway: { name: 'New York State Thruway', short: 'NYS Thruway', by: 'NYS Thruway Authority', state: 'NY', cls: 'freeway', logo: LOGOS.thruway },
+      nysdot: { name: 'NYSDOT state highway or interstate', short: 'NYSDOT', by: 'NYS Department of Transportation', state: 'NY', cls: 'state', logo: LOGOS.nysdot },
+      panynj: { name: 'Port Authority bridge, tunnel or airport', short: 'Port Authority', by: 'Port Authority of NY & NJ', state: 'NY/NJ', cls: 'freeway', logo: LOGOS.panynj },
+      penndot: { name: 'PennDOT state road or interstate', short: 'PennDOT', by: 'PA Department of Transportation', state: 'PA', cls: 'state', logo: LOGOS.penndot },
+      ctdot: { name: 'CTDOT state road or interstate', short: 'CTDOT', by: 'CT Department of Transportation', state: 'CT', cls: 'state', badge: 'CT' },
+      deldot: { name: 'DelDOT state road', short: 'DelDOT', by: 'Delaware Department of Transportation', state: 'DE', cls: 'state', badge: 'DE' },
+      local: { name: 'County or town road', short: 'County / town road', by: 'County or municipality', state: '', cls: 'local', badge: 'CO', tone: 'red' },
+      private: { name: 'Private property or event', short: 'Private / event', by: 'Property owner or event organizer', state: '', cls: 'private', badge: 'EV', tone: 'gold' },
+      unsure: { name: "I'm not sure who owns the road", short: 'Not sure yet', by: 'TSS will confirm', state: '', cls: 'local', badge: '?', tone: 'gold' }
+    };
+    const WORK = {
+      shoulder: { t: 'Shoulder work', d: 'Work on or just off the shoulder' },
+      right: { t: 'Right lane closure', d: 'Close the right travel lane' },
+      left: { t: 'Left lane closure', d: 'Close the left or fast lane' },
+      interior: { t: 'Center / interior lane', d: 'Close a middle lane, traffic both sides' },
+      double: { t: 'Two or more lanes', d: 'Close two lanes in one direction' },
+      flagging: { t: 'One lane, flaggers', d: 'Two-lane road, alternate traffic' },
+      full: { t: 'Full road closure', d: 'Close the road with a detour' },
+      intersection: { t: 'Intersection work', d: 'Work in or next to an intersection' },
+      ramp: { t: 'Ramp work', d: 'Entrance or exit ramp closure' },
+      sidewalk: { t: 'Sidewalk / crosswalk', d: 'Pedestrian route closed or detoured' },
+      mobile: { t: 'Moving operation', d: 'Striping, sweeping, crack seal, inspections' },
+      unsure: { t: 'Not sure', d: "Describe it and we'll recommend" }
+    };
+    const DUR = {
+      short: { t: 'Under an hour', d: 'Short duration', cat: 'Short-duration' },
+      shift: { t: 'One shift', d: 'Up to 12 hours, same day', cat: 'Short-term stationary' },
+      days: { t: 'Overnight to 3 days', d: 'Left up between shifts', cat: 'Intermediate-term stationary' },
+      long: { t: 'More than 3 days', d: 'Long-term setup', cat: 'Long-term stationary' }
+    };
+    const SETTING = { urban: 'Urban / downtown', suburban: 'Suburban', rural: 'Rural', freeway: 'Highway / expressway' };
+    const BUFFER = { 20: 115, 25: 155, 30: 200, 35: 250, 40: 305, 45: 360, 50: 425, 55: 495, 60: 570, 65: 645, 70: 730, 75: 820 };
+    const WA = { s: [200, 'Under 250 ft'], m: [400, '250–500 ft'], l: [800, '500–1,000 ft'], xl: [1500, 'Over 1,000 ft'] };
+
+    const STEPS = [
+      { id: 'road', label: 'Road' },
+      { id: 'where', label: 'Location' },
+      { id: 'roadway', label: 'Roadway' },
+      { id: 'work', label: 'Work' },
+      { id: 'timing', label: 'Timing' },
+      { id: 'needs', label: 'Needs' },
+      { id: 'plan', label: 'Your plan' }
+    ];
+
+    const KEY = 'tss_lcp_v1';
+    let s = { step: 0, auth: '', state: '', town: '', road: '', mp: '', speed: 0, lanes: 0, divided: '', setting: '', work: '', wa: 'm', dur: '', hours: '', start: '', shifts: '', service: '', police: '', permit: '', tcp: '', notes: '', name: '', company: '', email: '', phone: '', sent: false, id: '' };
+    try { const saved = JSON.parse(sessionStorage.getItem(KEY) || 'null'); if (saved && !saved.sent) s = { ...s, ...saved }; } catch {}
+    if (!s.id) s.id = 'LCP-' + Date.now().toString(36).slice(-5).toUpperCase();
+    const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(s)); } catch {} };
+    let dir = 1;
+
+    /* ---------------- mini road icons ---------------- */
+    function mini(type) {
+      const W = 96, H = 50;
+      let lanes = 3, closed = [], sh = false, flag = false, full = false, ped = false, mob = false, x = false, rp = false;
+      if (type === 'shoulder') { sh = true; }
+      else if (type === 'right') closed = [2];
+      else if (type === 'left') closed = [0];
+      else if (type === 'interior') closed = [1];
+      else if (type === 'double') closed = [1, 2];
+      else if (type === 'flagging') { lanes = 2; closed = [1]; flag = true; }
+      else if (type === 'full') { full = true; }
+      else if (type === 'intersection') { x = true; closed = [2]; }
+      else if (type === 'ramp') { rp = true; }
+      else if (type === 'sidewalk') { lanes = 2; ped = true; }
+      else if (type === 'mobile') { mob = true; }
+      const top = 6, lh = (H - 12 - (sh || ped ? 8 : 0)) / lanes;
+      let g = `<rect x="0" y="${top - 2}" width="${W}" height="${lanes * lh + 4 + (sh || ped ? 8 : 0)}" rx="5" fill="#2b3036"/>`;
+      for (let i = 1; i < lanes; i++) g += `<line x1="4" x2="${W - 4}" y1="${top + i * lh}" y2="${top + i * lh}" stroke="${flag && i === 1 ? '#f5b800' : '#fff'}" stroke-width="1.4" stroke-dasharray="${flag ? '0' : '6 5'}"/>`;
+      const by = top + lanes * lh;
+      if (sh || ped) g += `<rect x="0" y="${by + 1}" width="${W}" height="8" fill="${ped ? '#c9ced3' : '#3a4047'}"/>`;
+      closed.forEach((c) => {
+        const y = top + c * lh;
+        g += `<path d="M24 ${c === 0 ? y : y + lh} L44 ${c === 0 ? y + lh : y} L${W - 8} ${c === 0 ? y + lh : y} L${W - 8} ${c === 0 ? y : y + lh} Z" fill="#b60606" opacity=".85"/>`;
+      });
+      if (sh) g += `<path d="M30 ${by + 9} L44 ${by + 1} L${W - 8} ${by + 1} L${W - 8} ${by + 9} Z" fill="#b60606"/>`;
+      if (ped) g += `<rect x="30" y="${by + 1}" width="40" height="8" fill="#b60606"/><path d="M26 ${by - 2} q24 -10 48 0" stroke="#f5b800" stroke-width="2" fill="none" stroke-dasharray="3 3"/>`;
+      if (full) g += `<rect x="40" y="${top - 2}" width="6" height="${lanes * lh + 4}" fill="#f5b800"/><rect x="40" y="${top + 4}" width="6" height="5" fill="#fff"/><rect x="40" y="${top + 18}" width="6" height="5" fill="#fff"/><rect x="40" y="${top + 32}" width="6" height="5" fill="#fff"/><rect x="46" y="${top - 2}" width="${W - 46}" height="${lanes * lh + 4}" fill="#b60606" opacity=".75"/>`;
+      if (flag) g += `<circle cx="18" cy="${top + lh * 1.5}" r="4" fill="#f5b800"/><circle cx="${W - 4}" cy="${top + lh * .5}" r="4" fill="#f5b800"/>`;
+      if (x) g += `<rect x="58" y="0" width="18" height="${H}" fill="#2b3036"/><rect x="58" y="${top + 2 * lh}" width="18" height="${lh}" fill="#b60606" opacity=".85"/>`;
+      if (rp) g += `<path d="M20 ${by} L60 ${by} L90 ${H}" stroke="#2b3036" stroke-width="10" fill="none"/><path d="M48 ${by + 2} L60 ${by + 2} L84 ${H}" stroke="#b60606" stroke-width="6" fill="none"/>`;
+      if (mob) g += `<rect x="58" y="${top + 2 * lh + 2}" width="16" height="${lh - 4}" rx="2" fill="#f5b800"/><rect x="34" y="${top + 2 * lh + 2}" width="16" height="${lh - 4}" rx="2" fill="#fff"/><path d="M38 ${top + 2 * lh + lh / 2} h8 l-3 -3 m3 3 l-3 3" stroke="#b60606" stroke-width="1.6" fill="none"/>`;
+      if (type === 'unsure') g += `<text x="${W / 2}" y="${top + lanes * lh / 2 + 6}" text-anchor="middle" font-size="20" font-weight="800" fill="#f5b800">?</text>`;
+      return `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${g}</svg>`;
+    }
+    const clock = (frac) => { const a = frac * Math.PI * 2 - Math.PI / 2, lg = frac > .5 ? 1 : 0; const x = 23 + 17 * Math.cos(a), y = 23 + 17 * Math.sin(a); return `<svg viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="20" fill="#f5f6f7" stroke="#cfd4d9" stroke-width="2"/>${frac >= 1 ? '<circle cx="23" cy="23" r="17" fill="#b60606"/>' : `<path d="M23 23 L23 6 A17 17 0 ${lg} 1 ${x.toFixed(1)} ${y.toFixed(1)} Z" fill="#b60606"/>`}<circle cx="23" cy="23" r="3" fill="#14171a"/></svg>`; };
+    const shield = (a) => a.logo ? `<img src="${a.logo}" alt="" loading="lazy">` : `<span class="lcp-shield ${a.tone ? 'lcp-shield--' + a.tone : ''}">${a.badge}</span>`;
+
+    /* ---------------- builders ---------------- */
+    const opt = (key, val, media, t, d) => `<button type="button" class="lcp-opt" data-set="${key}" data-val="${val}" aria-pressed="${s[key] === val}"><span class="lcp-opt__check">${CHECK}</span>${media ? `<span class="lcp-opt__media">${media}</span>` : ''}<b>${t}</b>${d ? `<span>${d}</span>` : ''}</button>`;
+    const chip = (key, val, t, sub) => `<button type="button" class="lcp-chip" data-set="${key}" data-val="${val}" aria-pressed="${String(s[key]) === String(val)}">${t}${sub ? `<small>${sub}</small>` : ''}</button>`;
+    const field = (key, label, attrs = '', full = false) => `<label class="lcp-field ${full ? 'lcp-field--full' : ''}"><span>${label}</span><input data-in="${key}" value="${esc(s[key])}" ${attrs}></label>`;
+    const head = (i, h, sub) => `<p class="lcp-step__n">Step ${i + 1} of ${STEPS.length - 1}</p><h2>${h}</h2>${sub ? `<p class="lcp-step__sub">${sub}</p>` : ''}`;
+
+    const VIEWS = {
+      road() {
+        return head(0, 'Whose road is the work on?', 'The road owner sets the permit, closure hours and standard drawings on top of MUTCD. Pick the closest match.')
+          + `<div class="lcp-q"><div class="lcp-opts">${Object.entries(AUTH).map(([k, a]) => opt('auth', k, shield(a), a.short, a.by)).join('')}</div></div>`;
+      },
+      where() {
+        const a = AUTH[s.auth] || {};
+        const fixed = a.state && a.state.length === 2;
+        const states = [['NJ', 'New Jersey'], ['NY', 'New York'], ['PA', 'Pennsylvania'], ['CT', 'Connecticut'], ['DE', 'Delaware']];
+        return head(1, 'Where is the job?', 'Rough is fine. A route and town lets us check closure hours and the right permit office.')
+          + `<div class="lcp-q"><p class="lcp-q__label">State ${fixed ? `<small>Set by ${esc(a.short)}</small>` : ''}</p><div class="lcp-chips">${states.map(([v, t]) => chip('state', v, v, t)).join('')}</div></div>`
+          + `<div class="lcp-fields">${field('road', 'Road or route', 'placeholder="e.g. Route 22 westbound" autocomplete="off"')}${field('town', 'Town / county', 'placeholder="e.g. Union Township, Union County" autocomplete="off"')}${field('mp', 'Milepost, exit or cross street', 'placeholder="e.g. MP 142.3, or at Main St" autocomplete="off"')}${field('start', 'Start date', 'type="date"')}</div>`;
+      },
+      roadway() {
+        const speeds = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70];
+        return head(2, 'Tell us about the roadway', 'Speed drives almost every distance in the plan: taper length, buffer space and how far back the signs go.')
+          + `<div class="lcp-q"><p class="lcp-q__label">Posted speed limit <small>mph</small></p><div class="lcp-chips">${speeds.map((v) => chip('speed', v, v)).join('')}</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Travel lanes in the direction of work</p><div class="lcp-chips">${[1, 2, 3, 4].map((v) => chip('lanes', v, v === 4 ? '4+' : v, v === 1 ? 'lane' : 'lanes')).join('')}</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Road layout</p><div class="lcp-chips">${chip('divided', 'divided', 'Divided', 'median or barrier')}${chip('divided', 'undivided', 'Undivided', 'two-way traffic')}${chip('divided', 'oneway', 'One-way street')}</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Setting</p><div class="lcp-chips">${Object.entries(SETTING).map(([k, t]) => chip('setting', k, t)).join('')}</div></div>`;
+      },
+      work() {
+        return head(3, 'What kind of closure do you need?', 'Pick what the work needs. Not sure? Choose "Not sure" and tell us about the job on the next steps.')
+          + `<div class="lcp-q"><div class="lcp-opts">${Object.entries(WORK).map(([k, w]) => opt('work', k, mini(k), w.t, w.d)).join('')}</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Length of the work area <small>approx.</small></p><div class="lcp-chips">${Object.entries(WA).map(([k, [, t]]) => chip('wa', k, t)).join('')}</div></div>`;
+      },
+      timing() {
+        return head(4, 'When and how long?', 'MUTCD sorts work zones by how long they stay up. Longer setups need sturdier devices and more signs.')
+          + `<div class="lcp-q"><p class="lcp-q__label">How long will the closure stay up?</p><div class="lcp-opts lcp-opts--wide">${Object.entries(DUR).map(([k, d], i) => opt('dur', k, clock([.12, .45, .75, 1][i]), d.t, d.d + ' · ' + d.cat.toLowerCase())).join('')}</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Work hours</p><div class="lcp-chips">${chip('hours', 'day', 'Daytime')}${chip('hours', 'night', 'Overnight')}${chip('hours', 'both', 'Day and night', '24-hour')}</div></div>`
+          + `<div class="lcp-fields">${field('shifts', 'Number of shifts or days', 'type="number" min="1" inputmode="numeric" placeholder="e.g. 3"')}</div>`;
+      },
+      needs() {
+        return head(5, 'What do you need from TSS?', 'This helps us quote the right crew and paperwork.')
+          + `<div class="lcp-q"><p class="lcp-q__label">Service</p><div class="lcp-opts lcp-opts--wide">`
+          + opt('service', 'crew', '<span class="lcp-shield lcp-shield--red">CREW</span>', 'Full closure crew', 'Certified crew sets up, maintains and removes it')
+          + opt('service', 'equip', '<span class="lcp-shield">EQ</span>', 'Equipment only', 'Delivered and picked up, your crew sets it')
+          + opt('service', 'install', '<span class="lcp-shield lcp-shield--gold">SET</span>', 'Equipment + setup', 'We set it and take it down, you run the job')
+          + opt('service', 'unsure', '<span class="lcp-shield lcp-shield--gold">?</span>', 'Not sure yet', 'We will recommend after review')
+          + `</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Permit status</p><div class="lcp-chips">${chip('permit', 'have', 'Have it')}${chip('permit', 'applied', 'Applied')}${chip('permit', 'none', 'Not yet')}${chip('permit', 'unsure', 'Not sure')}</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Police detail</p><div class="lcp-chips">${chip('police', 'arranged', 'Already arranged')}${chip('police', 'help', 'Need guidance')}${chip('police', 'no', 'Not required')}</div></div>`
+          + `<div class="lcp-q"><p class="lcp-q__label">Need a traffic control plan drawing for the permit?</p><div class="lcp-chips">${chip('tcp', 'yes', 'Yes, prepare one')}${chip('tcp', 'no', 'No, we have one')}${chip('tcp', 'unsure', 'Not sure')}</div></div>`
+          + `<div class="lcp-fields"><label class="lcp-field lcp-field--full"><span>Anything else about the job?</span><textarea data-in="notes" placeholder="Type of work, equipment on site, sight-distance issues, nearby ramps or driveways…">${esc(s.notes)}</textarea></label></div>`;
+      },
+      plan() { return renderPlan(); }
+    };
+
+    const REQ = {
+      road: () => !!s.auth,
+      where: () => !!s.state,
+      roadway: () => s.speed && s.lanes && s.divided && s.setting,
+      work: () => !!s.work,
+      timing: () => s.dur && s.hours,
+      needs: () => true,
+      plan: () => true
+    };
+    const MISSING = { road: 'Pick the road owner to continue', where: 'Pick a state to continue', roadway: 'Pick speed, lanes, layout and setting', work: 'Pick a closure type', timing: 'Pick how long and the work hours' };
+
+    /* ---------------- engine ---------------- */
+    function compute() {
+      const a = AUTH[s.auth] || AUTH.unsure;
+      const S = Number(s.speed) || 35;
+      let lanes = Number(s.lanes) || 1;
+      const fwy = a.cls === 'freeway' || s.setting === 'freeway';
+      const highSpeed = S >= 45;
+      const twoWay = s.divided === 'undivided';
+      let work = s.work || 'unsure';
+      if (work === 'unsure') work = lanes >= 2 ? 'right' : (twoWay ? 'flagging' : 'shoulder');
+      if (work === 'interior' && lanes < 3) work = 'right';
+      if (work === 'double' && lanes < 2) work = 'right';
+      if ((work === 'right' || work === 'left') && lanes === 1 && twoWay) work = 'flagging';
+      const dur = s.dur || 'shift';
+      const night = s.hours === 'night' || s.hours === 'both';
+      const longish = dur === 'days' || dur === 'long';
+
+      // advance warning sign spacing (MUTCD Part 6 recommended minimums)
+      let spacing, roadType;
+      if (fwy) { spacing = [1000, 1500, 2640]; roadType = 'Expressway / freeway'; }
+      else if (s.setting === 'rural') { spacing = [500, 500, 500]; roadType = 'Rural'; }
+      else if (S <= 40) { spacing = [100, 100, 100]; roadType = 'Urban, low speed'; }
+      else { spacing = [350, 350, 350]; roadType = 'Urban, high speed'; }
+
+      const W = 12;
+      const L = Math.round(S >= 45 ? W * S : (W * S * S) / 60);
+      const buffer = BUFFER[Math.min(75, Math.max(20, Math.round(S / 5) * 5))];
+      const wa = (WA[s.wa] || WA.m)[0];
+      let taper = L, taperLabel = 'Merging taper', taperNote = `L = W × S = ${W} ft × ${S} mph`;
+      if (S < 45) taperNote = `L = W × S² ÷ 60 = ${W} × ${S}² ÷ 60`;
+      if (work === 'shoulder') { taper = Math.round(L / 3); taperLabel = 'Shoulder taper'; taperNote = '⅓ of L for a shoulder closure'; }
+      if (work === 'flagging') { taper = 100; taperLabel = 'Flagger taper'; taperNote = '50–100 ft for one-lane, two-way traffic'; }
+      if (work === 'full') { taper = 0; taperLabel = 'Road closed'; taperNote = 'Type III barricades across the road'; }
+      if (work === 'sidewalk') { taper = 0; taperLabel = 'Ped detour'; taperNote = 'Barricades and detectable edging'; }
+      if (work === 'mobile') { taper = 0; taperLabel = 'Moving zone'; taperNote = 'Shadow vehicle with arrow board or sign'; }
+      const taperSp = S, tangentSp = 2 * S;
+
+      // typical application
+      const TA = (() => {
+        switch (work) {
+          case 'shoulder': return fwy ? ['TA-5', 'Shoulder closure on a freeway'] : (dur === 'short' ? ['TA-4', 'Short-duration or mobile operation on a shoulder'] : ['TA-3', 'Work on the shoulder']);
+          case 'right': case 'left': return (fwy || s.divided === 'divided') ? ['TA-33', 'Stationary lane closure on a divided highway'] : (S <= 40 && lanes <= 2 ? ['TA-18', 'Lane closure on a minor street'] : ['TA-33', 'Lane closure on a multi-lane road (adapted from TA-33)']);
+          case 'interior': return fwy ? ['TA-38', 'Interior lane closure on a freeway'] : ['TA-30', 'Interior lane closure on a multi-lane street'];
+          case 'double': return ['TA-37', 'Double lane closure on a freeway'];
+          case 'flagging': return ['TA-10', 'Lane closure on a two-lane road using flaggers'];
+          case 'full': return ['TA-13 / TA-20', 'Temporary road closure with a detour for the closed street'];
+          case 'intersection': return ['TA-21–27', 'Lane closures at an intersection (near side, far side or center)'];
+          case 'ramp': return ['TA-42 / 44', 'Work in the vicinity of an exit or entrance ramp'];
+          case 'sidewalk': return ['TA-28 / 29', 'Sidewalk detour or diversion, crosswalk closures'];
+          case 'mobile': return lanes >= 2 ? ['TA-35', 'Mobile operation on a multi-lane road'] : ['TA-17', 'Mobile operations on a two-lane road'];
+        }
+        return ['TA-33', 'Stationary lane closure'];
+      })();
+
+      // devices
+      const bigDevice = fwy || highSpeed || longish;
+      const devName = (fwy || (highSpeed && longish)) ? 'Drums with reflective bands' : highSpeed ? '42" channelizers or drums' : night ? '28" cones with reflective collars' : '28" traffic cones';
+      const nTaper = taper ? Math.ceil(taper / taperSp) + 1 : 0;
+      const nTangent = Math.ceil((buffer + wa) / tangentSp) + 1;
+      const nDown = 5;
+      let devices = 0;
+      if (work === 'double') devices = 2 * nTaper + Math.ceil((2 * L) / tangentSp) + nTangent + nDown + 4;
+      else if (work === 'flagging') devices = 2 * nTaper + nTangent + 4;
+      else if (work === 'intersection') devices = nTaper + nTangent + nDown + 12;
+      else if (work === 'mobile' || work === 'full' || work === 'sidewalk') devices = work === 'full' ? 10 : work === 'sidewalk' ? 6 : 0;
+      else devices = nTaper + nTangent + nDown;
+      devices = Math.ceil(devices * 1.1);
+
+      // signs
+      const both = (fwy || s.divided === 'divided' || s.divided === 'oneway') && lanes >= 2 && work !== 'shoulder';
+      const side = work === 'left' ? 'LEFT' : 'RIGHT';
+      let signs = [];
+      if (work === 'shoulder') signs = [['W20-1', 'ROAD WORK AHEAD'], ['W21-5', 'SHOULDER WORK'], ['G20-2', 'END ROAD WORK']];
+      else if (work === 'flagging') signs = [['W20-1', 'ROAD WORK AHEAD'], ['W20-4', 'ONE LANE ROAD AHEAD'], ['W20-7', 'Flagger symbol'], ['W3-4', 'BE PREPARED TO STOP'], ['G20-2', 'END ROAD WORK']];
+      else if (work === 'full') signs = [['W20-3', 'ROAD CLOSED AHEAD'], ['R11-2', 'ROAD CLOSED'], ['M4-9', 'DETOUR arrows'], ['W20-2', 'DETOUR AHEAD'], ['G20-2', 'END DETOUR']];
+      else if (work === 'sidewalk') signs = [['R9-9', 'SIDEWALK CLOSED'], ['R9-11a', 'SIDEWALK CLOSED, CROSS HERE'], ['M4-9', 'Pedestrian detour arrows']];
+      else if (work === 'mobile') signs = [['W20-1', 'ROAD WORK AHEAD (on shadow vehicle)'], ['W21-10', 'SHOULDER / LANE WORK, truck-mounted'], ['W4-2', 'Lane reduction (when used)']];
+      else if (work === 'double') signs = [['W20-1', 'ROAD WORK AHEAD'], ['W20-5aR', `2 ${side} LANES CLOSED AHEAD`], ['W4-2', 'Lane reduction symbol'], ['W20-5', `${side} LANE CLOSED AHEAD`], ['G20-2', 'END ROAD WORK']];
+      else if (work === 'interior') signs = [['W20-1', 'ROAD WORK AHEAD'], ['W20-5', 'CENTER LANE CLOSED AHEAD'], ['W4-2', 'Lane reduction symbol'], ['G20-2', 'END ROAD WORK']];
+      else signs = [['W20-1', 'ROAD WORK AHEAD'], ['W20-5', `${side} LANE CLOSED AHEAD`], ['W4-2', 'Lane reduction symbol'], ['G20-2', 'END ROAD WORK']];
+      if (work === 'ramp') signs = [['W20-1', 'ROAD WORK AHEAD'], ['W20-5', 'RAMP LANE CLOSED / EXIT CLOSED'], ['E5-1', 'Exit sign, relocated or covered'], ['G20-2', 'END ROAD WORK']];
+      if (work === 'intersection') signs.splice(2, 0, ['R3-7', 'Lane use / turn restrictions']);
+      const signCount = signs.length * (both ? 2 : 1) * (work === 'flagging' ? 2 : 1);
+
+      // arrow board, TMA, VMS, lights
+      const laneClosure = ['right', 'left', 'interior', 'double', 'ramp', 'intersection'].includes(work);
+      let arrow = null;
+      if (laneClosure && !twoWay) arrow = fwy || S >= 55 ? 'Type C' : S >= 45 ? 'Type B' : 'Type A or B';
+      if (laneClosure && twoWay && lanes >= 2) arrow = S >= 45 ? 'Type B' : 'Type A or B';
+      if (work === 'mobile') arrow = lanes >= 2 ? (S >= 55 || fwy ? 'Type C on shadow vehicle' : 'Type B on shadow vehicle') : null;
+      const arrowQty = arrow ? (work === 'double' ? 2 : 1) : 0;
+      const tmaReq = ['njtp', 'gsp', 'thruway', 'panynj'].includes(s.auth);
+      const tma = work === 'sidewalk' || work === 'full' ? null : (tmaReq ? 'Typically required' : (fwy || (S >= 50 && work !== 'flagging') || work === 'mobile') ? 'Recommended' : (S >= 45 ? 'Consider' : null));
+      const tmaQty = tma && tma !== 'Consider' ? (work === 'mobile' ? 1 : work === 'double' ? 2 : 1) : 0;
+      const vms = fwy || dur === 'long' || work === 'full' || (night && S >= 45) || (S >= 55 && laneClosure);
+      const vmsQty = vms ? (fwy || work === 'full' || both ? 2 : 1) : 0;
+      const lights = night ? Math.max(2, Math.ceil(wa / 400) + (work === 'flagging' ? 2 : 0)) : 0;
+      const barrier = dur === 'long' && highSpeed && laneClosure;
+
+      // crew
+      const flaggers = work === 'flagging' ? 2 : work === 'intersection' ? 2 : work === 'full' ? 1 : 0;
+      let laborers = 2 + (fwy ? 1 : 0) + (work === 'double' ? 1 : 0) + (work === 'mobile' ? 0 : 0);
+      if (work === 'sidewalk') laborers = 1;
+      const crew = [[1, 'Traffic Control Captain', 'Rutgers-certified, runs the setup and stays on site']];
+      crew.push([laborers, 'Laborers', 'Experienced, OSHA-trained, set and maintain devices']);
+      if (flaggers) crew.push([flaggers, 'Flaggers', 'ATSSA-certified' + (work === 'flagging' ? ', one at each end of the zone' : '')]);
+      if (tmaQty) crew.push([tmaQty, 'TMA operator' + (tmaQty > 1 ? 's' : ''), 'Drives the truck-mounted attenuator']);
+      const crewTotal = crew.reduce((t, c) => t + c[0], 0);
+
+      // equipment
+      const eq = [];
+      if (devices) eq.push([devices, devName, `Taper ~${taperSp} ft apart, ~${tangentSp} ft along the tangent. Includes ~10% spares.`]);
+      eq.push([signCount, 'Work zone signs on stands', (both ? 'Signs on both sides of the road. ' : '') + (work === 'flagging' ? 'Full sign series on both approaches. ' : '') + (longish ? 'Post-mounted or heavy stands for longer setups.' : '48" × 48" roll-up or rigid on stands.')]);
+      if (arrowQty) eq.push([arrowQty, `Arrow board, ${arrow}`, work === 'mobile' ? 'Mounted on the shadow vehicle.' : 'At the start of the taper, in the closed lane.']);
+      if (tmaQty) eq.push([tmaQty, 'Truck-mounted attenuator (TMA)', tma + ' ahead of the work, in the buffer or behind the work vehicle.']);
+      if (vmsQty) eq.push([vmsQty, 'Portable message board (VMS)', 'Upstream of the first sign to warn of the closure ' + (dur === 'long' ? 'and dates.' : 'and hours.')]);
+      if (lights) eq.push([lights, 'Light towers', 'Lights the work area and flagger stations at night without glare to drivers.']);
+      if (work === 'full' || work === 'sidewalk') eq.push([work === 'full' ? 4 : 3, 'Type III barricades', work === 'full' ? 'Across the closed road, with ROAD CLOSED sign mounted.' : 'With detectable edging for pedestrians.']);
+      if (work === 'flagging') eq.push([2, 'STOP/SLOW paddles + radios', 'One set per flagger.']);
+      if (night && devices) eq.push([Math.ceil(devices / 4), 'Warning lights', 'Steady-burn lights on channelizers through the taper.']);
+      if (barrier) eq.push(['—', 'Temporary barrier (TA-34)', 'Consider WATERCADE or concrete barrier for long-term, high-speed work. Ask us.']);
+
+      const service = { crew: 'Full closure crew', equip: 'Equipment only', install: 'Equipment + setup/takedown', unsure: 'Not sure yet' }[s.service] || '';
+      return { a, S, lanes, fwy, work, dur, night, spacing, roadType, L, taper, taperLabel, taperNote, buffer, wa, taperSp, tangentSp, TA, devices, devName, signs, signCount, both, arrow, arrowQty, tma, tmaQty, vms, vmsQty, lights, barrier, crew, crewTotal, eq, service, twoWay };
+    }
+
+    function agencyNotes(p) {
+      const st = s.state || (p.a.state.length === 2 ? p.a.state : '');
+      const N = {
+        njtp: ['Work on the Turnpike needs NJ Turnpike Authority approval, usually through an Authority permit or your contract’s approved traffic control plan.', 'The Authority sets allowable lane closure hours by location. Daytime closures are often restricted around peak periods, so plan for night work.', 'NJTA standard traffic control drawings apply on top of MUTCD, and a TMA is typically required behind lane and shoulder closures.', 'Closures are coordinated with the Authority’s traffic operations and NJ State Police Troop D.'],
+        gsp: ['The Garden State Parkway is run by the NJ Turnpike Authority, so plan for an Authority permit or contract-approved traffic control plan.', 'Closure hours are set by the Authority and are tighter in summer shore season and around peak commute periods.', 'NJTA standard traffic control drawings apply, and a TMA is typically required behind lane and shoulder closures.', 'Closures are coordinated with the Authority and NJ State Police Troop D.'],
+        njdot: ['Work in NJDOT right-of-way typically needs a highway occupancy or road opening permit from NJDOT for the region.', 'NJDOT sets allowable lane closure hours by route. High-volume routes often limit closures to nights or off-peak.', 'NJDOT standard construction details for traffic control apply alongside MUTCD.', 'Uniformed police traffic directors are often a permit condition. Plan on them unless the permit says otherwise.'],
+        thruway: ['Work on the Thruway needs a NYS Thruway Authority work permit or contract approval.', 'The Thruway sets lane closure windows by section, commonly overnight or off-peak.', 'A TMA is typically required for lane and shoulder closures, along with Thruway work zone standards.', 'Closures are coordinated with Thruway traffic operations and NY State Police Troop T.'],
+        nysdot: ['Work in NYSDOT right-of-way needs a highway work permit from the NYSDOT regional office.', 'New York uses the National MUTCD with the New York State Supplement. NYSDOT standard sheets for work zone traffic control often apply.', 'Expect lane closure time restrictions on major routes and interstates.', 'Some permits require police presence. Check the permit conditions.'],
+        panynj: ['Port Authority facilities (bridges, tunnels, airports and terminals) have their own work permits, access rules and closure windows.', 'Closures are coordinated with facility operations and the Port Authority Police.', 'Expect tight overnight windows on crossings and TMA protection for lane work.', 'Badging or escort requirements can apply. Give us the facility and we will confirm.'],
+        penndot: ['Work in PennDOT right-of-way typically needs a Highway Occupancy Permit (HOP).', 'Traffic control follows PennDOT Publication 213, Temporary Traffic Control Guidelines, and its typical application drawings.', 'PennDOT may set closure hours on busy routes, especially interstates.', 'Local police or Pennsylvania State Police may be needed depending on the route and permit.'],
+        ctdot: ['Work on CTDOT state roads typically needs a CTDOT encroachment permit.', 'CTDOT traffic control standards and approved lane closure hours apply alongside MUTCD.', 'Connecticut permits commonly call for uniformed officers or state police on state highways.', 'Long-term work may need a CTDOT-approved traffic control plan.'],
+        deldot: ['Work in DelDOT right-of-way typically needs a DelDOT permit.', 'Delaware uses its own edition of the MUTCD (the Delaware MUTCD), which follows the national manual with state changes.', 'DelDOT may set closure hours on major routes, especially in beach season on Route 1.', 'Police may be required depending on the route and permit.']
+      };
+      const LOCAL = {
+        NJ: ['County and municipal roads typically need a road opening or street opening permit from the county engineer or the town.', 'NJ towns frequently require off-duty police traffic directors. Check with the local police department early.', 'MUTCD applies. Some counties have their own standard details.'],
+        NY: ['Town, village and county roads typically need a local highway work permit.', 'In New York City, street work needs NYC DOT street work permits, and closures follow their stipulations and hours.', 'New York uses the National MUTCD with the NYS Supplement.'],
+        PA: ['Municipal roads typically need a road occupancy permit from the township or borough.', 'PennDOT Publication 213 is the standard many PA municipalities follow for traffic control.', 'Local police may be required for flagging at signals and intersections.'],
+        CT: ['Town roads typically need a road opening or obstruction permit from the town.', 'Connecticut towns often require a uniformed officer for work in the road.', 'MUTCD applies.'],
+        DE: ['County and municipal roads may need a local permit. Many Delaware roads are state-maintained, so confirm the road owner.', 'The Delaware MUTCD applies.', 'Police may be required depending on the location.']
+      };
+      let list = N[s.auth];
+      if (!list && s.auth === 'private') list = ['Private property and event sites usually don’t need a DOT permit, but any work that reaches a public road does.', 'MUTCD still applies to private roads and lots that are open to public travel.', 'Events may need approval from the town and local police, especially for road closures and detours.'];
+      if (!list) list = LOCAL[st] || LOCAL.NJ;
+      if (s.auth === 'unsure') list = ['Not sure who owns the road? Send the plan and we will confirm whether it is a state, county, town or authority road.'].concat(list.slice(0, 2));
+      return list;
+    }
+
+    /* ---------------- diagram ---------------- */
+    function diagram(p) {
+      const W = 1100, lh = 46;
+      const flag = p.work === 'flagging';
+      const nl = flag ? 2 : Math.min(p.lanes, 4);
+      const sidewalk = p.work === 'sidewalk';
+      const top = 82, roadH = nl * lh, shH = 18;
+      const H = top + roadH + shH + (sidewalk ? 22 : 0) + 88;
+      const x0 = 30, xT = 400, xT2 = p.taper ? 560 : 400, xB = xT2 + 120, xW = 900, xD = 960, xE = 1050;
+      let g = '';
+      // terrain
+      g += `<rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/>`;
+      g += `<rect x="0" y="${top - 6}" width="${W}" height="${roadH + shH + 12}" fill="#cdd2d6" rx="4"/>`;
+      g += `<rect x="0" y="${top}" width="${W}" height="${roadH}" fill="#3a3f45"/>`;
+      g += `<rect x="0" y="${top + roadH}" width="${W}" height="${shH}" fill="#50565d"/>`;
+      g += `<line x1="0" x2="${W}" y1="${top + roadH}" y2="${top + roadH}" stroke="#fff" stroke-width="2"/>`;
+      g += `<line x1="0" x2="${W}" y1="${top}" y2="${top}" stroke="${flag || p.twoWay ? '#fff' : '#f5b800'}" stroke-width="2"/>`;
+      if (sidewalk) g += `<rect x="0" y="${top + roadH + shH}" width="${W}" height="22" fill="#d9dde0"/>`;
+      for (let i = 1; i < nl; i++) {
+        const y = top + i * lh;
+        g += flag ? `<line x1="0" x2="${W}" y1="${y - 1.5}" y2="${y - 1.5}" stroke="#f5b800" stroke-width="2"/><line x1="0" x2="${W}" y1="${y + 1.5}" y2="${y + 1.5}" stroke="#f5b800" stroke-width="2"/>`
+          : `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#fff" stroke-width="2" stroke-dasharray="22 26"/>`;
+      }
+      // traffic arrows
+      const arrowAt = (x, y, rev) => `<path d="M${x} ${y} h${rev ? -28 : 28} m0 0 l${rev ? 8 : -8} -6 m${rev ? -8 : 8} 6 l${rev ? 8 : -8} 6" stroke="#fff" stroke-opacity=".75" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+      for (let i = 0; i < nl; i++) {
+        const rev = flag && i === 0;
+        g += arrowAt(rev ? 120 : 70, top + i * lh + lh / 2, rev) + arrowAt(rev ? 330 : 280, top + i * lh + lh / 2, rev);
+      }
+      // closed lanes
+      let closed = [];
+      if (p.work === 'right' || p.work === 'ramp' || p.work === 'intersection') closed = [nl - 1];
+      if (p.work === 'left') closed = [0];
+      if (p.work === 'interior') closed = [Math.floor(nl / 2)];
+      if (p.work === 'double') closed = [nl - 2, nl - 1];
+      if (flag) closed = [1];
+      const cone = (x, y, d) => `<g class="cone" style="animation-delay:${d}ms"><path d="M${x - 4} ${y + 5} L${x} ${y - 7} L${x + 4} ${y + 5} Z" fill="#ff6a00"/><rect x="${x - 2.6}" y="${y - 2}" width="5.2" height="2.2" fill="#fff"/><rect x="${x - 5.5}" y="${y + 4.5}" width="11" height="2.5" rx="1" fill="#ff6a00"/></g>`;
+      let d = 0, cones = '';
+      const shade = (x1, x2, y1, y2) => `<rect x="${x1}" y="${y1}" width="${x2 - x1}" height="${y2 - y1}" fill="url(#lcpHatch)"/>`;
+      const workBox = (y, h) => `<rect x="${xB}" y="${y + 4}" width="${xW - xB}" height="${h - 8}" rx="6" fill="#b60606" fill-opacity=".9"/><text x="${(xB + xW) / 2}" y="${y + h / 2 + 5}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" letter-spacing=".08em">WORK AREA</text>`;
+      if (closed.length) {
+        const c0 = Math.min(...closed), c1 = Math.max(...closed);
+        const yTop = top + c0 * lh, yBot = top + (c1 + 1) * lh;
+        const fromBottom = c1 === nl - 1 && !(p.work === 'left');
+        const edgeOpen = fromBottom ? yTop : yBot; // line between closed and open
+        const edgeOut = fromBottom ? yBot : yTop;
+        g += `<path d="M${xT} ${edgeOut} L${xT2} ${edgeOpen} L${xW} ${edgeOpen} L${xD} ${edgeOut} Z" fill="url(#lcpHatch)"/>`;
+        g += `<rect x="${xT2}" y="${Math.min(edgeOpen, edgeOut)}" width="${xB - xT2}" height="${Math.abs(edgeOut - edgeOpen)}" fill="#f5b800" fill-opacity=".14"/>`;
+        g += workBox(Math.min(edgeOpen, edgeOut), Math.abs(edgeOut - edgeOpen));
+        for (let k = 0; k <= 8; k++) { const t = k / 8; cones += cone(xT + (xT2 - xT) * t, edgeOut + (edgeOpen - edgeOut) * t, d += 40); }
+        for (let x = xT2 + 30; x < xW; x += 40) cones += cone(x, edgeOpen, d += 22);
+        for (let k = 1; k <= 3; k++) { const t = k / 3; cones += cone(xW + (xD - xW) * t, edgeOpen + (edgeOut - edgeOpen) * t, d += 40); }
+        if (p.arrowQty) g += `<g transform="translate(${xT2 + 8} ${Math.min(edgeOpen, edgeOut) + 5})"><rect width="38" height="24" rx="3" fill="#14171a"/><path d="M8 12 h18 m0 0 l-6 -6 m6 6 l-6 6" stroke="#f5b800" stroke-width="3" fill="none" stroke-linecap="round" transform="${fromBottom ? '' : ''}"/></g>`;
+        if (p.tmaQty) g += `<g transform="translate(${xB - 56} ${Math.min(edgeOpen, edgeOut) + 7})"><rect width="44" height="20" rx="3" fill="#f5b800"/><rect x="0" y="0" width="10" height="20" fill="#14171a"/><path d="M1 2 l8 8 l-8 8" stroke="#f5b800" stroke-width="2" fill="none"/></g>`;
+        if (flag) {
+          g += `<g><circle cx="${xT - 16}" cy="${top + lh * 1.5}" r="9" fill="#f5b800" stroke="#14171a" stroke-width="2"/><text x="${xT - 16}" y="${top + lh * 1.5 + 4}" text-anchor="middle" font-size="10" font-weight="800">F</text></g>`;
+          g += `<g><circle cx="${xD + 22}" cy="${top + lh * .5}" r="9" fill="#f5b800" stroke="#14171a" stroke-width="2"/><text x="${xD + 22}" y="${top + lh * .5 + 4}" text-anchor="middle" font-size="10" font-weight="800">F</text></g>`;
+        }
+      } else if (p.work === 'shoulder') {
+        const y1 = top + roadH, y2 = y1 + shH;
+        g += `<path d="M${xT} ${y2} L${xT2} ${y1} L${xW} ${y1} L${xD} ${y2} Z" fill="url(#lcpHatch)"/>`;
+        g += `<rect x="${xB}" y="${y1 + 2}" width="${xW - xB}" height="${shH - 4}" rx="4" fill="#b60606"/><text x="${(xB + xW) / 2}" y="${y1 + 13}" text-anchor="middle" font-size="10" font-weight="800" fill="#fff" letter-spacing=".08em">SHOULDER WORK</text>`;
+        for (let k = 0; k <= 5; k++) { const t = k / 5; cones += cone(xT + (xT2 - xT) * t, y2 + (y1 - y2) * t, d += 50); }
+        for (let x = xT2 + 40; x < xW; x += 50) cones += cone(x, y1, d += 25);
+      } else if (p.work === 'full') {
+        g += `<rect x="${xT}" y="${top}" width="${xD - xT}" height="${roadH}" fill="url(#lcpHatch)"/>`;
+        for (let i = 0; i < nl; i++) g += `<g transform="translate(${xT - 6} ${top + i * lh + 4})"><rect width="12" height="${lh - 8}" fill="#fff"/><rect y="2" width="12" height="6" fill="#ff6a00"/><rect y="${lh - 18}" width="12" height="6" fill="#ff6a00"/></g>`;
+        g += workBox(top, roadH);
+        g += `<path d="M${xT - 40} ${top - 8} q 0 -40 60 -40 h 380 q 60 0 60 40" stroke="#f5b800" stroke-width="3" stroke-dasharray="8 7" fill="none"/><text x="${(xT + xD) / 2}" y="${top - 52}" text-anchor="middle" font-size="12" font-weight="800" fill="#8a6a00">DETOUR ROUTE</text>`;
+      } else if (sidewalk) {
+        const y1 = top + roadH + shH;
+        g += `<rect x="${xB}" y="${y1}" width="${xW - xB}" height="22" fill="#b60606"/><text x="${(xB + xW) / 2}" y="${y1 + 15}" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">SIDEWALK CLOSED</text>`;
+        g += `<path d="M${xB - 60} ${y1 + 10} L${xB - 30} ${top + roadH + 6} L${xW + 30} ${top + roadH + 6} L${xW + 60} ${y1 + 10}" stroke="#f5b800" stroke-width="3" stroke-dasharray="6 6" fill="none"/>`;
+      } else if (p.work === 'mobile') {
+        const y = top + (nl - 1) * lh;
+        g += `<rect x="${xB}" y="${y + 6}" width="70" height="${lh - 12}" rx="4" fill="#fff"/><text x="${xB + 35}" y="${y + lh / 2 + 4}" text-anchor="middle" font-size="10" font-weight="800">WORK</text>`;
+        g += `<g transform="translate(${xB - 160} ${y + 6})"><rect width="64" height="${lh - 12}" rx="4" fill="#f5b800"/><rect x="2" y="2" width="22" height="${lh - 16}" fill="#14171a"/><path d="M6 ${(lh - 12) / 2} h12 m0 0 l-4 -4 m4 4 l-4 4" stroke="#f5b800" stroke-width="2" fill="none"/></g>`;
+        g += `<text x="${xB - 128}" y="${y - 6}" text-anchor="middle" font-size="11" font-weight="800" fill="#14171a">SHADOW / TMA</text>`;
+        g += `<path d="M${xB + 90} ${y + lh / 2} h70 m0 0 l-8 -6 m8 6 l-8 6" stroke="#b60606" stroke-width="3" fill="none"/><text x="${xB + 130}" y="${y - 6}" text-anchor="middle" font-size="11" font-weight="800" fill="#b60606">MOVING</text>`;
+      }
+      // signs
+      const sx = [x0 + 40, x0 + 150, x0 + 260];
+      const signLabels = ['3', '2', '1'];
+      const sy = top + roadH + shH + (sidewalk ? 22 : 0) + 10;
+      if (p.work !== 'sidewalk') {
+        sx.forEach((x, i) => { g += `<g transform="translate(${x} ${sy})"><rect x="-1.5" y="18" width="3" height="16" fill="#5b6670"/><rect x="-13" y="-1" width="26" height="26" transform="rotate(45 0 12)" fill="#ff8a00" stroke="#14171a" stroke-width="2"/><text y="17" text-anchor="middle" font-size="12" font-weight="900" fill="#14171a">${signLabels[i]}</text></g>`; });
+        const dim = (xa, xb, label, y) => `<g><line x1="${xa}" x2="${xb}" y1="${y}" y2="${y}" stroke="#14171a" stroke-width="1.4"/><line x1="${xa}" x2="${xa}" y1="${y - 5}" y2="${y + 5}" stroke="#14171a" stroke-width="1.4"/><line x1="${xb}" x2="${xb}" y1="${y - 5}" y2="${y + 5}" stroke="#14171a" stroke-width="1.4"/><rect x="${(xa + xb) / 2 - 48}" y="${y - 12}" width="96" height="24" rx="12" fill="#fff" stroke="#cfd4d9"/><text x="${(xa + xb) / 2}" y="${y + 5}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#14171a">${label}</text></g>`;
+        const yd = sy + 52;
+        g += dim(sx[0], sx[1], `C ${fmt(p.spacing[2])} ft`, yd) + dim(sx[1], sx[2], `B ${fmt(p.spacing[1])} ft`, yd) + dim(sx[2], xT, `A ${fmt(p.spacing[0])} ft`, yd);
+        if (p.taper) g += dim(xT, xT2, `${fmt(p.taper)} ft`, top - 24);
+        if (p.taper || closed.length || p.work === 'shoulder') g += dim(xT2, xB, `${fmt(p.buffer)} ft`, top - 24) + dim(xB, xW, `~${fmt(p.wa)} ft`, top - 24);
+        g += `<text x="${(xT + xT2) / 2}" y="${top - 44}" text-anchor="middle" font-size="12" font-weight="800" fill="#5b6670" letter-spacing=".06em">${p.taper ? p.taperLabel.toUpperCase() : ''}</text>`;
+        if (p.taper || closed.length || p.work === 'shoulder') g += `<text x="${(xT2 + xB) / 2}" y="${top - 44}" text-anchor="middle" font-size="12" font-weight="800" fill="#5b6670" letter-spacing=".06em">BUFFER</text><text x="${(xB + xW) / 2}" y="${top - 44}" text-anchor="middle" font-size="12" font-weight="800" fill="#5b6670" letter-spacing=".06em">WORK AREA</text>`;
+        g += `<g transform="translate(${xE} ${sy})"><rect x="-1.5" y="18" width="3" height="16" fill="#5b6670"/><rect x="-22" y="0" width="44" height="22" rx="3" fill="#ff8a00" stroke="#14171a" stroke-width="2"/><text y="15" text-anchor="middle" font-size="8.5" font-weight="900">END</text></g>`;
+      }
+      const defs = `<defs><pattern id="lcpHatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="#b60606" fill-opacity=".14"/><line x1="0" y1="0" x2="0" y2="10" stroke="#b60606" stroke-opacity=".45" stroke-width="3"/></pattern></defs>`;
+      return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagram of the recommended work zone layout">${defs}${g}${cones}</svg>`;
+    }
+
+    /* ---------------- results ---------------- */
+    const ICON = {
+      box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>',
+      crew: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.5c2.6.1 4.3 1.8 5 4.5"/></svg>',
+      flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>',
+      sign: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 10-10 10L2 12z"/></svg>',
+      print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>',
+      edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>',
+      send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg>'
+    };
+    function renderPlan() {
+      const p = compute();
+      const work = WORK[s.work] || WORK.unsure;
+      const loc = [s.road, s.town, s.state].filter(Boolean).join(', ');
+      const tags = [
+        `<span class="lcp-tag lcp-tag--red">${esc(p.a.short)}</span>`,
+        `<span class="lcp-tag">${p.S} mph</span>`,
+        `<span class="lcp-tag">${p.lanes === 4 ? '4+' : p.lanes} lane${p.lanes > 1 ? 's' : ''}</span>`,
+        `<span class="lcp-tag">${esc(p.roadType)}</span>`,
+        `<span class="lcp-tag">${esc(DUR[p.dur].cat)}</span>`,
+        p.night ? '<span class="lcp-tag">Night work</span>' : ''
+      ].join('');
+      const nums = [
+        [p.spacing[0] === p.spacing[2] ? `${fmt(p.spacing[0])} ft` : `${fmt(p.spacing[0])}–${fmt(p.spacing[2])} ft`, 'Advance sign spacing (A, B, C)', p.roadType],
+        [p.taper ? `${fmt(p.taper)} ft` : '—', p.taperLabel, p.taperNote],
+        [p.work === 'sidewalk' ? '—' : `${fmt(p.buffer)} ft`, 'Longitudinal buffer', `Stopping sight distance at ${p.S} mph`],
+        [p.devices ? `${p.taperSp} / ${p.tangentSp} ft` : '—', 'Device spacing', 'Taper / tangent, about S and 2S']
+      ].map(([b, sp, sm]) => `<div class="lcp-num"><b>${b}</b><span>${sp}</span><small>${esc(sm)}</small></div>`).join('');
+      const eq = p.eq.map(([q, t, n]) => `<li><b>${q}</b><div><strong>${esc(t)}</strong><span>${esc(n)}</span></div></li>`).join('');
+      const signs = p.signs.map(([c, t]) => `<li><i><svg viewBox="0 0 26 26" width="22" height="22"><rect x="5" y="5" width="16" height="16" transform="rotate(45 13 13)" fill="#ff8a00" stroke="#14171a" stroke-width="1.6"/></svg></i>${esc(c)} · ${esc(t)}</li>`).join('');
+      const crew = p.crew.map(([n, t, d]) => `<li><b>${n}</b><div><strong>${esc(t)}</strong><span>${esc(d)}</span></div></li>`).join('');
+      const notes = agencyNotes(p).map((n) => `<li>${esc(n)}</li>`).join('');
+      const logo = p.a.logo ? `<img src="${p.a.logo}" alt="">` : `<span class="lcp-shield ${p.a.tone ? 'lcp-shield--' + p.a.tone : ''}">${p.a.badge}</span>`;
+      if (s.sent) return doneView();
+      return `<div class="lcp-res">
+        <div class="lcp-res__top"><div><p class="lcp-step__n">Your free lane closure plan</p><h2>${esc(work.t)}${loc ? ` <span style="color:var(--steel);font-variation-settings:'wght' 520">· ${esc(loc)}</span>` : ''}</h2></div><span class="lcp-res__id">Plan <code>${s.id}</code></span></div>
+        <div class="lcp-res__tags">${tags}</div>
+        <div class="lcp-ta"><span class="lcp-ta__code">${p.TA[0]}</span><div><b>Closest MUTCD typical application: ${esc(p.TA[1])}</b><p>From MUTCD Part 6. ${esc(p.a.by)} standards and your permit can add to or change this layout.</p></div></div>
+        <figure class="lcp-dia">${diagram(p)}<figcaption>Not to scale. Signs: 1 is closest to the work. Distances follow MUTCD Part 6 recommended minimums for ${p.S} mph.</figcaption></figure>
+        <div class="lcp-nums">${nums}</div>
+        <div class="lcp-cols">
+          <div class="lcp-panel"><h3><i>${ICON.box}</i>Estimated equipment</h3><ul class="lcp-eq">${eq}</ul></div>
+          <div style="display:grid;gap:14px;align-content:start;min-width:0">
+            <div class="lcp-panel"><h3><i>${ICON.crew}</i>Recommended crew · ${p.crewTotal} people</h3><ul class="lcp-crew">${crew}</ul></div>
+            <div class="lcp-panel"><h3><i>${ICON.sign}</i>Sign series</h3><ul class="lcp-signs">${signs}</ul></div>
+          </div>
+        </div>
+        <div class="lcp-panel" style="margin-top:14px"><div class="lcp-agency__head">${logo}<div><b>${esc(p.a.by)}</b><span>What to plan for on this road</span></div></div><ul class="lcp-agency">${notes}</ul>
+          <p class="lcp-disc">This plan is a starting point built from MUTCD Part 6 and typical agency practice. Final layouts, closure hours and permit conditions are set by the road owner, and a TSS traffic control specialist confirms every plan before the job.</p></div>
+        <div class="lcp-tools"><button type="button" class="lcp-link" data-print>${ICON.print}Print or save as PDF</button><button type="button" class="lcp-link" data-goto="0">${ICON.edit}Edit answers</button></div>
+        <section class="lcp-send" id="lcp-send">
+          <div class="lcp-send__head"><h3>Send this plan to TSS for a free quote</h3><p>A traffic control specialist reviews it, checks the permit and closure hours, and quotes a certified, experienced crew.</p></div>
+          <div class="lcp-send__body">
+            <div class="lcp-fields">
+              ${field('name', 'Your name <em>*</em>', 'autocomplete="name" required')}
+              ${field('company', 'Company', 'autocomplete="organization"')}
+              ${field('email', 'Email <em>*</em>', 'type="email" autocomplete="email" required')}
+              ${field('phone', 'Phone <em>*</em>', 'type="tel" autocomplete="tel" required')}
+            </div>
+            <div class="lcp-send__row"><button type="button" class="lcp-btn lcp-btn--solid" data-send>Send my plan to TSS ${ICON.send}</button><p>Free, no obligation. We reply within one business day, or call <a href="${TEL}">${PHONE}</a> for anything urgent.</p></div>
+            <div data-err></div>
+          </div>
+        </section>
+      </div>`;
+    }
+    function doneView() {
+      return `<div class="lcp-done"><div class="lcp-done__mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg></div>
+        <h2>Plan sent. We're on it.</h2>
+        <p>Plan <b>${s.id}</b> is with our traffic control team. A specialist will review it and reach out ${s.phone ? 'at ' + esc(s.phone) + ' or ' : ''}by email within one business day with a quote.</p>
+        <div class="lcp-done__btns"><a class="lcp-btn lcp-btn--solid" href="${TEL}">Call ${PHONE}</a><button type="button" class="lcp-btn lcp-btn--ghost" data-new>Plan another closure</button><a class="lcp-btn lcp-btn--ghost" href="/pages/lane-closure">Back to lane closures</a></div></div>`;
+    }
+
+    /* ---------------- render ---------------- */
+    function render() {
+      const step = STEPS[s.step];
+      rail.innerHTML = STEPS.map((st, i) => `<li class="${i < s.step ? 'is-done' : i === s.step ? 'is-on' : ''}"><button type="button" data-goto="${i}" ${canReach(i) ? '' : 'disabled'} aria-label="${st.label}${i === s.step ? ' (current step)' : ''}"><i></i><span>${st.label}</span></button></li>`).join('');
+      stage.innerHTML = `<div class="lcp-step ${dir < 0 ? 'is-back' : ''}">${VIEWS[step.id]()}</div>`;
+      const last = step.id === 'plan';
+      foot.classList.toggle('is-hidden', last);
+      btnBack.hidden = s.step === 0;
+      btnNext.textContent = s.step === STEPS.length - 2 ? 'See my plan' : 'Continue';
+      updateNext();
+      preview();
+      save();
+    }
+    function canReach(i) { for (let k = 0; k < i; k++) if (!REQ[STEPS[k].id]()) return false; return !s.sent || i === STEPS.length - 1; }
+    function updateNext() {
+      const ok = REQ[STEPS[s.step].id]();
+      btnNext.setAttribute('aria-disabled', ok ? 'false' : 'true');
+      hint.textContent = ok ? '' : (MISSING[STEPS[s.step].id] || '');
+    }
+    let prevVals = {};
+    function preview() {
+      if (!side) return;
+      const a = AUTH[s.auth];
+      const rows = [
+        ['Road', a ? a.short : ''],
+        ['Location', [s.road, s.town, s.state].filter(Boolean).join(', ')],
+        ['Roadway', s.speed ? `${s.speed} mph · ${s.lanes ? (s.lanes == 4 ? '4+' : s.lanes) + ' lane' + (s.lanes > 1 ? 's' : '') : '…'}${s.divided ? ' · ' + s.divided.replace('oneway', 'one-way') : ''}` : ''],
+        ['Closure', s.work ? WORK[s.work].t : ''],
+        ['Timing', s.dur ? DUR[s.dur].t + (s.hours ? ' · ' + { day: 'day', night: 'night', both: 'day & night' }[s.hours] : '') : ''],
+        ['Service', { crew: 'Full crew', equip: 'Equipment only', install: 'Equipment + setup', unsure: 'Not sure' }[s.service] || '']
+      ];
+      side.querySelector('[data-preview]').innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd class="${v ? (prevVals[k] !== v ? 'is-new' : '') : 'is-empty'}">${v ? esc(v) : 'Not set'}</dd></div>`).join('');
+      rows.forEach(([k, v]) => (prevVals[k] = v));
+      const filled = rows.filter((r) => r[1]).length;
+      side.querySelector('[data-meter]').style.width = Math.round((filled / rows.length) * 100) + '%';
+      const calc = side.querySelector('[data-calc]');
+      if (s.speed && s.auth) {
+        const p = compute();
+        const items = [[p.taper ? fmt(p.taper) + ' ft' : '—', 'Taper'], [fmt(p.buffer) + ' ft', 'Buffer'], [fmt(p.spacing[0]) + (p.spacing[2] !== p.spacing[0] ? '+' : '') + ' ft', 'Sign spacing'], [s.work ? p.TA[0] : '…', 'MUTCD TA']];
+        calc.innerHTML = items.map(([b, t]) => `<div><b>${b}</b><span>${t}</span></div>`).join('');
+      } else calc.innerHTML = '';
+    }
+
+    function go(i) { dir = i >= s.step ? 1 : -1; s.step = Math.max(0, Math.min(STEPS.length - 1, i)); render(); const top = root.getBoundingClientRect().top + scrollY - 120; if (scrollY > top) scrollTo({ top, behavior: 'smooth' }); }
+
+    root.addEventListener('click', (e) => {
+      const set = e.target.closest('[data-set]');
+      if (set) {
+        const k = set.dataset.set; let v = set.dataset.val;
+        if (k === 'speed' || k === 'lanes') v = Number(v);
+        s[k] = v;
+        if (k === 'auth') {
+          const a = AUTH[v];
+          if (a.state && a.state.length === 2) s.state = a.state;
+          if (a.cls === 'freeway') { s.setting = 'freeway'; if (!s.divided) s.divided = 'divided'; if (!s.speed) s.speed = v === 'panynj' ? 45 : 65; if (!s.lanes) s.lanes = 3; }
+        }
+        root.querySelectorAll(`[data-set="${k}"]`).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val) === String(v) ? 'true' : 'false'));
+        updateNext(); preview(); save();
+        // auto-advance on single-choice card steps
+        if (k === 'auth') setTimeout(() => { if (REQ[STEPS[s.step].id]()) go(s.step + 1); }, 280);
+        return;
+      }
+      const g = e.target.closest('[data-goto]');
+      if (g && !g.disabled) { s.sent = false; go(Number(g.dataset.goto)); return; }
+      if (e.target.closest('[data-print]')) { window.print(); return; }
+      if (e.target.closest('[data-new]')) { const keep = { name: s.name, company: s.company, email: s.email, phone: s.phone }; s = { ...s, ...Object.fromEntries(Object.keys(s).map((k) => [k, ''])), ...keep, step: 0, speed: 0, lanes: 0, wa: 'm', sent: false, id: 'LCP-' + Date.now().toString(36).slice(-5).toUpperCase() }; go(0); return; }
+      if (e.target.closest('[data-send]')) send(e.target.closest('[data-send]'));
+    });
+    root.addEventListener('input', (e) => { const k = e.target.dataset?.in; if (!k) return; s[k] = e.target.value; e.target.closest('.lcp-field')?.classList.remove('is-bad'); if (STEPS[s.step].id === 'where') preview(); save(); });
+    btnNext.addEventListener('click', () => { if (!REQ[STEPS[s.step].id]()) { hint.textContent = MISSING[STEPS[s.step].id] || ''; hint.animate?.([{ transform: 'translateX(-4px)' }, { transform: 'translateX(4px)' }, { transform: 'none' }], { duration: 240 }); return; } go(s.step + 1); });
+    btnBack.addEventListener('click', () => go(s.step - 1));
+
+    function summaryText(p) {
+      const L = [];
+      L.push(`FREE LANE CLOSURE PLAN ${s.id}`);
+      L.push(`Road owner: ${p.a.name} (${p.a.by})`);
+      L.push(`Location: ${[s.road, s.town, s.state].filter(Boolean).join(', ') || 'n/a'}${s.mp ? ' — ' + s.mp : ''}`);
+      L.push(`Roadway: ${p.S} mph, ${s.lanes} lane(s) in work direction, ${s.divided}, ${SETTING[s.setting] || ''}`);
+      L.push(`Work: ${(WORK[s.work] || WORK.unsure).t}, work area ${(WA[s.wa] || WA.m)[1]}`);
+      L.push(`Timing: ${DUR[p.dur].t} (${DUR[p.dur].cat}), ${s.hours}${s.shifts ? ', ' + s.shifts + ' shifts/days' : ''}${s.start ? ', starting ' + s.start : ''}`);
+      L.push(`Typical application: ${p.TA[0]} ${p.TA[1]}`);
+      L.push(`Sign spacing A/B/C: ${p.spacing.join(' / ')} ft · Taper: ${p.taper || 'n/a'} ft · Buffer: ${p.buffer} ft`);
+      L.push('Equipment: ' + p.eq.map(([q, t]) => `${q} × ${t}`).join('; '));
+      L.push('Crew: ' + p.crew.map(([n, t]) => `${n} ${t}`).join(', '));
+      if (s.notes) L.push('Notes: ' + s.notes);
+      return L.join('\n');
+    }
+
+    async function send(btn) {
+      const need = ['name', 'email', 'phone'];
+      let bad = false;
+      need.forEach((k) => { const v = (s[k] || '').trim(); const ok = k === 'email' ? /^\S+@\S+\.\S+$/.test(v) : k === 'phone' ? v.replace(/\D/g, '').length >= 10 : v.length > 1; if (!ok) { bad = true; root.querySelector(`[data-in="${k}"]`)?.closest('.lcp-field')?.classList.add('is-bad'); } });
+      const err = root.querySelector('[data-err]');
+      if (bad) { err.innerHTML = '<p class="lcp-send__err">Add your name, a valid email and a phone number so we can send the quote.</p>'; return; }
+      const p = compute();
+      btn.setAttribute('aria-disabled', 'true'); btn.innerHTML = 'Sending…';
+      const answers = {
+        name: s.name.trim(), company: s.company.trim(), email: s.email.trim(), phone: s.phone.trim(),
+        planId: s.id,
+        project: { roadOwner: `${p.a.name} (${p.a.by})`, state: s.state, road: s.road, town: s.town, milepostOrCrossStreet: s.mp, startDate: s.start, shiftsOrDays: s.shifts },
+        roadway: { speedMph: p.S, lanesInWorkDirection: s.lanes, layout: s.divided, setting: SETTING[s.setting] || '' },
+        work: { closureType: (WORK[s.work] || WORK.unsure).t, workAreaLength: (WA[s.wa] || WA.m)[1], duration: `${DUR[p.dur].t} (${DUR[p.dur].cat})`, hours: { day: 'Daytime', night: 'Overnight', both: 'Day and night' }[s.hours] || '' },
+        needs: { service: p.service || 'Not given', permit: { have: 'Have it', applied: 'Applied', none: 'Not yet', unsure: 'Not sure' }[s.permit] || 'Not given', policeDetail: { arranged: 'Already arranged', help: 'Needs guidance', no: 'Not required' }[s.police] || 'Not given', tcpDrawing: { yes: 'Wants TSS to prepare one', no: 'Has one', unsure: 'Not sure' }[s.tcp] || 'Not given' },
+        notes: s.notes,
+        generatedPlan: {
+          typicalApplication: `${p.TA[0]}: ${p.TA[1]}`,
+          signSpacingABC: p.spacing.map((x) => x + ' ft').join(' / ') + ` (${p.roadType})`,
+          taper: p.taper ? `${p.taper} ft ${p.taperLabel.toLowerCase()}` : p.taperLabel,
+          buffer: `${p.buffer} ft`,
+          deviceSpacing: `${p.taperSp} ft taper / ${p.tangentSp} ft tangent`,
+          equipment: p.eq.map(([q, t]) => `${q} × ${t}`).join('\n'),
+          signs: p.signs.map(([c, t]) => `${c} ${t}`).join('\n') + (p.both ? '\n(both sides of road)' : ''),
+          crew: p.crew.map(([n, t]) => `${n} × ${t}`).join('\n') + `\nTotal: ${p.crewTotal}`,
+          agencyNotes: agencyNotes(p).join('\n')
+        }
+      };
+      const payload = { type: 'lane-closure', answers, summary: summaryText(p), quoteList: [], page: location.pathname, submittedAt: new Date().toISOString(), source: 'Free lane closure plan' };
+      try {
+        if (!HOOK) throw new Error('no hook');
+        const r = await fetch(HOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        s.sent = true; save();
+        try { sessionStorage.removeItem(KEY); } catch {}
+        render();
+        root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (ex) {
+        btn.setAttribute('aria-disabled', 'false'); btn.innerHTML = 'Send my plan to TSS ' + ICON.send;
+        err.innerHTML = `<p class="lcp-send__err">We couldn't send that just now. <a href="mailto:${EMAIL}?subject=${encodeURIComponent('Lane closure plan ' + s.id)}&body=${encodeURIComponent(summaryText(p) + '\n\n' + s.name + ' · ' + s.company + ' · ' + s.phone)}">Email the plan instead</a> or call <a href="${TEL}"><b>${PHONE}</b></a>.</p>`;
+      }
+    }
+
+    // open from a link like ?work=flagging
+    const q = new URLSearchParams(location.search);
+    if (q.get('work') && WORK[q.get('work')]) s.work = q.get('work');
+    if (s.step >= STEPS.length - 1 && !REQ.timing()) s.step = 0;
+    render();
+  }
+</script>
