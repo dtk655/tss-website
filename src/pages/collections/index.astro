@@ -211,20 +211,98 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     }
   }
 
-  /* category rail: arrows + progress */
+  /* category rail: endless auto-drift left, pauses on touch/hover/swipe, resumes 1s after */
   const rail = document.querySelector('[data-rail]');
   if (rail) {
     const bar = document.querySelector('[data-rail-bar]');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const originals = [...rail.children];
+    if (!reduce) {
+      originals.forEach((c) => {
+        const k = c.cloneNode(true);
+        k.setAttribute('aria-hidden', 'true');
+        k.setAttribute('tabindex', '-1');
+        rail.appendChild(k);
+      });
+    }
+    const cycle = () => (reduce ? 0 : rail.children[originals.length].offsetLeft - rail.children[0].offsetLeft);
+    let setW = cycle();
     const step = () => (rail.querySelector('.rcard')?.getBoundingClientRect().width || 320) + 20;
-    document.querySelector('[data-rail-prev]')?.addEventListener('click', () => rail.scrollBy({ left: -step() * 2, behavior: 'smooth' }));
-    document.querySelector('[data-rail-next]')?.addEventListener('click', () => rail.scrollBy({ left: step() * 2, behavior: 'smooth' }));
-    const upd = () => {
-      const max = rail.scrollWidth - rail.clientWidth;
-      if (bar) bar.style.width = max > 0 ? (8 + (rail.scrollLeft / max) * 92) + '%' : '100%';
+
+    const SPEED = 38; // px per second
+    let pos = 0, last = 0, running = false, userHold = false, visible = true, resumeT = 0, raf = 0;
+    const wrap = (x) => (setW > 0 ? ((x % setW) + setW) % setW : x);
+    const frame = (t) => {
+      raf = 0;
+      if (!running) return;
+      const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+      last = t;
+      pos = wrap(pos + SPEED * dt);
+      rail.scrollLeft = pos;
+      upd();
+      raf = requestAnimationFrame(frame);
     };
-    rail.addEventListener('scroll', upd, { passive: true });
-    addEventListener('resize', upd);
+    const start = () => {
+      if (reduce || userHold || !visible || running) return;
+      pos = wrap(rail.scrollLeft);
+      rail.scrollLeft = pos;
+      running = true; last = 0;
+      raf = requestAnimationFrame(frame);
+    };
+    const stop = () => { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; };
+    const hold = () => { userHold = true; clearTimeout(resumeT); stop(); };
+    const release = (ms = 1000) => { clearTimeout(resumeT); resumeT = setTimeout(() => { userHold = false; start(); }, ms); };
+
+    // touch / pen / mouse drag
+    rail.addEventListener('pointerdown', hold);
+    rail.addEventListener('pointerup', () => release());
+    rail.addEventListener('pointercancel', () => release());
+    rail.addEventListener('touchstart', hold, { passive: true });
+    rail.addEventListener('touchend', () => release(), { passive: true });
+    // desktop hover pauses while the cursor is on the row
+    rail.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hold(); });
+    rail.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') release(); });
+    rail.addEventListener('wheel', () => { hold(); release(); }, { passive: true });
+    rail.addEventListener('focusin', hold);
+    rail.addEventListener('focusout', () => release());
+    // user scrolling (swipe momentum, trackpad): keep paused until 1s after it settles
+    rail.addEventListener('scroll', () => {
+      if (!running) {
+        if (userHold) release();
+      }
+      upd();
+    }, { passive: true });
+
+    // arrows: pause, glide, resume 1s later (with seamless wrap at either end)
+    const glide = (dir) => {
+      hold();
+      if (setW) {
+        if (dir < 0 && rail.scrollLeft - step() * 2 < 0) rail.scrollLeft += setW;
+        if (dir > 0 && rail.scrollLeft + step() * 2 > setW * 2 - rail.clientWidth) rail.scrollLeft -= setW;
+      }
+      rail.scrollBy({ left: dir * step() * 2, behavior: 'smooth' });
+      release(1400);
+    };
+    document.querySelector('[data-rail-prev]')?.addEventListener('click', () => glide(-1));
+    document.querySelector('[data-rail-next]')?.addEventListener('click', () => glide(1));
+
+    function upd() {
+      if (!bar) return;
+      if (setW) bar.style.width = (8 + (wrap(rail.scrollLeft) / setW) * 92) + '%';
+      else {
+        const max = rail.scrollWidth - rail.clientWidth;
+        bar.style.width = max > 0 ? (8 + (rail.scrollLeft / max) * 92) + '%' : '100%';
+      }
+    }
+
+    // only run while the row is on screen and the tab is visible
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible ? start() : stop(); }, { threshold: 0.15 }).observe(rail);
+    }
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    addEventListener('resize', () => { setW = cycle(); pos = wrap(rail.scrollLeft); upd(); });
     upd();
+    start();
   }
 
   /* cursor tilt on rail cards */
@@ -297,14 +375,14 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
   .railbtn svg { width: 20px; height: 20px; }
   .railwrap { position: relative; }
   .rail {
-    display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
     padding: 64px var(--gutter) 26px; margin-top: -10px;
     scroll-padding-inline: var(--gutter);
   }
   @media (min-width: 1600px) { .rail { padding-inline: calc((100vw - var(--wrap)) / 2 + var(--gutter)); scroll-padding-inline: calc((100vw - var(--wrap)) / 2 + var(--gutter)); } }
   .rail::-webkit-scrollbar { display: none; }
   .rcard {
-    position: relative; flex: none; width: clamp(280px, 23vw, 350px); scroll-snap-align: start;
+    position: relative; flex: none; width: clamp(280px, 23vw, 350px);
     display: flex; flex-direction: column; justify-content: flex-end; min-height: 350px;
     background: linear-gradient(185deg, var(--tint, #ececea) 0%, #ffffff 72%);
     border: 1px solid var(--line); border-radius: 18px; text-decoration: none;
@@ -407,7 +485,14 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     .best__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .perks__in { grid-template-columns: 1fr 1fr; gap: 10px; }
     .perks p > b + span { display: none; }
-    .rcard { width: min(78vw, 300px); }
+    .rail { gap: 14px; padding-top: 44px; padding-bottom: 18px; }
+    .rcard { width: min(56vw, 215px); min-height: 236px; padding: 16px 16px 14px; border-radius: 14px; }
+    .rcard__img { top: -30px; height: 150px; max-width: 80%; }
+    .rcard::after { top: 112px; height: 20px; }
+    .rcard__body { gap: 3px; }
+    .rcard__body b { font-size: 1.04rem; }
+    .rcard__body small { font-size: .8rem; min-height: 2.4em; }
+    .rcard__n { font-size: .8rem; margin-top: 3px; }
     .railhead__act .railbtn { display: none; }
   }
 </style>
