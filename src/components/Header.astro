@@ -10,15 +10,6 @@ const path = Astro.url.pathname.replace(/\.html$/, '');
 const current = (href) => (href === '/collections' ? path === '/collections' || path.startsWith('/collections/') || path.startsWith('/products/') : path.startsWith(href));
 ---
 <header class="hdr">
-  <div class="hdr__util">
-    <div class="wrap hdr__utilin">
-      <span class="hdr__since">Family-run in New Jersey since 1971</span>
-      <span class="hdr__area">Rentals and crews in NJ, NY, PA and CT &nbsp;·&nbsp; Products ship nationwide</span>
-      <a href="/pages/create-c-m-account">Contractor &amp; municipal accounts</a>
-      <a href="/pages/contact">Contact</a>
-      <a href="tel:+19085614800" class="hdr__utilphone"><strong>24/7</strong>&ensp;908-561-4800</a>
-    </div>
-  </div>
   <div class="hdr__main">
     <div class="hdr__in wrap">
       <a href="/" class="logo" aria-label="Traffic Safety Service home">
@@ -67,14 +58,7 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 </script>
 <style>
-  .hdr { position: sticky; top: -38px; z-index: 40; background: #fff; }
-  .hdr__util { background: var(--ink); color: #aab1b8; font-size: .84rem; }
-  .hdr__utilin { height: 38px; display: flex; align-items: center; gap: 28px; white-space: nowrap; overflow: hidden; }
-  .hdr__since { color: var(--gold); font-variation-settings: 'wght' 650; }
-  .hdr__utilin a { text-decoration: none; color: #dfe3e6; font-variation-settings: 'wght' 560; }
-  .hdr__utilin a:hover { color: #fff; }
-  .hdr__utilphone { margin-left: auto; letter-spacing: .01em; }
-  .hdr__utilphone strong { color: var(--gold); font-variation-settings: 'wght' 720; }
+  .hdr { position: sticky; top: 0; z-index: 40; background: #fff; }
 
   .hdr__main { background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); transition: box-shadow .25s ease; }
   .hdr.is-stuck .hdr__main { box-shadow: 0 12px 32px -20px rgba(20, 23, 26, .35); }
@@ -115,16 +99,12 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .mnav__cta { color: var(--red); }
   @media (max-width: 1360px) { .hdr__phonetxt { display: none; } .hdr__phone { margin-right: 0; } }
   @media (max-width: 1150px) { .hdr__sep { display: none; } }
-  @media (max-width: 1080px) { .hdr__area { display: none; } }
   @media (max-width: 1010px) {
     .nav, .hdr__cta { display: none; }
     .menu-btn { display: grid; }
     .hdr__act { margin-left: auto; }
     .hdr__in { height: 72px; }
     .logo__img { height: 58px; }
-    .hdr__utilin { justify-content: space-between; gap: 14px; }
-    .hdr__utilin > .hdr__area, .hdr__utilin > a:not(.hdr__utilphone) { display: none; }
-    .hdr__utilphone { margin-left: 0; }
-  }
+    }
   @media (min-width: 1011px) { .mnav { display: none !important; } }
 </style>
