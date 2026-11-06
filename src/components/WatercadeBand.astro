@@ -1,0 +1,24 @@
+---
+import { img } from '../lib/shopify.js';
+---
+    <a href="/watercade/" class="wcband reveal">
+      <img class="wcband__photo" data-parallax=".1" src={img('https://cdn.shopify.com/s/files/1/0587/7701/0241/files/Water-Filled-Barricades-In-Use-3-1.png', 1800)} alt="" loading="lazy" />
+      <span class="wcband__shade" aria-hidden="true"></span>
+      <span class="wcband__body">
+        <img class="wcband__logo" src="/watercade/logo-white.png" alt="WATERCADE" width="1932" height="237" loading="lazy" />
+        <span class="wcband__copy">Our own crash-tested water-filled barrier. Build yours in 3D, buy it, or rent it by the job.</span>
+        <span class="wcband__chips" aria-hidden="true"><i>MASH TL-3</i><i>50 lbs empty</i><i>650 lbs filled</i><i>90° swivel pin</i></span>
+        <span class="wcband__cta btn">Explore WATERCADE</span>
+      </span>
+    </a>
+<style>
+  .wcband { position: relative; display: flex; align-items: center; min-height: 280px; border-radius: 18px; overflow: hidden; text-decoration: none; color: #fff; box-shadow: var(--shadow-l); }
+  .wcband__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
+  .wcband__shade { position: absolute; inset: 0; background: linear-gradient(92deg, rgba(8, 27, 61, .93) 0%, rgba(8, 27, 61, .6) 52%, rgba(8, 27, 61, .1) 100%); }
+  .wcband__body { position: relative; display: grid; gap: 13px; padding: 40px clamp(24px, 3.4vw, 52px); max-width: 640px; justify-items: start; }
+  .wcband__logo { width: clamp(210px, 23vw, 300px); height: auto; }
+  .wcband__copy { font-size: 1.02rem; line-height: 1.55; color: #dde6f2; text-shadow: 0 1px 8px rgba(0, 0, 0, .4); }
+  .wcband__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .wcband__chips i { font-style: normal; font-size: .85rem; font-variation-settings: 'wght' 680; letter-spacing: .02em; padding: 7px 13px 6px; border-radius: 999px; background: rgba(255, 255, 255, .13); border: 1px solid rgba(255, 255, 255, .32); backdrop-filter: blur(6px); white-space: nowrap; }
+  .wcband__cta { margin-top: 4px; }
+</style>
