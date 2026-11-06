@@ -1,123 +1,72 @@
 ---
-// Header showcase: cycles through the job types TSS crews handle, each with a small animated scene.
-import { scenes, W, H } from '../data/jobScenes';
+// Header list of the job types TSS crews handle. A highlight sweeps through the rows.
+const jobs = [
+  ['Lane and road closures', 'Single lanes to full closures with detours', '/tools/lane-closure-plan?work=right'],
+  ['Flagging operations', 'ATSSA-certified flaggers, one-lane two-way', '/tools/lane-closure-plan?work=flagging'],
+  ['TMA crash truck protection', 'Crash trucks with certified operators', '/pages/request-a-quote?type=lane-closure'],
+  ['Night and weekend work', 'Off-peak closure windows, fully lit', '/tools/lane-closure-plan?work=right'],
+  ['Special events', 'Parades, races, concerts and game days', '/pages/request-a-quote?type=lane-closure'],
+  ['Emergency response', 'Water main breaks, downed lines, incidents', '/pages/create-c-m-account', 'Account customers']
+];
 ---
-<div class="jb" data-js>
-  <div class="jb__stage">
-    <svg class="jb__defs" width="0" height="0" aria-hidden="true"><defs><linearGradient id="jbBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c9" stop-opacity=".55" /><stop offset="1" stop-color="#fff6c9" stop-opacity="0" /></linearGradient></defs></svg>
-    {scenes.map((s, i) => (
-      <figure class:list={['jb__scene', i === 0 && 'is-on', s.dark && 'is-dark']} data-scene={i}>
-        <svg viewBox={`0 34 ${W} ${H - 34}`} aria-hidden="true" set:html={s.svg} />
-        <figcaption>
-          <b>{s.t}</b>
-          <span>{s.d}</span>
-          <a href={s.cta[1]}>{s.cta[0]}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
-        </figcaption>
-      </figure>
+<div class="jb" data-jb>
+  <p class="jb__head">What our crews handle</p>
+  <ol class="jb__list">
+    {jobs.map(([t, d, href, tag], i) => (
+      <li style={`--i:${i}`}>
+        <a href={href} class:list={['jb__row', i === 0 && 'is-on']} data-row>
+          <span class="jb__n">{String(i + 1).padStart(2, '0')}</span>
+          <span class="jb__t"><b>{t}{tag && <em>{tag}</em>}</b><small>{d}</small></span>
+          <svg class="jb__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </a>
+      </li>
     ))}
-  </div>
-  <div class="jb__tabs" role="tablist" aria-label="Jobs our crews handle">
-    {scenes.map((s, i) => (
-      <button type="button" role="tab" class="jb__tab" data-tab={i} aria-selected={i === 0 ? 'true' : 'false'}><span>{s.t}</span><i aria-hidden="true"></i></button>
-    ))}
-  </div>
+  </ol>
 </div>
 
 <style>
-  .jb { background: #fff; color: var(--ink); border-radius: 22px; overflow: hidden; box-shadow: 0 40px 70px -40px rgba(0,0,0,.65); text-align: left; }
-  .jb__defs { position: absolute; }
-  .jb__stage { position: relative; display: grid; background: linear-gradient(180deg, #e9eef2, #f6f8f9 50%); }
-  .jb__scene { grid-area: 1 / 1; margin: 0; display: grid; grid-template-rows: auto 1fr; opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s .45s; }
-  .jb__scene.is-on { opacity: 1; visibility: visible; transition: opacity .45s ease; }
-  .jb__scene > svg { display: block; width: 100%; height: auto; }
-  .jb__scene figcaption { position: relative; z-index: 1; display: grid; align-content: start; gap: 4px; padding: 14px 20px 16px; background: #fff; border-top: 1px solid var(--line); }
-  .jb__scene figcaption b { font-size: 1.22rem; letter-spacing: -.01em; font-variation-settings: 'wght' 780; }
-  .jb__scene figcaption span { font-size: .93rem; line-height: 1.45; color: var(--steel); }
-  .jb__scene figcaption a { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; color: var(--red); font-size: .92rem; font-variation-settings: 'wght' 720; text-decoration: none; width: fit-content; }
-  .jb__scene figcaption a svg { width: 16px; height: 16px; transition: transform .2s; }
-  .jb__scene figcaption a:hover svg { transform: translateX(3px); }
-
-  .jb__tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); background: var(--haze); }
-  .jb__tab { all: unset; position: relative; cursor: pointer; padding: 11px 12px 12px; font-size: .82rem; line-height: 1.25; font-variation-settings: 'wght' 660; color: var(--steel); text-align: center; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transition: color .2s, background .2s; }
-  .jb__tab:nth-child(3n) { border-right: 0; }
-  .jb__tab:nth-last-child(-n+3) { border-bottom: 0; }
-  .jb__tab:hover { color: var(--ink); }
-  .jb__tab:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: -3px; }
-  .jb__tab[aria-selected="true"] { color: var(--red); background: #fff; }
-  .jb__tab i { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--red); }
-  .jb__tab[aria-selected="true"] i { animation: jsBar var(--jb-t, 4200ms) linear forwards; }
-  .jb.is-paused .jb__tab i { animation: none; width: 100%; }
-  @keyframes jsBar { to { width: 100%; } }
-
-  /* scene animations (only while the scene is on) */
-  .jb__scene :global(.jb__pop) { opacity: 0; transform: translateY(-10px) scale(.4); transform-box: fill-box; transform-origin: center bottom; }
-  .jb__scene.is-on :global(.jb__pop) { animation: jsPop .4s cubic-bezier(.2,.8,.2,1.5) both; animation-delay: calc(.2s + var(--c) * 90ms); }
-  @keyframes jsPop { to { opacity: 1; transform: none; } }
-  .jb__scene :global(.jb__fade) { opacity: 0; }
-  .jb__scene.is-on :global(.jb__fade) { animation: jsFade .5s 1s ease both; }
-  @keyframes jsFade { to { opacity: 1; } }
-  .jb__scene.is-on :global(.jb__drive) { animation: jsDrive 3.6s linear infinite; }
-  .jb__scene.is-on :global(.jb__drive--2) { animation-duration: 4.4s; animation-delay: -1.5s; }
-  @keyframes jsDrive { from { transform: translateX(-80px); } to { transform: translateX(460px); } }
-  .jb__scene.is-on :global(.jb__approach) { animation: jsApproach 3s cubic-bezier(.3,.7,.3,1) infinite; }
-  @keyframes jsApproach { 0% { transform: translateX(0); } 60%, 100% { transform: translateX(200px); } }
-  :global(.jb__seq) { opacity: .15; }
-  .jb__scene.is-on :global(.jb__seq) { animation: jsSeq 1.2s steps(1, end) infinite; animation-delay: calc(var(--n) * .2s); }
-  @keyframes jsSeq { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .15; } }
-  .jb__scene.is-on :global(.jb__stop) { animation: jsStop 2.4s steps(1, end) infinite; }
-  .jb__scene.is-on :global(.jb__slow) { animation: jsSlow 2.4s steps(1, end) infinite; }
-  :global(.jb__slow) { opacity: 0; }
-  @keyframes jsStop { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-  @keyframes jsSlow { 0%, 49% { opacity: 0; } 50%, 100% { opacity: 1; } }
-  .jb__scene.is-on :global(.jb__beam) { animation: jsBeam 2.6s ease-in-out infinite; }
-  @keyframes jsBeam { 50% { opacity: .65; } }
-  .jb__scene.is-on :global(.jb__star) { animation: jsTw 2s ease-in-out infinite; animation-delay: calc(var(--c) * .3s); }
-  @keyframes jsTw { 50% { opacity: .2; } }
-  .jb__scene.is-on :global(.jb__crowd) { animation: jsBob 1s ease-in-out infinite; animation-delay: calc(var(--c) * 70ms); }
-  @keyframes jsBob { 50% { transform: translateY(-3px); } }
-  .jb__scene.is-on :global(.jb__flag) { animation: jsWave 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
-  @keyframes jsWave { 50% { transform: skewY(4deg); } }
-  .jb__scene.is-on :global(.jb__beacon) { animation: jsBeacon .7s steps(1, end) infinite; }
-  @keyframes jsBeacon { 50% { opacity: .2; } }
-  .jb__scene.is-on :global(.jb__water) { animation: jsWater 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  @keyframes jsWater { 50% { transform: scale(1.12); } }
+  .jb { background: #fff; color: var(--ink); border-radius: 22px; padding: 22px 10px 10px; box-shadow: 0 40px 70px -40px rgba(0,0,0,.65); text-align: left; }
+  .jb__head { margin: 0 14px 10px; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; font-variation-settings: 'wght' 760; color: var(--red); }
+  .jb__list { list-style: none; margin: 0; padding: 0; }
+  .jb__list li { opacity: 0; transform: translateY(8px); animation: jbIn .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(.15s + var(--i) * 80ms); }
+  .jb__list li + li { box-shadow: 0 -1px 0 var(--line); }
+  @keyframes jbIn { to { opacity: 1; transform: none; } }
+  .jb__row { position: relative; display: grid; grid-template-columns: 34px 1fr 20px; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 14px; color: inherit; text-decoration: none; transition: background .3s; }
+  .jb__row::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 3px; background: var(--red); transform: scaleY(0); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+  .jb__row.is-on, .jb__row:hover { background: var(--red-tint); border-color: transparent; }
+  .jb__row.is-on::before, .jb__row:hover::before { transform: scaleY(1); }
+  .jb__n { font-size: .82rem; font-variation-settings: 'wght' 760; color: #aab2ba; font-variant-numeric: tabular-nums; transition: color .3s; }
+  .jb__row.is-on .jb__n, .jb__row:hover .jb__n { color: var(--red); }
+  .jb__t { min-width: 0; }
+  .jb__t b { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; font-size: 1.08rem; line-height: 1.25; letter-spacing: -.005em; font-variation-settings: 'wght' 720; }
+  .jb__t em { font-style: normal; font-size: .7rem; letter-spacing: .04em; text-transform: uppercase; padding: 3px 8px 2px; border-radius: 999px; background: var(--haze-2); color: var(--steel); font-variation-settings: 'wght' 720; }
+  .jb__t small { display: block; margin-top: 2px; font-size: .86rem; color: var(--steel); }
+  .jb__go { width: 18px; height: 18px; color: var(--red); opacity: 0; transform: translateX(-6px); transition: opacity .3s, transform .3s; }
+  .jb__row.is-on .jb__go, .jb__row:hover .jb__go { opacity: 1; transform: none; }
+  .jb__row:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: -3px; }
 
   @media (max-width: 1100px) { .jb { max-width: 720px; width: 100%; justify-self: center; box-sizing: border-box; } }
   @media (max-width: 640px) {
-    .jb { border-radius: 18px; }
-    .jb__scene figcaption { padding: 12px 16px 14px; }
-    .jb__scene figcaption b { font-size: 1.08rem; }
-    .jb__scene figcaption span { font-size: .86rem; }
-    .jb__tab { font-size: .74rem; padding: 10px 6px 11px; }
+    .jb { border-radius: 18px; padding: 16px 6px 6px; }
+    .jb__head { margin: 0 12px 6px; }
+    .jb__row { grid-template-columns: 26px 1fr 16px; gap: 10px; padding: 11px 12px; }
+    .jb__t b { font-size: 1rem; }
+    .jb__t small { font-size: .8rem; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .jb__scene :global(*) { animation: none !important; }
-    .jb__scene :global(.jb__pop), .jb__scene :global(.jb__fade) { opacity: 1; transform: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .jb__list li { animation: none; opacity: 1; transform: none; } }
 </style>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-js]').forEach((root) => {
-    const scenes = [...root.querySelectorAll<HTMLElement>('[data-scene]')];
-    const tabs = [...root.querySelectorAll<HTMLElement>('[data-tab]')];
-    const T = 4200;
-    root.style.setProperty('--jb-t', T + 'ms');
-    let i = 0, timer = 0, paused = false, resume = 0;
-    const show = (n: number) => {
-      i = n;
-      scenes.forEach((s, k) => s.classList.toggle('is-on', k === n));
-      tabs.forEach((t, k) => t.setAttribute('aria-selected', String(k === n)));
-    };
-    const start = () => { if (!timer && !paused) timer = window.setInterval(() => show((i + 1) % scenes.length), T); };
-    const stop = () => { clearInterval(timer); timer = 0; };
-    root.addEventListener('click', (e) => {
-      const t = (e.target as Element).closest<HTMLElement>('[data-tab]');
-      if (!t) return;
-      paused = true; root.classList.add('is-paused'); stop(); show(Number(t.dataset.tab));
-      clearTimeout(resume);
-      resume = window.setTimeout(() => { paused = false; root.classList.remove('is-paused'); show(i); start(); }, 12000);
-    });
+  document.querySelectorAll<HTMLElement>('[data-jb]').forEach((root) => {
+    const rows = [...root.querySelectorAll<HTMLElement>('[data-row]')];
+    let i = 0, timer = 0, hover = false;
+    const show = (n: number) => { i = n; rows.forEach((r, k) => r.classList.toggle('is-on', k === n)); };
+    root.addEventListener('mouseenter', () => { hover = true; rows.forEach((r) => r.classList.remove('is-on')); });
+    root.addEventListener('mouseleave', () => { hover = false; show(i); });
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    new IntersectionObserver(([en]) => { en.isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(root);
+    new IntersectionObserver(([en]) => {
+      if (en.isIntersecting && !timer) timer = window.setInterval(() => { if (!hover) show((i + 1) % rows.length); }, 2200);
+      else if (!en.isIntersecting && timer) { clearInterval(timer); timer = 0; }
+    }, { threshold: 0.3 }).observe(root);
   });
 </script>
