@@ -160,7 +160,7 @@ STYLE = '''<style id="tss-shell">
 @media(max-width:1420px){.tsshdr-tag{display:none}}
 @media(max-width:1230px){.tsshdr-phonetxt{display:none}.tsshdr-phone{gap:0}}
 @media(max-width:640px){.tsshdr-ai{display:none}}
-@media(max-width:1010px){.tsshdr-navrow,.tsshdr-cta,.tsshdr-phone,.tsshdr-in>.tsshdr-search{display:none}.tsshdr-menu{display:grid}.tsshdr-act{margin-left:auto}.tsshdr-in{height:70px}.tsshdr-logo img{height:56px}.tsshdr-msearch{display:block}}
+@media(max-width:1010px){.tsshdr-navrow,.tsshdr-cta,.tsshdr-phone,.tsshdr-in>.tsshdr-search{display:none}.tsshdr-menu{display:grid;justify-self:start}.tsshdr-in{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;height:82px}.tsshdr.is-stuck .tsshdr-in{height:72px}.tsshdr-logo{justify-self:center}.tsshdr-act{justify-self:end;margin-left:0}.tsshdr-logo img{height:68px}.tsshdr.is-stuck .tsshdr-logo img{height:60px}.tsshdr-msearch{display:block}}
 @media(min-width:1011px){.tsshdr-mnav{display:none!important}}
 </style>'''
 

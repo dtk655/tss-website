@@ -304,9 +304,13 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   @media (max-width: 1010px) {
     .hdr__nav, .hdr__cta, .hdr__phone, .hdr__sep, .hdr__in > .search { display: none; }
     .menu-btn { display: grid; }
-    .hdr__act { margin-left: auto; }
-    .hdr__in { height: 70px; }
-    .logo__img { height: 56px; }
+    .hdr__in { display: grid; grid-template-columns: 1fr auto 1fr; height: 82px; gap: 8px; }
+    .hdr.is-stuck .hdr__in { height: 72px; }
+    .menu-btn { justify-self: start; }
+    .logo { justify-self: center; }
+    .hdr__act { justify-self: end; margin-left: 0; }
+    .logo__img { height: 68px; }
+    .hdr.is-stuck .logo__img { height: 60px; }
     .msearch { display: block; }
   }
   @media (min-width: 1011px) { .mnav { display: none !important; } }
