@@ -134,6 +134,7 @@
 </script>
 
 <style is:global>
+  .qv [hidden] { display: none !important; }
   .qv { width: min(880px, calc(100vw - 28px)); max-height: calc(100dvh - 48px); border: 0; border-radius: var(--r-l); padding: 0; background: #fff; box-shadow: var(--shadow-l); }
   .qv::backdrop { background: rgba(20, 23, 26, .5); backdrop-filter: blur(3px); }
   .qv[open] { animation: qv-in .22s cubic-bezier(.2, .8, .25, 1); }

@@ -65,7 +65,7 @@ const payload = qv ? JSON.stringify({
     position: absolute; z-index: 2; left: 50%; bottom: 14px; translate: -50% 6px;
     display: inline-flex; align-items: center; gap: 7px;
     border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 255, 255, .96); backdrop-filter: blur(6px);
-    color: var(--ink); font-variation-settings: 'wght' 640; font-size: .86rem; padding: 9px 15px 8px;
+    color: var(--ink); font-variation-settings: 'wght' 640; font-size: .86rem; padding: 9px 15px 8px; white-space: nowrap;
     box-shadow: var(--shadow-m); cursor: pointer; opacity: 0; transition: opacity .18s ease, translate .18s ease, border-color .15s;
   }
   .pcard:hover .pcard__qv, .pcard__qv:focus-visible { opacity: 1; translate: -50% 0; }

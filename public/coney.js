@@ -89,6 +89,10 @@
     '.teaser .cta{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--red)}' +
     '.teaser .tx{position:absolute;top:6px;right:6px;width:24px;height:24px;border:0;background:none;color:var(--muted);font-size:17px;cursor:pointer;border-radius:50%}' +
     '.open .teaser{display:none}' +
+    /* lifted while a page's sticky buy bar is visible */
+    ':host([data-lift]) .launcher{bottom:94px}' +
+    ':host([data-lift]) .teaser{bottom:102px}' +
+    ':host([data-lift]) .panel{bottom:182px;height:min(640px,calc(100vh - 202px))}' +
 
     '.backdrop{display:none}' +
 
