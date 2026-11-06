@@ -1,0 +1,159 @@
+---
+// "Unsure what closure you need?" band with an animated cycle of common closure setups.
+const W = 440, H = 150;
+type Scene = { name: string; crew: string; ta: string; svg: string };
+
+const cone = (x: number, y: number, i: number) =>
+  `<g class="fpb__cone" style="--c:${i}"><path d="M${x - 4.5} ${y + 5} L${x} ${y - 8} L${x + 4.5} ${y + 5} Z" fill="#ff6a00"/><rect x="${x - 3}" y="${y - 2.5}" width="6" height="2.4" fill="#fff"/><rect x="${x - 6}" y="${y + 4.6}" width="12" height="2.6" rx="1" fill="#ff6a00"/></g>`;
+const person = (x: number, y: number, i: number, flag = false) =>
+  `<g class="fpb__cone" style="--c:${i}"><circle cx="${x}" cy="${y}" r="7" fill="#f5b800" stroke="#14171a" stroke-width="2"/>${flag ? `<rect x="${x + 6}" y="${y - 14}" width="10" height="10" rx="2" fill="#b60606" stroke="#fff" stroke-width="1.2"/>` : ''}</g>`;
+const truck = (x: number, y: number, h: number, i: number, label = 'TMA') =>
+  `<g class="fpb__cone" style="--c:${i}"><rect x="${x}" y="${y}" width="46" height="${h}" rx="4" fill="#f5b800"/><rect x="${x}" y="${y}" width="11" height="${h}" fill="#14171a"/><path d="M${x + 2} ${y + 3} l7 ${h / 2 - 3} l-7 ${h / 2 - 3}" stroke="#f5b800" stroke-width="2" fill="none"/><text x="${x + 29}" y="${y + h / 2 + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#14171a">${label}</text></g>`;
+const work = (x: number, y: number, w: number, h: number) =>
+  `<rect class="fpb__work" x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#b60606"/>`;
+const road = (lanes: number, twoWay = false, shoulder = true) => {
+  const top = 22, lh = shoulder ? 30 : 34, sh = shoulder ? 16 : 0;
+  let g = `<rect x="0" y="${top}" width="${W}" height="${lanes * lh + sh}" fill="#3a3f45"/>`;
+  if (shoulder) g += `<rect x="0" y="${top + lanes * lh}" width="${W}" height="${sh}" fill="#4f555c"/><line x1="0" x2="${W}" y1="${top + lanes * lh}" y2="${top + lanes * lh}" stroke="#fff" stroke-width="2"/>`;
+  for (let i = 1; i < lanes; i++) {
+    const y = top + i * lh;
+    g += twoWay ? `<line x1="0" x2="${W}" y1="${y - 1.6}" y2="${y - 1.6}" stroke="#f5b800" stroke-width="2"/><line x1="0" x2="${W}" y1="${y + 1.6}" y2="${y + 1.6}" stroke="#f5b800" stroke-width="2"/>`
+      : `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#fff" stroke-width="2" stroke-dasharray="16 18"/>`;
+  }
+  return { g, top, lh, sh, hgt: lanes * lh + sh };
+};
+const arrows = (ys: number[], rev: number[] = []) =>
+  ys.map((y, i) => { const r = rev.includes(i); const x = r ? 60 : 24; return `<path class="fpb__arrow" d="M${x} ${y} h${r ? -24 : 24} m0 0 l${r ? 7 : -7} -5 m${r ? -7 : 7} 5 l${r ? 7 : -7} 5" stroke="#fff" stroke-opacity=".7" stroke-width="2.2" fill="none" stroke-linecap="round"/>`; }).join('');
+const taper = (x1: number, y1: number, x2: number, y2: number, n: number, start = 0) =>
+  Array.from({ length: n + 1 }, (_, k) => cone(x1 + ((x2 - x1) * k) / n, y1 + ((y2 - y1) * k) / n, start + k)).join('');
+const line = (x1: number, x2: number, y: number, step: number, start = 0) => {
+  let s = '', k = 0;
+  for (let x = x1; x <= x2; x += step) s += cone(x, y, start + k++);
+  return s;
+};
+
+const scenes: Scene[] = [];
+const center = (r: { top: number; hgt: number }, svg: string) => `<g transform="translate(0 ${((H - r.hgt) / 2 - r.top).toFixed(1)})">${svg}</g>`;
+{ // shoulder closure
+  const r = road(3); const y1 = r.top + 3 * r.lh, y2 = y1 + r.sh;
+  scenes.push({ name: 'Shoulder closure', crew: '3-man crew', ta: 'MUTCD TA-3 / TA-5', svg: center(r, r.g + arrows([37, 67, 97]) + taper(120, y2, 190, y1, 4) + line(220, 380, y1, 32, 5) + work(230, y1 + 2, 130, r.sh - 4)) });
+}
+{ // flagging
+  const r = road(2, true, false); const yMid = r.top + r.lh;
+  scenes.push({ name: 'Flagging operation', crew: '2-man flagging crew', ta: 'One lane, two-way · TA-10', svg: center(r, r.g + arrows([39, 73], [0]) + taper(110, r.top + 2 * r.lh, 140, yMid, 3) + line(165, 330, yMid, 33, 4) + taper(350, yMid, 380, r.top + 2 * r.lh, 2, 10) + work(170, yMid + 4, 150, r.lh - 8) + person(92, yMid + r.lh / 2, 13, true) + person(402, r.top + r.lh / 2, 14, true)) });
+}
+{ // single lane closure
+  const r = road(3); const ya = r.top + 2 * r.lh, yb = r.top + 3 * r.lh;
+  scenes.push({ name: 'Right lane closure', crew: '4-man crew + TMA', ta: 'Stationary lane closure · TA-33', svg: center(r, r.g + arrows([37, 67]) + taper(90, yb, 190, ya, 6) + line(222, 400, ya, 30, 7) + truck(200, ya + 5, r.lh - 10, 13) + work(270, ya + 4, 120, r.lh - 8)) });
+}
+{ // double lane closure
+  const r = road(3); const ya = r.top + r.lh, yb = r.top + 2 * r.lh, yc = r.top + 3 * r.lh;
+  scenes.push({ name: 'Double lane closure', crew: '6-man crew + 2 TMAs', ta: 'Freeway double lane · TA-37', svg: center(r, r.g + arrows([37]) + taper(40, yc, 110, yb, 4) + line(130, 180, yb, 25, 5) + taper(190, yb, 260, ya, 4, 8) + line(285, 410, ya, 30, 13) + truck(118, yb + 5, r.lh - 10, 18) + truck(268, ya + 5, r.lh - 10, 19) + work(330, ya + 4, 80, 2 * r.lh - 8)) });
+}
+{ // mobile operation
+  const r = road(3); const ya = r.top + 2 * r.lh;
+  scenes.push({ name: 'Mobile operation', crew: '3-man crew + shadow TMA', ta: 'Moving work zone · TA-35', svg: center(r, r.g + arrows([37, 67]) + `<g class="fpb__move">${truck(150, ya + 5, r.lh - 10, 0, 'TMA')}<g class="fpb__cone" style="--c:1"><rect x="250" y="${ya + 5}" width="60" height="${r.lh - 10}" rx="4" fill="#fff"/><text x="280" y="${ya + r.lh / 2 + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#14171a">WORK</text></g><path class="fpb__cone" style="--c:2" d="M322 ${ya + r.lh / 2} h40 m0 0 l-8 -6 m8 6 l-8 6" stroke="#b60606" stroke-width="3" fill="none"/></g>`) });
+}
+{ // full closure with detour
+  const r = road(2, true, false); const yb = r.top + 2 * r.lh;
+  let bar = '';
+  for (let i = 0; i < 2; i++) bar += `<g class="fpb__cone" style="--c:${i}"><rect x="150" y="${r.top + i * r.lh + 4}" width="12" height="${r.lh - 8}" fill="#fff"/><rect x="150" y="${r.top + i * r.lh + 6}" width="12" height="6" fill="#ff6a00"/><rect x="150" y="${r.top + i * r.lh + r.lh - 14}" width="12" height="6" fill="#ff6a00"/></g>`;
+  scenes.push({ name: 'Road closure + detour', crew: '4-man crew', ta: 'Road closed, detour · TA-13 / TA-20', svg: center(r, r.g + arrows([39, 73], [0]) + bar + work(180, r.top + 4, 200, 2 * r.lh - 8) + `<path class="fpb__detour" d="M120 ${r.top - 4} q0 -16 30 -16 h260" stroke="#f5b800" stroke-width="3" stroke-dasharray="7 6" fill="none"/><text class="fpb__cone" style="--c:3" x="290" y="${yb + 22}" text-anchor="middle" font-size="11" font-weight="800" fill="#8a6a00">DETOUR</text>`) });
+}
+---
+<section class="fpb" data-fpb>
+  <div class="wrap">
+    <div class="fpb__card">
+      <div class="fpb__copy">
+        <p class="fpb__kicker">Free lane closure plan</p>
+        <h2>Unsure what type of closure or crew you need?</h2>
+        <p class="fpb__lede">Answer a few questions and get a free MUTCD-based plan in about two minutes.</p>
+        <a href="/tools/lane-closure-plan" class="fpb__btn">Get my free plan
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15" /><path d="M13 6l6 6-6 6" /></svg>
+        </a>
+      </div>
+      <a href="/tools/lane-closure-plan" class="fpb__viz" aria-label="Common closure types, start your free plan">
+        <div class="fpb__screen">
+          {scenes.map((s, i) => (
+            <svg viewBox={`0 0 ${W} ${H}`} class:list={['fpb__scene', i === 0 && 'is-on']} data-scene={i} aria-hidden="true" set:html={s.svg} />
+          ))}
+        </div>
+        <div class="fpb__info">
+          {scenes.map((s, i) => (
+            <div class:list={['fpb__meta', i === 0 && 'is-on']} data-meta={i}>
+              <b>{s.name}</b>
+              <span><i>{s.crew}</i>{s.ta}</span>
+            </div>
+          ))}
+          <div class="fpb__dots" aria-hidden="true">{scenes.map((_, i) => <i class:list={[i === 0 && 'is-on']} />)}</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fpb { padding: clamp(36px, 5vw, 64px) 0 0; }
+  .fpb__card { position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(24px, 4vw, 56px); align-items: center; padding: clamp(24px, 3.4vw, 44px); border-radius: 24px; color: #fff; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); box-shadow: 0 30px 60px -36px rgba(138, 4, 4, .7); }
+  .fpb__card::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,.035) 0 18px, transparent 18px 36px); pointer-events: none; }
+  .fpb__copy, .fpb__viz { position: relative; z-index: 1; }
+  .fpb__kicker { display: inline-block; margin: 0 0 12px; padding: 6px 12px 5px; border-radius: 999px; background: var(--gold); color: var(--ink); font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
+  .fpb h2 { margin: 0; color: #fff; font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.06; letter-spacing: -.02em; text-wrap: balance; }
+  .fpb__lede { margin: 12px 0 0; color: rgba(255,255,255,.9); font-size: 1.08rem; line-height: 1.5; }
+  .fpb__btn { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; min-height: 56px; padding: 15px 26px 14px; border-radius: 12px; background: #fff; color: var(--red); font-size: 1.06rem; font-variation-settings: 'wght' 700; text-decoration: none; box-shadow: 0 14px 30px -14px rgba(0,0,0,.5); transition: background .15s, transform .15s; }
+  .fpb__btn:hover { background: var(--haze); transform: translateY(-1px); }
+
+  .fpb__viz { display: block; text-decoration: none; color: var(--ink); border-radius: 18px; overflow: hidden; background: #fff; box-shadow: 0 24px 50px -24px rgba(0,0,0,.55); }
+  .fpb__screen { position: relative; aspect-ratio: 440 / 150; background: #cfd4d8; }
+  .fpb__scene { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .45s ease; }
+  .fpb__scene.is-on { opacity: 1; }
+  .fpb__scene :global(.fpb__cone) { opacity: 0; transform: translateY(-8px) scale(.5); transform-box: fill-box; transform-origin: center bottom; }
+  .fpb__scene.is-on :global(.fpb__cone) { animation: fpbDrop .38s cubic-bezier(.2,.8,.2,1.5) both; animation-delay: calc(.15s + var(--c) * 70ms); }
+  @keyframes fpbDrop { to { opacity: 1; transform: none; } }
+  .fpb__scene :global(.fpb__work) { opacity: 0; transition: opacity .4s .9s; }
+  .fpb__scene.is-on :global(.fpb__work) { opacity: .9; }
+  .fpb__scene :global(.fpb__detour) { stroke-dashoffset: 300; }
+  .fpb__scene.is-on :global(.fpb__detour) { animation: fpbDash 1.4s .3s ease forwards; }
+  @keyframes fpbDash { from { stroke-dasharray: 300; stroke-dashoffset: 300; } to { stroke-dasharray: 300; stroke-dashoffset: 0; } }
+  .fpb__scene.is-on :global(.fpb__move) { animation: fpbMove 3.2s linear both; }
+  @keyframes fpbMove { from { transform: translateX(-90px); } to { transform: translateX(60px); } }
+  .fpb__info { display: flex; align-items: center; gap: 16px; padding: 16px 20px; min-height: 76px; position: relative; }
+  .fpb__meta { position: absolute; left: 20px; right: 90px; top: 50%; transform: translateY(-40%); opacity: 0; transition: opacity .35s, transform .35s; }
+  .fpb__meta.is-on { opacity: 1; transform: translateY(-50%); }
+  .fpb__meta b { display: block; font-size: 1.18rem; letter-spacing: -.01em; font-variation-settings: 'wght' 760; }
+  .fpb__meta span { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 4px; font-size: .88rem; color: var(--steel); }
+  .fpb__meta i { font-style: normal; padding: 3px 9px 2px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-variation-settings: 'wght' 700; }
+  .fpb__dots { margin-left: auto; display: flex; gap: 5px; }
+  .fpb__dots i { width: 7px; height: 7px; border-radius: 99px; background: var(--line-dark); transition: width .3s, background .3s; }
+  .fpb__dots i.is-on { width: 20px; background: var(--red); }
+
+  @media (max-width: 900px) { .fpb__card { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .fpb__copy { text-align: center; }
+    .fpb__btn { width: 100%; justify-content: center; box-sizing: border-box; }
+    .fpb__info { padding: 14px 16px; min-height: 80px; }
+    .fpb__meta { left: 16px; right: 16px; top: 44%; }
+    .fpb__dots { position: absolute; right: 16px; bottom: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fpb__scene.is-on :global(.fpb__cone), .fpb__scene.is-on :global(.fpb__move), .fpb__scene.is-on :global(.fpb__detour) { animation: none; opacity: 1; transform: none; stroke-dashoffset: 0; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-fpb]').forEach((root) => {
+    const scenes = [...root.querySelectorAll('[data-scene]')];
+    const metas = [...root.querySelectorAll('[data-meta]')];
+    const dots = [...root.querySelectorAll('.fpb__dots i')];
+    let i = 0, t = 0;
+    const show = (n: number) => {
+      i = n;
+      [scenes, metas, dots].forEach((list) => list.forEach((el, k) => el.classList.toggle('is-on', k === n)));
+    };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    new IntersectionObserver((ents) => ents.forEach((en) => {
+      if (en.isIntersecting && !t) { show(i); t = window.setInterval(() => show((i + 1) % scenes.length), 3400); }
+      else if (!en.isIntersecting && t) { clearInterval(t); t = 0; }
+    }), { threshold: 0.3 }).observe(root);
+  });
+</script>
