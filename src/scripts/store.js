@@ -72,7 +72,15 @@ async function updateLine(lineId, quantity) {
 }
 
 function setCount(sel, n) {
-  document.querySelectorAll(sel).forEach((el) => { el.textContent = n; el.hidden = !n; });
+  document.querySelectorAll(sel).forEach((el) => {
+    const prev = +(el.dataset.prev || 0);
+    el.textContent = n; el.hidden = !n; el.dataset.prev = n;
+    if (n > prev) {
+      el.classList.remove('is-pop'); void el.offsetWidth; el.classList.add('is-pop');
+      const b = el.closest('.icon-btn');
+      if (b) { b.classList.remove('is-pop'); void b.offsetWidth; b.classList.add('is-pop'); }
+    }
+  });
 }
 function renderCart() {
   const lines = cart?.lines?.nodes || [];
@@ -202,3 +210,95 @@ window.TSSQuote = {
 
 renderQuote();
 loadCart().then((c) => { cart = c; renderCart(); });
+
+/* ---------------- smart effects ---------------- */
+const motionOK = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+/* product image flies into the cart / quote icon when added */
+let lastFly = 0;
+function flyFrom(btn, target) {
+  if (!motionOK) return;
+  const now = Date.now();
+  if (now - lastFly < 250) return; // bar button proxies a second click
+  const src =
+    btn.closest('.pcard')?.querySelector('.pcard__media img') ||
+    btn.closest('.qv')?.querySelector('[data-qv-img]') ||
+    btn.closest('[data-buybar]')?.querySelector('.buybar__img') ||
+    document.querySelector('.gal__slide img, .gal img');
+  const dest = document.querySelector(`.icon-btn [data-${target}-count]`)?.closest('.icon-btn');
+  if (!src || !src.getAttribute('src') || !dest) return;
+  const a = src.getBoundingClientRect(), b = dest.getBoundingClientRect();
+  if (!a.width || !b.width) return;
+  lastFly = now;
+  const fly = new Image();
+  fly.src = src.currentSrc || src.src;
+  fly.className = 'fly-img';
+  fly.alt = '';
+  Object.assign(fly.style, { top: a.top + 'px', left: a.left + 'px', width: a.width + 'px', height: a.height + 'px' });
+  document.body.appendChild(fly);
+  void fly.offsetWidth;
+  Object.assign(fly.style, {
+    top: b.top + b.height / 2 - 16 + 'px', left: b.left + b.width / 2 - 16 + 'px',
+    width: '32px', height: '32px', opacity: '.25', borderRadius: '50%'
+  });
+  setTimeout(() => fly.remove(), 680);
+}
+document.addEventListener('click', (e) => {
+  const t = e.target;
+  if (t.closest('[data-quick-add], [data-add-cart]')) flyFrom(t.closest('[data-quick-add], [data-add-cart]'), 'cart');
+  else if (t.closest('[data-qv-add]')) {
+    const b = t.closest('[data-qv-add]');
+    flyFrom(b, /quote/i.test(b.textContent) ? 'quote' : 'cart');
+  } else if (t.closest('[data-bar-add]')) {
+    const b = t.closest('[data-bar-add]');
+    flyFrom(b, /quote/i.test(b.textContent) ? 'quote' : 'cart');
+  } else if (t.closest('[data-add-quote]')) flyFrom(t.closest('[data-add-quote]'), 'quote');
+}, true);
+
+/* gentle parallax for [data-parallax] imagery inside overflow-hidden banners */
+const parEls = [...document.querySelectorAll('[data-parallax]')];
+if (parEls.length && motionOK) {
+  parEls.forEach((el) => { el.style.transition = 'none'; });
+  let ticking = false;
+  const upd = () => {
+    ticking = false;
+    for (const el of parEls) {
+      const r = (el.parentElement || el).getBoundingClientRect();
+      if (r.bottom < -80 || r.top > innerHeight + 80) continue;
+      const f = parseFloat(el.dataset.parallax) || 0.12;
+      const off = (r.top + r.height / 2 - innerHeight / 2) * f;
+      el.style.transform = `translateY(${off.toFixed(1)}px) scale(1.14)`;
+    }
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
+  upd();
+}
+
+/* numbers count up when they scroll into view: <strong data-countup>10,578</strong> */
+const cuEls = document.querySelectorAll('[data-countup]');
+if (cuEls.length && 'IntersectionObserver' in window && motionOK) {
+  const io = new IntersectionObserver((es) => {
+    es.forEach((en) => {
+      if (!en.isIntersecting) return;
+      io.unobserve(en.target);
+      const el = en.target;
+      const orig = el.textContent.trim();
+      const m = orig.match(/^([\d,]+(?:\.\d+)?)(.*)$/);
+      if (!m) return;
+      const end = parseFloat(m[1].replace(/,/g, ''));
+      const dec = (m[1].split('.')[1] || '').length;
+      const comma = m[1].includes(',');
+      const suf = m[2];
+      const t0 = performance.now(), D = 1400;
+      const step = (t) => {
+        const p = Math.min(1, (t - t0) / D);
+        if (p >= 1) { el.textContent = orig; return; }
+        const v = end * (1 - Math.pow(1 - p, 3));
+        el.textContent = (comma ? Math.round(v).toLocaleString('en-US') : v.toFixed(dec)) + suf;
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.5 });
+  cuEls.forEach((el) => io.observe(el));
+}

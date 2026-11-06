@@ -3,69 +3,69 @@ import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../lib/shopify.js';
 const { colByHandle } = await loadCatalog();
 const megaCats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const nav = [
-  { href: '/collections', label: 'Products', mega: true },
+  { href: '/collections', label: 'Products' },
   { href: '/collections/equipment-rentals', label: 'Rentals' },
   { href: '/pages/lane-closure', label: 'Lane closures' },
   { href: '/watercade/', label: 'WATERCADE' },
-  { href: '/tools', label: 'Planning tools' }
+  { href: '/tools', label: 'Planning tools' },
+  { href: '/pages/custom-stenciling', label: 'Custom shop' },
+  { href: '/pages/contact', label: 'Contact' }
 ];
 const path = Astro.url.pathname.replace(/\.html$/, '');
-const current = (href) => (href === '/collections' ? path === '/collections' || path.startsWith('/collections/') || path.startsWith('/products/') : path.startsWith(href));
+const current = (href) => (href === '/collections' ? path === '/collections' || (path.startsWith('/collections/') && !path.includes('rentals')) || path.startsWith('/products/') : path.startsWith(href));
 ---
 <header class="hdr">
   <div class="hdr__main">
     <div class="hdr__in wrap">
+      <button class="icon-btn menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mnav">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
       <a href="/" class="logo" aria-label="Traffic Safety Service home">
         <img class="logo__img" src="/brand/tss-logo-420.png" alt="TSS, Traffic Safety Service" width="420" height="210" />
       </a>
-      <nav class="nav" aria-label="Main">
-        {nav.map((n) => (
-          <div class={`nav__item${n.mega ? ' nav__item--mega' : ''}`}>
-            <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-haspopup={n.mega ? 'true' : undefined} aria-expanded={n.mega ? 'false' : undefined}>
-              <span>{n.label}</span>
-              {n.mega && <svg class="nav__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>}
-            </a>
-            {n.mega && (
-              <div class="mega" role="region" aria-label="Product categories">
-                <div class="wrap mega__in">
-                  <div class="mega__cats">
-                    {megaCats.map((c) => (
-                      <a href={`/collections/${c.handle}`} class="mega__cat">
-                        <span class="mega__thumb">{c.cover && <img src={img(c.cover.url, 120)} alt="" loading="lazy" width="56" height="56" />}</span>
-                        <span class="mega__txt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}</small></span>
-                      </a>
-                    ))}
-                  </div>
-                  <div class="mega__side">
-                    <a href="/collections" class="mega__all">All products
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </a>
-                    <a href="/pages/custom-stenciling" class="mega__promo">
-                      <b>Custom branding</b>
-                      <span>Your colors, logo and stenciling on cones, drums and barriers.</span>
-                    </a>
-                    <a href="/tools/rent-vs-buy" class="mega__promo">
-                      <b>Rent or buy?</b>
-                      <span>Run your real numbers in the calculator.</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </nav>
-      <div class="hdr__act">
-        <div class="search" data-search>
-          <svg class="search__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-          <input type="search" placeholder="Search products" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="search-results" />
-          <div class="search__panel" id="search-results" role="listbox" hidden data-search-panel></div>
-        </div>
-        <button class="icon-btn search-toggle" aria-label="Search" data-search-toggle>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+      <div class="nav__item--mega allwrap">
+        <button class="allbtn" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5h6v6h-6z M13.5 4.5h6v6h-6z M4.5 13.5h6v6h-6z M13.5 13.5h6v6h-6z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+          <span>All products</span>
+          <svg class="allbtn__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        <div class="mega" role="region" aria-label="Product categories">
+          <div class="wrap mega__in">
+            <div class="mega__cats">
+              {megaCats.map((c) => (
+                <a href={`/collections/${c.handle}`} class="mega__cat">
+                  <span class="mega__thumb">{c.cover && <img src={img(c.cover.url, 120)} alt="" loading="lazy" width="56" height="56" />}</span>
+                  <span class="mega__txt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}</small></span>
+                </a>
+              ))}
+            </div>
+            <div class="mega__side">
+              <a href="/collections" class="mega__all">Browse all products
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+              <a href="/pages/custom-stenciling" class="mega__promo">
+                <b>Custom branding</b>
+                <span>Your colors, logo and stenciling on cones, drums and barriers.</span>
+              </a>
+              <a href="/tools/rent-vs-buy" class="mega__promo">
+                <b>Rent or buy?</b>
+                <span>Run your real numbers in the calculator.</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="search" data-search>
+        <input type="search" placeholder="Search cones, barricades, signs, rentals…" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="search-results" />
+        <span class="search__btn" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        </span>
+        <div class="search__panel" id="search-results" role="listbox" hidden data-search-panel></div>
+      </div>
+      <div class="hdr__act">
         <a class="hdr__phone" href="tel:+19085614800" aria-label="Call 908-561-4800">
           <span class="hdr__phonebadge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
+          <span class="hdr__phonetxt"><small>Call us 24/7</small><b>908-561-4800</b></span>
         </a>
         <span class="hdr__sep" aria-hidden="true"></span>
         <button class="icon-btn" data-open-drawer="quote" aria-label="Quote list">
@@ -77,17 +77,26 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
           <span class="badge" data-cart-count hidden>0</span>
         </button>
         <a href="/pages/request-a-quote" class="btn hdr__cta">Request a quote</a>
-        <button class="icon-btn menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mnav">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
       </div>
     </div>
-    <div class="msearch" hidden data-msearch>
+    <div class="msearch" data-msearch>
       <div class="wrap"><div class="search search--mobile" data-search>
-        <svg class="search__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-        <input type="search" placeholder="Search products" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="msearch-results" />
+        <input type="search" placeholder="Search cones, barricades, signs…" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="msearch-results" />
+        <span class="search__btn" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        </span>
         <div class="search__panel" id="msearch-results" role="listbox" hidden data-search-panel></div>
       </div></div>
+    </div>
+  </div>
+  <div class="hdr__nav">
+    <div class="wrap hdr__navin">
+      <nav class="nav" aria-label="Main">
+        {nav.map((n) => (
+          <a href={n.href} aria-current={current(n.href) ? 'page' : undefined}><span>{n.label}</span></a>
+        ))}
+      </nav>
+      <p class="hdr__tag">Ships nationwide · Rentals &amp; crews in NJ, NY, PA, CT</p>
     </div>
   </div>
   <nav id="mnav" class="mnav" aria-label="Mobile" hidden>
@@ -105,13 +114,13 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
     if (m) m.hidden = open;
   });
   const hdr = document.querySelector('.hdr');
-  const onScroll = () => hdr.classList.toggle('is-stuck', window.scrollY > 24);
+  const onScroll = () => hdr.classList.toggle('is-stuck', window.scrollY > 56);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  /* mega menu: hover intent + touch + keyboard */
+  /* mega menu: hover intent + click + keyboard */
   const mi = document.querySelector('.nav__item--mega');
   if (mi) {
-    const link = mi.querySelector('a');
+    const link = mi.querySelector('.allbtn');
     let t;
     const mega = mi.querySelector('.mega');
     const set = (open) => {
@@ -119,11 +128,12 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
       mi.classList.toggle('is-open', open);
       link.setAttribute('aria-expanded', String(open));
     };
+    link.addEventListener('click', () => set(!mi.classList.contains('is-open')));
     mi.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { clearTimeout(t); set(true); } });
     mi.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { t = setTimeout(() => set(false), 160); } });
-    mi.addEventListener('focusin', () => set(true));
     mi.addEventListener('focusout', (e) => { if (!mi.contains(e.relatedTarget)) set(false); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+    document.addEventListener('click', (e) => { if (!mi.contains(e.target)) set(false); });
   }
 
   /* instant search */
@@ -182,40 +192,35 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
     });
     document.addEventListener('click', (e) => { if (!root.contains(e.target)) close(); });
   });
-  const mtoggle = document.querySelector('[data-search-toggle]');
-  const msearch = document.querySelector('[data-msearch]');
-  mtoggle?.addEventListener('click', () => {
-    msearch.hidden = !msearch.hidden;
-    if (!msearch.hidden) msearch.querySelector('input').focus();
-  });
 </script>
 <style>
   .hdr { position: sticky; top: 0; z-index: 40; background: #fff; }
-  .hdr__main { background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); transition: box-shadow .25s ease; }
+  .hdr__main { position: relative; z-index: 2; background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: box-shadow .25s ease; }
   .hdr.is-stuck .hdr__main { box-shadow: 0 12px 32px -20px rgba(20, 23, 26, .35); }
-  .hdr__in { height: 96px; display: flex; align-items: center; gap: clamp(14px, 1.8vw, 30px); transition: height .25s ease; }
-  .hdr.is-stuck .hdr__in { height: 74px; }
+  .hdr__in { height: 92px; display: flex; align-items: center; gap: clamp(12px, 1.4vw, 24px); transition: height .25s ease; }
+  .hdr.is-stuck .hdr__in { height: 72px; }
   .logo { flex: none; display: flex; }
-  .logo__img { height: 86px; width: auto; transition: height .25s ease; }
-  .hdr.is-stuck .logo__img { height: 64px; }
+  .logo__img { height: 80px; width: auto; transition: height .25s ease; }
+  .hdr.is-stuck .logo__img { height: 60px; }
 
-  .nav { display: flex; gap: clamp(0px, .4vw, 8px); margin-right: auto; }
-  .nav__item { position: relative; display: flex; }
-  .nav > .nav__item > a { position: relative; display: flex; align-items: center; gap: 5px; text-decoration: none; font-variation-settings: 'wght' 620; font-size: 1.02rem; padding: 10px 12px 9px; color: var(--ink-2); white-space: nowrap; transition: color .14s; }
-  .nav > .nav__item > a > span { position: relative; }
-  .nav > .nav__item > a > span::after { content: ''; position: absolute; left: 0; right: 100%; bottom: -7px; height: 2.5px; border-radius: 2px; background: var(--red); transition: right .22s cubic-bezier(.4, 0, .2, 1); }
-  .nav > .nav__item > a:hover { color: var(--ink); }
-  .nav > .nav__item > a:hover > span::after { right: 0; }
-  .nav > .nav__item > a[aria-current] { color: var(--ink); font-variation-settings: 'wght' 700; }
-  .nav > .nav__item > a[aria-current] > span::after { right: 0; }
-  .nav__chev { width: 15px; height: 15px; transition: rotate .2s; margin-top: 1px; }
-  .nav__item--mega.is-open .nav__chev { rotate: 180deg; }
+  /* ---------- All products mega button ---------- */
+  .allwrap { position: relative; flex: none; }
+  .allbtn {
+    display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+    background: var(--asphalt); color: #fff; border: 0; border-radius: 10px;
+    font: inherit; font-variation-settings: 'wght' 650; font-size: .99rem;
+    padding: 13px 16px 12px 15px; white-space: nowrap; transition: background .15s;
+  }
+  .allbtn:hover, .nav__item--mega.is-open .allbtn { background: #000; }
+  .allbtn svg { width: 19px; height: 19px; }
+  .allbtn__chev { width: 15px !important; height: 15px !important; transition: rotate .2s; opacity: .8; }
+  .nav__item--mega.is-open .allbtn__chev { rotate: 180deg; }
 
-  /* ---------- mega menu ---------- */
-  .mega { position: fixed; left: 0; right: 0; top: var(--megatop, 96px); background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 32px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity .22s ease, translate .22s ease, visibility .22s; z-index: 30; }
+  /* ---------- mega panel ---------- */
+  .mega { position: fixed; left: 0; right: 0; top: var(--megatop, 92px); background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 32px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity .22s ease, translate .22s ease, visibility .22s; z-index: 30; }
   .nav__item--mega.is-open .mega { opacity: 1; translate: 0 0; visibility: visible; }
-  .mega__in { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 32px; padding-block: 28px 30px; }
-  .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 14px; }
+  .mega__in { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 36px; padding-block: 28px 30px; }
+  .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 16px; align-content: start; }
   .mega__cat { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; padding: 9px 10px; border-radius: 10px; transition: background .12s; }
   .mega__cat:hover { background: var(--haze); }
   .mega__thumb { width: 52px; height: 52px; border-radius: 9px; border: 1px solid var(--haze-2); background: #fff; display: grid; place-items: center; overflow: hidden; flex: none; }
@@ -224,7 +229,7 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .mega__txt b { font-variation-settings: 'wght' 650; font-size: .97rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mega__cat:hover .mega__txt b { color: var(--red); }
   .mega__txt small { color: var(--steel); font-size: .82rem; }
-  .mega__side { display: grid; gap: 10px; align-content: start; border-left: 1px solid var(--line); padding-left: 32px; }
+  .mega__side { display: grid; gap: 10px; align-content: start; border-left: 1px solid var(--line); padding-left: 36px; }
   .mega__all { display: flex; align-items: center; gap: 7px; text-decoration: none; font-variation-settings: 'wght' 700; color: var(--red); padding: 4px 0 8px; }
   .mega__all svg { width: 15px; height: 15px; transition: translate .15s; }
   .mega__all:hover svg { translate: 3px 0; }
@@ -233,38 +238,33 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .mega__promo b { font-variation-settings: 'wght' 670; }
   .mega__promo span { color: var(--steel); font-size: .88rem; line-height: 1.4; }
 
-  /* ---------- search ---------- */
-  /* search: fixed circle that expands over the nav on focus, so it never pushes the layout */
-  .search { position: relative; width: 46px; height: 46px; flex: none; }
+  /* ---------- search bar (always visible, commerce-style) ---------- */
+  .search { position: relative; flex: 1; min-width: 0; max-width: 640px; height: 50px; }
   .search input {
-    position: absolute; right: 0; top: 0; height: 46px; width: 46px;
-    padding: 10px 40px 9px 18px;
-    border: 1.5px solid var(--line); border-radius: 999px; background: var(--haze);
-    font-size: .95rem; color: transparent; cursor: pointer;
-    transition: width .28s cubic-bezier(.4, 0, .2, 1), background .15s, border-color .15s, box-shadow .15s;
+    width: 100%; height: 100%; padding: 12px 56px 11px 20px;
+    border: 1.5px solid var(--line-dark); border-radius: 999px; background: var(--haze);
+    font-size: .98rem; color: var(--ink);
+    transition: background .15s, border-color .15s, box-shadow .15s;
   }
-  .search input::placeholder { color: transparent; transition: color .15s; }
-  .search input:focus {
-    outline: none; width: min(430px, 46vw); color: inherit; cursor: text;
-    background: #fff; border-color: var(--ink); box-shadow: var(--shadow-l); z-index: 60;
-  }
-  .search input:focus::placeholder { color: var(--steel); }
+  .search input::placeholder { color: var(--steel); }
+  .search input:hover { background: var(--haze-2); }
+  .search input:focus { outline: none; background: #fff; border-color: var(--ink); box-shadow: var(--shadow-m); }
   .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
-  .search__ico { position: absolute; right: 14px; top: 50%; translate: 0 -50%; width: 18px; height: 18px; color: var(--ink-2); pointer-events: none; z-index: 61; }
-  .search:hover input:not(:focus) { background: var(--haze-2); }
-  .search__panel { position: absolute; top: calc(100% + 10px); right: 0; width: min(430px, calc(100vw - 32px)); max-height: min(66vh, 540px); overflow: auto; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow-l); padding: 8px; z-index: 59; }
-  .icon-btn.search-toggle { display: none; }
-  .msearch { border-top: 1px solid var(--line); padding-block: 10px; }
-  .msearch .search { width: 100%; height: 48px; }
-  .msearch .search input { position: static; width: 100%; height: 48px; color: inherit; cursor: text; background: var(--haze); }
-  .msearch .search input::placeholder { color: var(--steel); }
-  .msearch .search__panel { left: 0; right: 0; width: auto; }
+  .search__btn { position: absolute; right: 5px; top: 5px; bottom: 5px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--red); color: #fff; pointer-events: none; }
+  .search__btn svg { width: 18px; height: 18px; }
+  .search__panel { position: absolute; top: calc(100% + 10px); left: 0; right: 0; max-height: min(66vh, 540px); overflow: auto; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow-l); padding: 8px; z-index: 59; }
+  .msearch { display: none; border-top: 1px solid var(--line); padding-block: 10px; }
+  .msearch .search { max-width: none; height: 46px; }
 
-  .hdr__act { display: flex; align-items: center; gap: 5px; }
-  .hdr__phone { display: flex; align-items: center; text-decoration: none; color: var(--ink); }
+  /* ---------- right actions ---------- */
+  .hdr__act { display: flex; align-items: center; gap: 5px; flex: none; }
+  .hdr__phone { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
   .hdr__phonebadge { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--red-tint); color: var(--red); flex: none; transition: background .15s, color .15s; }
   .hdr__phonebadge svg { width: 19px; height: 19px; }
   .hdr__phone:hover .hdr__phonebadge { background: var(--red); color: #fff; }
+  .hdr__phonetxt { display: grid; line-height: 1.2; }
+  .hdr__phonetxt small { color: var(--steel); font-size: .78rem; }
+  .hdr__phonetxt b { font-variation-settings: 'wght' 700; font-size: .98rem; white-space: nowrap; }
   .hdr__sep { width: 1px; height: 30px; background: var(--line); margin: 0 7px; }
   .icon-btn { position: relative; width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; border-radius: 10px; cursor: pointer; color: var(--ink); }
   .icon-btn:hover { background: var(--haze); }
@@ -273,17 +273,35 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .badge { position: absolute; top: 2px; right: 1px; min-width: 18px; height: 18px; padding: 2px 5px 0; border-radius: 9px; background: var(--red); color: #fff; font-size: .7rem; font-variation-settings: 'wght' 700; display: grid; place-items: center; box-shadow: 0 0 0 2px #fff; }
   .hdr__cta { margin-left: 9px; min-height: 48px; padding: 13px 24px 12px; font-size: 1rem; white-space: nowrap; }
   .menu-btn { display: none; }
+
+  /* ---------- nav row (second row) ---------- */
+  .hdr__nav { position: relative; z-index: 1; background: #fff; border-top: 1px solid var(--haze-2); border-bottom: 1px solid var(--line); transition: translate .28s ease, opacity .22s ease; }
+  .hdr.is-stuck .hdr__nav { position: absolute; left: 0; right: 0; translate: 0 -105%; opacity: 0; pointer-events: none; }
+  .hdr__navin { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .nav { display: flex; gap: clamp(2px, .6vw, 14px); margin-left: -12px; }
+  .nav > a { position: relative; display: flex; align-items: center; text-decoration: none; font-variation-settings: 'wght' 620; font-size: .99rem; padding: 13px 12px 12px; color: var(--ink-2); white-space: nowrap; transition: color .14s; }
+  .nav > a > span { position: relative; }
+  .nav > a > span::after { content: ''; position: absolute; left: 0; right: 100%; bottom: -13px; height: 2.5px; background: var(--red); transition: right .22s cubic-bezier(.4, 0, .2, 1); }
+  .nav > a:hover { color: var(--ink); }
+  .nav > a:hover > span::after { right: 0; }
+  .nav > a[aria-current] { color: var(--ink); font-variation-settings: 'wght' 700; }
+  .nav > a[aria-current] > span::after { right: 0; }
+  .hdr__tag { margin: 0; color: var(--steel); font-size: .86rem; white-space: nowrap; }
+
   .mnav[hidden] { display: none; }
   .mnav { background: #fff; padding: 6px var(--gutter) 20px; display: grid; border-top: 1px solid var(--line); box-shadow: var(--shadow-m); }
   .mnav a { padding: 15px 2px 13px; text-decoration: none; font-variation-settings: 'wght' 640; font-size: 1.12rem; border-bottom: 1px solid var(--haze-2); color: var(--ink); }
   .mnav__cta { color: var(--red); }
-  @media (max-width: 1010px) { .hdr__act > .search { display: none; } .icon-btn.search-toggle { display: grid; } }
+
+  @media (max-width: 1420px) { .hdr__tag { display: none; } }
+  @media (max-width: 1230px) { .hdr__phonetxt { display: none; } .hdr__phone { gap: 0; } }
   @media (max-width: 1010px) {
-    .nav, .hdr__cta, .hdr__phone { display: none; }
+    .allwrap, .hdr__nav, .hdr__cta, .hdr__phone, .hdr__sep, .hdr__in > .search { display: none; }
     .menu-btn { display: grid; }
     .hdr__act { margin-left: auto; }
-    .hdr__in { height: 72px; }
-    .logo__img { height: 58px; }
+    .hdr__in { height: 70px; }
+    .logo__img { height: 56px; }
+    .msearch { display: block; }
   }
   @media (min-width: 1011px) { .mnav { display: none !important; } }
 </style>
@@ -294,10 +312,9 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .search__row img { width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--haze-2); border-radius: 7px; background: #fff; flex: none; }
   .search__cathumb { width: 40px; height: 40px; border-radius: 7px; background: var(--haze); color: var(--steel); display: grid; place-items: center; flex: none; }
   .search__cathumb svg { width: 18px; height: 18px; }
-  .search__row > span:not(.search__cathumb) { flex: 1; font-size: .95rem; font-variation-settings: 'wght' 580; line-height: 1.3; }
+  .search__row > span:not(.search__cathumb) { flex: 1; font-size: .95rem; font-variation-settings: 'wght' 580; line-height: 1.3; color: var(--ink); }
   .search__row mark { background: none; color: var(--red); font-variation-settings: 'wght' 720; }
   .search__row small { color: var(--steel); font-size: .85rem; white-space: nowrap; }
   .search__none { padding: 16px 14px; color: var(--steel); font-size: .95rem; line-height: 1.5; }
   .search__none a { color: var(--red); font-variation-settings: 'wght' 650; }
-  .search__row > span:not(.search__cathumb) { color: var(--ink); }
 </style>

@@ -40,7 +40,7 @@
   --fs-6: clamp(2.5rem, 5.4vw, 4.2rem);
 
   /* shape + depth */
-  --wrap: 1280px;
+  --wrap: 1600px;
   --gutter: clamp(18px, 4vw, 44px);
   --r-s: 8px;
   --r-m: 12px;
@@ -177,3 +177,29 @@ strong { font-variation-settings: 'wght' 680; font-weight: 400; }
 .reveal.is-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
 .no-js .reveal { opacity: 1; transform: none; }
+
+/* ---------------- smart commerce effects ---------------- */
+/* sheen sweep across product/category imagery on hover */
+.pcard__media::after, .cat__img::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .5) 50%, transparent 58%);
+  transform: translateX(-130%) skewX(-6deg);
+}
+.pcard:hover .pcard__media::after, .cat:hover .cat__img::after { transform: translateX(130%) skewX(-6deg); transition: transform .65s ease; }
+
+/* product image flying into the cart */
+.fly-img {
+  position: fixed; z-index: 220; pointer-events: none; object-fit: contain;
+  background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-l);
+  transition: top .62s cubic-bezier(.35, .8, .35, 1), left .62s cubic-bezier(.35, .8, .35, 1), width .62s cubic-bezier(.35, .8, .35, 1), height .62s cubic-bezier(.35, .8, .35, 1), opacity .62s ease, border-radius .62s ease;
+}
+/* header badge pop when a count goes up */
+@keyframes badgepop { 0% { scale: 1; } 40% { scale: 1.55; } 100% { scale: 1; } }
+.badge.is-pop { animation: badgepop .45s cubic-bezier(.3, .7, .4, 1.2); }
+@keyframes iconnudge { 0% { rotate: 0deg; } 30% { rotate: -9deg; } 65% { rotate: 7deg; } 100% { rotate: 0deg; } }
+.icon-btn.is-pop svg { animation: iconnudge .5s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .fly-img { display: none; }
+  .badge.is-pop, .icon-btn.is-pop svg { animation: none; }
+  .pcard__media::after, .cat__img::after { display: none; }
+}
