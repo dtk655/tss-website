@@ -7,7 +7,6 @@ HEADER = '''<header class="tsshdr">
 <div class="tsshdr-main"><div class="tsshdr-wrap tsshdr-in">
 <button type="button" class="tsshdr-menu" aria-expanded="false" aria-controls="tssmnav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
 <a href="/" class="tsshdr-logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo-420.png" alt="TSS, Traffic Safety Service" width="420" height="210"></a>
-<a href="/collections" class="tsshdr-allbtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4.5h6v6h-6z M13.5 4.5h6v6h-6z M4.5 13.5h6v6h-6z M13.5 13.5h6v6h-6z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span>All products</span></a>
 <div class="tsshdr-search" data-tss-search>
 <span class="tsshdr-coney" aria-hidden="true"><svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg></span>
 <input type="search" placeholder="Ask Conner anything &mdash; products, prices, quotes&hellip;" aria-label="Ask Conner or search products" autocomplete="off" spellcheck="false">
@@ -97,9 +96,6 @@ STYLE = '''<style id="tss-shell">
 .tsshdr-logo{flex:none;display:flex}
 .tsshdr-logo img{height:80px;width:auto;display:block;transition:height .25s ease}
 .tsshdr.is-stuck .tsshdr-logo img{height:60px}
-.tsshdr-allbtn{display:inline-flex;align-items:center;gap:9px;flex:none;background:#1a1d21;color:#fff!important;border-radius:10px;font-variation-settings:'wght' 650;font-size:.99rem;padding:13px 16px 12px 15px;white-space:nowrap;text-decoration:none;transition:background .15s}
-.tsshdr-allbtn:hover{background:#000}
-.tsshdr-allbtn svg{width:19px;height:19px}
 .tsshdr-search{position:relative;flex:1;min-width:0;max-width:640px;height:50px}
 .tsshdr-search input{width:100%;height:100%;padding:12px 84px 11px 52px;border:1.5px solid #cfd4d9;border-radius:999px;background:#f5f6f7;font:inherit;font-size:.98rem;color:#14171a;transition:background .15s,border-color .15s,box-shadow .15s}
 .tsshdr-search input::placeholder{color:#5b6670}
@@ -164,7 +160,7 @@ STYLE = '''<style id="tss-shell">
 @media(max-width:1420px){.tsshdr-tag{display:none}}
 @media(max-width:1230px){.tsshdr-phonetxt{display:none}.tsshdr-phone{gap:0}}
 @media(max-width:640px){.tsshdr-ai{display:none}}
-@media(max-width:1010px){.tsshdr-allbtn,.tsshdr-navrow,.tsshdr-cta,.tsshdr-phone,.tsshdr-in>.tsshdr-search{display:none}.tsshdr-menu{display:grid}.tsshdr-act{margin-left:auto}.tsshdr-in{height:70px}.tsshdr-logo img{height:56px}.tsshdr-msearch{display:block}}
+@media(max-width:1010px){.tsshdr-navrow,.tsshdr-cta,.tsshdr-phone,.tsshdr-in>.tsshdr-search{display:none}.tsshdr-menu{display:grid}.tsshdr-act{margin-left:auto}.tsshdr-in{height:70px}.tsshdr-logo img{height:56px}.tsshdr-msearch{display:block}}
 @media(min-width:1011px){.tsshdr-mnav{display:none!important}}
 </style>'''
 
