@@ -16,3 +16,14 @@
   for = "/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+
+# The WATERCADE page is the full watercadebarrier.com experience, served from /watercade/
+[[redirects]]
+  from = "/pages/water-filled-barrier"
+  to = "/watercade/"
+  status = 301
+
+[[redirects]]
+  from = "/watercade"
+  to = "/watercade/"
+  status = 301

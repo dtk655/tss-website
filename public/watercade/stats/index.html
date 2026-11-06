@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Site Stats | WATERCADE™</title>
+<link rel="icon" href="/watercade/favicon-32.png?v=2">
+<style>
+:root{--navy:#0d2a5c;--deep:#081b3d;--orange:#f26a1b;--ink:#0d2a5c;--muted:#5b7394;--line:#d5e3f2;--bg:#f4f8fd;--card:#fff;--bar:#1673c4;--bar-hover:#0d2a5c}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--deep);color:#e9f2ff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header img{height:30px;display:block}
+header span{font-weight:700;color:#9fc3e8}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+.bar-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{margin:0;font-size:28px;letter-spacing:-.02em}
+.range{display:flex;gap:6px}
+.range button{min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid #c5d6ea;background:#fff;color:var(--navy);font:inherit;font-weight:700;cursor:pointer}
+.range button.on{background:var(--orange);border-color:var(--orange);color:#fff}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.tile{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--line);border-radius:16px;padding:14px 16px}
+.tile b{display:block;font-size:30px;letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile span{display:block;margin-top:4px;color:var(--muted);font-size:14px;font-weight:600}
+.tile.hl{border-top:3px solid var(--orange)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+.card h2{margin:0 0 4px;font-size:17px}
+.card p.sub{margin:0 0 14px;color:var(--muted);font-size:14px}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:220px;overflow:visible}
+.chart .axis{fill:var(--muted);font-size:11px}
+.chart .grid{stroke:#e3ebf5;stroke-width:1}
+.chart path.b{fill:var(--bar)}
+.chart g.col:hover path.b,.chart g.col:focus path.b{fill:var(--bar-hover)}
+.chart g.col{outline:none}
+.tip{position:absolute;pointer-events:none;background:var(--deep);color:#fff;font-size:13px;line-height:1.45;padding:8px 10px;border-radius:10px;white-space:nowrap;transform:translate(-50%,-100%);opacity:0;transition:opacity .1s}
+.tip b{display:block;color:#9fc3e8;font-size:12px}
+.grid2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid2 .card{margin:0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:7px 0;border-top:1px solid #eef3f9;vertical-align:middle}
+tr:first-child td{border-top:0}
+td.n{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;width:56px}
+td .meter{height:6px;border-radius:3px;background:#e7eef6;margin-top:5px;overflow:hidden}
+td .meter i{display:block;height:100%;background:var(--bar);border-radius:3px}
+.empty{color:var(--muted);font-size:14px;margin:0}
+.gate{max-width:420px;margin:60px auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.gate h1{font-size:22px;margin-bottom:8px}
+.gate p{color:var(--muted);margin:0 0 14px}
+.gate input{width:100%;min-height:44px;padding:10px 12px;border:1px solid #c5d6ea;border-radius:10px;font:inherit;font-size:16px;margin-bottom:12px}
+.gate button{width:100%;min-height:46px;border:0;border-radius:999px;background:var(--orange);color:#fff;font:inherit;font-weight:800;cursor:pointer}
+.err{color:#b42318;font-weight:600;margin:0 0 10px}
+.note{color:var(--muted);font-size:13px;margin:8px 0 0}
+@media(max-width:1000px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.grid2{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.tile b{font-size:26px}}
+</style>
+</head>
+<body>
+<header><img src="/watercade/logo-white.png?v=2" alt="WATERCADE™"><span>Site Stats</span></header>
+<main id="app">
+<div class="gate" id="gate" hidden>
+<h1>Site stats</h1>
+<p>Enter the stats key to see visitor numbers.</p>
+<p class="err" id="gate-err" hidden>That key didn't work.</p>
+<form id="gate-form"><input id="gate-key" type="password" autocomplete="current-password" placeholder="Stats key" required><button>Show stats</button></form>
+</div>
+<div id="dash" hidden>
+<div class="bar-row">
+<h1>Last <span id="days-label">30</span> days</h1>
+<div class="range" id="range"><button data-d="7">7 days</button><button data-d="30" class="on">30 days</button><button data-d="90">90 days</button></div>
+</div>
+<div class="tiles" id="tiles"></div>
+<div class="card">
+<h2>Visits per day</h2>
+<p class="sub">Hover or tap a bar for that day's page views and quote requests.</p>
+<div class="chart" id="chart"></div>
+</div>
+<div class="grid2">
+<div class="card"><h2>Most viewed pages</h2><div id="t-pages"></div></div>
+<div class="card"><h2>Where visitors came from</h2><div id="t-ref"></div></div>
+<div class="card"><h2>Visitor locations</h2><div id="t-places"></div></div>
+<div class="card"><h2>Devices</h2><div id="t-dev"></div></div>
+<div class="card"><h2>Quote requests: buy or rent</h2><div id="t-qt"></div></div>
+<div class="card"><h2>PDF downloads</h2><div id="t-dl"></div></div>
+</div>
+<p class="note">A visit is one person's session on the site; page views count every page they open. Bots are filtered out, and no cookies or IP addresses are stored. Days are in UTC.</p>
+</div>
+</main>
+<script>
+(function(){
+  var KEY='wc-stats-key', days=30, key='';
+  try{ key=localStorage.getItem(KEY)||''; }catch(e){}
+  var qk=new URLSearchParams(location.search).get('key');
+  if(qk){ key=qk; try{localStorage.setItem(KEY,qk);}catch(e){} history.replaceState(null,'',location.pathname); }
+  var $=function(id){return document.getElementById(id);};
+  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var PAGE={'/':'Home','/watercade/swivel-pin':'90° Swivel Pin','/watercade/fence-panels':'Fence Panels','/watercade/mash-test':'MASH TL-3 Test','/watercade/airport-barrier':'TSS890 Airport Barrier'};
+  var PDF={'watercade-fence-panel-spec-sheet':'Fence panel spec sheet','watercade-mash-certification':'MASH certification','watercade-spec-sheet':'Spec sheet'};
+
+  function showGate(bad){ $('dash').hidden=true; $('gate').hidden=false; $('gate-err').hidden=!bad; $('gate-key').focus(); }
+  $('gate-form').addEventListener('submit',function(e){ e.preventDefault(); key=$('gate-key').value.trim(); try{localStorage.setItem(KEY,key);}catch(_){} load(); });
+  $('range').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; days=+b.dataset.d; [].forEach.call(this.children,function(x){x.classList.toggle('on',x===b);}); load(); });
+
+  function load(){
+    if(!key){ showGate(false); return; }
+    fetch('/api/stats?days='+days+'&key='+encodeURIComponent(key),{cache:'no-store'}).then(function(r){
+      if(r.status===401){ try{localStorage.removeItem(KEY);}catch(_){} key=''; showGate(true); return null; }
+      return r.json();
+    }).then(function(d){ if(d) render(d); }).catch(function(){ $('tiles').innerHTML='<p class="empty">Could not load stats. Try again in a moment.</p>'; });
+  }
+
+  function list(el, rows, label){
+    if(!rows||!rows.length){ $(el).innerHTML='<p class="empty">Nothing yet.</p>'; return; }
+    var max=rows[0][1]||1;
+    $(el).innerHTML='<table>'+rows.map(function(r){ return '<tr><td>'+esc(label?label(r[0]):r[0])+'<div class="meter"><i style="width:'+Math.max(3,Math.round(r[1]/max*100))+'%"></i></div></td><td class="n">'+r[1].toLocaleString()+'</td></tr>'; }).join('')+'</table>';
+  }
+
+  function render(d){
+    $('gate').hidden=true; $('dash').hidden=false; $('days-label').textContent=d.days;
+    var t=d.totals, rate=t.visits?Math.round(t.quote_submit/t.visits*1000)/10:0;
+    var tiles=[['Visits',t.visits,0],['Page views',t.pageviews,0],['Quote requests',t.quote_submit,1],['Quote forms opened',t.quote_open,0],['Phone number taps',t.call_click,1],['QR code scans',t.qr_scan||0,1],['PDF downloads',t.spec_download,0]];
+    $('tiles').innerHTML=tiles.map(function(x){ return '<div class="tile'+(x[2]?' hl':'')+'"><b>'+x[1].toLocaleString()+'</b><span>'+x[0]+'</span></div>'; }).join('');
+    if(t.visits) $('tiles').children[2].querySelector('span').textContent='Quote requests ('+rate+'% of visits)';
+    last=d.daily; chart(d.daily);
+    list('t-pages',d.pages,function(p){return PAGE[p]||p;});
+    list('t-ref',d.referrers);
+    list('t-places',d.places,function(p){return p.indexOf('US-')===0?p.slice(3)+', USA':p;});
+    list('t-dev',d.devices,function(p){return p.charAt(0).toUpperCase()+p.slice(1);});
+    list('t-qt',d.quoteTypes);
+    list('t-dl',d.downloads,function(p){return PDF[p]||p;});
+  }
+
+  function chart(rows){
+    var W=Math.max(300,$('chart').clientWidth||1000),H=220,L=34,B=24,T=8,n=rows.length;
+    var max=Math.max(4,Math.max.apply(null,rows.map(function(r){return r.visits;})));
+    var step=Math.pow(10,Math.floor(Math.log10(max))); var top=Math.ceil(max/step)*step; if(top/step<3) {step/=2; top=Math.ceil(max/step)*step;}
+    var y=function(v){return T+(H-T-B)*(1-v/top);};
+    var slot=(W-L)/n, bw=Math.max(2,Math.min(28,slot-2));
+    var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Visits per day">';
+    for(var v=0;v<=top;v+=step){ s+='<line class="grid" x1="'+L+'" x2="'+W+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="axis" x="'+(L-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+v+'</text>'; }
+    var every=Math.ceil(n/Math.max(3,Math.floor(W/90)));
+    rows.forEach(function(r,i){
+      var x=L+i*slot+(slot-bw)/2, h=(H-T-B)-(y(r.visits)-T), yy=y(r.visits);
+      var label=new Date(r.day+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',timeZone:'UTC'});
+      s+='<g class="col" tabindex="0" data-i="'+i+'"><rect x="'+(L+i*slot)+'" y="'+T+'" width="'+slot+'" height="'+(H-T-B)+'" fill="transparent"/>';
+      if(r.visits>0) s+='<path class="b" d="M'+x+','+(H-B)+'V'+(yy+Math.min(3,h))+'q0,-'+Math.min(3,h)+' '+Math.min(3,bw/2)+',-'+Math.min(3,h)+'H'+(x+bw-Math.min(3,bw/2))+'q'+Math.min(3,bw/2)+',0 '+Math.min(3,bw/2)+','+Math.min(3,h)+'V'+(H-B)+'Z"/>';
+      s+='</g>';
+      if(i%every===0) s+='<text class="axis" x="'+(L+i*slot+slot/2)+'" y="'+(H-6)+'" text-anchor="middle">'+label+'</text>';
+    });
+    s+='</svg><div class="tip" id="tip"></div>';
+    $('chart').innerHTML=s;
+    var tip=$('tip'), box=$('chart');
+    function show(g){
+      var r=rows[+g.dataset.i], rb=g.getBoundingClientRect(), cb=box.getBoundingClientRect();
+      var label=new Date(r.day+'T12:00:00Z').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});
+      tip.innerHTML='<b>'+label+'</b>'+r.visits+' visits · '+r.pageviews+' page views<br>'+r.quote_submit+' quote request'+(r.quote_submit===1?'':'s');
+      var cx=rb.left-cb.left+rb.width/2; cx=Math.max(90,Math.min(cb.width-90,cx));
+      tip.style.left=cx+'px'; tip.style.top=Math.max(0,y(r.visits)/H*cb.height-8)+'px'; tip.style.opacity=1;
+      [].forEach.call(box.querySelectorAll('g.col path'),function(p){p.style.fill='';});
+      var p=g.querySelector('path'); if(p) p.style.fill='var(--bar-hover)';
+    }
+    function hide(){ tip.style.opacity=0; [].forEach.call(box.querySelectorAll('g.col path'),function(p){p.style.fill='';}); }
+    [].forEach.call(box.querySelectorAll('g.col'),function(g){ g.addEventListener('mouseenter',function(){show(g);}); g.addEventListener('focus',function(){show(g);}); g.addEventListener('click',function(){show(g);}); g.addEventListener('blur',hide); });
+    box.querySelector('svg').addEventListener('mouseleave',hide);
+  }
+  var last=null, rt=0;
+  window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){ if(last) chart(last); },150); });
+  load();
+})();
+</script>
+</body>
+</html>

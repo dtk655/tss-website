@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Quote request | WATERCADE™</title>
+</head>
+<body>
+<p>Thanks — we'll get back to you with pricing shortly. Questions? Call <a href="tel:9085614800">908-561-4800</a>.</p>
+<!-- Static form so Netlify registers submissions for /quote.html. The customizer posts here. -->
+<form id="quote-static-form" name="quote" method="POST" action="/watercade/quote.html" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field">
+<input type="hidden" name="form-name" value="quote">
+<input type="hidden" name="design-summary" value="">
+<p><label>Don’t fill this out <input name="bot-field"></label></p>
+<p><label>Mockup <input type="file" name="mockup" accept="image/png,image/jpeg"></label></p>
+<p><label>Buy or rent <input type="text" name="buy-or-rent" value="Buy"></label></p>
+<p><label>Quantity <input type="number" name="quantity" min="1" value="1"></label></p>
+<p><label>Include Fence Panels In Quote <input type="text" name="fence-in-quote" value="No"></label></p>
+<p><label>Include Type B Lights In Quote <input type="text" name="light-in-quote" value="No"></label></p>
+<p><label>Name <input type="text" name="customer-name"></label></p>
+<p><label>Company <input type="text" name="company"></label></p>
+<p><label>Email <input type="email" name="email"></label></p>
+<p><label>Phone <input type="tel" name="phone"></label></p>
+<p><label>Delivery ZIP or city / state <input type="text" name="zip"></label></p>
+<p><label>Needed by <input type="date" name="needed-by"></label></p>
+<p><label>Notes <textarea name="notes"></textarea></label></p>
+<p><button type="submit">Request a quote</button></p>
+</form>
+</body>
+</html>
