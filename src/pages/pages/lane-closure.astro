@@ -4,6 +4,7 @@ import TmaTruck from '../../components/TmaTruck.astro';
 import CoverageMap from '../../components/CoverageMap.astro';
 import FreePlanBand from '../../components/FreePlanBand.astro';
 import JobsShowcase from '../../components/JobsShowcase.astro';
+import CredProof from '../../components/CredProof.astro';
 import { PHONE, PHONE_TEL, YEARS } from '../../lib/config.js';
 
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
@@ -66,25 +67,9 @@ const agencies = [
       <JobsShowcase />
     </div>
 
-    <div class="lch__band">
-      <div class="wrap pf">
-        <div class="pf__grp">
-          <p class="pf__k">Certified</p>
-          <p class="pf__n"><b>6</b><span>certifications on every crew</span></p>
-          <ul class="pf__logos">{certs.map(([t, src], i) => <li title={t} style={`--i:${i}`}><img src={src} alt={t} width="40" height="40" loading="lazy" /></li>)}</ul>
-        </div>
-        <div class="pf__grp">
-          <p class="pf__k">Experienced</p>
-          <p class="pf__n"><b><span data-countup>25,000</span>+</b><span>closures by our crews</span></p>
-          <ul class="pf__logos">{agencies.map(([t, src], i) => <li title={t} style={`--i:${i}`}><img src={src} alt={t} width="40" height="40" loading="lazy" /></li>)}</ul>
-        </div>
-        <ul class="pf__mini">
-          <li><b><span data-countup>25</span>+</b><span>years</span></li>
-          <li><b>5</b><span>states</span></li>
-        </ul>
-      </div>
-    </div>
   </section>
+
+  <CredProof />
 
   <FreePlanBand />
 
@@ -92,15 +77,6 @@ const agencies = [
 
   <TmaTruck />
 
-  <section class="section section--haze">
-    <div class="wrap">
-      <h2>Our certifications</h2>
-      <p class="lede">Every crew is led by a Rutgers-Certified Traffic Control Captain.</p>
-      <ul class="lc-badges">
-        {certs.map(([t, src]) => <li><img src={src} alt="" loading="lazy" width="160" height="160" /><span>{t}</span></li>)}
-      </ul>
-    </div>
-  </section>
 
 <CoverageMap />
 </Layout>
@@ -158,36 +134,5 @@ const agencies = [
   
 
 
-  .lc-badges { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px; }
-  .lc-badges li { display: grid; gap: 12px; justify-items: center; text-align: center; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); padding: 22px 14px 18px; }
-  .lc-badges img { width: 96px; height: 96px; object-fit: contain; }
-  .lc-badges span { font-variation-settings: 'wght' 640; font-size: .92rem; line-height: 1.35; }
-  /* proof strip: certified + experienced */
-  .pf { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: clamp(20px, 3vw, 48px); align-items: center; padding-block: 20px; }
-  .pf__grp { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "k k" "n logos"; gap: 6px 20px; align-items: center; min-width: 0; }
-  .pf__grp + .pf__grp { padding-left: clamp(20px, 3vw, 48px); border-left: 1px solid rgba(255,255,255,.16); }
-  .pf__k { grid-area: k; margin: 0; color: var(--gold); font-size: .76rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
-  .pf__n { grid-area: n; margin: 0; display: grid; gap: 2px; }
-  .pf__n b { font-size: clamp(1.7rem, 2.3vw, 2.2rem); line-height: 1; letter-spacing: -.02em; font-variation-settings: 'wght' 800; white-space: nowrap; }
-  .pf__n > span { font-size: .8rem; color: #fbd2cc; white-space: nowrap; }
-  .pf__logos { grid-area: logos; list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
-  .pf__logos li { width: 38px; height: 38px; border-radius: 9px; background: #fff; display: grid; place-items: center; overflow: hidden; padding: 2px; box-sizing: border-box; }
-  .pf__logos img { width: 100%; height: 100%; object-fit: contain; }
-  .pf__mini { list-style: none; margin: 0; padding: 0 0 0 clamp(20px, 3vw, 48px); border-left: 1px solid rgba(255,255,255,.16); display: flex; gap: 24px; }
-  .pf__mini li { display: grid; gap: 2px; }
-  .pf__mini b { font-size: clamp(1.5rem, 2vw, 1.9rem); line-height: 1; font-variation-settings: 'wght' 800; }
-  .pf__mini li > span { font-size: .8rem; color: #fbd2cc; }
-  @media (max-width: 1280px) { .pf { grid-template-columns: 1fr 1fr; } .pf__mini { display: none; } }
-  @media (max-width: 860px) {
-    .pf { grid-template-columns: 1fr; gap: 16px; padding-block: 18px; }
-    .pf__grp + .pf__grp { padding-left: 0; border-left: 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.16); }
-  }
-  @media (max-width: 640px) {
-    .lch :global(.jb) { order: 3; margin-top: 10px !important; }
-    .pf__grp { grid-template-areas: "k n" "logos logos"; grid-template-columns: auto 1fr; text-align: left; }
-    .pf__k { align-self: start; padding-top: 4px; }
-    .pf__n { justify-items: end; text-align: right; }
-    .pf__logos { justify-content: space-between; margin-top: 4px; }
-    .pf__logos li { width: 36px; height: 36px; }
-  }
+  @media (max-width: 640px) { .lch :global(.jb) { order: 3; margin-top: 10px !important; } }
 </style>
