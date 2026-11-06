@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import QuickView from '../../components/QuickView.astro';
-import { loadCatalog, PRODUCT_COLLECTIONS, img, money } from '../../lib/shopify.js';
+import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../../lib/shopify.js';
 const { colByHandle, byHandle } = await loadCatalog();
 const cats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const blurbs = {
@@ -21,21 +21,12 @@ const tints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barriers'
 const hero = colByHandle.get('cones');
 const best = ['cone28inch', 'waterbarriertss590rparent', 'traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring', 'type-iii-breakaway-barricade-hi-intensity-left-stripes', 'class3safetyvest'].map((h) => byHandle.get(h)).filter(Boolean);
 const count = (c) => `${c.products.length} ${c.products.length === 1 ? 'product' : 'products'}`;
-const picks = cats
-  .map((c) => {
-    const pool = c.products.filter((p) => p.featuredImage && !p.isRental);
-    const p = pool[1] || pool[0];
-    return p ? { c, p } : null;
-  })
-  .filter(Boolean);
-const priceOf = (p) => (p.minPrice === p.maxPrice ? money(p.minPrice) : `From ${money(p.minPrice)}`);
 const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg` : `/cats/${h}.png`);
 ---
 <Layout title="Products" description="Traffic cones, barricades, WATERCADE barriers, drums, signs, lights, reflectors and safety gear. Buy online with nationwide shipping, or rent in NJ, NY, PA and CT.">
   <section class="phero">
     <div class="wrap phero__in">
       <div class="phero__copy">
-        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Products</span></nav>
         <p class="phero__k">The TSS yard · South Plainfield, NJ</p>
         <h1>Everything your work zone needs.</h1>
         <p class="phero__lede">Buy it shipped nationwide, or rent it by the job in NJ, NY, PA and CT.</p>
@@ -118,14 +109,14 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
       </div>
     </div>
     <div class="railwrap">
-      <div class="rail rail--prod" data-rail data-dir="-1" aria-label="Featured products by category">
-        {picks.map(({ c, p }) => (
-          <a href={`/products/${p.handle}`} class="rcard rcard--prod" style={`--tint:${tints[c.handle] || '#ececea'}`} data-tilt>
-            <span class="rcard__photo"><img src={img(p.featuredImage.url, 420)} alt="" loading="lazy" /></span>
+      <div class="rail rail--alt" data-rail data-dir="-1">
+        {[...cats].reverse().map((c, i) => (
+          <a href={`/collections/${c.handle}`} class="rcard" style={`--tint:${tints[c.handle] || '#ececea'}`} data-tilt>
+            <img class="rcard__img" src={`/cats/alt-${c.handle}.png`} alt="" loading={i < 4 ? 'eager' : 'lazy'} />
             <span class="rcard__body">
-              <span class="rcard__kick">{c.title}</span>
-              <b class="rcard__pt">{p.title}</b>
-              <span class="rcard__n"><strong>{priceOf(p)}</strong>
+              <b>{c.title}</b>
+              <small>{blurbs[c.handle] || ''}</small>
+              <span class="rcard__n">{count(c)}
                 <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
             </span>
@@ -331,15 +322,15 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
 <style>
   /* ---------------- hero ---------------- */
   .phero { position: relative; background: radial-gradient(120% 170% at 88% -30%, #e13a1a 0%, #b60606 42%, #8a0404 100%); color: #fff; overflow: hidden; }
-  .phero__in { position: relative; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: clamp(20px, 4vw, 60px); padding-block: clamp(26px, 3vw, 44px) clamp(24px, 3vw, 40px); }
+  .phero__in { position: relative; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr); align-items: center; gap: clamp(20px, 4vw, 60px); padding-block: clamp(26px, 3vw, 44px) clamp(24px, 3vw, 40px); }
   .crumbs { display: flex; gap: 8px; font-size: .9rem; color: #f0b3b3; margin-bottom: 12px; }
   .crumbs a { color: inherit; }
-  .phero__k { color: var(--gold); font-size: .92rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 14px; }
-  .phero h1 { text-wrap: balance; font-size: clamp(1.9rem, 2.9vw, 3rem); line-height: 1.02; letter-spacing: -.025em; font-variation-settings: 'wght' 780; margin: 0 0 18px; }
-  .phero__lede { color: #fbd9d4; font-size: clamp(.97rem, 1.1vw, 1.08rem); line-height: 1.55; max-width: 60ch; margin: 0 0 20px; }
-  .phero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .phero__btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 14px 26px 13px; border-radius: 10px; font-size: 1.02rem; font-variation-settings: 'wght' 680; text-decoration: none; white-space: nowrap; transition: background .15s, color .15s, border-color .15s, translate .15s, box-shadow .15s; }
-  .phero__btn svg { width: 20px; height: 20px; flex: none; }
+  .phero__k { color: var(--gold); font-size: clamp(.95rem, 1.1vw, 1.15rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 14px; }
+  .phero h1 { text-wrap: balance; font-size: clamp(2.1rem, 3.55vw, 3.5rem); line-height: 1.02; letter-spacing: -.025em; font-variation-settings: 'wght' 780; margin: 0 0 18px; }
+  .phero__lede { color: #fbd9d4; font-size: clamp(1.05rem, 1.45vw, 1.35rem); line-height: 1.5; max-width: 60ch; margin: 0 0 26px; }
+  .phero__cta { display: flex; flex-wrap: wrap; gap: 14px; }
+  .phero__btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 60px; padding: 17px 32px 16px; border-radius: 12px; font-size: 1.14rem; font-variation-settings: 'wght' 680; text-decoration: none; white-space: nowrap; transition: background .15s, color .15s, border-color .15s, translate .15s, box-shadow .15s; }
+  .phero__btn svg { width: 22px; height: 22px; flex: none; }
   .phero__btn:hover { translate: 0 -2px; }
   .phero__btn--buy { background: #fff; color: var(--red); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .45); }
   .phero__btn--buy:hover { background: var(--haze); }
@@ -416,17 +407,7 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
   .rcard:hover .rcard__n svg { translate: 4px 0; }
 
 
-  /* row 2: specific products (image sits inside the card) */
-  .rail--prod { padding-top: 6px; margin-top: 0; }
-  .rcard--prod { justify-content: flex-start; min-height: 0; padding: 14px 16px 16px; gap: 12px; }
-  .rcard--prod::after { display: none; }
-  .rcard__photo { display: grid; place-items: center; height: 160px; border-radius: 12px; }
-  .rcard__photo img { max-width: 82%; max-height: 146px; object-fit: contain; mix-blend-mode: multiply; transition: scale .25s ease; }
-  .rcard--prod:hover .rcard__photo img { scale: 1.06; }
-  .rcard__kick { font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 720; }
-  .rcard__body .rcard__pt { font-size: .98rem; line-height: 1.3; font-variation-settings: 'wght' 660; letter-spacing: 0; min-height: 2.6em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .rcard--prod .rcard__n strong { color: var(--ink); font-size: 1rem; font-variation-settings: 'wght' 720; }
-
+  .rail--alt { margin-top: -18px; }
   /* ---------------- perks ---------------- */
   .perks { margin-top: clamp(36px, 4.5vw, 56px); border-block: 1px solid var(--line); background: var(--haze); }
   .perks__in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-block: 18px; }
@@ -516,12 +497,7 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     .rcard { width: min(50vw, 190px); min-height: 212px; padding: 14px 14px 12px; border-radius: 14px; }
     .rcard__img { top: -26px; height: 132px; max-width: 80%; }
     .rcard::after { top: 98px; height: 18px; }
-    .rail--prod { gap: 14px; padding-top: 4px; }
-    .rcard--prod { min-height: 0; padding: 10px 12px 12px; gap: 8px; }
-    .rcard__photo { height: 118px; }
-    .rcard__photo img { max-height: 106px; }
-    .rcard__body .rcard__pt { font-size: .86rem; }
-    .rcard__kick { font-size: .66rem; }
+    .rail--alt { margin-top: -10px; }
     .rcard__body { gap: 3px; }
     .rcard__body b { font-size: 1.04rem; }
     .rcard__body small { font-size: .8rem; min-height: 2.4em; }
