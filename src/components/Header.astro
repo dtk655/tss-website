@@ -1,6 +1,9 @@
 ---
+import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../lib/shopify.js';
+const { colByHandle } = await loadCatalog();
+const megaCats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const nav = [
-  { href: '/collections', label: 'Products' },
+  { href: '/collections', label: 'Products', mega: true },
   { href: '/collections/equipment-rentals', label: 'Rentals' },
   { href: '/pages/lane-closure', label: 'Lane closures' },
   { href: '/watercade/', label: 'WATERCADE' },
@@ -16,12 +19,53 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
         <img class="logo__img" src="/brand/tss-logo-420.png" alt="TSS, Traffic Safety Service" width="420" height="210" />
       </a>
       <nav class="nav" aria-label="Main">
-        {nav.map((n) => <a href={n.href} aria-current={current(n.href) ? 'page' : undefined}><span>{n.label}</span></a>)}
+        {nav.map((n) => (
+          <div class={`nav__item${n.mega ? ' nav__item--mega' : ''}`}>
+            <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-haspopup={n.mega ? 'true' : undefined} aria-expanded={n.mega ? 'false' : undefined}>
+              <span>{n.label}</span>
+              {n.mega && <svg class="nav__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>}
+            </a>
+            {n.mega && (
+              <div class="mega" role="region" aria-label="Product categories">
+                <div class="wrap mega__in">
+                  <div class="mega__cats">
+                    {megaCats.map((c) => (
+                      <a href={`/collections/${c.handle}`} class="mega__cat">
+                        <span class="mega__thumb">{c.cover && <img src={img(c.cover.url, 120)} alt="" loading="lazy" width="56" height="56" />}</span>
+                        <span class="mega__txt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}</small></span>
+                      </a>
+                    ))}
+                  </div>
+                  <div class="mega__side">
+                    <a href="/collections" class="mega__all">All products
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                    <a href="/pages/custom-stenciling" class="mega__promo">
+                      <b>Custom branding</b>
+                      <span>Your colors, logo and stenciling on cones, drums and barriers.</span>
+                    </a>
+                    <a href="/tools/rent-vs-buy" class="mega__promo">
+                      <b>Rent or buy?</b>
+                      <span>Run your real numbers in the calculator.</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </nav>
       <div class="hdr__act">
+        <div class="search" data-search>
+          <svg class="search__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+          <input type="search" placeholder="Search products" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="search-results" />
+          <div class="search__panel" id="search-results" role="listbox" hidden data-search-panel></div>
+        </div>
+        <button class="icon-btn search-toggle" aria-label="Search" data-search-toggle>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        </button>
         <a class="hdr__phone" href="tel:+19085614800" aria-label="Call 908-561-4800">
           <span class="hdr__phonebadge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
-          <span class="hdr__phonetxt"><small>Call us 24/7</small><b>908-561-4800</b></span>
         </a>
         <span class="hdr__sep" aria-hidden="true"></span>
         <button class="icon-btn" data-open-drawer="quote" aria-label="Quote list">
@@ -37,6 +81,13 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
       </div>
+    </div>
+    <div class="msearch" hidden data-msearch>
+      <div class="wrap"><div class="search search--mobile" data-search>
+        <svg class="search__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8" fill="none" stroke="currentColor" stroke-width="2" /><path d="M15.6 15.6L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        <input type="search" placeholder="Search products" aria-label="Search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="msearch-results" />
+        <div class="search__panel" id="msearch-results" role="listbox" hidden data-search-panel></div>
+      </div></div>
     </div>
   </div>
   <nav id="mnav" class="mnav" aria-label="Mobile" hidden>
@@ -56,55 +107,197 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   const hdr = document.querySelector('.hdr');
   const onScroll = () => hdr.classList.toggle('is-stuck', window.scrollY > 24);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* mega menu: hover intent + touch + keyboard */
+  const mi = document.querySelector('.nav__item--mega');
+  if (mi) {
+    const link = mi.querySelector('a');
+    let t;
+    const mega = mi.querySelector('.mega');
+    const set = (open) => {
+      if (open && mega) mega.style.top = document.querySelector('.hdr__main').getBoundingClientRect().bottom + 'px';
+      mi.classList.toggle('is-open', open);
+      link.setAttribute('aria-expanded', String(open));
+    };
+    mi.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { clearTimeout(t); set(true); } });
+    mi.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { t = setTimeout(() => set(false), 160); } });
+    mi.addEventListener('focusin', () => set(true));
+    mi.addEventListener('focusout', (e) => { if (!mi.contains(e.relatedTarget)) set(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+  }
+
+  /* instant search */
+  let idx = null, loading = null;
+  const loadIdx = () => (loading ||= fetch('/search-index.json').then((r) => r.json()).then((d) => (idx = d)).catch(() => (idx = { cats: [], prods: [] })));
+  const fmt = (n) => Number(n).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const score = (t, q) => {
+    t = t.toLowerCase();
+    if (t.startsWith(q)) return 3;
+    if (t.includes(' ' + q)) return 2;
+    if (t.includes(q)) return 1;
+    const toks = q.split(/\s+/).filter(Boolean);
+    return toks.length > 1 && toks.every((w) => t.includes(w)) ? 1 : 0;
+  };
+  const mark = (t, q) => {
+    const i = t.toLowerCase().indexOf(q);
+    return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + q.length)) + '</mark>' + esc(t.slice(i + q.length));
+  };
+  document.querySelectorAll('[data-search]').forEach((root) => {
+    const input = root.querySelector('[data-search-input]');
+    const panel = root.querySelector('[data-search-panel]');
+    let items = [], active = -1;
+    const close = () => { panel.hidden = true; input.setAttribute('aria-expanded', 'false'); active = -1; };
+    const render = () => {
+      const q = input.value.trim().toLowerCase();
+      if (!q || !idx) { close(); return; }
+      const cats = idx.cats.map((c) => [score(c.t, q), c]).filter(([s]) => s).sort((a, b) => b[0] - a[0]).slice(0, 3);
+      const prods = idx.prods.map((p) => [score(p.t, q), p]).filter(([s]) => s).sort((a, b) => b[0] - a[0]).slice(0, 6);
+      items = [...cats.map(([, c]) => ({ href: '/collections/' + c.h })), ...prods.map(([, p]) => ({ href: '/products/' + p.h }))];
+      if (!items.length) {
+        panel.innerHTML = '<div class="search__none">Nothing matches “' + esc(input.value.trim()) + '”.<br><a href="/pages/request-a-quote">Ask us for a quote</a> or call 908-561-4800.</div>';
+        panel.hidden = false; input.setAttribute('aria-expanded', 'true');
+        return;
+      }
+      let html = '';
+      if (cats.length) html += '<p class="search__h">Categories</p>' + cats.map(([, c], i) => `<a role="option" data-i="${i}" class="search__row search__row--cat" href="/collections/${c.h}"><span class="search__cathumb"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>${mark(c.t, q)}</span><small>${c.n}</small></a>`).join('');
+      if (prods.length) html += '<p class="search__h">Products</p>' + prods.map(([, p], i) => `<a role="option" data-i="${cats.length + i}" class="search__row" href="/products/${p.h}">${p.i ? `<img src="${p.i}" alt="" loading="lazy">` : '<span class="search__cathumb"></span>'}<span>${mark(p.t, q)}</span><small>${p.r ? 'Rental' : p.pr != null ? fmt(p.pr) : ''}</small></a>`).join('');
+      panel.innerHTML = html;
+      panel.hidden = false; input.setAttribute('aria-expanded', 'true'); active = -1;
+    };
+    input.addEventListener('focus', () => { loadIdx().then(() => input.value.trim() && render()); });
+    input.addEventListener('input', () => { loadIdx().then(render); });
+    input.addEventListener('keydown', (e) => {
+      const rows = [...panel.querySelectorAll('.search__row')];
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!rows.length) return;
+        active = (active + (e.key === 'ArrowDown' ? 1 : -1) + rows.length) % rows.length;
+        rows.forEach((r, i) => r.classList.toggle('is-active', i === active));
+        rows[active].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter') {
+        if (active >= 0 && rows[active]) { e.preventDefault(); location.href = rows[active].href; }
+        else if (rows[0]) { e.preventDefault(); location.href = rows[0].href; }
+      } else if (e.key === 'Escape') close();
+    });
+    document.addEventListener('click', (e) => { if (!root.contains(e.target)) close(); });
+  });
+  const mtoggle = document.querySelector('[data-search-toggle]');
+  const msearch = document.querySelector('[data-msearch]');
+  mtoggle?.addEventListener('click', () => {
+    msearch.hidden = !msearch.hidden;
+    if (!msearch.hidden) msearch.querySelector('input').focus();
+  });
 </script>
 <style>
   .hdr { position: sticky; top: 0; z-index: 40; background: #fff; }
-
   .hdr__main { background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); transition: box-shadow .25s ease; }
   .hdr.is-stuck .hdr__main { box-shadow: 0 12px 32px -20px rgba(20, 23, 26, .35); }
-  .hdr__in { height: 96px; display: flex; align-items: center; gap: clamp(16px, 2.2vw, 38px); transition: height .25s ease; }
+  .hdr__in { height: 96px; display: flex; align-items: center; gap: clamp(14px, 1.8vw, 30px); transition: height .25s ease; }
   .hdr.is-stuck .hdr__in { height: 74px; }
   .logo { flex: none; display: flex; }
   .logo__img { height: 86px; width: auto; transition: height .25s ease; }
   .hdr.is-stuck .logo__img { height: 64px; }
 
-  .nav { display: flex; gap: clamp(2px, .6vw, 10px); margin-right: auto; }
-  .nav a { position: relative; text-decoration: none; font-variation-settings: 'wght' 620; font-size: 1.02rem; letter-spacing: .002em; padding: 10px 13px 9px; color: var(--ink-2); white-space: nowrap; transition: color .14s; }
-  .nav a span { position: relative; }
-  .nav a span::after { content: ''; position: absolute; left: 0; right: 100%; bottom: -7px; height: 2.5px; border-radius: 2px; background: var(--red); transition: right .22s cubic-bezier(.4, 0, .2, 1); }
-  .nav a:hover { color: var(--ink); }
-  .nav a:hover span::after { right: 0; }
-  .nav a[aria-current] { color: var(--ink); font-variation-settings: 'wght' 700; }
-  .nav a[aria-current] span::after { right: 0; }
+  .nav { display: flex; gap: clamp(0px, .4vw, 8px); margin-right: auto; }
+  .nav__item { position: relative; display: flex; }
+  .nav > .nav__item > a { position: relative; display: flex; align-items: center; gap: 5px; text-decoration: none; font-variation-settings: 'wght' 620; font-size: 1.02rem; padding: 10px 12px 9px; color: var(--ink-2); white-space: nowrap; transition: color .14s; }
+  .nav > .nav__item > a > span { position: relative; }
+  .nav > .nav__item > a > span::after { content: ''; position: absolute; left: 0; right: 100%; bottom: -7px; height: 2.5px; border-radius: 2px; background: var(--red); transition: right .22s cubic-bezier(.4, 0, .2, 1); }
+  .nav > .nav__item > a:hover { color: var(--ink); }
+  .nav > .nav__item > a:hover > span::after { right: 0; }
+  .nav > .nav__item > a[aria-current] { color: var(--ink); font-variation-settings: 'wght' 700; }
+  .nav > .nav__item > a[aria-current] > span::after { right: 0; }
+  .nav__chev { width: 15px; height: 15px; transition: rotate .2s; margin-top: 1px; }
+  .nav__item--mega.is-open .nav__chev { rotate: 180deg; }
 
-  .hdr__act { display: flex; align-items: center; gap: 6px; }
-  .hdr__phone { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-right: 6px; white-space: nowrap; color: var(--ink); }
-  .hdr__phonebadge { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--red-tint); color: var(--red); flex: none; transition: background .15s, color .15s; }
+  /* ---------- mega menu ---------- */
+  .mega { position: fixed; left: 0; right: 0; top: var(--megatop, 96px); background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 32px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity .22s ease, translate .22s ease, visibility .22s; z-index: 30; }
+  .nav__item--mega.is-open .mega { opacity: 1; translate: 0 0; visibility: visible; }
+  .mega__in { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 32px; padding-block: 28px 30px; }
+  .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 14px; }
+  .mega__cat { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; padding: 9px 10px; border-radius: 10px; transition: background .12s; }
+  .mega__cat:hover { background: var(--haze); }
+  .mega__thumb { width: 52px; height: 52px; border-radius: 9px; border: 1px solid var(--haze-2); background: #fff; display: grid; place-items: center; overflow: hidden; flex: none; }
+  .mega__thumb img { width: 42px; height: 42px; object-fit: contain; }
+  .mega__txt { display: grid; line-height: 1.25; min-width: 0; }
+  .mega__txt b { font-variation-settings: 'wght' 650; font-size: .97rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mega__cat:hover .mega__txt b { color: var(--red); }
+  .mega__txt small { color: var(--steel); font-size: .82rem; }
+  .mega__side { display: grid; gap: 10px; align-content: start; border-left: 1px solid var(--line); padding-left: 32px; }
+  .mega__all { display: flex; align-items: center; gap: 7px; text-decoration: none; font-variation-settings: 'wght' 700; color: var(--red); padding: 4px 0 8px; }
+  .mega__all svg { width: 15px; height: 15px; transition: translate .15s; }
+  .mega__all:hover svg { translate: 3px 0; }
+  .mega__promo { display: grid; gap: 3px; text-decoration: none; background: var(--haze); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; transition: border-color .15s; }
+  .mega__promo:hover { border-color: var(--line-dark); }
+  .mega__promo b { font-variation-settings: 'wght' 670; }
+  .mega__promo span { color: var(--steel); font-size: .88rem; line-height: 1.4; }
+
+  /* ---------- search ---------- */
+  /* search: fixed circle that expands over the nav on focus, so it never pushes the layout */
+  .search { position: relative; width: 46px; height: 46px; flex: none; }
+  .search input {
+    position: absolute; right: 0; top: 0; height: 46px; width: 46px;
+    padding: 10px 40px 9px 18px;
+    border: 1.5px solid var(--line); border-radius: 999px; background: var(--haze);
+    font-size: .95rem; color: transparent; cursor: pointer;
+    transition: width .28s cubic-bezier(.4, 0, .2, 1), background .15s, border-color .15s, box-shadow .15s;
+  }
+  .search input::placeholder { color: transparent; transition: color .15s; }
+  .search input:focus {
+    outline: none; width: min(430px, 46vw); color: inherit; cursor: text;
+    background: #fff; border-color: var(--ink); box-shadow: var(--shadow-l); z-index: 60;
+  }
+  .search input:focus::placeholder { color: var(--steel); }
+  .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .search__ico { position: absolute; right: 14px; top: 50%; translate: 0 -50%; width: 18px; height: 18px; color: var(--ink-2); pointer-events: none; z-index: 61; }
+  .search:hover input:not(:focus) { background: var(--haze-2); }
+  .search__panel { position: absolute; top: calc(100% + 10px); right: 0; width: min(430px, calc(100vw - 32px)); max-height: min(66vh, 540px); overflow: auto; background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow-l); padding: 8px; z-index: 59; }
+  .icon-btn.search-toggle { display: none; }
+  .msearch { border-top: 1px solid var(--line); padding-block: 10px; }
+  .msearch .search { width: 100%; height: 48px; }
+  .msearch .search input { position: static; width: 100%; height: 48px; color: inherit; cursor: text; background: var(--haze); }
+  .msearch .search input::placeholder { color: var(--steel); }
+  .msearch .search__panel { left: 0; right: 0; width: auto; }
+
+  .hdr__act { display: flex; align-items: center; gap: 5px; }
+  .hdr__phone { display: flex; align-items: center; text-decoration: none; color: var(--ink); }
+  .hdr__phonebadge { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--red-tint); color: var(--red); flex: none; transition: background .15s, color .15s; }
   .hdr__phonebadge svg { width: 19px; height: 19px; }
   .hdr__phone:hover .hdr__phonebadge { background: var(--red); color: #fff; }
-  .hdr__phonetxt { display: grid; line-height: 1.15; }
-  .hdr__phonetxt small { font-size: .74rem; color: var(--steel); letter-spacing: .01em; }
-  .hdr__phonetxt b { font-variation-settings: 'wght' 720; font-size: 1.02rem; letter-spacing: .005em; }
-  .hdr__sep { width: 1px; height: 30px; background: var(--line); margin: 0 8px; }
+  .hdr__sep { width: 1px; height: 30px; background: var(--line); margin: 0 7px; }
   .icon-btn { position: relative; width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; border-radius: 10px; cursor: pointer; color: var(--ink); }
   .icon-btn:hover { background: var(--haze); }
   .icon-btn svg { width: 23px; height: 23px; }
   .badge[hidden] { display: none; }
   .badge { position: absolute; top: 2px; right: 1px; min-width: 18px; height: 18px; padding: 2px 5px 0; border-radius: 9px; background: var(--red); color: #fff; font-size: .7rem; font-variation-settings: 'wght' 700; display: grid; place-items: center; box-shadow: 0 0 0 2px #fff; }
-  .hdr__cta { margin-left: 10px; min-height: 48px; padding: 13px 24px 12px; font-size: 1rem; white-space: nowrap; }
+  .hdr__cta { margin-left: 9px; min-height: 48px; padding: 13px 24px 12px; font-size: 1rem; white-space: nowrap; }
   .menu-btn { display: none; }
   .mnav[hidden] { display: none; }
   .mnav { background: #fff; padding: 6px var(--gutter) 20px; display: grid; border-top: 1px solid var(--line); box-shadow: var(--shadow-m); }
   .mnav a { padding: 15px 2px 13px; text-decoration: none; font-variation-settings: 'wght' 640; font-size: 1.12rem; border-bottom: 1px solid var(--haze-2); color: var(--ink); }
   .mnav__cta { color: var(--red); }
-  @media (max-width: 1360px) { .hdr__phonetxt { display: none; } .hdr__phone { margin-right: 0; } }
-  @media (max-width: 1150px) { .hdr__sep { display: none; } }
+  @media (max-width: 1010px) { .hdr__act > .search { display: none; } .icon-btn.search-toggle { display: grid; } }
   @media (max-width: 1010px) {
-    .nav, .hdr__cta { display: none; }
+    .nav, .hdr__cta, .hdr__phone { display: none; }
     .menu-btn { display: grid; }
     .hdr__act { margin-left: auto; }
     .hdr__in { height: 72px; }
     .logo__img { height: 58px; }
-    }
+  }
   @media (min-width: 1011px) { .mnav { display: none !important; } }
+</style>
+<style is:global>
+  .search__h { margin: 6px 10px 4px; font-size: .78rem; letter-spacing: .04em; color: var(--steel); font-variation-settings: 'wght' 680; text-transform: uppercase; }
+  .search__row { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 9px; text-decoration: none; }
+  .search__row:hover, .search__row.is-active { background: var(--haze); }
+  .search__row img { width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--haze-2); border-radius: 7px; background: #fff; flex: none; }
+  .search__cathumb { width: 40px; height: 40px; border-radius: 7px; background: var(--haze); color: var(--steel); display: grid; place-items: center; flex: none; }
+  .search__cathumb svg { width: 18px; height: 18px; }
+  .search__row > span:not(.search__cathumb) { flex: 1; font-size: .95rem; font-variation-settings: 'wght' 580; line-height: 1.3; }
+  .search__row mark { background: none; color: var(--red); font-variation-settings: 'wght' 720; }
+  .search__row small { color: var(--steel); font-size: .85rem; white-space: nowrap; }
+  .search__none { padding: 16px 14px; color: var(--steel); font-size: .95rem; line-height: 1.5; }
+  .search__none a { color: var(--red); font-variation-settings: 'wght' 650; }
+  .search__row > span:not(.search__cathumb) { color: var(--ink); }
 </style>
