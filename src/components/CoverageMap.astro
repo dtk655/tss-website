@@ -1,0 +1,252 @@
+---
+import map from '../data/coverage-map.json';
+import { PHONE, PHONE_TEL } from '../lib/config.js';
+
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const L = {
+  njtp: [CDN + 'Untitled_design_26.png', 'NJ Turnpike'],
+  gsp: [CDN + 'Untitled_design_23.png', 'Garden State Parkway'],
+  njdot: [CDN + 'Untitled_design_27.png', 'NJDOT'],
+  thruway: [CDN + 'Untitled_design_24.png', 'NYS Thruway'],
+  nysdot: [CDN + 'Untitled_design_29.png', 'NYSDOT'],
+  panynj: [CDN + 'Untitled_design_28.png', 'Port Authority'],
+  penndot: [CDN + 'Untitled_design_30.png', 'PennDOT']
+};
+const info = {
+  NJ: { name: 'New Jersey', tag: 'Home base', closures: true, rentals: true, text: 'Our South Plainfield yard sits in the middle of it all. Crews roll onto the Turnpike, the Parkway, NJDOT routes and county and town roads around the clock.', logos: ['njtp', 'gsp', 'njdot'], extra: 'County and municipal roads' },
+  NY: { name: 'New York', tag: 'Closures + rentals', closures: true, rentals: true, text: 'New York City, Long Island and the Hudson Valley. Thruway and NYSDOT routes, Port Authority crossings and local streets.', logos: ['thruway', 'nysdot', 'panynj'], extra: 'NYC and local roads' },
+  PA: { name: 'Pennsylvania', tag: 'Closures + rentals', closures: true, rentals: true, text: 'PennDOT routes and interstates plus township and borough roads, set up to PennDOT Publication 213.', logos: ['penndot'], extra: 'Township and borough roads' },
+  CT: { name: 'Connecticut', tag: 'Closures + rentals', closures: true, rentals: true, text: 'CTDOT routes and town roads, with crews and equipment coming straight up I-95 from our yard.', logos: [], extra: 'CTDOT and town roads' },
+  DE: { name: 'Delaware', tag: 'Lane closures', closures: true, rentals: false, text: 'Lane closure crews for DelDOT and local roads, set up to the Delaware MUTCD. Equipment rentals stay in NJ, NY, PA and CT.', logos: [], extra: 'DelDOT and local roads' }
+};
+const order = ['NJ', 'NY', 'PA', 'CT', 'DE'];
+const [yx, yy] = map.yard;
+const ppm = map.pxPerMile;
+const rings = [25, 50, 100];
+const routes = map.places.map((pl, i) => {
+  const [x, y] = pl.p;
+  const mx = (yx + x) / 2, my = (yy + y) / 2;
+  const dx = x - yx, dy = y - yy;
+  const bend = 0.22 * (i % 2 ? 1 : -1);
+  return { ...pl, d: `M${yx} ${yy} Q${(mx - dy * bend).toFixed(1)} ${(my + dx * bend).toFixed(1)} ${x} ${y}`, i };
+});
+---
+<section class="cov" data-cov>
+  <div class="wrap">
+    <div class="cov__head">
+      <div>
+        <p class="cov__kicker">Where our crews work</p>
+        <h2>Five states. One yard. Crews on call 24/7.</h2>
+      </div>
+      <p class="cov__lede">Every crew and truck leaves from our South Plainfield, NJ yard, close to the Turnpike, the Parkway, I-287 and the bridges into New York.</p>
+    </div>
+
+    <div class="cov__grid">
+      <div class="cov__map">
+        <svg viewBox={`0 0 ${map.W} ${map.H}`} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of the five states TSS covers: New Jersey, New York, Pennsylvania, Connecticut and Delaware, with distance rings around the South Plainfield yard">
+          <defs>
+            <radialGradient id="covGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="#b60606" stop-opacity=".16" />
+              <stop offset="1" stop-color="#b60606" stop-opacity="0" />
+            </radialGradient>
+            <clipPath id="covClip"><rect width={map.W} height={map.H} rx="0" /></clipPath>
+          </defs>
+          <g clip-path="url(#covClip)">
+            {map.near.map((s) => <path d={s.d} class="cov__near" />)}
+            {map.states.map((s) => <path d={s.d} class="cov__state" data-state={s.id} tabindex="0" role="button" aria-label={info[s.id].name} />)}
+            <circle cx={yx} cy={yy} r={ppm * 110} fill="url(#covGlow)" class="cov__glow" />
+            {rings.map((r) => (
+              <g class="cov__ring">
+                <circle cx={yx} cy={yy} r={ppm * r} />
+                <text x={yx + ppm * r * 0.707 + 4} y={yy + ppm * r * 0.707 + 12}>{r} mi</text>
+              </g>
+            ))}
+            <circle cx={yx} cy={yy} r={ppm * 25} class="cov__pulse" />
+            <circle cx={yx} cy={yy} r={ppm * 25} class="cov__pulse cov__pulse--2" />
+            {routes.map((r) => (
+              <g class="cov__route" style={`--i:${r.i}`}>
+                <path d={r.d} pathLength="100" />
+                <circle class="cov__truck" r="3.6">
+                  <animateMotion dur={`${5 + (r.i % 3)}s`} begin={`${r.i * 0.7}s`} repeatCount="indefinite" path={r.d} />
+                </circle>
+              </g>
+            ))}
+            {routes.map((r) => (
+              <g class="cov__place" style={`--i:${r.i}`}>
+                <circle cx={r.p[0]} cy={r.p[1]} r="5.5" />
+                <text x={r.p[0] + (r.p[0] > yx + 40 ? 10 : -10)} y={r.p[1] + 4} text-anchor={r.p[0] > yx + 40 ? 'start' : 'end'}>{r.n}</text>
+              </g>
+            ))}
+            {order.map((id) => <text class="cov__label" data-label={id} x={map.labels[id][0]} y={map.labels[id][1]} text-anchor="middle">{id}</text>)}
+            <g class="cov__yard" transform={`translate(${yx} ${yy})`}>
+              <circle r="15" class="cov__yard-ring" />
+              <circle r="9" />
+              <path d="M-3.5 -3 L0 -6.5 L3.5 -3 L3.5 3.5 L-3.5 3.5 Z" fill="#fff" />
+            </g>
+            <g class="cov__yardtag" transform={`translate(${yx - 18} ${yy + 34})`}>
+              <rect x="-148" y="-15" width="166" height="30" rx="15" />
+              <text x="-65" y="5" text-anchor="middle">TSS yard · South Plainfield</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="cov__panel">
+        <div class="cov__tabs" role="tablist" aria-label="States">
+          {order.map((id, i) => <button type="button" role="tab" class="cov__tab" data-tab={id} aria-selected={i === 0 ? 'true' : 'false'}>{id}</button>)}
+        </div>
+        {order.map((id, i) => {
+          const s = info[id];
+          return (
+            <div class="cov__card" data-card={id} hidden={i !== 0}>
+              <p class="cov__tag">{s.tag}</p>
+              <h3>{s.name}</h3>
+              <p class="cov__text">{s.text}</p>
+              <ul class="cov__svc">
+                <li class="is-on">Lane closure crews</li>
+                <li class:list={[s.rentals && 'is-on']}>Equipment rentals</li>
+                <li class="is-on">Products shipped</li>
+              </ul>
+              <div class="cov__logos">
+                {s.logos.map((k) => <span class="cov__logo"><img src={L[k][0]} alt="" loading="lazy" width="52" height="52" /><span>{L[k][1]}</span></span>)}
+                <span class="cov__logo cov__logo--text"><i aria-hidden="true">+</i><span>{s.extra}</span></span>
+              </div>
+            </div>
+          );
+        })}
+        <div class="cov__foot">
+          <ul class="cov__stats">
+            <li><b>5</b><span>states</span></li>
+            <li><b>1</b><span>yard, central NJ</span></li>
+            <li><b>24/7</b><span>dispatch</span></li>
+          </ul>
+          <a class="cov__call" href={PHONE_TEL}>Outside these states? Call {PHONE}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cov { padding: clamp(56px, 7vw, 96px) 0; background: var(--haze); }
+  .cov__head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px 48px; align-items: end; margin-bottom: clamp(22px, 3vw, 34px); }
+  .cov__kicker { margin: 0 0 8px; color: var(--red); font-size: .86rem; letter-spacing: .1em; text-transform: uppercase; font-variation-settings: 'wght' 720; }
+  .cov h2 { margin: 0; font-size: clamp(1.9rem, 3.4vw, 3rem); line-height: 1.05; letter-spacing: -.022em; text-wrap: balance; }
+  .cov__lede { margin: 0; color: var(--steel); font-size: 1.06rem; line-height: 1.55; max-width: 56ch; }
+  .cov__grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
+  .cov__map { position: relative; border-radius: 22px; overflow: hidden; background: linear-gradient(180deg, #eef3f7, #f8fafb); border: 1px solid var(--line); box-shadow: 0 24px 50px -34px rgba(20,23,26,.4); }
+  .cov__map { display: flex; min-height: 420px; }
+  .cov__map svg { display: block; flex: 1; width: 100%; height: auto; min-height: 100%; }
+  .cov__near { fill: #e6e9ec; stroke: #fff; stroke-width: 1.2; }
+  .cov__state { fill: #fff; stroke: var(--line-dark); stroke-width: 1.3; cursor: pointer; transition: fill .3s, stroke .3s; outline: none; }
+  .cov__state:hover { fill: #fff6f6; }
+  .cov__state.is-on { fill: var(--red-tint); stroke: var(--red); stroke-width: 2; }
+  .cov__state:focus-visible { stroke: var(--red); stroke-width: 3; }
+  .cov__label { font-size: 30px; font-variation-settings: 'wght' 820; fill: #c4cad0; letter-spacing: .04em; pointer-events: none; transition: fill .3s; }
+  .cov__label.is-on { fill: var(--red); }
+  .cov__ring circle { fill: none; stroke: var(--red); stroke-opacity: .45; stroke-width: 1.4; stroke-dasharray: 5 6; }
+  .cov__ring text { font-size: 12px; fill: var(--red); font-variation-settings: 'wght' 700; paint-order: stroke; stroke: #fff; stroke-width: 4px; }
+  .cov__pulse { fill: none; stroke: var(--red); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: covPulse 3.6s cubic-bezier(.2,.7,.2,1) infinite; }
+  .cov__pulse--2 { animation-delay: 1.8s; }
+  @keyframes covPulse { 0% { transform: scale(.15); opacity: .9; } 100% { transform: scale(4.2); opacity: 0; } }
+  .cov__route path { fill: none; stroke: var(--ink); stroke-opacity: .55; stroke-width: 1.6; stroke-dasharray: 2 4; }
+  .cov__truck { fill: var(--gold); stroke: var(--ink); stroke-width: 1.2; }
+  .cov__place circle { fill: #fff; stroke: var(--ink); stroke-width: 2; }
+  .cov__place text { font-size: 13px; fill: var(--ink-2); font-variation-settings: 'wght' 680; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+  .cov__yard circle:not(.cov__yard-ring) { fill: var(--red); }
+  .cov__yard-ring { fill: #fff; stroke: var(--red); stroke-width: 2; }
+  .cov__yardtag rect { fill: var(--ink); }
+  .cov__yardtag text { fill: #fff; font-size: 12.5px; font-variation-settings: 'wght' 700; }
+  [data-cov]:not(.is-in) .cov__route path { stroke-dashoffset: 100; }
+  .cov__route path { stroke-dasharray: 100; stroke-dashoffset: 0; transition: stroke-dashoffset 1.4s cubic-bezier(.3,.7,.2,1) calc(var(--i) * .12s); }
+  .cov.is-drawn .cov__route path { stroke-dasharray: 2 4; transition: none; }
+  .cov__place { opacity: 0; transform: translateY(6px); transition: opacity .5s, transform .5s; transition-delay: calc(.6s + var(--i) * .12s); }
+  [data-cov].is-in .cov__place { opacity: 1; transform: none; }
+
+  .cov__panel { display: flex; flex-direction: column; border-radius: 22px; background: #fff; border: 1px solid var(--line); overflow: hidden; min-width: 0; }
+  .cov__tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 12px; background: var(--ink); }
+  .cov__tab { all: unset; cursor: pointer; text-align: center; padding: 11px 0 10px; border-radius: 10px; color: rgba(255,255,255,.75); font-variation-settings: 'wght' 760; letter-spacing: .04em; position: relative; overflow: hidden; transition: background .2s, color .2s; }
+  .cov__tab:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .cov__tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .cov__tab[aria-selected="true"] { background: var(--red); color: #fff; }
+  .cov__tab[aria-selected="true"]::after { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--gold); animation: covBar var(--cov-t, 4.5s) linear forwards; }
+  .cov.is-paused .cov__tab::after { display: none; }
+  @keyframes covBar { to { width: 100%; } }
+  .cov__card { padding: 24px 26px 8px; animation: covIn .4s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes covIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .cov__tag { display: inline-block; margin: 0 0 10px; padding: 5px 11px 4px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 740; }
+  .cov__card h3 { margin: 0; font-size: clamp(1.5rem, 2.2vw, 1.95rem); letter-spacing: -.015em; }
+  .cov__text { margin: 10px 0 0; color: var(--ink-2); line-height: 1.55; }
+  .cov__svc { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 8px; }
+  .cov__svc li { display: flex; align-items: center; gap: 10px; font-size: .95rem; color: #9aa3ab; text-decoration: line-through; text-decoration-color: rgba(154,163,171,.6); }
+  .cov__svc li::before { content: '–'; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--haze-2); color: #9aa3ab; font-size: .9rem; flex: none; }
+  .cov__svc li.is-on { color: var(--ink); text-decoration: none; font-variation-settings: 'wght' 620; }
+  .cov__svc li.is-on::before { content: '✓'; background: var(--red); color: #fff; font-size: .78rem; }
+  .cov__logos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .cov__logo { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 12px; background: var(--haze); font-size: .84rem; font-variation-settings: 'wght' 640; color: var(--ink-2); }
+  .cov__logo img { width: 30px; height: 30px; object-fit: contain; }
+  .cov__logo--text i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-style: normal; color: var(--steel); }
+  .cov__foot { margin-top: auto; padding: 18px 26px 22px; }
+  .cov__stats { list-style: none; margin: 0 0 14px; padding: 16px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cov__stats b { display: block; font-size: 1.6rem; letter-spacing: -.02em; font-variation-settings: 'wght' 800; line-height: 1.1; }
+  .cov__stats span { font-size: .82rem; color: var(--steel); }
+  .cov__call { font-size: .92rem; color: var(--red); font-variation-settings: 'wght' 660; text-decoration: none; }
+  .cov__call:hover { text-decoration: underline; }
+
+  @media (max-width: 1100px) { .cov__map { min-height: 0; } .cov__grid { grid-template-columns: 1fr; } .cov__head { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .cov__head { text-align: center; }
+    .cov__lede { margin: 0 auto; }
+    .cov__map { border-radius: 16px; aspect-ratio: 1 / 1; }
+    .cov__map svg { height: 100%; }
+    .cov__place text, .cov__ring text { display: none; }
+    .cov__label { font-size: 38px; }
+    .cov__yardtag { display: none; }
+    .cov__card { padding: 20px 18px 4px; }
+    .cov__foot { padding: 16px 18px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cov__pulse, .cov__truck { display: none; } .cov__place, .cov__route path { transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cov]').forEach((root) => {
+    const order = ['NJ', 'NY', 'PA', 'CT', 'DE'];
+    const T = 4500;
+    let cur = 'NJ', timer = 0, paused = false;
+    const set = (id: string, user = false) => {
+      cur = id;
+      root.querySelectorAll<SVGPathElement>('[data-state]').forEach((p) => p.classList.toggle('is-on', p.dataset.state === id));
+      root.querySelectorAll('[data-label]').forEach((t) => t.classList.toggle('is-on', (t as SVGElement).dataset.label === id));
+      root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+      root.querySelectorAll<HTMLElement>('[data-card]').forEach((c) => (c.hidden = c.dataset.card !== id));
+      if (user) { paused = true; root.classList.add('is-paused'); clearInterval(timer); }
+    };
+    root.style.setProperty('--cov-t', T + 'ms');
+    root.addEventListener('click', (e) => {
+      const t = (e.target as Element).closest<HTMLElement>('[data-tab]');
+      const s = (e.target as Element).closest<SVGElement>('[data-state]');
+      if (t) set(t.dataset.tab!, true);
+      else if (s) set(s.dataset.state!, true);
+    });
+    root.addEventListener('keydown', (e) => {
+      const s = (e.target as Element).closest?.<SVGElement>('[data-state]');
+      if (s && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); set(s.dataset.state!, true); }
+    });
+    root.querySelectorAll<SVGElement>('[data-state]').forEach((p) => p.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) set(p.dataset.state!, true); }));
+    set('NJ');
+    const svg = root.querySelector('.cov__map svg');
+    const fitMap = () => svg?.setAttribute('preserveAspectRatio', matchMedia('(max-width: 640px)').matches ? 'xMaxYMid slice' : 'xMidYMid slice');
+    fitMap(); addEventListener('resize', fitMap);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach((en) => {
+        if (en.isIntersecting) {
+          root.classList.add('is-in');
+          setTimeout(() => root.classList.add('is-drawn'), 2600);
+          if (!paused && !reduce && !timer) timer = window.setInterval(() => { if (!paused) set(order[(order.indexOf(cur) + 1) % order.length]); }, T);
+        } else if (timer) { clearInterval(timer); timer = 0; }
+      });
+    }, { threshold: 0.3 });
+    io.observe(root);
+  });
+</script>

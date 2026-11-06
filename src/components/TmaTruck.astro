@@ -1,0 +1,213 @@
+---
+// Interactive truck-mounted attenuator (TMA) explorer: tap hotspots on real TSS truck photos.
+const views = [
+  {
+    id: 'side', label: 'Side', img: '/fleet/tma-side.webp', w: 962, h: 621, cut: true,
+    spots: [
+      { x: 48, y: 8, t: 'Arrow board', d: 'A flashing arrow panel rides above the cab. At the job it steers traffic out of the closed lane, or runs in caution mode where an arrow would confuse drivers.' },
+      { x: 33.5, y: 20.5, t: 'Amber warning lights', d: 'Roof-mounted amber lights make the truck visible from far back, day or night, before drivers reach the taper.' },
+      { x: 75, y: 21, t: 'Crash cushion, stowed', d: 'The attenuator travels folded up. At the work zone it lowers behind the truck to absorb the impact if a driver strays into the closure, so the hit lands on the cushion instead of the crew.' },
+      { x: 50.5, y: 34, t: 'Certified TMA operator', d: 'A trained operator stays in the truck, positions it the right distance behind the work and moves with the crew.' },
+      { x: 53.5, y: 60, t: 'Heavy host truck', d: 'About 26,000 lb GVW. The weight is part of the protection: a heavy truck rolls less after an impact, keeping the crew ahead of it safe.' },
+      { x: 82, y: 41, t: 'Railed work deck', d: 'Carries cones, drums and signs so the crew can set and pick up the zone right off the truck, with railings to keep them secure.' },
+      { x: 74.5, y: 66, t: 'Reflective conspicuity', d: 'Red-and-white reflective tape outlines the truck in headlights, and the steps are striped for safe climbing on and off.' }
+    ]
+  },
+  {
+    id: 'rear', label: 'Rear', img: '/fleet/tma-rear.jpg', w: 1320, h: 1206,
+    spots: [
+      { x: 73, y: 47, t: 'Chevron cushion face', d: 'Black and yellow reflective chevrons on the cushion face point drivers away from the closed lane.' },
+      { x: 45, y: 21, t: 'Crash-tested and eligible', d: 'The label on the cushion marks it as crash-tested, passed and eligible for use under federal highway crash-testing rules.' },
+      { x: 21, y: 31, t: 'Arrow board lamps', d: 'The panel’s high-intensity lamps are visible from well over half a mile on a clear day.' },
+      { x: 51.5, y: 66, t: 'Brake and tail lights', d: 'Extra brake and tail lights on the frame so traffic behind the truck sees it slow and stop.' }
+    ]
+  },
+  { id: 'job', label: 'On the job', img: '/fleet/tma-dusk.jpg', w: 983, h: 1024, spots: [], caption: 'Cushion down and in position behind a closure at dusk.' }
+];
+---
+<section class="tma" data-tma>
+  <div class="wrap">
+    <div class="tma__head">
+      <div>
+        <p class="tma__kicker">Truck-mounted attenuator</p>
+        <h2>Meet the truck that protects our crews.</h2>
+      </div>
+      <p class="tma__lede">Every TSS highway crew works behind a truck like this one. Tap the numbered points to see what each part does and why agencies like the Turnpike typically require one.</p>
+    </div>
+
+    <div class="tma__grid">
+      <div class="tma__stage">
+        <div class="tma__views">
+          {views.map((v, vi) => (
+            <figure class:list={['tma__view', v.cut && 'tma__view--cut', !v.spots.length && 'tma__view--photo']} data-view={v.id} hidden={vi !== 0}>
+              <div class="tma__frame" style={`aspect-ratio:${v.w}/${v.h}`}>
+                <img src={v.img} alt={v.id === 'side' ? 'TSS truck-mounted attenuator truck 199, side view' : v.id === 'rear' ? 'Rear of a TSS truck-mounted attenuator showing the chevron crash cushion' : 'TSS crash truck with its cushion lowered behind a closure at dusk'} width={v.w} height={v.h} loading={vi === 0 ? 'eager' : 'lazy'} />
+                {v.spots.map((s, i) => (
+                  <button type="button" class="tma__spot" style={`left:${s.x}%;top:${s.y}%;--d:${i * 90}ms`} data-spot={`${v.id}-${i}`} aria-label={s.t}><span>{i + 1}</span></button>
+                ))}
+              </div>
+              {v.caption && <figcaption>{v.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+        <div class="tma__switch" role="tablist" aria-label="Truck views">
+          {views.map((v, vi) => (
+            <button type="button" role="tab" class="tma__tab" data-show={v.id} aria-selected={vi === 0 ? 'true' : 'false'}>
+              <img src={v.img} alt="" loading="lazy" width="64" height="48" /><span>{v.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="tma__side">
+        {views.filter((v) => v.spots.length).map((v, vi) => (
+          <ol class="tma__list" data-list={v.id} hidden={vi !== 0}>
+            {v.spots.map((s, i) => (
+              <li>
+                <button type="button" class="tma__item" data-spot={`${v.id}-${i}`} aria-expanded="false">
+                  <b>{i + 1}</b><strong>{s.t}</strong>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <div class="tma__body"><p>{s.d}</p></div>
+              </li>
+            ))}
+          </ol>
+        ))}
+        <div class="tma__list tma__list--job" data-list="job" hidden>
+          <p>The cushion only goes down at the job. Our operator sets the truck in the buffer space ahead of the crew, angled and braked, with the arrow board up. If a driver gets through the taper, the truck takes the hit.</p>
+        </div>
+        <div class="tma__cta">
+          <p><b>Need a TMA on your job?</b> Book one with a certified operator, alone or with a full closure crew.</p>
+          <a href="#quote-form" class="tma__btn">Book a TMA
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15" /><path d="M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tma { padding: clamp(56px, 7vw, 96px) 0; background: #fff; overflow: hidden; }
+  .tma__head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px 48px; align-items: end; margin-bottom: clamp(22px, 3vw, 34px); }
+  .tma__kicker { margin: 0 0 8px; color: var(--red); font-size: .86rem; letter-spacing: .1em; text-transform: uppercase; font-variation-settings: 'wght' 720; }
+  .tma h2 { margin: 0; font-size: clamp(1.9rem, 3.4vw, 3rem); line-height: 1.05; letter-spacing: -.022em; text-wrap: balance; }
+  .tma__lede { margin: 0; color: var(--steel); font-size: 1.06rem; line-height: 1.55; max-width: 56ch; }
+  .tma__grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+
+  .tma__stage { position: relative; border-radius: 24px; padding: clamp(14px, 2vw, 26px); background: radial-gradient(90% 80% at 50% 62%, #ffffff 0, #f1f3f5 60%, #e6e9ec 100%); border: 1px solid var(--line); }
+  .tma__stage::before { content: ''; position: absolute; left: 8%; right: 8%; bottom: 96px; height: 22px; border-radius: 50%; background: radial-gradient(closest-side, rgba(20,23,26,.22), transparent); pointer-events: none; }
+  .tma__view { margin: 0; animation: tmaIn .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes tmaIn { from { opacity: 0; transform: translateX(26px) scale(.98); } to { opacity: 1; transform: none; } }
+  .tma__frame { position: relative; width: 100%; max-height: 560px; margin: 0 auto; }
+  .tma__view--photo .tma__frame, .tma__view:not(.tma__view--cut) .tma__frame { max-width: min(100%, 560px); }
+  .tma__frame img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .tma__view:not(.tma__view--cut) .tma__frame img { border-radius: 16px; object-fit: cover; box-shadow: 0 20px 40px -24px rgba(20,23,26,.5); }
+  .tma__view figcaption { text-align: center; margin-top: 12px; font-size: .9rem; color: var(--steel); }
+
+  .tma__spot { all: unset; position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; z-index: 2; animation: tmaPop .45s cubic-bezier(.2,.8,.2,1.4) both; animation-delay: calc(.25s + var(--d)); }
+  @keyframes tmaPop { from { transform: scale(0); } to { transform: none; } }
+  .tma__spot span { position: relative; z-index: 1; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--red); border: 2.5px solid var(--red); font-size: .86rem; font-variation-settings: 'wght' 800; box-shadow: 0 6px 14px -4px rgba(0,0,0,.45); transition: background .2s, color .2s, transform .2s; }
+  .tma__spot::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: rgba(182,6,6,.35); animation: tmaRing 2.2s ease-out infinite; }
+  @keyframes tmaRing { 0% { transform: scale(.6); opacity: 1; } 100% { transform: scale(1.9); opacity: 0; } }
+  .tma__spot:hover span, .tma__spot.is-on span { background: var(--red); color: #fff; transform: scale(1.15); }
+  .tma__spot:focus-visible span { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .tma__switch { display: flex; justify-content: center; gap: 10px; margin-top: 18px; }
+  .tma__tab { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 14px; background: #fff; border: 1.5px solid var(--line); font-size: .92rem; font-variation-settings: 'wght' 660; color: var(--ink-2); transition: border-color .15s, box-shadow .2s; }
+  .tma__tab img { width: 54px; height: 40px; object-fit: cover; border-radius: 9px; background: var(--haze); }
+  .tma__tab:hover { border-color: var(--line-dark); }
+  .tma__tab[aria-selected="true"] { border-color: var(--red); color: var(--ink); box-shadow: 0 0 0 3px rgba(182,6,6,.1); }
+  .tma__tab:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; }
+
+  .tma__side { display: grid; gap: 14px; }
+  .tma__list { list-style: none; margin: 0; padding: 6px; border-radius: 20px; background: var(--haze); border: 1px solid var(--line); display: grid; gap: 4px; animation: tmaFade .35s ease both; }
+  @keyframes tmaFade { from { opacity: 0; } to { opacity: 1; } }
+  .tma__list[hidden], .tma__view[hidden] { display: none; }
+  .tma__list--job { padding: 22px; color: var(--ink-2); line-height: 1.6; }
+  .tma__list--job p { margin: 0; }
+  .tma__list li { border-radius: 14px; transition: background .2s, box-shadow .2s; }
+  .tma__list li.is-on { background: #fff; box-shadow: 0 10px 24px -16px rgba(20,23,26,.4); }
+  .tma__item { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 30px 1fr 20px; gap: 12px; align-items: center; width: 100%; padding: 12px 14px; }
+  .tma__item b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 2px solid var(--line-dark); font-size: .84rem; font-variation-settings: 'wght' 800; color: var(--ink-2); transition: all .2s; }
+  .tma__item strong { font-size: 1rem; font-variation-settings: 'wght' 680; }
+  .tma__item svg { width: 20px; height: 20px; color: var(--steel); transition: transform .25s; }
+  .tma__item:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: -3px; border-radius: 14px; }
+  li.is-on .tma__item b { background: var(--red); border-color: var(--red); color: #fff; }
+  li.is-on .tma__item svg { transform: rotate(180deg); color: var(--red); }
+  .tma__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s cubic-bezier(.2,.8,.2,1); }
+  .tma__body p { overflow: hidden; margin: 0; padding: 0 16px 0 56px; color: var(--ink-2); font-size: .95rem; line-height: 1.55; }
+  li.is-on .tma__body { grid-template-rows: 1fr; }
+  li.is-on .tma__body p { padding-bottom: 14px; }
+
+  .tma__cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px; border-radius: 18px; color: #fff; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); }
+  .tma__cta p { margin: 0; flex: 1 1 220px; font-size: .95rem; line-height: 1.45; color: rgba(255,255,255,.9); }
+  .tma__cta b { color: #fff; }
+  .tma__btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 12px; background: #fff; color: var(--red); text-decoration: none; font-variation-settings: 'wght' 700; white-space: nowrap; }
+  .tma__btn:hover { background: var(--haze); }
+
+  @media (max-width: 1100px) { .tma__grid { grid-template-columns: 1fr; } .tma__head { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .tma__head { text-align: center; }
+    .tma__lede { margin: 0 auto; }
+    .tma__stage { padding: 10px 6px 14px; border-radius: 18px; }
+    .tma__stage::before { bottom: 80px; }
+    .tma__spot { width: 28px; height: 28px; margin: -14px 0 0 -14px; }
+    .tma__spot span { width: 22px; height: 22px; font-size: .74rem; border-width: 2px; }
+    .tma__tab { padding: 5px 10px 5px 5px; font-size: .84rem; gap: 7px; }
+    .tma__tab img { width: 40px; height: 32px; }
+    .tma__cta .tma__btn { width: 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .tma__spot, .tma__spot::before, .tma__view { animation: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tma]').forEach((root) => {
+    let view = 'side', tour = 0, touched = false;
+    const items = () => [...root.querySelectorAll<HTMLElement>(`[data-list="${view}"] .tma__item`)];
+    const open = (key: string | null) => {
+      root.querySelectorAll<HTMLElement>('.tma__spot').forEach((s) => s.classList.toggle('is-on', s.dataset.spot === key));
+      root.querySelectorAll<HTMLElement>('.tma__item').forEach((b) => {
+        const on = b.dataset.spot === key;
+        b.setAttribute('aria-expanded', String(on));
+        b.closest('li')!.classList.toggle('is-on', on);
+      });
+    };
+    const stopTour = () => { touched = true; clearInterval(tour); tour = 0; };
+    const show = (id: string) => {
+      view = id;
+      root.querySelectorAll<HTMLElement>('[data-view]').forEach((v) => (v.hidden = v.dataset.view !== id));
+      root.querySelectorAll<HTMLElement>('[data-list]').forEach((v) => (v.hidden = v.dataset.list !== id));
+      root.querySelectorAll<HTMLElement>('[data-show]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.show === id)));
+      const first = items()[0];
+      open(first ? first.dataset.spot! : null);
+    };
+    root.addEventListener('click', (e) => {
+      const el = e.target as Element;
+      const tab = el.closest<HTMLElement>('[data-show]');
+      if (tab) { stopTour(); show(tab.dataset.show!); return; }
+      const sp = el.closest<HTMLElement>('[data-spot]');
+      if (sp) {
+        stopTour();
+        const key = sp.dataset.spot!;
+        const isOpen = root.querySelector(`.tma__item[data-spot="${key}"]`)?.getAttribute('aria-expanded') === 'true';
+        open(isOpen && sp.classList.contains('tma__item') ? null : key);
+        if (sp.classList.contains('tma__spot') && matchMedia('(max-width: 1100px)').matches) {
+          root.querySelector(`.tma__item[data-spot="${key}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    });
+    root.querySelectorAll<HTMLElement>('.tma__spot').forEach((s) => s.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) { stopTour(); open(s.dataset.spot!); } }));
+    show('side');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    new IntersectionObserver((ents) => ents.forEach((en) => {
+      if (en.isIntersecting && !touched && !reduce && !tour) {
+        tour = window.setInterval(() => {
+          const list = items(); if (!list.length) return;
+          const i = list.findIndex((b) => b.getAttribute('aria-expanded') === 'true');
+          open(list[(i + 1) % list.length].dataset.spot!);
+        }, 3200);
+      } else if (!en.isIntersecting && tour) { clearInterval(tour); tour = 0; }
+    }), { threshold: 0.35 }).observe(root);
+  });
+</script>
