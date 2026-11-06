@@ -22,7 +22,7 @@ const hero = colByHandle.get('cones');
 const heroChips = ['cones', 'barricades', 'traffic-drums', 'sign-shop', 'lights', 'safety-gear'].map((h) => colByHandle.get(h)).filter(Boolean);
 const best = ['cone28inch', 'waterbarriertss590rparent', 'traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring', 'type-iii-breakaway-barricade-hi-intensity-left-stripes', 'class3safetyvest'].map((h) => byHandle.get(h)).filter(Boolean);
 const count = (c) => `${c.products.length} ${c.products.length === 1 ? 'product' : 'products'}`;
-const tickItems = [...cats.map((c) => c.title), 'Ships nationwide', 'Net terms & POs', 'Everything rents too'];
+const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg` : `/cats/${h}.png`);
 ---
 <Layout title="Products" description="Traffic cones, barricades, WATERCADE barriers, drums, signs, lights, reflectors and safety gear. Buy online with nationwide shipping, or rent in NJ, NY, PA and CT.">
   <section class="phero">
@@ -75,14 +75,7 @@ const tickItems = [...cats.map((c) => c.title), 'Ships nationwide', 'Net terms &
         </div>
       </div>
     </div>
-    <div class="phero__road" aria-hidden="true"></div>
   </section>
-
-  <div class="tick" aria-hidden="true">
-    <div class="tick__track">
-      {[0, 1].map(() => <span class="tick__set">{tickItems.map((t) => <i>{t}<b>✦</b></i>)}</span>)}
-    </div>
-  </div>
 
   <section class="railsec">
     <div class="wrap">
@@ -99,8 +92,7 @@ const tickItems = [...cats.map((c) => c.title), 'Ships nationwide', 'Net terms &
       <div class="rail" data-rail>
         {cats.map((c, i) => (
           <a href={`/collections/${c.handle}`} class="rcard" style={`--tint:${tints[c.handle] || '#ececea'}`} data-tilt>
-            <span class="rcard__num">{String(i + 1).padStart(2, '0')}</span>
-            {c.cover && <img class="rcard__img" src={img(c.cover.url, 520)} alt="" loading={i < 4 ? 'eager' : 'lazy'} />}
+            <img class="rcard__img" src={catImg(c.handle)} alt="" loading={i < 4 ? 'eager' : 'lazy'} />
             <span class="rcard__body">
               <b>{c.title}</b>
               <small>{blurbs[c.handle] || ''}</small>
@@ -252,33 +244,31 @@ const tickItems = [...cats.map((c) => c.title), 'Ships nationwide', 'Net terms &
 <style>
   /* ---------------- hero ---------------- */
   .phero { position: relative; background: radial-gradient(120% 170% at 88% -30%, #e13a1a 0%, #b60606 42%, #8a0404 100%); color: #fff; overflow: hidden; }
-  .phero__in { position: relative; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: clamp(20px, 4vw, 60px); padding-block: clamp(40px, 5vw, 72px) clamp(34px, 4.5vw, 64px); }
-  .crumbs { display: flex; gap: 8px; font-size: .9rem; color: #f0b3b3; margin-bottom: 18px; }
+  .phero__in { position: relative; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: clamp(20px, 4vw, 60px); padding-block: clamp(26px, 3vw, 44px) clamp(24px, 3vw, 40px); }
+  .crumbs { display: flex; gap: 8px; font-size: .9rem; color: #f0b3b3; margin-bottom: 12px; }
   .crumbs a { color: inherit; }
   .phero__k { color: var(--gold); font-size: .92rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 14px; }
-  .phero h1 { font-size: clamp(2.5rem, 4.6vw, 4.3rem); line-height: 1.02; letter-spacing: -.025em; font-variation-settings: 'wght' 780; margin: 0 0 18px; }
-  .phero__lede { color: #fbd9d4; font-size: clamp(1rem, 1.25vw, 1.16rem); line-height: 1.6; max-width: 52ch; margin: 0 0 26px; }
+  .phero h1 { font-size: clamp(2rem, 3.4vw, 3.2rem); line-height: 1.02; letter-spacing: -.025em; font-variation-settings: 'wght' 780; margin: 0 0 18px; }
+  .phero__lede { color: #fbd9d4; font-size: clamp(.97rem, 1.1vw, 1.08rem); line-height: 1.55; max-width: 52ch; margin: 0 0 20px; }
   .phero__chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .phero__chips a { display: inline-block; padding: 10px 18px 9px; border: 1.5px solid rgba(255, 255, 255, .4); border-radius: 999px; color: #fff; text-decoration: none; font-variation-settings: 'wght' 640; font-size: .95rem; transition: background .15s, border-color .15s, translate .15s; }
   .phero__chips a:hover { background: rgba(255, 255, 255, .14); border-color: #fff; translate: 0 -2px; }
   .phero__chips .phero__chipall { background: #fff; border-color: #fff; color: var(--red); }
   .phero__chips .phero__chipall:hover { background: var(--haze); }
-  .phero__art { position: relative; display: grid; place-items: center; min-height: 300px; }
+  .phero__art { position: relative; display: grid; place-items: center; min-height: 0; }
   .phero__glow { position: absolute; width: 135%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(245, 184, 0, .3), rgba(245, 184, 0, .07) 55%, transparent 72%); }
-  .phero__road { height: 10px; background: #5c0202 repeating-linear-gradient(90deg, var(--gold) 0 64px, transparent 64px 148px); background-size: 148px 100%; animation: road 7s linear infinite; }
-  @keyframes road { to { background-position: -148px 0; } }
 
   /* animated job sheet */
-  .job { position: relative; width: min(430px, 100%); background: #fff; border-radius: 16px; box-shadow: 0 40px 80px -24px rgba(0, 0, 0, .5); padding: 22px 24px 24px; rotate: -2deg; animation: jobbob 6s ease-in-out infinite; }
+  .job { position: relative; width: min(390px, 100%); background: #fff; border-radius: 16px; box-shadow: 0 40px 80px -24px rgba(0, 0, 0, .5); padding: 16px 20px 18px; rotate: -2deg; animation: jobbob 6s ease-in-out infinite; }
   @keyframes jobbob { 0%, 100% { translate: 0 0; rotate: -2deg; } 50% { translate: 0 -10px; rotate: -1.2deg; } }
   .job__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 2px solid var(--haze-2); padding-bottom: 14px; margin-bottom: 8px; }
   .job__head b { display: block; color: var(--ink); font-size: 1.04rem; font-variation-settings: 'wght' 720; }
   .job__head small { color: var(--steel); font-size: .85rem; }
   .job__badge { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--red); color: #fff; font-variation-settings: 'wght' 800; letter-spacing: .02em; font-size: .92rem; }
-  .job__row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--haze-2); opacity: .38; translate: 8px 0; transition: opacity .45s ease, translate .45s ease; }
+  .job__row { display: flex; align-items: center; gap: 11px; padding: 8px 0; border-bottom: 1px solid var(--haze-2); opacity: .38; translate: 8px 0; transition: opacity .45s ease, translate .45s ease; }
   .job__row:last-of-type { border-bottom: 0; }
   .job__row.is-done { opacity: 1; translate: 0 0; }
-  .job__ico { flex: none; width: 38px; height: 38px; border-radius: 9px; background: var(--haze); display: grid; place-items: center; color: var(--ink-2); }
+  .job__ico { flex: none; width: 34px; height: 34px; border-radius: 9px; background: var(--haze); display: grid; place-items: center; color: var(--ink-2); }
   .job__ico svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
   .job__t { flex: 1; color: var(--ink); font-size: .96rem; font-variation-settings: 'wght' 620; }
   .job__q { color: var(--steel); font-size: .92rem; font-variation-settings: 'wght' 700; }
@@ -293,17 +283,7 @@ const tickItems = [...cats.map((c) => c.title), 'Ships nationwide', 'Net terms &
     box-shadow: var(--shadow-m); opacity: 0; scale: 1.6; transition: opacity .3s ease, scale .3s cubic-bezier(.2, .9, .3, 1.4);
   }
   .job__stamp.is-on { opacity: 1; scale: 1; }
-  @media (prefers-reduced-motion: reduce) { .phero__road, .job { animation: none; } }
-
-  /* ---------------- marquee ---------------- */
-  .tick { overflow: hidden; border-bottom: 1px solid var(--line); background: #fff; padding-block: 16px; }
-  .tick__track { display: flex; width: max-content; animation: tick 36s linear infinite; }
-  .tick:hover .tick__track { animation-play-state: paused; }
-  .tick__set { display: flex; flex: none; }
-  .tick__set i { font-style: normal; display: flex; align-items: center; gap: 26px; padding-right: 26px; font-size: clamp(1.4rem, 2.2vw, 2rem); text-transform: uppercase; letter-spacing: .02em; font-variation-settings: 'wght' 780; color: transparent; -webkit-text-stroke: 1.2px var(--line-dark); white-space: nowrap; }
-  .tick__set i b { color: var(--gold); -webkit-text-stroke: 0; font-size: .8em; }
-  @keyframes tick { to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .tick__track { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .job { animation: none; } }
 
   /* ---------------- category rail ---------------- */
   .railsec { padding-block: clamp(40px, 5vw, 60px) 0; }
@@ -332,8 +312,7 @@ const tickItems = [...cats.map((c) => c.title), 'Ships nationwide', 'Net terms &
     transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
   }
   .rcard:hover { box-shadow: var(--shadow-l); border-color: var(--line-dark); }
-  .rcard__num { position: absolute; top: 14px; right: 20px; font-size: 3.4rem; line-height: 1; font-variation-settings: 'wght' 800; letter-spacing: -.04em; color: rgba(20, 23, 26, .08); }
-  .rcard__img { position: absolute; top: -48px; left: 50%; translate: -50% 0; height: 248px; max-width: 86%; object-fit: contain; mix-blend-mode: multiply; transition: translate .25s ease, scale .25s ease; z-index: 1; }
+  .rcard__img { position: absolute; top: -48px; left: 50%; translate: -50% 0; height: 248px; max-width: 86%; object-fit: contain; transition: translate .25s ease, scale .25s ease; z-index: 1; }
   .rcard::after { content: ''; position: absolute; top: 196px; left: 50%; translate: -50% 0; width: 62%; height: 30px; background: radial-gradient(closest-side, rgba(20, 23, 26, .24), transparent); }
   .rcard:hover .rcard__img { translate: -50% -12px; scale: 1.05; }
   .rcard__body { display: grid; gap: 5px; }
@@ -396,9 +375,26 @@ const tickItems = [...cats.map((c) => c.title), 'Ships nationwide', 'Net terms &
     .perks__in { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 920px) {
-    .phero__in { grid-template-columns: 1fr; padding-block: 40px 30px; }
-    .phero__art { order: 2; min-height: 0; margin-top: 10px; }
-    .job { rotate: -1deg; }
+    .phero__in { grid-template-columns: 1fr; padding-block: 24px 26px; gap: 16px; }
+    .phero h1 { font-size: 1.7rem; margin-bottom: 10px; }
+    .phero__lede { margin-bottom: 0; }
+    .phero__k { margin-bottom: 8px; font-size: .8rem; }
+    .crumbs { display: none; }
+    .phero__chips { display: none; }
+    .phero__art { order: 2; min-height: 0; margin-top: 2px; }
+    .job { rotate: -1deg; width: min(300px, 100%); padding: 12px 15px 14px; justify-self: start; }
+    .job__head { padding-bottom: 9px; margin-bottom: 4px; }
+    .job__head b { font-size: .9rem; }
+    .job__head small { font-size: .76rem; }
+    .job__badge { width: 36px; height: 36px; font-size: .8rem; }
+    .job__row { padding: 6px 0; gap: 9px; }
+    .job__ico { width: 28px; height: 28px; border-radius: 7px; }
+    .job__ico svg { width: 17px; height: 17px; }
+    .job__t { font-size: .84rem; }
+    .job__q { font-size: .8rem; }
+    .job__chk { width: 21px; height: 21px; }
+    .job__chk svg { width: 12px; height: 12px; }
+    .job__stamp { font-size: .85rem; padding: 6px 12px 5px; bottom: -13px; }
     .best__grid { grid-template-columns: repeat(3, 1fr); }
     .xbands { grid-template-columns: 1fr; }
     .brand { grid-template-columns: 1fr; }
