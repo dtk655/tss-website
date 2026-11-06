@@ -19,7 +19,6 @@ const blurbs = {
 };
 const tints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barriers': '#ffe1da', 'traffic-drums': '#ffe7d2', 'sign-shop': '#ffdede', lights: '#fff1c9', reflectors: '#e2edf8', 'safety-gear': '#e3f3d8', 'sign-stands': '#ebebe8', deliniators: '#ffe7d2' };
 const hero = colByHandle.get('cones');
-const heroChips = ['cones', 'barricades', 'traffic-drums', 'sign-shop', 'lights', 'safety-gear'].map((h) => colByHandle.get(h)).filter(Boolean);
 const best = ['cone28inch', 'waterbarriertss590rparent', 'traffic-drum-4-6-hi-intensity-reflective-stripes-w-tire-ring', 'type-iii-breakaway-barricade-hi-intensity-left-stripes', 'class3safetyvest'].map((h) => byHandle.get(h)).filter(Boolean);
 const count = (c) => `${c.products.length} ${c.products.length === 1 ? 'product' : 'products'}`;
 const picks = cats
@@ -40,9 +39,15 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
         <p class="phero__k">The TSS yard · South Plainfield, NJ</p>
         <h1>Everything your work zone needs.</h1>
         <p class="phero__lede">Buy it shipped nationwide, or rent it by the job in NJ, NY, PA and CT.</p>
-        <div class="phero__chips">
-          {heroChips.map((c) => <a href={`/collections/${c.handle}`}>{c.title}</a>)}
-          <a href="/collections/safety-products" class="phero__chipall">All products →</a>
+        <div class="phero__cta">
+          <a href="/collections/safety-products" class="phero__btn phero__btn--buy">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h3l2.4 11h10.2L21 7H7.2 M10 20a1 1 0 1 0 0-.01 M18 20a1 1 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+            Buy today
+          </a>
+          <a href="/pages/request-a-quote" class="phero__btn phero__btn--quote">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            Build a quote
+          </a>
         </div>
       </div>
       <div class="phero__art" aria-hidden="true">
@@ -332,11 +337,14 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
   .phero__k { color: var(--gold); font-size: .92rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 14px; }
   .phero h1 { text-wrap: balance; font-size: clamp(1.9rem, 2.9vw, 3rem); line-height: 1.02; letter-spacing: -.025em; font-variation-settings: 'wght' 780; margin: 0 0 18px; }
   .phero__lede { color: #fbd9d4; font-size: clamp(.97rem, 1.1vw, 1.08rem); line-height: 1.55; max-width: 60ch; margin: 0 0 20px; }
-  .phero__chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .phero__chips a { display: inline-block; padding: 10px 18px 9px; border: 1.5px solid rgba(255, 255, 255, .4); border-radius: 999px; color: #fff; text-decoration: none; font-variation-settings: 'wght' 640; font-size: .95rem; transition: background .15s, border-color .15s, translate .15s; }
-  .phero__chips a:hover { background: rgba(255, 255, 255, .14); border-color: #fff; translate: 0 -2px; }
-  .phero__chips .phero__chipall { background: #fff; border-color: #fff; color: var(--red); }
-  .phero__chips .phero__chipall:hover { background: var(--haze); }
+  .phero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .phero__btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 14px 26px 13px; border-radius: 10px; font-size: 1.02rem; font-variation-settings: 'wght' 680; text-decoration: none; white-space: nowrap; transition: background .15s, color .15s, border-color .15s, translate .15s, box-shadow .15s; }
+  .phero__btn svg { width: 20px; height: 20px; flex: none; }
+  .phero__btn:hover { translate: 0 -2px; }
+  .phero__btn--buy { background: #fff; color: var(--red); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .45); }
+  .phero__btn--buy:hover { background: var(--haze); }
+  .phero__btn--quote { border: 2px solid rgba(255, 255, 255, .7); color: #fff; }
+  .phero__btn--quote:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }
   .phero__art { position: relative; display: grid; place-items: center; min-height: 0; }
   .phero__glow { position: absolute; width: 135%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(245, 184, 0, .3), rgba(245, 184, 0, .07) 55%, transparent 72%); }
 
@@ -476,7 +484,8 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     .phero__lede { margin-bottom: 0; margin-inline: auto; }
     .phero__k { margin-bottom: 8px; font-size: .8rem; }
     .crumbs { display: none; }
-    .phero__chips { display: none; }
+    .phero__cta { justify-content: center; gap: 10px; margin-top: 16px; }
+    .phero__btn { flex: 1 1 0; min-height: 46px; padding: 11px 12px 10px; font-size: .95rem; }
     .phero__art { order: 2; min-height: 0; margin-top: 2px; }
     .phero__glow { width: 110%; }
     .job { rotate: 0deg; width: 100%; max-width: 420px; padding: 13px 16px 15px; justify-self: center; animation: jobbobm 6s ease-in-out infinite; }
