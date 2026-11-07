@@ -63,7 +63,7 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
       <article class="lg__t lg__t--cert" tabindex="0" data-t style="--d:1">
         <div class="lg__front">
           <p class="lg__eyebrow">Certified</p>
-          <p class="lg__cert-h"><b>6</b> certifications on every crew</p>
+          <p class="lg__cert-h">Certified to work <b>where others can’t.</b></p>
           <ul class="lg__logos">{certs.map(([t, src]) => <li><img src={src} alt={t} width="48" height="48" loading="lazy" /></li>)}</ul>
         </div>
         <div class="lg__more">
@@ -152,7 +152,7 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
   .lg__marquee img { width: 34px; height: 34px; border-radius: 9px; background: #fff; object-fit: contain; padding: 2px; box-sizing: border-box; }
 
   /* cert tile */
-  .lg__cert-h { margin: 10px 0 auto; font-size: clamp(1.3rem, 2vw, 1.75rem); line-height: 1.12; letter-spacing: -.02em; font-variation-settings: 'wght' 760; max-width: 16ch; }
+  .lg__cert-h { margin: 10px 0 auto; font-size: clamp(1.3rem, 2vw, 1.75rem); line-height: 1.12; letter-spacing: -.02em; font-variation-settings: 'wght' 760; max-width: 18ch; }
   .lg__cert-h b { color: var(--red); }
   .lg__logos { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
   .lg__logos li { aspect-ratio: 1; max-width: 64px; border-radius: 14px; border: 1px solid var(--line); background: #fff; display: grid; place-items: center; overflow: hidden; opacity: 0; transform: scale(.6); transition: opacity .4s, transform .5s cubic-bezier(.2,.8,.2,1.5); }
