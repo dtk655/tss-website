@@ -3,8 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import TmaTruck from '../../components/TmaTruck.astro';
 import CoverageMap from '../../components/CoverageMap.astro';
 import FreePlanBand from '../../components/FreePlanBand.astro';
-import JobsShowcase from '../../components/JobsShowcase.astro';
-import CredProof from '../../components/CredProof.astro';
+import LaneAtAGlance from '../../components/LaneAtAGlance.astro';
 import { PHONE, PHONE_TEL, YEARS } from '../../lib/config.js';
 
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
@@ -64,12 +63,11 @@ const agencies = [
         <p class="lch__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
       </div>
 
-      <JobsShowcase />
     </div>
 
   </section>
 
-  <CredProof />
+  <LaneAtAGlance />
 
   <FreePlanBand />
 
@@ -88,9 +86,9 @@ const agencies = [
   .lch::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/fleet/lc-hero.webp') 60% 46% / cover no-repeat; transform: scale(1.06); animation: lchZoom 18s ease-out forwards; }
   .lch::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(122,4,4,.92) 0%, rgba(140,5,5,.78) 32%, rgba(90,4,4,.35) 55%, rgba(12,12,14,.12) 78%), linear-gradient(0deg, rgba(10,10,12,.5), transparent 45%); }
   @keyframes lchZoom { to { transform: scale(1); } }
-  .lch__in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(28px, 4vw, 64px); padding-block: clamp(36px, 4.6vw, 68px); }
+  .lch__in { position: relative; display: grid; grid-template-columns: minmax(0, 720px); align-items: center; min-height: clamp(420px, 44vw, 600px); padding-block: clamp(40px, 5vw, 76px); }
   .lch__k { color: var(--gold); font-size: clamp(.92rem, 1.05vw, 1.05rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 12px; }
-  .lch h1 { font-size: clamp(2.2rem, 4vw, 4rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; margin: 0 0 16px; text-wrap: balance; color: #fff; }
+  .lch h1 { font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; margin: 0 0 16px; text-wrap: balance; color: #fff; }
   .lch__lede { color: #fde0db; font-size: clamp(1.05rem, 1.35vw, 1.24rem); line-height: 1.5; max-width: 46ch; margin: 0 0 26px; text-wrap: balance; }
 
   .lch__ways { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 700px; }
