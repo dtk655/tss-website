@@ -1,23 +1,6 @@
 ---
 // "At a glance" bento: one bold fact per tile; hover (desktop) or tap (touch) reveals the detail.
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
-const certs = [
-  ['OSHA Trained & Certified', 'Untitled_design_14.png'],
-  ['ATSSA Flagger Certified', 'Untitled_design_18.png'],
-  ['Rutgers-Certified TCCs', 'Untitled_design_16.png'],
-  ['S.W.A.C. Clearance', 'Untitled_design_15.png'],
-  ['MUTCD Compliant', 'Untitled_design_17.png'],
-  ['MASH Tested Equipment', 'Untitled_design_22.png']
-].map(([t, f]) => [t, CDN + f]);
-const roads = [
-  ['Garden State Parkway', 'Untitled_design_23.png'],
-  ['New Jersey Turnpike', 'Untitled_design_26.png'],
-  ['NJDOT highways', 'Untitled_design_27.png'],
-  ['George Washington Bridge', 'Untitled_design_28.png'],
-  ['NYS Thruway', 'Untitled_design_24.png'],
-  ['NYSDOT highways', 'Untitled_design_29.png'],
-  ['PennDOT roads', 'Untitled_design_30.png']
-].map(([t, f]) => [t, CDN + f]);
 const I: Record<string, string> = {
   cone: '<path d="M9.5 4h5l3.6 14H5.9z"/><path d="M8.4 9.5h7.2M7.2 14h9.6"/><path d="M3.5 20.5h17"/>',
   flag: '<path d="M8.5 3.5h7l5 5v7l-5 5h-7l-5-5v-7z"/><path d="M8 12h8"/>',
@@ -40,39 +23,15 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
   <div class="wrap">
     <div class="lg__head">
       <div>
-        <p class="lg__kicker">Lane closures at a glance</p>
-        <h2>What we do, and why crews trust us to do it.</h2>
+        <p class="lg__kicker">What our crews handle</p>
+        <h2>Every kind of closure. One call.</h2>
       </div>
       <p class="lg__hint"><span class="lg__hint-d">Hover any tile for the details</span><span class="lg__hint-m">Tap any tile for the details</span></p>
     </div>
 
     <div class="lg__grid">
-      <!-- experience -->
-      <article class="lg__t lg__t--exp" tabindex="0" data-t style="--d:0">
-        <div class="lg__front">
-          <p class="lg__eyebrow">Experienced</p>
-          <p class="lg__big"><b data-lg-count="25000">25,000</b><span>+</span></p>
-          <p class="lg__sub">closures on the region's busiest roads</p>
-          <div class="lg__marquee" aria-label="Roads our crews work">
-            <ul>{[...roads, ...roads].map(([t, src], i) => <li aria-hidden={i >= roads.length ? 'true' : undefined}><img src={src} alt="" width="34" height="34" loading="lazy" /><span>{t}</span></li>)}</ul>
-          </div>
-        </div>
-      </article>
-
-      <!-- certifications -->
-      <article class="lg__t lg__t--cert" tabindex="0" data-t style="--d:1">
-        <div class="lg__front">
-          <p class="lg__eyebrow">Certified</p>
-          <p class="lg__cert-h">Certified to work <b>where others can’t.</b></p>
-          <ul class="lg__logos">{certs.map(([t, src]) => <li><img src={src} alt={t} width="48" height="48" loading="lazy" /></li>)}</ul>
-        </div>
-        <div class="lg__more">
-          <ul class="lg__list lg__list--2">{certs.map(([t]) => <li><i set:html={CHK} />{t}</li>)}</ul>
-        </div>
-      </article>
-
       {services.map((s, i) => (
-        <article class="lg__t lg__t--svc" tabindex="0" data-t style={`--d:${i + 2}`}>
+        <article class="lg__t lg__t--svc" tabindex="0" data-t style={`--d:${i}`}>
           <div class="lg__front">
             <span class="lg__ic" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={I[s.ic]} /></span>
             <h3>{s.t}</h3>
@@ -101,11 +60,7 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
   .lg__hint-m { display: none; }
   @media (hover: none) { .lg__hint-d { display: none; } .lg__hint-m { display: inline; } }
 
-  .lg__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-areas: "exp exp cert cert" "exp exp s0 s1" "s2 s3 s4 s5"; gap: 14px; }
-  .lg__t--exp { grid-area: exp; }
-  .lg__t--cert { grid-area: cert; }
-  .lg__t--svc:nth-child(3) { grid-area: s0; } .lg__t--svc:nth-child(4) { grid-area: s1; } .lg__t--svc:nth-child(5) { grid-area: s2; }
-  .lg__t--svc:nth-child(6) { grid-area: s3; } .lg__t--svc:nth-child(7) { grid-area: s4; } .lg__t--svc:nth-child(8) { grid-area: s5; }
+  .lg__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 
   .lg__t { position: relative; overflow: hidden; border-radius: 22px; background: #fff; border: 1px solid var(--line); min-height: 196px; outline: none; cursor: pointer; opacity: 0; transform: translateY(22px); transition: opacity .6s, transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s; transition-delay: calc(var(--d) * 70ms); }
   .lg.is-in .lg__t { opacity: 1; transform: none; }
@@ -135,43 +90,18 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
   .lg__t:hover .lg__ic, .lg__t.is-open .lg__ic { transform: rotate(-8deg) scale(1.06); background: var(--red); color: #fff; }
   .lg__t.is-open .lg__plus { transform: rotate(45deg); }
 
-  /* experience tile */
-  .lg__t--exp { background: radial-gradient(70% 60% at 100% 0%, rgba(182,6,6,.4), transparent 70%), linear-gradient(160deg, #23292f, #121417); border-color: transparent; color: #fff; cursor: default; }
-  .lg__t--exp::before { content: ''; position: absolute; inset: 0; background: url('/fleet/lc-hero-m.webp') center / cover; opacity: .16; mix-blend-mode: luminosity; }
-  .lg__eyebrow { margin: 0; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 760; color: var(--red); }
-  .lg__t--exp .lg__eyebrow { color: var(--gold); }
-  .lg__big { margin: auto 0 0; display: flex; align-items: flex-start; line-height: .9; }
-  .lg__big b { font-size: clamp(4rem, 8.4vw, 8.2rem); letter-spacing: -.05em; font-variation-settings: 'wght' 840; font-variant-numeric: tabular-nums; }
-  .lg__big span { font-size: clamp(2.2rem, 4vw, 4rem); font-variation-settings: 'wght' 800; color: var(--gold); margin-left: 4px; }
-  .lg__sub { margin: 12px 0 0; font-size: clamp(1rem, 1.3vw, 1.2rem); color: #d0d6dc; }
-  .lg__marquee { margin: 22px -22px -22px; padding: 14px 0; border-top: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.25); overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-  .lg__marquee ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 26px; width: max-content; animation: lgRoll 34s linear infinite; }
-  .lg__t--exp:hover .lg__marquee ul { animation-play-state: paused; }
-  @keyframes lgRoll { to { transform: translateX(-50%); } }
-  .lg__marquee li { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; font-size: .92rem; font-variation-settings: 'wght' 640; color: #e6eaee; }
-  .lg__marquee img { width: 34px; height: 34px; border-radius: 9px; background: #fff; object-fit: contain; padding: 2px; box-sizing: border-box; }
 
   /* cert tile */
-  .lg__cert-h { margin: 10px 0 auto; font-size: clamp(1.3rem, 2vw, 1.75rem); line-height: 1.12; letter-spacing: -.02em; font-variation-settings: 'wght' 760; max-width: 18ch; }
-  .lg__cert-h b { color: var(--red); }
-  .lg__logos { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
-  .lg__logos li { aspect-ratio: 1; max-width: 64px; border-radius: 14px; border: 1px solid var(--line); background: #fff; display: grid; place-items: center; overflow: hidden; opacity: 0; transform: scale(.6); transition: opacity .4s, transform .5s cubic-bezier(.2,.8,.2,1.5); }
-  .lg.is-in .lg__logos li { opacity: 1; transform: none; }
-  .lg__logos li:nth-child(1) { transition-delay: .5s; } .lg__logos li:nth-child(2) { transition-delay: .6s; } .lg__logos li:nth-child(3) { transition-delay: .7s; } .lg__logos li:nth-child(4) { transition-delay: .8s; } .lg__logos li:nth-child(5) { transition-delay: .9s; } .lg__logos li:nth-child(6) { transition-delay: 1s; }
-  .lg__logos img { width: 100%; height: 100%; object-fit: contain; }
 
   @media (max-width: 1100px) {
-    .lg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "exp exp" "cert cert" "s0 s1" "s2 s3" "s4 s5"; }
+    .lg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 640px) {
-    .lg__cert-h { max-width: none; white-space: nowrap; font-size: min(1.3rem, 4.15vw); letter-spacing: -.025em; }
     .lg__head { display: block; }
     .lg__hint { margin-top: 14px; }
-    .lg__grid { grid-template-columns: 1fr; grid-template-areas: "exp" "cert" "s0" "s1" "s2" "s3" "s4" "s5"; gap: 10px; }
+    .lg__grid { grid-template-columns: 1fr; gap: 10px; }
     .lg__t { min-height: 0; border-radius: 18px; }
     .lg__front { padding: 16px; height: auto; }
-    .lg__big { margin-top: 18px; }
-    .lg__marquee { margin: 18px -16px -16px; }
     .lg__t--svc .lg__front { display: grid; grid-template-columns: 44px 1fr 26px; grid-template-rows: auto auto; column-gap: 12px; align-items: center; padding: 13px 14px; }
     .lg__t--svc .lg__ic { grid-row: 1 / 3; width: 44px; height: 44px; border-radius: 13px; }
     .lg__ic svg { width: 23px; height: 23px; }
@@ -188,8 +118,7 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
   }
   @keyframes lgDrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .lg__t, .lg__logos li { opacity: 1; transform: none; transition: none; }
-    .lg__marquee ul { animation: none; }
+    .lg__t { opacity: 1; transform: none; transition: none; }
   }
 </style>
 
@@ -213,18 +142,8 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
       if (t && (e.key === 'Enter' || e.key === ' ') && e.target === t) { e.preventDefault(); t.click(); }
       if (e.key === 'Escape') tiles.forEach((x) => x.classList.remove('is-open'));
     });
-    const count = root.querySelector<HTMLElement>('[data-lg-count]')!;
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { root.classList.add('is-in'); return; }
-    count.textContent = '0';
-    const io = new IntersectionObserver(([en]) => {
-      if (!en.isIntersecting) return;
-      io.disconnect();
-      root.classList.add('is-in');
-      const t0 = performance.now(), D = 1800, to = 25000;
-      const tick = (now: number) => { const p = Math.min(1, (now - t0) / D); count.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))).toLocaleString('en-US'); if (p < 1) requestAnimationFrame(tick); };
-      setTimeout(() => requestAnimationFrame(tick), 250);
-    }, { threshold: 0.15 });
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { root.classList.add('is-in'); return; }
+    const io = new IntersectionObserver(([en]) => { if (!en.isIntersecting) return; io.disconnect(); root.classList.add('is-in'); }, { threshold: 0.15 });
     io.observe(root);
   });
 </script>
