@@ -42,7 +42,7 @@ const agencies = [
   ['PennDOT', 'Untitled_design_30.png']
 ].map(([t, f]) => [t, CDN + f]);
 ---
-<Layout title="Lane closure services" description={`MUTCD-compliant lane closures with certified, experienced crews and ATSSA-certified flaggers in NJ, NY, PA, CT and DE. 25,000+ closures since ${2026 - YEARS}. Free closure plans and quotes.`} image={photos.job}>
+<Layout title="Lane closure services" description={`MUTCD-compliant lane closures with certified, experienced crews and ATSSA-certified flaggers in NJ, NY, PA, CT and DE. 25,000+ closures since ${2026 - YEARS}. Free closure plans and quotes.`} image="/fleet/lc-hero.jpg">
   <section class="lch">
     <div class="wrap lch__in">
       <div class="lch__copy">
@@ -84,8 +84,10 @@ const agencies = [
 
 <style>
   /* ================= HERO ================= */
-  .lch { position: relative; color: #fff; overflow: hidden; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); }
-  .lch::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,.035) 0 18px, transparent 18px 36px); pointer-events: none; }
+  .lch { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
+  .lch::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/fleet/lc-hero.webp') 60% 46% / cover no-repeat; transform: scale(1.06); animation: lchZoom 18s ease-out forwards; }
+  .lch::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(122,4,4,.92) 0%, rgba(140,5,5,.78) 32%, rgba(90,4,4,.35) 55%, rgba(12,12,14,.12) 78%), linear-gradient(0deg, rgba(10,10,12,.5), transparent 45%); }
+  @keyframes lchZoom { to { transform: scale(1); } }
   .lch__in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(28px, 4vw, 64px); padding-block: clamp(36px, 4.6vw, 68px); }
   .lch__k { color: var(--gold); font-size: clamp(.92rem, 1.05vw, 1.05rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 12px; }
   .lch h1 { font-size: clamp(2.2rem, 4vw, 4rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; margin: 0 0 16px; text-wrap: balance; color: #fff; }
@@ -134,5 +136,8 @@ const agencies = [
   
 
 
+  @media (max-width: 1100px) { .lch::after { background: linear-gradient(180deg, rgba(120,4,4,.88) 0%, rgba(120,4,4,.7) 40%, rgba(20,10,10,.35) 100%); } }
+  @media (max-width: 640px) { .lch::before { background-image: url('/fleet/lc-hero-m.webp'); } }
+  @media (prefers-reduced-motion: reduce) { .lch::before { animation: none; transform: none; } }
   @media (max-width: 640px) { .lch :global(.jb) { order: 3; margin-top: 10px !important; } }
 </style>
