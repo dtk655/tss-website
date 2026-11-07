@@ -41,43 +41,28 @@ const roads = [
         </ul>
       </article>
 
-      <article class="cp__panel cp__panel--exp" data-rw>
+      <article class="cp__panel cp__panel--exp">
         <p class="cp__label"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20L9 4M20 20L15 4M12 6v2M12 11v2M12 16v3" /></svg></i>Experienced</p>
         <h3 class="rw__h">The roads our crews work.</h3>
-        <div class="rw">
-          <svg class="rw__road" viewBox="0 0 600 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-            <defs>
-              <linearGradient id="rwSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2228" /><stop offset="1" stop-color="#2c333a" /></linearGradient>
-              <linearGradient id="rwRoad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4047" /><stop offset="1" stop-color="#23282d" /></linearGradient>
-              <linearGradient id="rwFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2228" /><stop offset=".35" stop-color="#1c2228" stop-opacity="0" /></linearGradient>
-            </defs>
-            <rect width="600" height="260" fill="url(#rwSky)" />
-            <path d="M286 92 L314 92 L620 260 L-20 260 Z" fill="url(#rwRoad)" />
-            <path d="M286 92 L-20 260 M314 92 L620 260" stroke="#e8ecef" stroke-width="3" />
-            <path class="rw__dash" d="M295 92 L170 260" stroke="#fff" stroke-width="4" stroke-dasharray="14 18" />
-            <path class="rw__dash" d="M305 92 L430 260" stroke="#fff" stroke-width="4" stroke-dasharray="14 18" />
-            <g class="rw__cones">
-              <circle cx="470" cy="236" r="5" fill="#ff6a00" /><circle cx="440" cy="203" r="4" fill="#ff6a00" /><circle cx="414" cy="176" r="3.3" fill="#ff6a00" /><circle cx="394" cy="154" r="2.7" fill="#ff6a00" /><circle cx="378" cy="137" r="2.2" fill="#ff6a00" /><circle cx="366" cy="124" r="1.8" fill="#ff6a00" />
-            </g>
-            <rect width="600" height="260" fill="url(#rwFade)" />
-            <rect x="96" y="20" width="9" height="240" fill="#5b6670" /><rect x="495" y="20" width="9" height="240" fill="#5b6670" />
-            <rect x="90" y="26" width="420" height="6" fill="#7b8590" /><rect x="90" y="40" width="420" height="4" fill="#7b8590" />
-          </svg>
-          <div class="rw__sign" aria-live="polite">
+        <div class="rx" data-rx>
+          <div class="rx__feature" aria-live="polite">
             {roads.map(([n, a, src], i) => (
-              <div class:list={['rw__face', i === 0 && 'is-on']} data-face={i}>
-                <span class="rw__logo"><img src={src} alt="" width="56" height="56" loading="lazy" /></span>
-                <span class="rw__txt"><b>{n}</b><small>{a}</small></span>
+              <div class:list={['rx__slide', i === 0 && 'is-on']} data-slide={i}>
+                <span class="rx__logo"><img src={src} alt="" width="76" height="76" loading="lazy" /></span>
+                <div class="rx__text">
+                  <p class="rx__name">{n.split(' ').map((w, k) => <span class="rx__w" style={`--k:${k}`}><span>{w}</span></span>)}</p>
+                  <p class="rx__agency">{a}</p>
+                </div>
               </div>
             ))}
-            <span class="rw__tab"><span data-rw-n>1</span> / {roads.length}</span>
           </div>
+          <div class="rx__bar"><i data-rx-bar></i></div>
+          <ol class="rx__index">
+            {roads.map(([n], i) => (
+              <li><button type="button" class:list={['rx__row', i === 0 && 'is-on']} data-row={i}><span class="rx__n">{String(i + 1).padStart(2, '0')}</span><span class="rx__rn">{n}</span></button></li>
+            ))}
+          </ol>
         </div>
-        <ul class="rw__list">
-          {roads.map(([n, , src], i) => (
-            <li><button type="button" class:list={['rw__chip', i === 0 && 'is-on']} data-chip={i}><img src={src} alt="" width="28" height="28" loading="lazy" /><span>{n}</span><i aria-hidden="true"></i></button></li>
-          ))}
-        </ul>
       </article>
     </div>
   </div>
@@ -98,7 +83,7 @@ const roads = [
   .cp__panel--exp { transition-delay: .15s; }
   .cp.is-in .cp__panel { opacity: 1; transform: none; }
   .cp__panel--cert { background: #fff; border: 1px solid var(--line); box-shadow: 0 30px 60px -44px rgba(20,23,26,.5); }
-  .cp__panel--exp { background: radial-gradient(120% 140% at 100% 0%, #2a3036 0%, #14171a 60%); color: #fff; }
+  .cp__panel--exp { background: radial-gradient(60% 55% at 100% 0%, rgba(182,6,6,.32), transparent 70%), radial-gradient(120% 140% at 100% 0%, #2a3036 0%, #14171a 60%); color: #fff; }
   .cp__panel--exp::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,.025) 0 16px, transparent 16px 32px); pointer-events: none; }
   .cp__label { position: relative; display: inline-flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; font-variation-settings: 'wght' 760; color: var(--red); }
   .cp__panel--exp .cp__label { color: var(--gold); }
@@ -126,48 +111,48 @@ const roads = [
   @keyframes cpStamp { from { transform: scale(.5); } to { transform: none; } }
 
 
-  /* experienced: roadway sign gantry */
+  /* experienced: roadway showcase */
   .cp__panel--exp { display: flex; flex-direction: column; }
-  .rw__h { position: relative; margin: 0 0 18px; font-size: clamp(1.6rem, 2.6vw, 2.3rem); line-height: 1.1; letter-spacing: -.02em; color: #fff; }
-  .rw { position: relative; flex: 1; min-height: 300px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); }
-  .rw__road { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .rw__dash { stroke-dashoffset: 0; animation: rwDrive .9s linear infinite; }
-  @keyframes rwDrive { to { stroke-dashoffset: -32; } }
-  .rw.is-boost .rw__dash { animation-duration: .35s; }
-  .rw__cones { animation: rwCones 1.8s ease-in-out infinite; }
-  @keyframes rwCones { 50% { opacity: .55; } }
-  .rw__sign { position: absolute; left: 50%; top: 9%; width: min(80%, 460px); transform: translateX(-50%); aspect-ratio: 440 / 130; border-radius: 12px; background: #0b6b3a; box-shadow: inset 0 0 0 3px #0b6b3a, inset 0 0 0 5px #fff, 0 18px 30px -12px rgba(0,0,0,.6); overflow: hidden; }
-  .rw__sign::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.22) 48%, transparent 62%); transform: translateX(-120%); pointer-events: none; }
-  .rw.is-flip .rw__sign::after { animation: rwSheen .8s ease; }
-  @keyframes rwSheen { to { transform: translateX(120%); } }
-  .rw__face { position: absolute; inset: 0; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4%; padding: 0 6% 0 5%; color: #fff; opacity: 0; transform: translateY(70%); transition: opacity .45s, transform .55s cubic-bezier(.2,.8,.2,1); }
-  .rw__face.is-on { opacity: 1; transform: none; }
-  .rw__face.is-out { opacity: 0; transform: translateY(-70%); }
-  .rw__logo { width: clamp(42px, 5vw, 64px); aspect-ratio: 1; border-radius: 12px; background: #fff; display: grid; place-items: center; overflow: hidden; padding: 3px; box-sizing: border-box; }
-  .rw__logo img { width: 100%; height: 100%; object-fit: contain; }
-  .rw__txt { min-width: 0; }
-  .rw__txt b { display: block; font-size: clamp(1rem, 1.75vw, 1.55rem); line-height: 1.08; letter-spacing: .005em; font-variation-settings: 'wght' 760; text-wrap: balance; }
-  .rw__txt small { display: block; margin-top: 4px; font-size: clamp(.72rem, .95vw, .86rem); color: rgba(255,255,255,.8); letter-spacing: .04em; text-transform: uppercase; font-variation-settings: 'wght' 640; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rw__tab { position: absolute; right: 10px; top: 8px; padding: 2px 8px 1px; border-radius: 5px; background: var(--gold); color: var(--ink); font-size: .68rem; font-variation-settings: 'wght' 800; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+  .rw__h { position: relative; margin: 0 0 26px; font-size: clamp(1.6rem, 2.6vw, 2.3rem); line-height: 1.1; letter-spacing: -.02em; color: #fff; }
+  .rx { position: relative; display: flex; flex-direction: column; flex: 1; }
+  .rx__feature { position: relative; display: grid; min-height: 132px; }
+  .rx__slide { grid-area: 1 / 1; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 20px; pointer-events: none; }
+  .rx__logo { width: 84px; height: 84px; border-radius: 20px; background: #fff; display: grid; place-items: center; padding: 6px; box-sizing: border-box; box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 20px 40px -18px rgba(0,0,0,.8); opacity: 0; transform: scale(.85) rotate(-6deg); transition: opacity .4s, transform .6s cubic-bezier(.2,.8,.2,1.3); }
+  .rx__logo img { width: 100%; height: 100%; object-fit: contain; }
+  .rx__slide.is-on .rx__logo { opacity: 1; transform: none; transition-delay: .1s; }
+  .rx__text { min-width: 0; }
+  .rx__name { margin: 0; font-size: clamp(1.9rem, 3.3vw, 3.1rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 800; color: #fff; }
+  .rx__w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-right: .22em; }
+  .rx__w > span { display: inline-block; transform: translateY(105%); transition: transform .65s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--k) * 70ms); }
+  .rx__slide.is-on .rx__w > span { transform: none; transition-delay: calc(.12s + var(--k) * 70ms); }
+  .rx__slide.is-out .rx__w > span { transform: translateY(-105%); transition-duration: .45s; transition-delay: calc(var(--k) * 40ms); }
+  .rx__agency { margin: 10px 0 0; font-size: .82rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; color: var(--gold); opacity: 0; transform: translateY(6px); transition: opacity .4s, transform .4s; }
+  .rx__slide.is-on .rx__agency { opacity: 1; transform: none; transition-delay: .4s; }
 
-  .rw__list { position: relative; list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-  .rw__chip { all: unset; box-sizing: border-box; position: relative; overflow: hidden; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #c5ccd3; font-size: .82rem; font-variation-settings: 'wght' 620; transition: background .3s, color .3s, border-color .3s; }
-  .rw__chip img { width: 26px; height: 26px; border-radius: 50%; background: #fff; object-fit: contain; }
-  .rw__chip:hover { color: #fff; border-color: rgba(255,255,255,.3); }
-  .rw__chip:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .rw__chip.is-on { background: #0b6b3a; border-color: #2a9a5f; color: #fff; }
-  .rw__chip i { position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--gold); }
-  .rw__chip.is-on i { animation: rwBar var(--rw-t, 2600ms) linear forwards; }
-  [data-rw].is-paused .rw__chip.is-on i { animation: none; width: 100%; }
-  @keyframes rwBar { to { width: 100%; } }
+  .rx__bar { position: relative; height: 2px; margin: 26px 0 8px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+  .rx__bar i { position: absolute; inset: 0; width: 0; background: linear-gradient(90deg, var(--red), var(--gold)); }
+  .rx__bar i.is-run { animation: rxBar var(--rx-t, 3200ms) linear forwards; }
+  @keyframes rxBar { to { width: 100%; } }
+
+  .rx__index { list-style: none; margin: auto 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  .rx__row { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: 30px 1fr; align-items: baseline; gap: 6px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.08); color: #7f8892; font-size: .92rem; font-variation-settings: 'wght' 600; transition: color .3s; }
+  .rx__row:hover { color: #d7dce1; }
+  .rx__row:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+  .rx__n { font-size: .74rem; font-variant-numeric: tabular-nums; letter-spacing: .04em; transition: color .3s; }
+  .rx__rn { position: relative; }
+  .rx__row.is-on { color: #fff; }
+  .rx__row.is-on .rx__n { color: var(--gold); }
+
   @media (max-width: 640px) {
-    .rw { min-height: 230px; }
-    .rw__sign { width: 88%; top: 8%; }
-    .rw__list { gap: 6px; }
-    .rw__chip { font-size: .74rem; padding: 4px 10px 4px 4px; }
-    .rw__chip img { width: 22px; height: 22px; }
+    .rx__feature { min-height: 112px; }
+    .rx__slide { gap: 14px; }
+    .rx__logo { width: 62px; height: 62px; border-radius: 16px; }
+    .rx__name { font-size: 1.75rem; }
+    .rx__agency { font-size: .72rem; }
+    .rx__index { grid-template-columns: 1fr; }
+    .rx__row { padding: 9px 0; font-size: .86rem; }
   }
-  @media (prefers-reduced-motion: reduce) { .rw__dash, .rw__cones { animation: none; } .rw__face { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .rx__w > span, .rx__logo, .rx__agency { transition: none !important; } }
   @media (max-width: 1100px) { .cp__grid { grid-template-columns: 1fr; } }
   @media (max-width: 640px) {
     .cp__kicker { font-size: .72rem; letter-spacing: .08em; }
@@ -205,35 +190,35 @@ const roads = [
     }, { threshold: 0.2 });
     io.observe(root);
   });
-  document.querySelectorAll<HTMLElement>('[data-rw]').forEach((panel) => {
-    const rw = panel.querySelector<HTMLElement>('.rw')!;
-    const faces = [...panel.querySelectorAll<HTMLElement>('[data-face]')];
-    const chips = [...panel.querySelectorAll<HTMLElement>('[data-chip]')];
-    const num = panel.querySelector<HTMLElement>('[data-rw-n]')!;
-    const T = 2600;
-    panel.style.setProperty('--rw-t', T + 'ms');
-    let i = 0, timer = 0, resume = 0;
-    const show = (n: number) => {
-      if (n === i) return;
-      faces[i].classList.remove('is-on'); faces[i].classList.add('is-out');
-      const old = faces[i];
-      setTimeout(() => old.classList.remove('is-out'), 600);
-      i = n;
-      faces[i].classList.add('is-on');
-      chips.forEach((c, k) => c.classList.toggle('is-on', k === i));
-      num.textContent = String(i + 1);
-      rw.classList.remove('is-flip', 'is-boost'); void rw.offsetWidth; rw.classList.add('is-flip', 'is-boost');
-      setTimeout(() => rw.classList.remove('is-boost'), 700);
+  document.querySelectorAll<HTMLElement>('[data-rx]').forEach((rx) => {
+    const slides = [...rx.querySelectorAll<HTMLElement>('[data-slide]')];
+    const rows = [...rx.querySelectorAll<HTMLElement>('[data-row]')];
+    const bar = rx.querySelector<HTMLElement>('[data-rx-bar]')!;
+    const T = 3200;
+    rx.style.setProperty('--rx-t', T + 'ms');
+    let i = 0, timer = 0, resume = 0, running = false;
+    const restartBar = (run: boolean) => { bar.classList.remove('is-run'); void bar.offsetWidth; if (run) bar.classList.add('is-run'); else bar.style.width = '100%'; };
+    const show = (n: number, run = true) => {
+      if (n !== i) {
+        const old = slides[i];
+        old.classList.remove('is-on'); old.classList.add('is-out');
+        setTimeout(() => old.classList.remove('is-out'), 700);
+        i = n;
+        slides[i].classList.add('is-on');
+        rows.forEach((r, k) => r.classList.toggle('is-on', k === i));
+      }
+      bar.style.width = '';
+      restartBar(run);
     };
-    const start = () => { if (!timer) timer = window.setInterval(() => show((i + 1) % faces.length), T); };
-    const stop = () => { clearInterval(timer); timer = 0; };
-    panel.addEventListener('click', (e) => {
-      const c = (e.target as Element).closest<HTMLElement>('[data-chip]');
-      if (!c) return;
-      stop(); panel.classList.add('is-paused'); show(Number(c.dataset.chip));
-      clearTimeout(resume); resume = window.setTimeout(() => { panel.classList.remove('is-paused'); start(); }, 9000);
+    const start = () => { if (running) return; running = true; restartBar(true); timer = window.setInterval(() => show((i + 1) % slides.length), T); };
+    const stop = () => { running = false; clearInterval(timer); timer = 0; };
+    rx.addEventListener('click', (e) => {
+      const r = (e.target as Element).closest<HTMLElement>('[data-row]');
+      if (!r) return;
+      stop(); show(Number(r.dataset.row), false);
+      clearTimeout(resume); resume = window.setTimeout(start, 9000);
     });
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    new IntersectionObserver(([en]) => { en.isIntersecting && !panel.classList.contains('is-paused') ? start() : stop(); }, { threshold: 0.3 }).observe(panel);
+    new IntersectionObserver(([en]) => { en.isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(rx);
   });
 </script>
