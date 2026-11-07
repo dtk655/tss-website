@@ -1,0 +1,129 @@
+---
+// Homepage header: three photo "doors" for TSS's three businesses. Hover (desktop) widens one; phones stack them.
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const doors = [
+  {
+    k: '01', t: 'Products', h: 'Cones, barriers, signs and drums.', d: 'Traffic control gear in stock and shipped nationwide.',
+    items: ['Traffic cones', 'WATERCADE barriers', 'Barricades', 'Signs and stands'],
+    img: CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg', pos: '50% 50%',
+    href: '/collections', cta: 'Shop products'
+  },
+  {
+    k: '02', t: 'Rentals', h: 'TMAs, message boards and more.', d: 'Delivered from our yard across NJ, NY, PA and CT.',
+    items: ['TMA crash trucks', 'VMS message boards', 'Arrow boards', 'Light towers'],
+    img: '/fleet/tma-rear-2.jpg', pos: '55% 45%',
+    href: '/collections/equipment-rentals', cta: 'See rentals'
+  },
+  {
+    k: '03', t: 'Lane closures', h: 'Certified, experienced crews.', d: 'MUTCD closures across NJ, NY, PA, CT and DE.',
+    items: ['Lane and road closures', 'Flagging operations', 'TMA protection', 'Night and weekend work'],
+    img: '/fleet/lc-hero.webp', pos: '62% 45%',
+    href: '/pages/lane-closure', cta: 'Book a crew'
+  }
+];
+---
+<section class="hd" data-hd>
+  <div class="hd__top wrap">
+    <div>
+      <p class="hd__k">Traffic Safety Service · Since 1971</p>
+      <h1>Everything your work zone needs.</h1>
+    </div>
+    <div class="hd__ctas">
+      <a href="/pages/request-a-quote" class="hd__btn hd__btn--solid">Build a quote</a>
+      <a href="tel:+19085614800" class="hd__btn hd__btn--line">908-561-4800</a>
+    </div>
+  </div>
+  <div class="hd__doors">
+    {doors.map((x, i) => (
+      <a href={x.href} class:list={['hd__door', i === 0 && 'is-on']} data-door style={`--i:${i}`}>
+        <img src={x.img} alt="" style={`object-position:${x.pos}`} loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} />
+        <span class="hd__shade" aria-hidden="true"></span>
+        <span class="hd__body">
+          <span class="hd__num">{x.k}</span>
+          <span class="hd__t">{x.t}</span>
+          <span class="hd__more">
+            <span class="hd__h">{x.h}</span>
+            <span class="hd__d">{x.d}</span>
+            <span class="hd__chips">{x.items.map((it) => <span>{it}</span>)}</span>
+            <span class="hd__go">{x.cta}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+          </span>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .hd { position: relative; color: #fff; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); padding-bottom: clamp(16px, 2vw, 28px); overflow: hidden; }
+  .hd::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,.035) 0 18px, transparent 18px 36px); pointer-events: none; }
+  .hd__top { position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px 40px; padding-block: clamp(28px, 3.6vw, 52px) clamp(20px, 2.6vw, 32px); }
+  .hd__k { margin: 0 0 10px; color: var(--gold); font-size: clamp(.82rem, 1vw, .98rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 720; }
+  .hd h1 { margin: 0; color: #fff; font-size: clamp(2.2rem, 4.4vw, 4.2rem); line-height: 1; letter-spacing: -.035em; font-variation-settings: 'wght' 800; text-wrap: balance; }
+  .hd__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .hd__btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 14px 24px 13px; border-radius: 12px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .15s, transform .15s; }
+  .hd__btn:hover { transform: translateY(-1px); }
+  .hd__btn--solid { background: #fff; color: var(--red); box-shadow: 0 14px 30px -14px rgba(0,0,0,.5); }
+  .hd__btn--solid:hover { background: var(--haze); }
+  .hd__btn--line { border: 1.5px solid rgba(255,255,255,.6); color: #fff; }
+  .hd__btn--line:hover { background: rgba(255,255,255,.1); }
+
+  .hd__doors { position: relative; display: flex; gap: 12px; height: clamp(360px, 38vw, 540px); max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); box-sizing: border-box; }
+  .hd__door { position: relative; flex: 1 1 0; min-width: 0; overflow: hidden; border-radius: 22px; color: #fff; text-decoration: none; background: #111; transition: flex-grow .7s cubic-bezier(.2,.8,.2,1), box-shadow .4s; box-shadow: 0 30px 60px -36px rgba(0,0,0,.8); opacity: 0; transform: translateY(24px); animation: hdIn .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(.1s + var(--i) * .12s); }
+  @keyframes hdIn { to { opacity: 1; transform: none; } }
+  .hd__door.is-on { flex-grow: 2.1; }
+  .hd__door img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); transition: transform 1.4s cubic-bezier(.2,.8,.2,1), filter .6s; filter: saturate(.85) brightness(.85); }
+  .hd__door.is-on img { transform: scale(1); filter: none; }
+  .hd__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 22%, rgba(10,10,12,.55) 48%, rgba(10,10,12,.92) 100%); transition: background .5s; }
+  .hd__door:not(.is-on) .hd__shade { background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(10,10,12,.85)); }
+  .hd__body { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(18px, 2.2vw, 30px); display: grid; gap: 6px; }
+  .hd__num { font-size: .82rem; font-variation-settings: 'wght' 760; color: var(--gold); letter-spacing: .1em; }
+  .hd__t { font-size: clamp(1.6rem, 2.6vw, 2.5rem); line-height: 1; letter-spacing: -.025em; font-variation-settings: 'wght' 800; white-space: nowrap; }
+  .hd__more { display: grid; gap: 8px; max-height: 0; opacity: 0; overflow: hidden; transition: max-height .6s cubic-bezier(.2,.8,.2,1), opacity .4s, margin .4s; }
+  .hd__door.is-on .hd__more { max-height: 260px; opacity: 1; margin-top: 6px; transition-delay: .15s; }
+  .hd__h { font-size: clamp(1.05rem, 1.4vw, 1.3rem); font-variation-settings: 'wght' 700; }
+  .hd__d { font-size: .95rem; color: rgba(255,255,255,.82); }
+  .hd__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .hd__chips span { padding: 5px 11px 4px; border-radius: 999px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); backdrop-filter: blur(6px); font-size: .82rem; font-variation-settings: 'wght' 620; white-space: nowrap; }
+  .hd__go { display: inline-flex; align-items: center; gap: 8px; width: fit-content; margin-top: 8px; padding: 11px 18px; border-radius: 11px; background: #fff; color: var(--red); font-size: .95rem; font-variation-settings: 'wght' 720; }
+  .hd__go svg { width: 17px; height: 17px; transition: transform .2s; }
+  .hd__door:hover .hd__go svg { transform: translateX(3px); }
+  .hd__door:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  @media (max-width: 900px) {
+    .hd__doors { flex-direction: column; height: auto; gap: 10px; }
+    .hd__door { flex: none; height: 230px; }
+    .hd__door.is-on { flex-grow: 0; }
+    .hd__door img { transform: none; filter: none; }
+    .hd__door:not(.is-on) .hd__shade, .hd__shade { background: linear-gradient(90deg, rgba(10,10,12,.85) 0%, rgba(10,10,12,.45) 70%, rgba(10,10,12,.2)); }
+    .hd__body { top: 0; align-content: end; }
+    .hd__more { max-height: none; opacity: 1; margin-top: 4px; }
+    .hd__d, .hd__chips { display: none; }
+    .hd__go { margin-top: 6px; padding: 9px 14px; font-size: .88rem; }
+  }
+  @media (max-width: 640px) {
+    .hd__top { flex-direction: column; align-items: center; text-align: center; }
+    .hd h1 { font-size: 2.1rem; }
+    .hd__ctas { width: 100%; }
+    .hd__btn { flex: 1; }
+    .hd__door { height: 200px; border-radius: 18px; }
+    .hd__t { font-size: 1.7rem; }
+    .hd__h { font-size: .98rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hd__door, .hd__door img, .hd__more { animation: none; opacity: 1; transform: none; transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-hd]').forEach((root) => {
+    const doors = [...root.querySelectorAll<HTMLElement>('[data-door]')];
+    const wide = () => matchMedia('(min-width: 901px)').matches;
+    let i = 0, timer = 0, hovering = false;
+    const show = (n: number) => { i = n; doors.forEach((d, k) => d.classList.toggle('is-on', k === n)); };
+    doors.forEach((d, k) => {
+      d.addEventListener('mouseenter', () => { if (wide()) { hovering = true; show(k); } });
+      d.addEventListener('focus', () => show(k));
+    });
+    root.addEventListener('mouseleave', () => { hovering = false; });
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    timer = window.setInterval(() => { if (wide() && !hovering && document.visibilityState === 'visible') show((i + 1) % doors.length); }, 4200);
+  });
+</script>

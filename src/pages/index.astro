@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard.astro';
 import QuickView from '../components/QuickView.astro';
 import CategoryRails from '../components/CategoryRails.astro';
 import WatercadeBand from '../components/WatercadeBand.astro';
+import HomeDoors from '../components/HomeDoors.astro';
 import { loadCatalog, img } from '../lib/shopify.js';
 import { YEARS } from '../lib/config.js';
 
@@ -17,49 +18,7 @@ const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
 const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure on a state highway', 'Rent an arrow board for 3 days'];
 ---
 <Layout title="Traffic Safety Service: traffic control products, rentals and lane closures">
-  <!-- ============ HERO ============ -->
-  <section class="hhero">
-    <img class="hhero__photo" src={img(CDN + 'tss.jpg', 2200)} alt="" fetchpriority="high" />
-    <span class="hhero__scrim" aria-hidden="true"></span>
-    <div class="wrap hhero__in">
-      <div class="hhero__copy">
-        <p class="hhero__k">Traffic Safety Service · New Jersey</p>
-        <h1>Work zones, set up right.</h1>
-        <p class="hhero__lede">Products, rentals and certified lane closure crews. One call, one yard, since 1971.</p>
-        <div class="hhero__cta">
-          <a href="/pages/request-a-quote" class="hbtn hbtn--solid">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
-            Build a quote
-          </a>
-          <a href="/collections" class="hbtn hbtn--line">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h3l2.4 11h10.2L21 7H7.2 M10 20a1 1 0 1 0 0-.01 M18 20a1 1 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
-            Shop products
-          </a>
-        </div>
-      </div>
-
-      <nav class="svt" aria-label="What we do" data-svt>
-        <a href="/collections" class="svt__tile">
-          <span class="svt__img"><img src="/cats/cones.svg" alt="" /></span>
-          <span class="svt__txt"><b>Products</b><small>Cones, drums, barricades, signs</small></span>
-        </a>
-        <a href="/collections/equipment-rentals" class="svt__tile">
-          <span class="svt__img"><img src="/cats/hero-rentals.png" alt="" /></span>
-          <span class="svt__txt"><b>Rentals</b><small>Message boards, arrow boards, trucks</small></span>
-        </a>
-        <a href="/pages/lane-closure" class="svt__tile">
-          <span class="svt__img">
-            <svg viewBox="0 0 80 110" aria-hidden="true"><rect x="37" y="58" width="6" height="50" rx="2" fill="#5b6670"/><path d="M23 6h34l17 17v34L57 74H23L6 57V23z" fill="#c8102e" stroke="#fff" stroke-width="3"/><text x="40" y="47" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-size="19" font-weight="800" fill="#fff">STOP</text></svg>
-          </span>
-          <span class="svt__txt"><b>Lane closures</b><small>Certified flaggers, 24/7 crews</small></span>
-        </a>
-        <a href="/watercade/" class="svt__tile">
-          <span class="svt__img"><img src="/cats/water-filled-barriers.png" alt="" /></span>
-          <span class="svt__txt"><b>WATERCADE</b><small>Crash-tested water barriers</small></span>
-        </a>
-      </nav>
-    </div>
-  </section>
+  <HomeDoors />
 
 
   <!-- ============ SERVICES ============ -->
