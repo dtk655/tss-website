@@ -164,6 +164,7 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.
     .lg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "exp exp" "cert cert" "s0 s1" "s2 s3" "s4 s5"; }
   }
   @media (max-width: 640px) {
+    .lg__cert-h { max-width: none; white-space: nowrap; font-size: min(1.3rem, 4.15vw); letter-spacing: -.025em; }
     .lg__head { display: block; }
     .lg__hint { margin-top: 14px; }
     .lg__grid { grid-template-columns: 1fr; grid-template-areas: "exp" "cert" "s0" "s1" "s2" "s3" "s4" "s5"; gap: 10px; }
