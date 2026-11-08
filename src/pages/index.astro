@@ -5,6 +5,7 @@ import QuickView from '../components/QuickView.astro';
 import CategoryRails from '../components/CategoryRails.astro';
 import WatercadeBand from '../components/WatercadeBand.astro';
 import HomeDoors from '../components/HomeDoors.astro';
+import BuyOrRent from '../components/BuyOrRent.astro';
 import { loadCatalog, img } from '../lib/shopify.js';
 import { YEARS } from '../lib/config.js';
 
@@ -19,6 +20,8 @@ const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure o
 ---
 <Layout title="Traffic Safety Service: traffic control products, rentals and lane closures">
   <HomeDoors />
+
+  <BuyOrRent />
 
 
   <!-- ============ SERVICES ============ -->
