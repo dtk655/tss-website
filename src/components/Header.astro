@@ -36,7 +36,7 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
         <span class="search__coney" aria-hidden="true">
           <svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg>
         </span>
-        <input type="search" placeholder="Ask Conner anything — products, prices, quotes…" aria-label="Ask Conner or search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="search-results" />
+        <input type="search" placeholder="Ask Conner, your AI shopping assistant. Tell him what your job needs…" aria-label="Ask Conner, the AI shopping assistant, or search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="search-results" />
         <span class="search__ai" aria-hidden="true">AI</span>
         <button type="button" class="search__btn" data-ask-send aria-label="Ask Conner">
           <svg viewBox="0 0 24 24"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -65,7 +65,7 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
         <span class="search__coney" aria-hidden="true">
           <svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg>
         </span>
-        <input type="search" placeholder="Ask Conner or search products…" aria-label="Ask Conner or search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="msearch-results" />
+        <input type="search" placeholder="Ask Conner, your AI assistant…" aria-label="Ask Conner, the AI shopping assistant, or search products" autocomplete="off" spellcheck="false" data-search-input role="combobox" aria-expanded="false" aria-controls="msearch-results" />
         <button type="button" class="search__btn" data-ask-send aria-label="Ask Conner">
           <svg viewBox="0 0 24 24"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
         </button>
@@ -178,6 +178,20 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   </div>
 </header>
 <script>
+  // Fit the AI search placeholder to the bar: longest line that fits wins.
+  {
+    const lines = ['Ask Conner, your AI shopping assistant. Tell him what your job needs…', 'Ask Conner, your AI shopping assistant…', 'Ask Conner, your AI assistant…', 'Ask Conner (AI assistant)…', 'Ask Conner (AI)…'];
+    const ctx = document.createElement('canvas').getContext('2d');
+    const fit = () => document.querySelectorAll<HTMLInputElement>('[data-search-input]').forEach((i) => {
+      if (!i.offsetParent || !ctx) return;
+      const s = getComputedStyle(i);
+      ctx.font = `${s.fontWeight} ${s.fontSize} ${s.fontFamily}`;
+      const room = i.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight) - 4;
+      i.placeholder = lines.find((l) => ctx.measureText(l).width <= room) || lines[lines.length - 1];
+    });
+    fit(); addEventListener('resize', fit); document.fonts?.ready.then(fit);
+  }
+
   /* mobile slide-in menu */
   const btn = document.querySelector('.menu-btn');
   const drw = document.querySelector('[data-mdrw]');
