@@ -27,8 +27,8 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.5l4 4L18
       <h2>Everything we sell, <span>we also rent.</span></h2>
       <p class="br__lede">Own it for the long haul or rent it by the job. Same gear, same yard, one invoice.</p>
       <ul class="br__notes">
-        <li><b>Buy</b> Shipped nationwide</li>
-        <li><b>Rent</b> Delivered in NJ, NY, PA and CT</li>
+        <li><b>Buy</b> Ships nationwide</li>
+        <li><b>Rent</b> <span class="br__long">Delivered in&nbsp;</span>NJ, NY, PA, CT</li>
       </ul>
     </div>
 
@@ -80,11 +80,20 @@ const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.5l4 4L18
 
   @media (max-width: 900px) { .br__in { grid-template-columns: 1fr; } }
   @media (max-width: 640px) {
+    .br { padding: 30px 0 34px; }
+    .br__in { gap: 18px; }
+    .br__k { margin-bottom: 6px; }
+    .br__lede { margin-top: 8px; font-size: .96rem; }
+    .br__notes { margin-top: 12px; gap: 6px; flex-wrap: nowrap; }
+    .br__notes li { gap: 5px; padding: 4px 9px 3px 4px; font-size: .74rem; white-space: nowrap; }
+    .br__notes b { padding: 2px 7px 1px; font-size: .66rem; }
+    .br__long { display: none; }
     .br__copy { text-align: center; }
     .br__lede { margin-inline: auto; }
     .br__notes { justify-content: center; }
     .br__card { padding: 4px 14px 8px; border-radius: 18px; }
-    .br__row { grid-template-columns: 1fr 52px 52px; padding: 9px 0; }
+    .br__row { grid-template-columns: 1fr 48px 48px; padding: 7px 0; }
+    .br__row--head { padding: 9px 0 7px; }
     .br__item { gap: 10px; font-size: .9rem; }
     .br__item i { width: 32px; height: 32px; }
     .br__chk { width: 26px; height: 26px; }
