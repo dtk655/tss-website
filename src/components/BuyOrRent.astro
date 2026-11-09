@@ -1,10 +1,10 @@
 ---
 // "Buy it or rent it": a Buy/Rent switch that flips the same lineup of gear between the two ways to get it.
 const gear = [
-  { t: 'Cones', img: '/cats/cones.svg', desk: true },
-  { t: 'WATERCADE', img: '/cats/water-filled-barriers.png', logo: true },
-  { t: 'Message boards', img: '/cats/hero-rentals.png', big: true },
-  { t: 'Arrow boards', img: '/cats/arrow-board.png', big: true }
+  { t: 'Cones', img: '/cats/cones.svg', desk: true, href: '/products/cone28inch' },
+  { t: 'WATERCADE', img: '/cats/water-filled-barriers.png', logo: true, href: '/products/waterbarriertss590rparent' },
+  { t: 'Message boards', img: '/cats/hero-rentals.png', big: true, href: '/products/variable-message-sign-vms-board' },
+  { t: 'Arrow boards', img: '/cats/arrow-board.png', big: true, arrow: true, href: '/products/arrow-board' }
 ];
 const modes = {
   buy: { pts: [['Ships nationwide', 'Anywhere in the U.S.'], ['No minimum', 'One cone or a truckload'], ['Yours to keep', 'Stock your own yard']], cta: ['Shop products', '/collections'] },
@@ -27,14 +27,14 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     </div>
 
     <div class="br__panel">
-      <div class="br__stage" aria-hidden="true">
-        <span class="br__word br__word--buy">BUY</span>
-        <span class="br__word br__word--rent">RENT</span>
+      <div class="br__stage">
+        <span class="br__word br__word--buy" aria-hidden="true">BUY</span>
+        <span class="br__word br__word--rent" aria-hidden="true">RENT</span>
         <ul class="br__gear">
           {gear.map((g, i) => (
-            <li class:list={[g.big && 'is-big', g.desk && 'is-desk']} style={`--i:${i}`}>
+            <li class:list={[g.big && 'is-big', g.desk && 'is-desk', g.arrow && 'is-arrow']} style={`--i:${i}`}>
               <img src={g.img} alt="" loading="lazy" />
-              <span class="br__tag"><b class="br__tag--buy">Buy</b><b class="br__tag--rent">Rent</b>{g.logo ? <span class="br__tn br__tn--logo" aria-label="WATERCADE"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span> : <span class="br__tn">{g.t}</span>}</span>
+              <a href={g.href} class="br__tag" aria-label={`${g.t}: buy or rent`}><b class="br__tag--buy">Buy</b><b class="br__tag--rent">Rent</b>{g.logo ? <span class="br__tn br__tn--logo" aria-label="WATERCADE"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span> : <span class="br__tn">{g.t}</span>}</a>
             </li>
           ))}
         </ul>
@@ -78,17 +78,20 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   [data-mode="rent"] .br__word--buy { opacity: 0; transform: translate(-50%, -70%); }
   [data-mode="rent"] .br__word--rent { opacity: 1; transform: translate(-50%, -50%); }
 
-  .br__gear { position: absolute; left: 0; right: 0; bottom: 0; top: 0; align-content: center; list-style: none; margin: 0; padding: clamp(18px, 2vw, 26px) clamp(14px, 2vw, 28px); display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.3fr) minmax(0, 1.6fr) minmax(0, 1.1fr); align-items: end; gap: clamp(6px, 1vw, 14px); }
+  .br__gear { position: absolute; left: 0; right: 0; bottom: 0; top: 0; align-content: center; list-style: none; margin: 0; padding: clamp(18px, 2vw, 26px) clamp(14px, 2vw, 28px); display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.3fr) minmax(0, 1.6fr) minmax(0, .98fr); align-items: end; gap: clamp(6px, 1vw, 14px); }
   .br__gear li { position: relative; display: grid; justify-items: center; gap: 12px; opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .8s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i) * 80ms); }
   .br.is-in .br__gear li { opacity: 1; transform: none; }
   .br__gear img { width: 100%; max-height: clamp(130px, 16.5vw, 260px); object-fit: contain; object-position: bottom; filter: drop-shadow(0 18px 14px rgba(20,23,26,.2)); }
   .br__gear li.is-big img { max-height: clamp(170px, 23vw, 340px); }
+  .br__gear li.is-arrow img { max-height: clamp(151px, 20.4vw, 302px); }
   .br__gear li { animation: brBob 5s ease-in-out infinite; animation-delay: calc(var(--i) * -.9s); }
   @keyframes brBob { 50% { translate: 0 -5px; } }
-  .br__tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: .76rem; font-variation-settings: 'wght' 650; color: var(--ink-2); white-space: nowrap; box-shadow: 0 8px 18px -12px rgba(20,23,26,.4); }
+  .br__tag { text-decoration: none; transition: border-color .2s, transform .2s, box-shadow .2s; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: .76rem; font-variation-settings: 'wght' 650; color: var(--ink-2); white-space: nowrap; box-shadow: 0 8px 18px -12px rgba(20,23,26,.4); }
   .br__tag b { display: none; padding: 3px 8px 2px; border-radius: 999px; color: #fff; font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; font-variation-settings: 'wght' 780; }
   .br__tn--logo { display: inline-flex; align-items: center; }
   .br__tn--logo img { height: 13px; width: auto; display: block; }
+  .br__tag:hover { border-color: var(--line-dark); transform: translateY(-2px); box-shadow: 0 12px 22px -12px rgba(20,23,26,.5); }
+  .br__tag:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; }
   .br__tag--buy { background: var(--ink); }
   .br__tag--rent { background: var(--red); }
   [data-mode="buy"] .br__tag--buy, [data-mode="rent"] .br__tag--rent { display: inline-block; animation: brPop .45s cubic-bezier(.2,.8,.2,1.6) both; animation-delay: calc(var(--i) * 70ms); }
@@ -126,10 +129,11 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     .br__panel { border-radius: 20px; }
     .br__stage { min-height: 0; height: 205px; }
     .br__gear { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 14px 10px; }
-    .br__gear { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.3fr) minmax(0, .9fr) !important; }
+    .br__gear { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.3fr) minmax(0, .8fr) !important; }
     .br__gear li.is-desk { display: none; }
     .br__gear img { max-height: 130px; }
     .br__gear li.is-big img { max-height: 150px; }
+    .br__gear li.is-arrow img { max-height: 132px; }
     .br__tag { font-size: .7rem; padding: 3px; }
     .br__tag:has(.br__tn--logo) { padding: 3px 8px 3px 3px; }
     .br__tn:not(.br__tn--logo) { display: none; }
