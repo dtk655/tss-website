@@ -422,6 +422,11 @@ const photos = [
   .qs-tk__lines .is-ghost span.v { color: #b3bac1; font-variation-settings: 'wght' 500; }
   .qs-tk__thumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
   .qs-tk__thumbs span { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; background: var(--haze); font-size: .82rem; font-variation-settings: 'wght' 620; }
+  .qs-rm { flex: none; display: inline-grid; place-items: center; width: 20px; height: 20px; margin: 0 -4px 0 2px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--steel); cursor: pointer; transition: background .15s, color .15s; }
+  .qs-rm svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+  .qs-rm:hover, .qs-rm:focus-visible { background: var(--red); color: #fff; outline: none; }
+  .qs-tk__thumbs span, .qs-rv__items span { transition: opacity .2s; }
+  @media (max-width: 980px) { .qs-rm { width: 28px; height: 28px; margin: -4px -8px -4px 0; } .qs-rm svg { width: 13px; height: 13px; } }
   .qs-tk__thumbs img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: #fff; padding: 2px; }
   .qs-tk__perf { height: 1px; margin: 14px -20px; background-image: linear-gradient(90deg, var(--line-dark) 50%, transparent 50%); background-size: 10px 1px; position: relative; }
   .qs-tk__perf::before, .qs-tk__perf::after { content: ''; position: absolute; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--haze); border: 1px solid var(--line); }
@@ -847,9 +852,21 @@ const photos = [
     const rowHtml = (r) => `<div class="qs-row"><input class="qs-input" type="text" placeholder="Item, e.g. 36-inch cones with collars" value="${esc(r.desc || '')}" data-qs-rdesc aria-label="Item"><input class="qs-input" type="number" min="1" placeholder="Qty" value="${esc(r.qty || '')}" data-qs-rqty aria-label="Quantity"><button type="button" data-qs-rrm aria-label="Remove item">${ICON.x}</button></div>`;
 
     /* ---------------- items ---------------- */
+    const rmBtn = (x) => `<button type="button" class="qs-rm" data-qs-rm-item="${esc(x.key)}" aria-label="Remove ${esc(x.desc)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button>`;
+    function removeItem(key) {
+      if (key.startsWith('row:')) (state.job.items || []).splice(+key.slice(4), 1);
+      else delete state.job.sel[key];
+      save(); renderTicket();
+      if (body.querySelector('[data-qs-shop]')) refreshShop();
+      const rows = body.querySelector('[data-qs-rows]');
+      if (rows) rows.innerHTML = (state.job.items || []).map(rowHtml).join('');
+      if (state.step === 4 && body.querySelector('.qs-rv')) { lastStep = 4; render(); }
+      if (!sheet.hidden) fillSheet();
+    }
+    root.addEventListener('click', (e) => { const b = e.target.closest('[data-qs-rm-item]'); if (b) { e.preventDefault(); removeItem(b.dataset.qsRmItem); } });
     function allItems() {
-      const cat = Object.values(state.job.sel || {}).filter((e) => e.q > 0).map((e) => ({ desc: e.t + (e.v ? ` (${e.v})` : ''), qty: e.q, img: e.i }));
-      const extra = (state.job.items || []).filter((r) => r.desc && r.desc.trim()).map((r) => ({ desc: r.desc.trim(), qty: +r.qty || 1 }));
+      const cat = Object.entries(state.job.sel || {}).filter(([, e]) => e.q > 0).map(([k, e]) => ({ desc: e.t + (e.v ? ` (${e.v})` : ''), qty: e.q, img: e.i, key: k }));
+      const extra = (state.job.items || []).map((r, i) => ({ desc: (r.desc || '').trim(), qty: +r.qty || 1, key: 'row:' + i })).filter((r) => r.desc);
       return [...cat, ...extra];
     }
 
@@ -873,7 +890,7 @@ const photos = [
       }
       if (state.type === 'rental' || state.type === 'products') {
         const it = allItems();
-        if (it.length) L.push(['items:' + it.map((x) => x.desc + x.qty).join('|'), `${it.length} item${it.length > 1 ? 's' : ''}`, `<span class="qs-tk__thumbs">${it.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}${x.qty} &times; ${esc(x.desc)}</span>`).join('')}</span>`]);
+        if (it.length) L.push(['items:' + it.map((x) => x.desc + x.qty).join('|'), `${it.length} item${it.length > 1 ? 's' : ''}`, `<span class="qs-tk__thumbs">${it.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}${x.qty} &times; ${esc(x.desc)}${rmBtn(x)}</span>`).join('')}</span>`]);
         if (j.setup) L.push(['setup', 'Setup', esc(j.setup)]);
         if (j.custom === 'Yes') L.push(['custom', 'Custom', 'Colors, stenciling or logo']);
       }
@@ -915,12 +932,18 @@ const photos = [
     sheet.innerHTML = `<div class="qs-modal__bg" data-qs-sclose></div><div class="qs-modal__panel" role="dialog" aria-modal="true" aria-label="Your quote so far"><div class="qs-qsheet__body" data-qs-sbody></div><footer class="qs-modal__foot"><span class="qs-modal__count">Priced by a real person, usually within 1 business day</span><button type="button" class="qs-btn" data-qs-sclose>Keep going${ICON.arrow}</button></footer></div>`;
     document.body.appendChild(sheet);
     function openSheet() {
+      fillSheet();
+      openSheetUI();
+    }
+    function fillSheet() {
       const svc = SVC.find((x) => x.id === state.type);
       const ph = root.querySelector('.qs-tk__ph');
       const L = ticketLines();
       sheet.querySelector('[data-qs-sbody]').innerHTML = `<div class="qs-tk__ph">${[...ph.querySelectorAll('img')].map((im) => im.outerHTML.replace('loading="lazy"', '')).join('')}<div class="qs-tk__cap"><span class="qs-tk__k">Your quote</span><b>${esc(svc.b)}</b></div><button type="button" class="qs-modal__x qs-qsheet__x" data-qs-sclose aria-label="Close">${ICON.x}</button></div>
         <ul class="qs-tk__lines">${L.map(([k, t, v], i) => `<li class="qs-in" style="--i:${i}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')}</ul>
         ${L.length < 2 ? '<p class="qs-qsheet__empty">Your answers show up here as you go.</p>' : ''}`;
+    }
+    function openSheetUI() {
       sheet.hidden = false;
       requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('is-open')));
       document.documentElement.style.overflow = 'hidden';
@@ -935,7 +958,7 @@ const photos = [
       setTimeout(() => { sheet.hidden = true; }, 320);
       body.querySelector('[data-qs-qbtn]')?.focus({ preventScroll: true });
     }
-    sheet.addEventListener('click', (e) => { if (e.target.closest('[data-qs-sclose]')) closeSheet(); });
+    sheet.addEventListener('click', (e) => { const b = e.target.closest('[data-qs-rm-item]'); if (b) return removeItem(b.dataset.qsRmItem); if (e.target.closest('[data-qs-sclose]')) closeSheet(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
 
     /* ---------------- steps ---------------- */
@@ -1037,7 +1060,7 @@ const photos = [
       body.innerHTML = `<div class="qs-step${dir}">${head('Review', 'Look good?', 'Check the details, then send it over.')}
         <div class="qs-rv">
           <section class="qs-in" style="--i:1"><header><h3>${esc(svc.b)}</h3><button type="button" data-qs-goto2="0">Change</button></header>
-            ${items.length ? `<div class="qs-rv__items">${items.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}<b>${x.qty}</b>${esc(x.desc)}</span>`).join('')}</div>` : `<p class="qs-fine" style="margin:0">${esc(svc.s)}</p>`}
+            ${items.length ? `<div class="qs-rv__items">${items.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}<b>${x.qty}</b>${esc(x.desc)}${rmBtn(x)}</span>`).join('')}</div>` : `<p class="qs-fine" style="margin:0">${esc(svc.s)}</p>`}
           </section>
           <section class="qs-in" style="--i:2"><header><h3>The job</h3><button type="button" data-qs-goto2="1">Edit</button></header>${job.length ? dl(job) : '<p class="qs-fine">Nothing added.</p>'}</section>
           <section class="qs-in" style="--i:3"><header><h3>Your details</h3><button type="button" data-qs-goto2="3">Edit</button></header>${dl(about)}</section>
