@@ -1,0 +1,80 @@
+---
+// Homepage "Shop by category": a static grid of tinted category cards with product cutouts.
+import { loadCatalog, PRODUCT_COLLECTIONS } from '../lib/shopify.js';
+const { colByHandle } = await loadCatalog();
+const cats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
+const blurbs: Record<string, string> = {
+  cones: '18" to 36", nine colors',
+  barricades: 'Type III, A-frame, rails',
+  'water-filled-barriers': 'WATERCADE and airport',
+  'traffic-drums': 'Engineer and hi-intensity',
+  'sign-shop': 'Stock and custom signs',
+  lights: 'Lights, flares, batons',
+  reflectors: 'Side and top mount',
+  'safety-gear': 'Vests, jackets, hard hats',
+  'sign-stands': 'K-stands and tripods',
+  deliniators: 'Ring-top and knob-top'
+};
+const tints: Record<string, string> = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barriers': '#ffe1da', 'traffic-drums': '#ffe7d2', 'sign-shop': '#ffdede', lights: '#fff1c9', reflectors: '#e2edf8', 'safety-gear': '#e3f3d8', 'sign-stands': '#ebebe8', deliniators: '#ffe7d2' };
+const cols = cats.length % 5 === 0 ? 5 : 4;
+const catImg = (h: string) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg` : `/cats/${h}.png`);
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+---
+<section class="hcat" data-in>
+  <div class="wrap">
+    <div class="hs-head">
+      <div>
+        <p class="hs-k"><span></span>Shop by category</p>
+        <h2>Everything for the work zone. <em>In stock.</em></h2>
+      </div>
+      <a href="/collections" class="hs-link">All products<Fragment set:html={ARROW} /></a>
+    </div>
+    <ul class="hcat__grid" style={`--cols:${cols}`}>
+      {cats.map((c, i) => (
+        <li style={`--i:${i}`}>
+          <a href={`/collections/${c.handle}`} class="hcat__card" style={`--tint:${tints[c.handle] || '#ececea'}`}>
+            <span class="hcat__img"><img src={catImg(c.handle)} alt="" loading="lazy" /></span>
+            <span class="hcat__txt">
+              <b>{c.title}</b>
+              <small>{blurbs[c.handle] || ''}</small>
+            </span>
+            <span class="hcat__go" set:html={ARROW} />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hcat { padding: clamp(56px, 7vw, 100px) 0 clamp(20px, 3vw, 40px); background: #fff; }
+  .hcat__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .hcat__grid li { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .7s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i) * 50ms); }
+  .hcat.is-in .hcat__grid li { opacity: 1; transform: none; }
+  .hcat__card { position: relative; display: grid; grid-template-rows: 1fr auto; height: 100%; min-height: clamp(220px, 19vw, 280px); padding: 16px 18px 18px; border-radius: 20px; border: 1px solid var(--line); text-decoration: none; color: var(--ink); background: linear-gradient(185deg, var(--tint) 0%, #fff 75%); overflow: hidden; transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s, border-color .3s; }
+  .hcat__card:hover { transform: translateY(-6px); border-color: var(--line-dark); box-shadow: 0 28px 50px -30px rgba(20,23,26,.5); }
+  .hcat__card:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 3px; }
+  .hcat__img { display: grid; place-items: center; min-height: 0; padding: 6px 0 14px; }
+  .hcat__img img { max-width: 82%; max-height: clamp(110px, 10vw, 150px); object-fit: contain; filter: drop-shadow(0 16px 14px rgba(20,23,26,.2)); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  .hcat__card:hover .hcat__img img { transform: translateY(-6px) scale(1.06); }
+  .hcat__txt { display: grid; gap: 3px; padding-right: 34px; }
+  .hcat__txt b { font-size: clamp(1.05rem, 1.25vw, 1.2rem); line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 750; }
+  .hcat__txt small { font-size: .84rem; line-height: 1.35; color: var(--steel); }
+  .hcat__go { position: absolute; right: 14px; bottom: 16px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line-dark); color: var(--ink); transition: background .3s, color .3s, border-color .3s; }
+  .hcat__go :global(svg) { width: 15px; height: 15px; transition: transform .25s; }
+  .hcat__card:hover .hcat__go { background: var(--red); border-color: var(--red); color: #fff; }
+  .hcat__card:hover .hcat__go :global(svg) { transform: translateX(2px); }
+  .hcat__card:hover .hcat__txt b { color: var(--red); }
+  @media (max-width: 1100px) { .hcat__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 820px) { .hcat__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 640px) {
+    .hcat__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .hcat__card { min-height: 190px; padding: 12px 12px 14px; border-radius: 16px; }
+    .hcat__img img { max-height: 100px; }
+    .hcat__txt { padding-right: 0; }
+    .hcat__txt b { font-size: .98rem; }
+    .hcat__txt small { font-size: .76rem; }
+    .hcat__go { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hcat__grid li { opacity: 1; transform: none; transition: none; } }
+</style>
