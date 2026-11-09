@@ -8,9 +8,9 @@ const { preset = 'general', fromParam = false } = Astro.props;
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
 const photos = [
   ['lane-closure', '/fleet/lc-hero.webp', '58% 45%'],
-  ['rental', '/fleet/tma-rear-2.jpg', '50% 40%'],
-  ['products', CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg', '50% 50%'],
-  ['general', '/watercade/hero-poster.jpg', '60% 50%']
+  ['rental', CDN + 'thumbnail_IMG_1133_c2839bba-db54-470f-80d2-804e82e3fd23.jpg?width=900', '45% 50%'],
+  ['products', CDN + 'TRAILER13.jpg?width=900', '50% 50%'],
+  ['general', CDN + 'thumbnail_Safety_Day_Team_Photo.jpg?width=900', '40% 40%']
 ];
 ---
 <section class="qs" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
@@ -557,10 +557,10 @@ const photos = [
   }
 
   const SVC = [
-    { id: 'lane-closure', b: 'Lane closure crew', s: 'Flaggers, full closures, TMA protection and traffic control plans', photo: '/fleet/lc-hero.webp' },
-    { id: 'rental', b: 'Rent equipment', s: 'Cones to crash trucks, delivered and picked up in NJ, NY, PA and CT', imgs: [[IMG.vms, 'left:6%;bottom:6%;height:78%'], [IMG.arrow, 'right:8%;bottom:6%;height:70%']], tint: T.yellow },
-    { id: 'products', b: 'Buy products', s: 'Ships nationwide. Bulk orders, POs and custom branding', imgs: [[IMG.cones, 'left:14%;bottom:6%;height:80%'], [IMG.barricades, 'right:8%;bottom:6%;height:66%']], tint: T.orange },
-    { id: 'general', b: 'Something else', s: 'Not sure what you need? Describe it and we’ll sort it out', imgs: [[IMG.water, 'left:50%;bottom:4%;height:74%;translate:-50% 0']], tint: T.blue }
+    { id: 'lane-closure', b: 'Lane Closure Project', s: 'Flaggers, full closures, TMA protection and traffic control plans', photo: '/fleet/lc-hero.webp', pos: '58% 45%' },
+    { id: 'rental', b: 'Rental Pricing', s: 'Cones to crash trucks, delivered and picked up in NJ, NY, PA and CT', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_1133_c2839bba-db54-470f-80d2-804e82e3fd23.jpg?width=800', pos: '45% 55%' },
+    { id: 'products', b: 'Purchase Pricing', s: 'Ships nationwide. Bulk orders, POs and custom branding', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/TRAILER13.jpg?width=800', pos: '50% 50%' },
+    { id: 'general', b: 'Something Else?', s: 'Not sure what you need? Describe it and we\u2019ll sort it out', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_Safety_Day_Team_Photo.jpg?width=800', pos: '40% 45%' }
   ];
   const STATES_LC = ['NJ', 'NY', 'PA', 'CT', 'DE', 'Other'];
   const STATES_R = ['NJ', 'NY', 'PA', 'CT', 'Other'];
@@ -845,7 +845,7 @@ const photos = [
 
     function stepService(dir) {
       body.innerHTML = `<div class="qs-step${dir}">${head('Get started', 'What can we quote for you?', 'Pick the closest fit. You can change it any time.')}
-        <div class="qs-svc" role="radiogroup" aria-label="Service">${SVC.map((s, i) => `<label class="qs-in" style="--i:${i + 1}"><input type="radio" name="${ns}-svc" value="${s.id}"${state.touched && state.type === s.id ? ' checked' : ''}><span class="qs-svc__card"><span class="qs-svc__art${s.photo ? ' is-photo' : ''}" style="--tint:${s.tint || '#ececea'}">${s.photo ? `<img class="is-photo" src="${s.photo}" alt="" style="object-position:58% 45%">` : s.imgs.map(([src, st]) => `<img src="${src}" alt="" style="${st}">`).join('')}</span><span class="qs-svc__txt"><b>${esc(s.b)}</b><small>${esc(s.s)}</small></span><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>
+        <div class="qs-svc" role="radiogroup" aria-label="Service">${SVC.map((s, i) => `<label class="qs-in" style="--i:${i + 1}"><input type="radio" name="${ns}-svc" value="${s.id}"${state.touched && state.type === s.id ? ' checked' : ''}><span class="qs-svc__card"><span class="qs-svc__art${s.photo ? ' is-photo' : ''}" style="--tint:${s.tint || '#ececea'}"><img class="is-photo" src="${s.photo}" alt="" style="object-position:${s.pos}" loading="lazy"></span><span class="qs-svc__txt"><b>${esc(s.b)}</b><small>${esc(s.s)}</small></span><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>
         ${navHtml('Continue', false)}</div>`;
       body.querySelectorAll(`[name="${ns}-svc"]`).forEach((r) => r.addEventListener('change', () => {
         state.type = r.value; state.touched = true; save(); renderTicket();
