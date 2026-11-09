@@ -1,121 +1,171 @@
 ---
-// "Buy it or rent it" band: rows of equipment with Buy and Rent check marks that tick on in sequence.
-const rows = [
-  ['Traffic cones', 'cone'],
-  ['WATERCADE barriers', 'barrier'],
-  ['Barricades and drums', 'drum'],
-  ['Signs and stands', 'sign'],
-  ['TMA crash trucks', 'truck'],
-  ['VMS message boards', 'vms'],
-  ['Arrow boards and light towers', 'arrow']
+// "Buy it or rent it": a Buy/Rent switch that flips the same lineup of gear between the two ways to get it.
+const gear = [
+  { t: 'Cones', img: '/cats/cones.svg' },
+  { t: 'WATERCADE', img: '/cats/water-filled-barriers.png' },
+  { t: 'Message boards', img: '/cats/hero-rentals.png', big: true },
+  { t: 'Drums', img: '/cats/traffic-drums.svg' },
+  { t: 'Barricades', img: '/cats/barricades.png' }
 ];
-const I: Record<string, string> = {
-  cone: '<path d="M9.5 4h5l3.6 14H5.9z"/><path d="M8.4 9.5h7.2M7.2 14h9.6"/><path d="M3.5 20.5h17"/>',
-  barrier: '<path d="M3 17l2-8h14l2 8z"/><path d="M8 9l-1 8M16 9l1 8"/><path d="M3 17h18"/>',
-  drum: '<path d="M7 4h10l1 16H6z"/><path d="M6.5 9h11M6.3 14h11.4"/>',
-  sign: '<path d="M12 2.5l8 8-8 8-8-8z"/><path d="M12 18.5v3"/>',
-  truck: '<path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 9.5h4l3.5 3.5v3.5h-7.5"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/>',
-  vms: '<rect x="3" y="4" width="18" height="10" rx="1.5"/><path d="M7 8h4M7 11h7M12 14v4M8 21l4-3 4 3"/>',
-  arrow: '<rect x="3" y="5" width="18" height="10" rx="1.5"/><path d="M8 10h8M13 7.5l3 2.5-3 2.5"/><path d="M12 15v5"/>'
+const modes = {
+  buy: { pts: [['Ships nationwide', 'Anywhere in the U.S.'], ['No minimum', 'One cone or a truckload'], ['Yours to keep', 'Stock your own yard']], cta: ['Shop products', '/collections'] },
+  rent: { pts: [['Delivered from our yard', 'NJ, NY, PA and CT'], ['By the day, week or job', 'Pay only while you use it'], ['Picked up after', 'Nothing to store']], cta: ['Request a rental', '/pages/request-a-quote?type=rental'] }
 };
-const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.5l4 4L18 8"/></svg>';
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
-<section class="br" data-br>
-  <div class="wrap br__in">
-    <div class="br__copy">
-      <p class="br__k">Buy or rent</p>
-      <h2>Everything we sell, <span>we also rent.</span></h2>
-      <p class="br__lede">Own it for the long haul or rent it by the job. Same gear, same yard, one invoice.</p>
-      <ul class="br__notes">
-        <li><b>Buy</b> Ships nationwide</li>
-        <li><b>Rent</b> <span class="br__long">Delivered in&nbsp;</span>NJ, NY, PA, CT</li>
-      </ul>
+<section class="br" data-br data-mode="buy">
+  <div class="wrap">
+    <div class="br__top">
+      <div>
+        <p class="br__k"><span></span>Buy or rent</p>
+        <h2>Everything we sell, <em>we also rent.</em></h2>
+      </div>
+      <div class="br__switch" role="tablist" aria-label="Buy or rent">
+        <i class="br__thumb" aria-hidden="true"></i>
+        <button type="button" role="tab" aria-selected="true" data-set="buy">Buy</button>
+        <button type="button" role="tab" aria-selected="false" data-set="rent">Rent</button>
+      </div>
     </div>
 
-    <div class="br__card" role="table" aria-label="Products and equipment available to buy and to rent">
-      <div class="br__row br__row--head" role="row">
-        <span role="columnheader">Equipment</span>
-        <span role="columnheader" class="br__col">Buy</span>
-        <span role="columnheader" class="br__col">Rent</span>
+    <div class="br__panel">
+      <div class="br__stage" aria-hidden="true">
+        <span class="br__word br__word--buy">BUY</span>
+        <span class="br__word br__word--rent">RENT</span>
+        <ul class="br__gear">
+          {gear.map((g, i) => (
+            <li class:list={[g.big && 'is-big']} style={`--i:${i}`}>
+              <img src={g.img} alt="" loading="lazy" />
+              <span class="br__tag"><b class="br__tag--buy">Buy</b><b class="br__tag--rent">Rent</b>{g.t}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-      {rows.map(([t, ic], i) => (
-        <div class="br__row" role="row" style={`--i:${i}`}>
-          <span role="cell" class="br__item"><i aria-hidden="true"><svg viewBox="0 0 24 24" set:html={I[ic]} /></i>{t}</span>
-          <span role="cell" class="br__col"><span class="br__chk br__chk--buy" aria-label="Yes" set:html={CHK} /></span>
-          <span role="cell" class="br__col"><span class="br__chk br__chk--rent" aria-label="Yes" set:html={CHK} /></span>
-        </div>
-      ))}
+
+      <div class="br__info">
+        {Object.entries(modes).map(([k, m]) => (
+          <div class={`br__mode br__mode--${k}`} data-mode-panel={k}>
+            <ol>
+              {m.pts.map(([b, s], j) => <li style={`--j:${j}`}><span class="br__n">0{j + 1}</span><span><b>{b}</b><small>{s}</small></span></li>)}
+            </ol>
+            <a href={m.cta[1]} class="br__cta">{m.cta[0]}<Fragment set:html={ARROW} /></a>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  .br { padding: clamp(48px, 6vw, 84px) 0; background: #fff; }
-  .br__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
-  .br__k { margin: 0 0 10px; color: var(--red); font-size: .84rem; letter-spacing: .12em; text-transform: uppercase; font-variation-settings: 'wght' 740; }
-  .br h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.04; letter-spacing: -.03em; font-variation-settings: 'wght' 800; text-wrap: balance; }
-  .br h2 span { color: var(--red); }
-  .br__lede { margin: 14px 0 0; max-width: 44ch; color: var(--steel); font-size: 1.06rem; line-height: 1.55; }
-  .br__notes { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
-  .br__notes li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 6px 7px; border-radius: 999px; background: var(--haze); border: 1px solid var(--line); font-size: .9rem; color: var(--ink-2); }
-  .br__notes b { padding: 3px 10px 2px; border-radius: 999px; background: var(--ink); color: #fff; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
-  .br__notes li + li b { background: var(--red); }
+  .br { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .br__top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 40px; margin-bottom: clamp(24px, 3vw, 40px); }
+  .br__k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--steel); }
+  .br__k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .br h2 { margin: 0; font-size: clamp(2.2rem, 4.6vw, 4.2rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; }
+  .br h2 em { font-style: normal; color: var(--red); }
 
-  .br__card { border-radius: 22px; border: 1px solid var(--line); background: linear-gradient(180deg, #fff, #fafbfc); box-shadow: 0 30px 60px -44px rgba(20,23,26,.5); padding: 8px 20px 12px; }
-  .br__row { display: grid; grid-template-columns: 1fr 76px 76px; align-items: center; padding: 11px 0; border-top: 1px solid var(--line); }
-  .br__row--head { border-top: 0; padding: 12px 0 10px; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; font-variation-settings: 'wght' 760; color: var(--steel); }
-  .br__row--head .br__col { color: var(--ink); }
-  .br__col { display: grid; place-items: center; text-align: center; }
-  .br__item { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-variation-settings: 'wght' 650; min-width: 0; }
-  .br__item i { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--red-tint); color: var(--red); }
-  .br__item svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .br__switch { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 6px; border-radius: 999px; background: var(--haze); border: 1px solid var(--line); min-width: 260px; }
+  .br__switch button { all: unset; position: relative; z-index: 1; cursor: pointer; text-align: center; padding: 14px 28px 13px; font-size: 1.05rem; font-variation-settings: 'wght' 720; color: var(--steel); transition: color .35s; border-radius: 999px; }
+  .br__switch button:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; }
+  .br__switch button[aria-selected="true"] { color: #fff; }
+  .br__thumb { position: absolute; top: 6px; bottom: 6px; left: 6px; width: calc(50% - 6px); border-radius: 999px; background: var(--ink); box-shadow: 0 10px 20px -10px rgba(20,23,26,.6); transition: transform .5s cubic-bezier(.2,.8,.2,1), background .4s; }
+  [data-mode="rent"] .br__thumb { transform: translateX(100%); background: var(--red); }
 
-  .br__chk { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line-dark); box-sizing: border-box; transition: background .3s, border-color .3s, transform .45s cubic-bezier(.2,.8,.2,1.7); }
-  .br__chk :global(svg) { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 18; stroke-dashoffset: 18; transition: stroke-dashoffset .35s ease .1s; }
-  .br__chk.is-on { border-color: transparent; transform: scale(1.08); }
-  .br__chk--buy.is-on { background: var(--ink); }
-  .br__chk--rent.is-on { background: var(--red); }
-  .br__chk.is-on :global(svg) { stroke-dashoffset: 0; }
-  .br__row.is-lit { background: linear-gradient(90deg, transparent, rgba(182,6,6,.05), transparent); }
+  .br__panel { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); border-radius: 26px; overflow: hidden; border: 1px solid var(--line); background: #fff; box-shadow: 0 40px 80px -60px rgba(20,23,26,.5); }
 
-  @media (max-width: 900px) { .br__in { grid-template-columns: 1fr; } }
-  @media (max-width: 640px) {
-    .br { padding: 30px 0 34px; }
-    .br__in { gap: 18px; }
-    .br__k { margin-bottom: 6px; }
-    .br__lede { margin-top: 8px; font-size: .96rem; }
-    .br__notes { margin-top: 12px; gap: 6px; flex-wrap: nowrap; }
-    .br__notes li { gap: 5px; padding: 4px 9px 3px 4px; font-size: .74rem; white-space: nowrap; }
-    .br__notes b { padding: 2px 7px 1px; font-size: .66rem; }
-    .br__long { display: none; }
-    .br__copy { text-align: center; }
-    .br__lede { margin-inline: auto; }
-    .br__notes { justify-content: center; }
-    .br__card { padding: 4px 14px 8px; border-radius: 18px; }
-    .br__row { grid-template-columns: 1fr 48px 48px; padding: 7px 0; }
-    .br__row--head { padding: 9px 0 7px; }
-    .br__item { gap: 10px; font-size: .9rem; }
-    .br__item i { width: 32px; height: 32px; }
-    .br__chk { width: 26px; height: 26px; }
+  .br__stage { position: relative; overflow: hidden; min-height: clamp(340px, 30vw, 440px); background: radial-gradient(120% 120% at 50% 100%, #ffffff 0, #f1f3f5 55%, #e7eaed 100%); transition: background .6s; }
+  [data-mode="rent"] .br__stage { background: radial-gradient(120% 120% at 50% 100%, #ffffff 0, #fbefed 55%, #f6dfdb 100%); }
+  .br__word { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); font-size: clamp(7rem, 17vw, 15rem); line-height: 1; letter-spacing: -.06em; font-variation-settings: 'wght' 860; color: rgba(20,23,26,.05); white-space: nowrap; transition: opacity .5s, transform .7s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+  .br__word--rent { color: rgba(182,6,6,.07); opacity: 0; transform: translate(-50%, -30%); }
+  [data-mode="rent"] .br__word--buy { opacity: 0; transform: translate(-50%, -70%); }
+  [data-mode="rent"] .br__word--rent { opacity: 1; transform: translate(-50%, -50%); }
+
+  .br__gear { position: absolute; left: 0; right: 0; bottom: 0; list-style: none; margin: 0; padding: 0 clamp(14px, 2vw, 28px) clamp(18px, 2vw, 26px); display: grid; grid-template-columns: 1fr 1.15fr 1.7fr 1fr 1.15fr; align-items: end; gap: clamp(6px, 1vw, 14px); }
+  .br__gear li { position: relative; display: grid; justify-items: center; gap: 12px; opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .8s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i) * 80ms); }
+  .br.is-in .br__gear li { opacity: 1; transform: none; }
+  .br__gear img { width: 100%; max-height: clamp(110px, 12vw, 170px); object-fit: contain; object-position: bottom; filter: drop-shadow(0 18px 14px rgba(20,23,26,.2)); }
+  .br__gear li.is-big img { max-height: clamp(150px, 17vw, 240px); }
+  .br__gear li { animation: brBob 5s ease-in-out infinite; animation-delay: calc(var(--i) * -.9s); }
+  @keyframes brBob { 50% { translate: 0 -5px; } }
+  .br__tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: .76rem; font-variation-settings: 'wght' 650; color: var(--ink-2); white-space: nowrap; box-shadow: 0 8px 18px -12px rgba(20,23,26,.4); }
+  .br__tag b { display: none; padding: 3px 8px 2px; border-radius: 999px; color: #fff; font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; font-variation-settings: 'wght' 780; }
+  .br__tag--buy { background: var(--ink); }
+  .br__tag--rent { background: var(--red); }
+  [data-mode="buy"] .br__tag--buy, [data-mode="rent"] .br__tag--rent { display: inline-block; animation: brPop .45s cubic-bezier(.2,.8,.2,1.6) both; animation-delay: calc(var(--i) * 70ms); }
+  @keyframes brPop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .br__info { position: relative; display: grid; padding: clamp(24px, 2.6vw, 40px); border-left: 1px solid var(--line); }
+  .br__mode { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; visibility: hidden; }
+  [data-mode="buy"] .br__mode--buy, [data-mode="rent"] .br__mode--rent { visibility: visible; }
+  .br__mode ol { list-style: none; margin: 0; padding: 0; display: grid; }
+  .br__mode li { display: grid; grid-template-columns: 38px 1fr; gap: 10px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); opacity: 0; transform: translateY(14px); transition: opacity .35s, transform .45s cubic-bezier(.2,.8,.2,1); }
+  .br__mode li:first-child { border-top: 1px solid var(--line); }
+  [data-mode="buy"] .br__mode--buy li, [data-mode="rent"] .br__mode--rent li { opacity: 1; transform: none; transition-delay: calc(.12s + var(--j) * 90ms); }
+  .br__n { font-size: .8rem; letter-spacing: .1em; font-variation-settings: 'wght' 760; color: var(--red); }
+  .br__mode b { display: block; font-size: clamp(1.15rem, 1.5vw, 1.4rem); line-height: 1.15; letter-spacing: -.02em; font-variation-settings: 'wght' 740; }
+  .br__mode small { display: block; margin-top: 3px; font-size: .92rem; color: var(--steel); }
+  .br__cta { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: fit-content; padding: 15px 26px 14px; border-radius: 999px; color: #fff; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; opacity: 0; transform: translateY(10px); transition: opacity .35s, transform .45s, background .2s; }
+  .br__mode--buy .br__cta { background: var(--ink); }
+  .br__mode--rent .br__cta { background: var(--red); }
+  [data-mode="buy"] .br__mode--buy .br__cta, [data-mode="rent"] .br__mode--rent .br__cta { opacity: 1; transform: none; transition-delay: .42s; }
+  .br__cta :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
+  .br__cta:hover :global(svg) { transform: translateX(3px); }
+
+  @media (max-width: 1000px) {
+    .br__panel { grid-template-columns: 1fr; }
+    .br__info { border-left: 0; border-top: 1px solid var(--line); }
   }
-  @media (prefers-reduced-motion: reduce) { .br__chk, .br__chk :global(svg) { transition: none; } }
+  @media (max-width: 640px) {
+    .br__top { flex-direction: column; align-items: stretch; text-align: center; gap: 18px; }
+    .br__k { justify-content: center; }
+    .br h2 { font-size: 2rem; }
+    .br h2 em { display: block; }
+    .br__switch { min-width: 0; }
+    .br__switch button { padding: 12px 0 11px; }
+    .br__panel { border-radius: 20px; }
+    .br__stage { min-height: 250px; }
+    .br__gear { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0 10px 16px; }
+    .br__gear li:nth-child(3), .br__gear li:nth-child(5) { display: none; }
+    .br__tag { padding: 3px; font-size: 0; gap: 0; }
+    .br__tag b { font-size: .62rem; }
+    .br__gear img { max-height: 110px; }
+    .br__gear li.is-big img { max-height: 150px; }
+    .br__tag { font-size: .7rem; }
+    .br__info { padding: 18px 18px 22px; }
+    .br__mode { gap: 16px; }
+    .br__mode li { padding: 12px 0; grid-template-columns: 30px 1fr; }
+    .br__mode b { font-size: 1.08rem; }
+    .br__mode small { font-size: .85rem; }
+    .br__cta { width: 100%; box-sizing: border-box; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .br__gear li, .br__mode li, .br__cta, .br__word { transition: none; animation: none; opacity: 1; transform: none; }
+  }
 </style>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-br]').forEach((root) => {
-    const rows = [...root.querySelectorAll<HTMLElement>('.br__row:not(.br__row--head)')];
-    const all = () => root.querySelectorAll<HTMLElement>('.br__chk').forEach((c) => c.classList.add('is-on'));
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { all(); return; }
-    const timers: number[] = [];
-    const run = () => {
-      rows.forEach((r, i) => {
-        const at = 300 + i * 360;
-        timers.push(window.setTimeout(() => { r.classList.add('is-lit'); r.querySelector('.br__chk--buy')!.classList.add('is-on'); }, at));
-        timers.push(window.setTimeout(() => r.querySelector('.br__chk--rent')!.classList.add('is-on'), at + 170));
-        timers.push(window.setTimeout(() => r.classList.remove('is-lit'), at + 650));
+    const btns = [...root.querySelectorAll<HTMLElement>('[data-set]')];
+    let timer = 0, resume = 0, visible = false;
+    const set = (m: string) => {
+      root.dataset.mode = m;
+      btns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.set === m)));
+      root.querySelectorAll<HTMLElement>('[data-mode-panel]').forEach((p) => {
+        const on = p.dataset.modePanel === m;
+        p.setAttribute('aria-hidden', String(!on));
+        p.querySelector('a')?.setAttribute('tabindex', on ? '0' : '-1');
       });
     };
-    const io = new IntersectionObserver(([en]) => { if (en.isIntersecting) { io.disconnect(); run(); } }, { threshold: 0.35 });
-    io.observe(root.querySelector('.br__card')!);
+    const start = () => { if (!timer && visible) timer = window.setInterval(() => set(root.dataset.mode === 'buy' ? 'rent' : 'buy'), 4500); };
+    const stop = () => { clearInterval(timer); timer = 0; };
+    btns.forEach((b) => b.addEventListener('click', () => {
+      stop(); set(b.dataset.set!);
+      clearTimeout(resume); resume = window.setTimeout(start, 12000);
+    }));
+    set('buy');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    new IntersectionObserver(([en]) => {
+      visible = en.isIntersecting;
+      if (visible) { root.classList.add('is-in'); if (!reduce) start(); } else stop();
+    }, { threshold: 0.3 }).observe(root);
   });
 </script>
