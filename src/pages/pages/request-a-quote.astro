@@ -1,45 +1,42 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import QuoteWizard from '../../components/QuoteWizard.astro';
-import { PHONE, PHONE_TEL, YEARS } from '../../lib/config.js';
+import { PHONE, YEARS } from '../../lib/config.js';
 ---
-<Layout title="Request a quote" description={`Free quotes on traffic control products, equipment rentals and lane closure crews. A TSS team member replies within 1 business day. Call ${PHONE} any time.`}>
-  <section class="rq-head">
+<Layout title="Request a quote" description={`Free quotes on traffic control products, equipment rentals and lane closure crews. A TSS team member replies within 1 business day. Call ${PHONE}.`}>
+  <section class="rq">
+    <div class="rq__glow" aria-hidden="true"></div>
     <div class="wrap">
-      <h1>Request a quote</h1>
-      <p class="lede">Tell us what the job needs and a real person prices it, usually within 1 business day. Quotes are free, nothing is booked by asking, and we've been doing this for {YEARS} years.</p>
-    </div>
-  </section>
-  <section class="rq-body">
-    <div class="wrap rq-grid">
-      <QuoteWizard preset="general" heading="Tell us about the job" fromParam={true} />
-      <aside class="rq-aside">
-        <div class="sign sign--dark rq-card">
-          <h2>In a hurry?</h2>
-          <p>Call and talk to a real person. Account customers get around-the-clock emergency dispatch.</p>
-          <a href={PHONE_TEL} class="btn">Call {PHONE}</a>
-        </div>
-        <div class="sign rq-card">
-          <h2>Agencies and contractors</h2>
-          <p>Open a free account for Net 30 or Net 60 terms, PO ordering and contract pricing.</p>
-          <a class="textlink" href="/pages/create-c-m-account">Open an account</a>
-        </div>
-        <div class="sign rq-card">
-          <h2>Not sure what the job needs?</h2>
-          <p>Plan it first and the equipment list fills this form for you.</p>
-          <a class="textlink" href="/tools/work-zone-builder">Open the work zone builder</a>
-        </div>
-      </aside>
+      <header class="rq__head">
+        <p class="rq__k"><span></span>Free quote</p>
+        <h1>Get your price in <em>two minutes.</em></h1>
+        <ul class="rq__trust">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Reply within 1 business day</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><path d="M8.5 12l2.4 2.4 4.6-4.8"/></svg>No obligation</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg>{YEARS} years in business</li>
+        </ul>
+      </header>
+      <QuoteWizard preset="general" fromParam={true} />
     </div>
   </section>
 </Layout>
 <style>
-  .rq-head { background: var(--haze); border-bottom: 1px solid var(--line); padding: 40px 0 48px; }
-  .rq-head .lede { margin-top: 12px; max-width: 62ch; }
-  .rq-body { padding: 32px 0 96px; }
-  .rq-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
-  .rq-aside { display: grid; gap: 16px; position: sticky; top: calc(var(--header-h) + 20px); }
-  .rq-card h2 { font-size: 1.25rem; margin-bottom: 6px; }
-  .rq-card p { margin: 0 0 10px; }
-  @media (max-width: 920px) { .rq-grid { grid-template-columns: 1fr; } .rq-aside { position: static; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+  .rq { position: relative; padding: clamp(36px, 5vw, 72px) 0 clamp(64px, 8vw, 120px); background: linear-gradient(180deg, #f3f4f5 0%, #f7f7f8 420px, #fff 100%); overflow: clip; }
+  .rq__glow { position: absolute; top: -260px; right: -200px; width: 720px; height: 720px; border-radius: 50%; background: radial-gradient(circle, rgba(182, 6, 6, .1), transparent 65%); pointer-events: none; }
+  .rq .wrap { position: relative; max-width: 1320px; }
+  .rq__head { display: grid; gap: 14px; margin-bottom: clamp(26px, 3.4vw, 40px); }
+  .rq__k { display: inline-flex; align-items: center; gap: 12px; margin: 0; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 700; }
+  .rq__k span { width: 26px; height: 2px; background: currentColor; }
+  .rq h1 { margin: 0; font-size: clamp(2.3rem, 5vw, 4.3rem); line-height: 1; letter-spacing: -.045em; font-variation-settings: 'wght' 790; font-weight: 400; animation: rqUp .8s cubic-bezier(.2, .8, .2, 1) both; }
+  .rq h1 em { font-style: normal; color: var(--red); }
+  .rq__trust { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; animation: rqUp .8s .12s cubic-bezier(.2, .8, .2, 1) both; }
+  .rq__trust li { display: inline-flex; align-items: center; gap: 8px; font-size: .95rem; color: var(--ink-2); font-variation-settings: 'wght' 580; }
+  .rq__trust svg { width: 19px; height: 19px; fill: none; stroke: var(--red); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes rqUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 640px) {
+    .rq { padding-top: 26px; }
+    .rq__trust { gap: 6px 14px; }
+    .rq__trust li { font-size: .86rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .rq h1, .rq__trust { animation: none; } }
 </style>

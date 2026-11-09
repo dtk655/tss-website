@@ -1,406 +1,873 @@
 ---
-// Multi-step quote form: the site's main conversion path.
-// Props: preset = 'lane-closure' | 'rental' | 'products' | 'general', heading, fromParam.
-// Field definitions live in the script below (FIELDS) so they're easy to edit.
+// Quote builder: a visual five-step request flow with a live quote ticket.
+// Props: preset = 'lane-closure' | 'rental' | 'products' | 'general', fromParam (reads ?type= and ?from=builder).
+// Step and field definitions live in the script below so they're easy to edit.
+// Posts { type, answers: { job, about }, summary, quoteList, page, submittedAt } to FORM_WEBHOOK.
 import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../lib/config.js';
-const { preset = 'general', heading = 'Request a quote', fromParam = false } = Astro.props;
+const { preset = 'general', fromParam = false } = Astro.props;
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const photos = [
+  ['lane-closure', '/fleet/lc-hero.webp', '58% 45%'],
+  ['rental', '/fleet/tma-rear-2.jpg', '50% 40%'],
+  ['products', CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg', '50% 50%'],
+  ['general', '/watercade/hero-poster.jpg', '60% 50%']
+];
 ---
-<section class="qw" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
-  <header class="qw-head">
-    <h2 class="qw-title">{heading}</h2>
-    <p class="qw-progress" data-qw-progress aria-live="polite"></p>
-    <div class="qw-bar" aria-hidden="true"><span data-qw-bar></span></div>
-  </header>
-  <div class="qw-body" data-qw-body>
-    <noscript>
-      <p><strong>This form needs JavaScript.</strong> You can also call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> with what you need, where, and when.</p>
-    </noscript>
+<section class="qs" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
+  <div class="qs__main">
+    <ol class="qs__steps" data-qs-steps aria-label="Progress"></ol>
+    <div class="qs__stage" data-qw-body aria-live="polite">
+      <noscript>
+        <p><strong>This form needs JavaScript.</strong> You can also call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> with what you need, where, and when.</p>
+      </noscript>
+    </div>
   </div>
-  <p class="qw-talk">Prefer to talk? Call <a href={PHONE_TEL}>{PHONE}</a>, 24/7.</p>
+  <aside class="qs__side" aria-label="Your quote so far">
+    <div class="qs-tk">
+      <div class="qs-tk__ph">
+        {photos.map(([t, src, pos], i) => <img src={src} alt="" data-ph={t} style={`object-position:${pos}`} loading={i === 0 ? 'eager' : 'lazy'} />)}
+        <div class="qs-tk__cap">
+          <span class="qs-tk__k">Your quote</span>
+          <b data-qs-tktitle>Start with what you need</b>
+        </div>
+      </div>
+      <div class="qs-tk__body">
+        <ul class="qs-tk__lines" data-qs-lines></ul>
+        <div class="qs-tk__perf" aria-hidden="true"></div>
+        <ul class="qs-tk__promise">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg>Priced by a real person, usually within 1 business day</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg>Free, and nothing is booked by asking</li>
+        </ul>
+      </div>
+    </div>
+    <a class="qs-call" href={PHONE_TEL}>
+      <span class="qs-call__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z" /></svg></span>
+      <span><small>Rather talk it through?</small><b>Call {PHONE}</b></span>
+    </a>
+  </aside>
 </section>
 
 <style is:global>
-  .qw { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-l); padding: clamp(20px, 3.5vw, 40px); max-width: 860px; box-shadow: var(--shadow-s); }
-  .qw-head { margin-bottom: 24px; }
-  .qw-title { font-size: var(--fs-4); margin-bottom: 12px; }
-  .qw-progress { margin: 0 0 8px; font-variation-settings: 'wght' 620; font-size: .92rem; color: var(--steel); }
-  .qw-bar { height: 4px; border-radius: 2px; background: var(--haze-2); overflow: hidden; }
-  .qw-bar span { display: block; height: 100%; width: 0; background: var(--red); border-radius: 2px; transition: width .3s ease; }
-  .qw-step { display: grid; gap: 20px; }
-  .qw-lead { margin: 0; color: var(--steel); }
-  .qw-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
-  .qw-card { position: relative; }
-  .qw-card input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0; }
-  .qw-card span { display: grid; gap: 4px; height: 100%; padding: 18px 16px 16px; border: 1.5px solid var(--line-dark); border-radius: var(--r-m); background: #fff; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
-  .qw-card span:hover { border-color: var(--steel); }
-  .qw-card b { font-size: 1.08rem; font-variation-settings: 'wght' 680; font-weight: 400; }
-  .qw-card small { color: var(--steel); line-height: 1.4; }
-  .qw-card input:checked + span { border-color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
-  .qw-card input:checked + span b { color: var(--red); }
-  .qw-card input:focus-visible + span { outline: 2.5px solid var(--ink); outline-offset: 2px; }
-  .qw-grid, [data-qw-fields] { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
-  [data-qw-fields] > .field { grid-column: span 6; }
-  [data-qw-fields] > .qw-half { grid-column: span 3; }
-  [data-qw-fields] > .qw-third { grid-column: span 2; }
-  @media (max-width: 640px) { [data-qw-fields] > .qw-half, [data-qw-fields] > .qw-third { grid-column: span 6; } }
-  .qw-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .qw-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  @media (max-width: 640px) { .qw-grid2, .qw-grid3 { grid-template-columns: 1fr; } }
-  .qw-err { color: var(--red); font-variation-settings: 'wght' 640; font-size: .92rem; margin: 2px 0 0; }
-  .qw-field-err input, .qw-field-err select, .qw-field-err textarea { border-color: var(--red); }
-  .qw-note { background: var(--haze); border: 1px solid var(--line); border-left: 3px solid var(--red); border-radius: var(--r-s); padding: 12px 14px 11px; font-size: .95rem; margin: 0; }
-  .qw-note button { background: none; border: 0; padding: 0; font: inherit; font-variation-settings: 'wght' 650; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; color: var(--red); }
-  .qw-emergency[hidden], .qw-fail[hidden] { display: none !important; }
-  .qw-emergency { background: var(--red-tint); border: 1px solid color-mix(in srgb, var(--red) 35%, transparent); border-top: 4px solid var(--red); border-radius: var(--r-m); padding: 18px 20px; display: grid; gap: 10px; }
-  .qw-emergency p { margin: 0; }
-  .qw-emergency strong { color: var(--red); }
-  .qw-emergency .btn { justify-self: start; }
-  .qw-items { display: grid; gap: 10px; }
-  .qw-item { display: grid; grid-template-columns: 1fr 92px 44px; gap: 8px; }
-  .qw-item input { min-height: 50px; padding: 12px 14px 11px; background: #fff; border: 1.5px solid var(--line-dark); border-radius: var(--r-s); width: 100%; }
-  .qw-item input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3.5px rgba(20, 23, 26, .08); }
-  .qw-item [data-qw-rm] { border: 1.5px solid var(--line-dark); background: #fff; border-radius: var(--r-s); cursor: pointer; font-size: 1.2rem; line-height: 1; color: var(--steel); }
-  .qw-item [data-qw-rm]:hover { color: var(--red); border-color: var(--red); }
-  .qw-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
-  .qw-back { background: none; border: 0; font: inherit; font-variation-settings: 'wght' 640; color: var(--steel); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; cursor: pointer; padding: 10px 0; }
-  .qw-back:hover { color: var(--ink); }
-  .qw-review { display: grid; gap: 14px; }
-  .qw-rsec { border: 1px solid var(--line); border-radius: var(--r-m); padding: 18px 20px; }
-  .qw-rsec header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
-  .qw-rsec h3 { font-size: 1.1rem; margin: 0; font-variation-settings: 'wght' 700; font-weight: 400; }
-  .qw-rsec dl { margin: 0; display: grid; gap: 10px; }
-  .qw-rsec dt { font-variation-settings: 'wght' 640; font-size: .88rem; color: var(--steel); margin-bottom: 1px; }
-  .qw-rsec dd { margin: 0; white-space: pre-wrap; line-height: 1.5; }
-  .qw-edit { background: none; border: 0; font: inherit; font-size: .92rem; font-variation-settings: 'wght' 640; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; cursor: pointer; color: var(--red); padding: 0; }
-  .qw-edit:hover { color: var(--red-press); }
-  .qw-consent { margin: 0; color: var(--steel); font-size: .95rem; }
-  .qw-done { text-align: center; padding: 28px 10px; display: grid; gap: 12px; justify-items: center; }
-  .qw-done svg { width: 60px; height: 60px; }
-  .qw-done h3 { font-size: var(--fs-3); }
-  .qw-done p { margin: 0; max-width: 46ch; }
-  .qw-fail { background: var(--red-tint); border: 1px solid color-mix(in srgb, var(--red) 35%, transparent); border-top: 4px solid var(--red); border-radius: var(--r-m); padding: 18px 20px; display: grid; gap: 8px; }
-  .qw-fail p { margin: 0; }
-  .qw-talk { margin: 18px 0 0; color: var(--steel); font-size: .95rem; }
-  .qw-talk a { font-variation-settings: 'wght' 660; }
-  .qw [data-qw-hidden] { display: none; }
+  .qs { --qs-r: 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 390px); gap: clamp(22px, 3vw, 40px); align-items: start; }
+  .qs__main { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--qs-r); padding: clamp(20px, 3.4vw, 44px); box-shadow: 0 40px 80px -60px rgba(20, 23, 26, .45); }
+  .qs__side { position: sticky; top: calc(var(--header-h, 72px) + 76px); display: grid; gap: 14px; }
+
+  /* ---------- stepper ---------- */
+  .qs__steps { list-style: none; margin: 0 0 clamp(26px, 3.4vw, 38px); padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .qs__steps li { position: relative; display: grid; gap: 9px; }
+  .qs__steps .qs-bar { height: 4px; border-radius: 4px; background: var(--haze-2); overflow: hidden; }
+  .qs__steps .qs-bar i { display: block; height: 100%; width: 0; background: var(--red); border-radius: 4px; transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+  .qs__steps li.is-done .qs-bar i, .qs__steps li.is-cur .qs-bar i { width: 100%; }
+  .qs__steps button { display: flex; align-items: center; gap: 7px; padding: 0; border: 0; background: none; font: inherit; font-size: .84rem; color: var(--steel); font-variation-settings: 'wght' 560; text-align: left; cursor: default; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .qs__steps li.is-done button { cursor: pointer; color: var(--ink-2); }
+  .qs__steps li.is-done button:hover { color: var(--red); }
+  .qs__steps li.is-cur button { color: var(--ink); font-variation-settings: 'wght' 720; }
+  .qs__steps .qs-n { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; font-size: .72rem; background: var(--haze-2); color: var(--steel); font-variation-settings: 'wght' 700; transition: background .3s, color .3s; }
+  .qs__steps li.is-cur .qs-n { background: var(--ink); color: #fff; }
+  .qs__steps li.is-done .qs-n { background: var(--red); color: #fff; }
+  .qs__steps .qs-n svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- step head ---------- */
+  .qs-step { display: grid; gap: clamp(22px, 2.6vw, 30px); }
+  .qs-head { display: grid; gap: 8px; }
+  .qs-k { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 700; }
+  .qs-k::before { content: ''; width: 22px; height: 2px; background: currentColor; }
+  .qs-head h2 { margin: 0; font-size: clamp(1.7rem, 2.9vw, 2.45rem); line-height: 1.05; letter-spacing: -.035em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .qs-head p { margin: 0; color: var(--steel); max-width: 60ch; }
+
+  /* entrance animation for each block */
+  .qs-in { animation: qsIn .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+  .qs-step.is-back .qs-in { animation-name: qsInBack; }
+  @keyframes qsIn { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
+  @keyframes qsInBack { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- service cards ---------- */
+  .qs-svc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .qs-svc label { position: relative; display: block; cursor: pointer; }
+  .qs-svc input { position: absolute; opacity: 0; pointer-events: none; }
+  .qs-svc__card { position: relative; display: grid; grid-template-rows: auto 1fr; height: 100%; border: 1.5px solid var(--line); border-radius: 18px; overflow: hidden; background: #fff; transition: border-color .25s, box-shadow .35s, transform .35s cubic-bezier(.2, .8, .2, 1); }
+  .qs-svc label:hover .qs-svc__card { transform: translateY(-4px); border-color: var(--line-dark); box-shadow: 0 26px 46px -30px rgba(20, 23, 26, .5); }
+  .qs-svc input:checked + .qs-svc__card { border-color: var(--red); box-shadow: 0 0 0 1.5px var(--red), 0 26px 46px -30px rgba(182, 6, 6, .55); }
+  .qs-svc input:focus-visible + .qs-svc__card { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 3px; }
+  .qs-svc__art { position: relative; height: clamp(130px, 12vw, 168px); background: linear-gradient(180deg, var(--tint, #ececea), #fff); overflow: hidden; }
+  .qs-svc__art img { position: absolute; object-fit: contain; filter: drop-shadow(0 14px 12px rgba(20, 23, 26, .22)); transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+  .qs-svc__art img.is-photo { inset: 0; width: 100%; height: 100%; object-fit: cover; filter: none; }
+  .qs-svc__art.is-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .35)); }
+  .qs-svc label:hover .qs-svc__art img { transform: translateY(-4px) scale(1.04); }
+  .qs-svc label:hover .qs-svc__art img.is-photo { transform: scale(1.06); }
+  .qs-svc__txt { display: grid; gap: 4px; padding: 16px 52px 18px 18px; }
+  .qs-svc__txt b { font-size: 1.14rem; letter-spacing: -.015em; font-variation-settings: 'wght' 740; }
+  .qs-svc__txt small { color: var(--steel); font-size: .9rem; line-height: 1.4; }
+  .qs-tick { position: absolute; right: 16px; bottom: 18px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line-dark); background: #fff; transition: background .25s, border-color .25s, transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  .qs-tick svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .35s .05s; }
+  input:checked + .qs-svc__card .qs-tick, .qs-pic input:checked + span .qs-tick, .qs-eq input:checked + span .qs-tick { background: var(--red); border-color: var(--red); transform: scale(1.08); }
+  input:checked + .qs-svc__card .qs-tick svg, .qs-pic input:checked + span .qs-tick svg, .qs-eq input:checked + span .qs-tick svg { stroke-dashoffset: 0; }
+
+  /* ---------- fields ---------- */
+  .qs-fields { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 22px 16px; }
+  .qs-f { grid-column: span 6; display: grid; gap: 9px; align-content: start; min-width: 0; }
+  .qs-f.is-half { grid-column: span 3; }
+  .qs-f.is-third { grid-column: span 2; }
+  .qs-f[hidden] { display: none; }
+  .qs-lbl { font-size: .95rem; color: var(--ink); font-variation-settings: 'wght' 660; }
+  .qs-lbl em { font-style: normal; color: var(--steel); font-variation-settings: 'wght' 450; font-size: .86rem; margin-left: 4px; }
+  .qs-hint { margin: 0; font-size: .86rem; color: var(--steel); }
+  .qs-err { margin: 0; font-size: .88rem; color: var(--red); font-variation-settings: 'wght' 640; display: flex; align-items: center; gap: 6px; }
+  .qs-err[hidden] { display: none; }
+  .qs-f.is-err { animation: qsShake .4s; }
+  @keyframes qsShake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+  .qs-input { width: 100%; min-height: 54px; padding: 14px 16px; font: inherit; font-size: 1rem; color: var(--ink); background: #fff; border: 1.5px solid var(--line-dark); border-radius: 12px; transition: border-color .2s, box-shadow .2s; appearance: none; }
+  textarea.qs-input { min-height: 116px; resize: vertical; line-height: 1.5; }
+  .qs-input::placeholder { color: #9aa2a9; }
+  .qs-input:hover { border-color: #b3bac1; }
+  .qs-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(20, 23, 26, .07); }
+  .qs-f.is-err .qs-input { border-color: var(--red); box-shadow: 0 0 0 4px rgba(182, 6, 6, .08); }
+
+  /* chips */
+  .qs-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .qs-chip { position: relative; }
+  .qs-chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .qs-chip span { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 10px 17px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font-size: .95rem; font-variation-settings: 'wght' 560; cursor: pointer; transition: border-color .2s, background .2s, color .2s, transform .2s; user-select: none; }
+  .qs-chip span:hover { border-color: var(--ink-2); }
+  .qs-chip span svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-chip input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; animation: qsPop .3s cubic-bezier(.3, 1.6, .5, 1); }
+  .qs-chip input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; }
+  @keyframes qsPop { 50% { transform: scale(1.06); } }
+
+  /* segmented */
+  .qs-seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); padding: 4px; gap: 4px; background: var(--haze); border: 1px solid var(--line); border-radius: 14px; }
+  .qs-seg label { position: relative; }
+  .qs-seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .qs-seg span { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 46px; padding: 8px 6px; border-radius: 10px; font-size: .95rem; font-variation-settings: 'wght' 600; color: var(--ink-2); cursor: pointer; transition: background .25s, color .25s, box-shadow .25s; white-space: nowrap; }
+  .qs-seg span:hover { color: var(--ink); }
+  .qs-seg span svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-seg input:checked + span { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(20, 23, 26, .08), 0 6px 16px -8px rgba(20, 23, 26, .3); }
+  .qs-seg input:checked + span svg { color: var(--red); }
+  .qs-seg input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); }
+
+  /* picture cards (road type, crew scope) */
+  .qs-pics { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 10px; }
+  .qs-pic { position: relative; }
+  .qs-pic input { position: absolute; opacity: 0; pointer-events: none; }
+  .qs-pic > span { position: relative; display: grid; gap: 10px; height: 100%; padding: 12px 12px 14px; border: 1.5px solid var(--line); border-radius: 16px; background: #fff; cursor: pointer; transition: border-color .2s, box-shadow .3s, transform .3s; }
+  .qs-pic > span:hover { border-color: var(--line-dark); transform: translateY(-2px); }
+  .qs-pic input:checked + span { border-color: var(--red); box-shadow: 0 0 0 1.5px var(--red); }
+  .qs-pic input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; }
+  .qs-pic b { font-size: .98rem; line-height: 1.2; font-variation-settings: 'wght' 700; padding-right: 26px; }
+  .qs-pic small { color: var(--steel); font-size: .84rem; line-height: 1.35; margin-top: -6px; }
+  .qs-pic .qs-tick { right: 10px; top: 10px; bottom: auto; width: 22px; height: 22px; }
+  .qs-pic .qs-tick svg { width: 12px; height: 12px; }
+  .qs-road { display: block; width: 100%; height: auto; border-radius: 10px; }
+  .qs-road .dash { stroke-dasharray: 8 7; }
+  .qs-pic input:checked + span .qs-road .dash, .qs-pic > span:hover .qs-road .dash { animation: qsRoad 1s linear infinite; }
+  @keyframes qsRoad { to { stroke-dashoffset: -15; } }
+  .qs-pic .qs-ico { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--haze); color: var(--ink); transition: background .25s, color .25s; }
+  .qs-pic .qs-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-pic input:checked + span .qs-ico { background: var(--red-tint); color: var(--red); }
+
+  /* equipment tiles (multi) */
+  .qs-eqs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .qs-eq { position: relative; }
+  .qs-eq input { position: absolute; opacity: 0; pointer-events: none; }
+  .qs-eq > span { position: relative; display: grid; grid-template-rows: 64px auto; gap: 8px; height: 100%; padding: 10px 10px 12px; border: 1.5px solid var(--line); border-radius: 14px; background: linear-gradient(185deg, var(--tint, #ececea), #fff 80%); cursor: pointer; transition: border-color .2s, box-shadow .3s, transform .3s; }
+  .qs-eq > span:hover { transform: translateY(-2px); border-color: var(--line-dark); }
+  .qs-eq input:checked + span { border-color: var(--red); box-shadow: 0 0 0 1.5px var(--red); }
+  .qs-eq input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; }
+  .qs-eq img { width: 100%; height: 64px; object-fit: contain; filter: drop-shadow(0 8px 8px rgba(20, 23, 26, .18)); }
+  .qs-eq .qs-noimg { display: grid; place-items: center; height: 64px; color: var(--steel); }
+  .qs-eq .qs-noimg svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-eq b { font-size: .88rem; line-height: 1.2; font-variation-settings: 'wght' 680; }
+  .qs-eq .qs-tick { right: 8px; top: 8px; bottom: auto; width: 22px; height: 22px; }
+  .qs-eq .qs-tick svg { width: 12px; height: 12px; }
+
+  /* catalog picker */
+  .qs-cat { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .qs-ci { position: relative; display: grid; grid-template-rows: auto auto auto; border: 1.5px solid var(--line); border-radius: 18px; background: linear-gradient(185deg, var(--tint, #ececea) 0%, #fff 70%); overflow: hidden; transition: border-color .2s, box-shadow .3s, transform .35s cubic-bezier(.2, .8, .2, 1); }
+  .qs-ci:hover { transform: translateY(-3px); border-color: var(--line-dark); box-shadow: 0 22px 40px -30px rgba(20, 23, 26, .5); }
+  .qs-ci.is-on { border-color: var(--red); box-shadow: 0 0 0 1.5px var(--red), 0 22px 40px -30px rgba(182, 6, 6, .5); }
+  .qs-ci__pick { display: grid; justify-items: center; gap: 8px; padding: 14px 10px 6px; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; }
+  .qs-ci__pick img { width: 100%; height: clamp(74px, 7vw, 92px); object-fit: contain; filter: drop-shadow(0 12px 10px rgba(20, 23, 26, .2)); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+  .qs-ci:hover .qs-ci__pick img { transform: translateY(-4px) scale(1.05); }
+  .qs-ci__pick b { font-size: .92rem; line-height: 1.2; text-align: center; font-variation-settings: 'wght' 690; min-height: 2.4em; display: grid; place-items: center; }
+  .qs-ci__ctl { padding: 4px 10px 12px; }
+  .qs-ci__add { width: 100%; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font: inherit; font-size: .88rem; font-variation-settings: 'wght' 640; color: var(--ink); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+  .qs-ci__add:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .qs-ci__add svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+  .qs-step-ctl { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; align-items: center; min-height: 40px; border-radius: 999px; background: var(--ink); color: #fff; animation: qsPop .3s cubic-bezier(.3, 1.6, .5, 1); }
+  .qs-step-ctl button { height: 40px; border: 0; background: none; color: #fff; font-size: 1.2rem; line-height: 1; cursor: pointer; border-radius: 999px; transition: background .15s; }
+  .qs-step-ctl button:hover { background: rgba(255, 255, 255, .14); }
+  .qs-step-ctl input { width: 100%; min-width: 0; border: 0; background: none; color: #fff; text-align: center; font: inherit; font-size: .95rem; font-variation-settings: 'wght' 720; -moz-appearance: textfield; }
+  .qs-step-ctl input::-webkit-outer-spin-button, .qs-step-ctl input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .qs-step-ctl input:focus { outline: none; }
+  .qs-ci__badge { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 999px; background: var(--red); color: #fff; font-size: .74rem; font-variation-settings: 'wght' 760; opacity: 0; transform: scale(.4); transition: opacity .2s, transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  .qs-ci.is-on .qs-ci__badge { opacity: 1; transform: none; }
+  .qs-more { display: grid; gap: 10px; padding: 18px; border: 1.5px dashed var(--line-dark); border-radius: 18px; background: var(--haze); }
+  .qs-more > p { margin: 0; font-size: .95rem; font-variation-settings: 'wght' 660; }
+  .qs-rows { display: grid; gap: 8px; }
+  .qs-row { display: grid; grid-template-columns: minmax(0, 1fr) 96px 46px; gap: 8px; animation: qsIn .35s cubic-bezier(.2, .8, .2, 1); }
+  .qs-row .qs-input { min-height: 48px; padding: 11px 14px; }
+  .qs-row button { border: 1.5px solid var(--line-dark); background: #fff; border-radius: 12px; color: var(--steel); cursor: pointer; display: grid; place-items: center; }
+  .qs-row button:hover { color: var(--red); border-color: var(--red); }
+  .qs-row button svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+  .qs-addrow { justify-self: start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 2px; border: 0; background: none; font: inherit; font-size: .94rem; color: var(--red); font-variation-settings: 'wght' 680; cursor: pointer; }
+  .qs-addrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+  .qs-addrow:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  .qs-pill { display: inline-flex; align-items: center; gap: 8px; justify-self: start; padding: 8px 14px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-size: .9rem; font-variation-settings: 'wght' 680; animation: qsPop .35s; }
+  .qs-pill svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* banner (work zone plan, quote list) */
+  .qs-note { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; background: linear-gradient(90deg, var(--red-tint), #fff); border: 1px solid #f2d3d3; }
+  .qs-note p { margin: 0; flex: 1; font-size: .95rem; }
+  .qs-note button { flex: none; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-size: .9rem; font-variation-settings: 'wght' 680; cursor: pointer; }
+  .qs-note button:hover { background: var(--red-press); }
+
+  /* ---------- nav ---------- */
+  .qs-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 6px; border-top: 1px solid var(--line); margin-top: 4px; padding-top: 22px; }
+  .qs-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 28px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-size: 1.02rem; font-variation-settings: 'wght' 700; cursor: pointer; text-decoration: none; transition: background .2s, transform .2s, box-shadow .3s; box-shadow: 0 14px 30px -16px rgba(182, 6, 6, .8); }
+  .qs-btn:hover { background: var(--red-press); }
+  .qs-btn:active { transform: scale(.98); }
+  .qs-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s; }
+  .qs-btn:hover svg { transform: translateX(3px); }
+  .qs-btn[disabled] { opacity: .7; cursor: progress; }
+  .qs-btn.is-sending svg { animation: qsSpin .8s linear infinite; }
+  @keyframes qsSpin { to { transform: rotate(360deg); } }
+  .qs-back { display: inline-flex; align-items: center; gap: 8px; min-height: 54px; padding: 0 20px 0 14px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font: inherit; font-size: .98rem; font-variation-settings: 'wght' 620; color: var(--ink-2); cursor: pointer; transition: border-color .2s, color .2s; }
+  .qs-back:hover { border-color: var(--ink); color: var(--ink); }
+  a.qs-back, a.qs-btn { text-decoration: none; }
+  .qs-back svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-skip { font-size: .88rem; color: var(--steel); }
+
+  /* ---------- review ---------- */
+  .qs-rv { display: grid; gap: 12px; }
+  .qs-rv section { border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; background: #fff; }
+  .qs-rv header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .qs-rv h3 { margin: 0; font-size: 1.06rem; font-variation-settings: 'wght' 720; font-weight: 400; }
+  .qs-rv header button { border: 0; background: none; padding: 4px 0; font: inherit; font-size: .9rem; color: var(--red); font-variation-settings: 'wght' 660; cursor: pointer; }
+  .qs-rv header button:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .qs-rv dl { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; }
+  .qs-rv dl > div.is-wide { grid-column: 1 / -1; }
+  .qs-rv dt { font-size: .8rem; color: var(--steel); font-variation-settings: 'wght' 600; margin-bottom: 2px; }
+  .qs-rv dd { margin: 0; white-space: pre-wrap; line-height: 1.45; font-size: .97rem; }
+  .qs-rv__items { display: flex; flex-wrap: wrap; gap: 8px; }
+  .qs-rv__items span { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--haze); font-size: .9rem; font-variation-settings: 'wght' 600; }
+  .qs-rv__items img { width: 30px; height: 30px; object-fit: contain; border-radius: 50%; background: #fff; padding: 3px; }
+  .qs-rv__items b { color: var(--red); }
+  .qs-fine { margin: 0; color: var(--steel); font-size: .9rem; }
+  .qs-fail { display: grid; gap: 6px; padding: 16px 18px; border-radius: 14px; background: var(--red-tint); border: 1px solid #f0c9c9; }
+  .qs-fail p { margin: 0; }
+  .qs-fail[hidden] { display: none; }
+
+  /* ---------- done ---------- */
+  .qs-done { display: grid; justify-items: center; text-align: center; gap: 14px; padding: clamp(10px, 3vw, 30px) 0 8px; }
+  .qs-done__check { width: 92px; height: 92px; }
+  .qs-done__check circle { fill: none; stroke: var(--ok); stroke-width: 4; stroke-dasharray: 280; stroke-dashoffset: 280; animation: qsDraw .8s .1s cubic-bezier(.6, 0, .3, 1) forwards; transform: rotate(-90deg); transform-origin: center; }
+  .qs-done__check path { fill: none; stroke: var(--ok); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 60; stroke-dashoffset: 60; animation: qsDraw .45s .75s ease-out forwards; }
+  @keyframes qsDraw { to { stroke-dashoffset: 0; } }
+  .qs-done h2 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.5rem); letter-spacing: -.035em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .qs-done > p { margin: 0; color: var(--steel); max-width: 48ch; }
+  .qs-ref { display: inline-flex; gap: 8px; padding: 8px 14px; border-radius: 999px; background: var(--haze); font-size: .9rem; color: var(--ink-2); font-variation-settings: 'wght' 620; }
+  .qs-ref b { color: var(--ink); letter-spacing: .04em; }
+  .qs-next { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; text-align: left; }
+  .qs-next li { padding: 16px; border: 1px solid var(--line); border-radius: 16px; display: grid; gap: 4px; }
+  .qs-next span { font-size: .76rem; letter-spacing: .14em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 700; }
+  .qs-next b { font-variation-settings: 'wght' 700; }
+  .qs-next small { color: var(--steel); font-size: .88rem; }
+  .qs-done__acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
+
+  /* ---------- live ticket ---------- */
+  .qs-tk { position: relative; border-radius: var(--qs-r); overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: 0 40px 80px -50px rgba(20, 23, 26, .55); }
+  .qs-tk__ph { position: relative; height: 150px; background: var(--asphalt); overflow: hidden; }
+  .qs-tk__ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity .9s ease, transform 6s ease-out; }
+  .qs-tk__ph img.is-on { opacity: 1; transform: scale(1); }
+  .qs-tk__ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 11, 13, .1), rgba(10, 11, 13, .78)); }
+  .qs-tk__cap { position: absolute; left: 20px; right: 20px; bottom: 16px; z-index: 1; display: grid; gap: 3px; color: #fff; }
+  .qs-tk__k { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); font-variation-settings: 'wght' 700; }
+  .qs-tk__cap b { font-size: 1.3rem; letter-spacing: -.02em; line-height: 1.15; font-variation-settings: 'wght' 740; }
+  .qs-tk__body { padding: 18px 20px 20px; }
+  .qs-tk__lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .qs-tk__lines li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; padding: 8px 0; border-bottom: 1px solid var(--haze-2); }
+  .qs-tk__lines li:last-child { border-bottom: 0; }
+  .qs-tk__lines li.is-new { animation: qsLine .55s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes qsLine { from { opacity: 0; transform: translateY(8px); background: #fff7e0; } 60% { background: #fff7e0; } to { opacity: 1; transform: none; background: transparent; } }
+  .qs-tk__lines .qs-dot { display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: #e7f3eb; color: var(--ok); }
+  .qs-tk__lines .qs-dot svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-tk__lines .is-ghost .qs-dot { background: var(--haze-2); color: transparent; }
+  .qs-tk__lines small { display: block; font-size: .74rem; color: var(--steel); letter-spacing: .02em; font-variation-settings: 'wght' 600; }
+  .qs-tk__lines span.v { display: block; font-size: .94rem; line-height: 1.4; font-variation-settings: 'wght' 600; overflow-wrap: anywhere; }
+  .qs-tk__lines .is-ghost span.v { color: #b3bac1; font-variation-settings: 'wght' 500; }
+  .qs-tk__thumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .qs-tk__thumbs span { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; background: var(--haze); font-size: .82rem; font-variation-settings: 'wght' 620; }
+  .qs-tk__thumbs img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: #fff; padding: 2px; }
+  .qs-tk__perf { height: 1px; margin: 14px -20px; background-image: linear-gradient(90deg, var(--line-dark) 50%, transparent 50%); background-size: 10px 1px; position: relative; }
+  .qs-tk__perf::before, .qs-tk__perf::after { content: ''; position: absolute; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--haze); border: 1px solid var(--line); }
+  .qs-tk__perf::before { left: -10px; }
+  .qs-tk__perf::after { right: -10px; }
+  .qs-tk__promise { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .qs-tk__promise li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; font-size: .86rem; color: var(--ink-2); line-height: 1.4; }
+  .qs-tk__promise svg { width: 18px; height: 18px; fill: none; stroke: var(--red); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-call { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 18px; border: 1px solid var(--line); background: #fff; text-decoration: none; color: var(--ink); transition: border-color .2s, transform .3s; }
+  .qs-call:hover { border-color: var(--line-dark); transform: translateY(-2px); }
+  .qs-call__ico { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--red-tint); color: var(--red); }
+  .qs-call__ico svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linejoin: round; }
+  .qs-call small { display: block; font-size: .8rem; color: var(--steel); }
+  .qs-call b { font-size: 1.05rem; font-variation-settings: 'wght' 720; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .qs-cat { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 980px) {
+    .qs { grid-template-columns: 1fr; }
+    .qs__side { display: none; }
+  }
+  @media (max-width: 720px) {
+    .qs-pics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .qs-eqs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .qs-next { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .qs__main { padding: 22px 16px 20px; border-radius: 18px; }
+    .qs__steps { display: flex; gap: 6px; margin-bottom: 24px; }
+    .qs__steps li { flex: 1 1 0; min-width: 0; }
+    .qs__steps li.is-cur { flex: 3.4 1 0; }
+    .qs__steps button { justify-content: center; }
+    .qs__steps button .qs-t { display: none; }
+    .qs__steps li.is-cur button { justify-content: flex-start; }
+    .qs__steps li.is-cur button .qs-t { display: inline; }
+    .qs-svc { grid-template-columns: 1fr; gap: 10px; }
+    .qs-svc__card { grid-template-columns: 112px minmax(0, 1fr); grid-template-rows: none; }
+    .qs-svc__art { height: auto; min-height: 104px; }
+    .qs-svc__txt { padding: 14px 44px 14px 14px; align-content: center; }
+    .qs-svc__txt b { font-size: 1.04rem; }
+    .qs-svc__txt small { font-size: .84rem; }
+    .qs-tick { right: 12px; bottom: auto; top: 50%; margin-top: -13px; }
+    .qs-cat { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .qs-fields { gap: 20px 12px; }
+    .qs-f.is-half, .qs-f.is-third { grid-column: span 6; }
+    .qs-f.is-half.qs-pair, .qs-f.is-third.qs-pair { grid-column: span 3; }
+    .qs-seg { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .qs-seg.is-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; }
+    .qs-row { grid-template-columns: minmax(0, 1fr) 76px 44px; }
+    .qs-nav { position: sticky; bottom: 0; z-index: 5; margin: 0 -16px -20px; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, .94); backdrop-filter: blur(10px); border-radius: 0 0 18px 18px; }
+    .qs-nav .qs-btn { flex: 1; padding: 0 18px; }
+    .qs-back { padding: 0 16px 0 12px; }
+    .qs-back .qs-t { display: none; }
+    .qs-rv dl { grid-template-columns: 1fr; }
+    .qs-note { flex-direction: column; align-items: stretch; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qs *, .qs *::before, .qs *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
+  }
 </style>
 
 <script>
-  const STATES = ['New Jersey', 'New York', 'Pennsylvania', 'Connecticut', 'Delaware', 'Other'];
-  const TYPES = [
-    { id: 'lane-closure', b: 'Lane closure crew', s: 'Flaggers, full closures, traffic control plans' },
-    { id: 'rental', b: 'Rent equipment', s: 'Cones to crash trucks, delivered in NJ, NY, PA, CT' },
-    { id: 'products', b: 'Buy products', s: 'Ships nationwide. Bulk, PO and custom branding' },
-    { id: 'general', b: 'Something else', s: 'Not sure yet? Start here' }
+  /* ---------------- content ---------------- */
+  const IMG = { cones: '/cats/cones.svg', drums: '/cats/traffic-drums.svg', barricades: '/cats/barricades.png', water: '/cats/water-filled-barriers.png', signs: '/cats/sign-shop.png', stands: '/cats/sign-stands.png', lights: '/cats/lights.png', delin: '/cats/deliniators.png', reflectors: '/cats/reflectors.png', gear: '/cats/safety-gear.png', arrow: '/fleet/cut/arrow-board.png', vms: '/fleet/cut/vms.png', tower: '/fleet/cut/light-tower.png', signal: '/fleet/cut/traffic-light.png', tma: '/fleet/tma-side.png', van: '/fleet/cut/bucket-van.png' };
+  const T = { orange: '#ffe7d2', blue: '#e2edf8', coral: '#ffe1da', red: '#ffdede', yellow: '#fff1c9', green: '#e3f3d8', grey: '#ebebe8' };
+  const RENT_CAT = [
+    { id: 'cones', t: 'Traffic cones', img: IMG.cones, tint: T.orange, step: 25 },
+    { id: 'drums', t: 'Traffic drums', img: IMG.drums, tint: T.orange, step: 10 },
+    { id: 'barricades', t: 'Barricades', img: IMG.barricades, tint: T.blue, step: 5 },
+    { id: 'water', t: 'WATERCADE barriers', img: IMG.water, tint: T.coral, step: 10 },
+    { id: 'signs', t: 'Signs and stands', img: IMG.signs, tint: T.red, step: 2 },
+    { id: 'arrow', t: 'Arrow board', img: IMG.arrow, tint: T.yellow, step: 1 },
+    { id: 'vms', t: 'Message board (VMS)', img: IMG.vms, tint: T.orange, step: 1 },
+    { id: 'tower', t: 'Light tower', img: IMG.tower, tint: T.blue, step: 1 },
+    { id: 'signal', t: 'Portable traffic light', img: IMG.signal, tint: T.green, step: 1 },
+    { id: 'tma', t: 'TMA crash truck', img: IMG.tma, tint: T.red, step: 1 },
+    { id: 'van', t: 'Bucket van', img: IMG.van, tint: T.grey, step: 1 },
+    { id: 'lights', t: 'Barricade lights', img: IMG.lights, tint: T.yellow, step: 10 }
   ];
-  const FIELDS = {
+  const BUY_CAT = [
+    { id: 'cones', t: 'Traffic cones', img: IMG.cones, tint: T.orange, step: 25 },
+    { id: 'drums', t: 'Traffic drums', img: IMG.drums, tint: T.orange, step: 10 },
+    { id: 'barricades', t: 'Barricades', img: IMG.barricades, tint: T.blue, step: 5 },
+    { id: 'water', t: 'Water-filled barriers', img: IMG.water, tint: T.coral, step: 10 },
+    { id: 'signs', t: 'Signs', img: IMG.signs, tint: T.red, step: 5 },
+    { id: 'stands', t: 'Sign stands', img: IMG.stands, tint: T.grey, step: 5 },
+    { id: 'lights', t: 'Lights and flares', img: IMG.lights, tint: T.yellow, step: 10 },
+    { id: 'delin', t: 'Delineators', img: IMG.delin, tint: T.orange, step: 10 },
+    { id: 'reflectors', t: 'Reflectors', img: IMG.reflectors, tint: T.blue, step: 25 },
+    { id: 'gear', t: 'Safety gear', img: IMG.gear, tint: T.green, step: 10 },
+    { id: 'arrow', t: 'Arrow board', img: IMG.arrow, tint: T.yellow, step: 1 },
+    { id: 'vms', t: 'Message board (VMS)', img: IMG.vms, tint: T.orange, step: 1 }
+  ];
+  const ICON = {
+    check: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>',
+    back: '<svg viewBox="0 0 24 24"><path d="M19 12H6M11 6l-6 6 6 6"/></svg>',
+    plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+    x: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    sun: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>',
+    moon: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>',
+    clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    flag: '<svg viewBox="0 0 24 24"><path d="M6 21V4M6 4h11l-2 4 2 4H6"/></svg>',
+    cone: '<svg viewBox="0 0 24 24"><path d="M10.5 3h3l5 17h-13zM8.2 11h7.6M6.8 15.5h10.4M4 20h16"/></svg>',
+    crew: '<svg viewBox="0 0 24 24"><circle cx="9" cy="7.5" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.4A4.5 4.5 0 0 1 21 18.6"/></svg>',
+    plan: '<svg viewBox="0 0 24 24"><path d="M4 5l5-2 6 2 5-2v16l-5 2-6-2-5 2z"/><path d="M9 3v16M15 5v16"/></svg>',
+    box: '<svg viewBox="0 0 24 24"><path d="M3 7.5L12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg>',
+    chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4"/></svg>',
+    cal: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>'
+  };
+
+  // Small road diagrams for the road-type cards: n lanes, divided median or a double yellow line.
+  function road(n, divided, shoulder) {
+    const W = 140, H = 64, top = shoulder ? 10 : 6, bot = H - top, lh = (bot - top) / n;
+    let s = `<svg class="qs-road" viewBox="0 0 ${W} ${H}" aria-hidden="true"><rect width="${W}" height="${H}" rx="10" fill="#e9ebe6"/><rect y="${top - 2}" width="${W}" height="${bot - top + 4}" fill="#2b2f34"/>`;
+    s += `<path d="M0 ${top}H${W}M0 ${bot}H${W}" stroke="#f4f4f0" stroke-width="1.6"/>`;
+    for (let i = 1; i < n; i++) {
+      const y = top + lh * i;
+      if (i === n / 2) s += divided ? `<rect y="${y - 3}" width="${W}" height="6" fill="#7b8a6c"/><path d="M0 ${y - 3}H${W}M0 ${y + 3}H${W}" stroke="#f5b800" stroke-width="1.2"/>` : `<path d="M0 ${y - 1.3}H${W}M0 ${y + 1.3}H${W}" stroke="#f5b800" stroke-width="1.3"/>`;
+      else s += `<path class="dash" d="M0 ${y}H${W}" stroke="#f4f4f0" stroke-width="1.5"/>`;
+    }
+    if (n === 2 && !divided && !shoulder) s = s.replace(/<path d="M0 ([\d.]+)H140M0 ([\d.]+)H140" stroke="#f5b800" stroke-width="1.3"\/>/, '<path class="dash" d="M0 32H140" stroke="#f5b800" stroke-width="1.8"/>');
+    // a car in the right lane
+    const cy = bot - lh / 2;
+    s += `<rect x="92" y="${cy - 4.5}" width="18" height="9" rx="3" fill="#b60606"/><rect x="101" y="${cy - 3.5}" width="5" height="7" rx="1.5" fill="#f7d4d4"/>`;
+    return s + '</svg>';
+  }
+
+  const SVC = [
+    { id: 'lane-closure', b: 'Lane closure crew', s: 'Flaggers, full closures, TMA protection and traffic control plans', photo: '/fleet/lc-hero.webp' },
+    { id: 'rental', b: 'Rent equipment', s: 'Cones to crash trucks, delivered and picked up in NJ, NY, PA and CT', imgs: [[IMG.vms, 'left:6%;bottom:6%;height:78%'], [IMG.arrow, 'right:8%;bottom:6%;height:70%']], tint: T.yellow },
+    { id: 'products', b: 'Buy products', s: 'Ships nationwide. Bulk orders, POs and custom branding', imgs: [[IMG.cones, 'left:14%;bottom:6%;height:80%'], [IMG.barricades, 'right:8%;bottom:6%;height:66%']], tint: T.orange },
+    { id: 'general', b: 'Something else', s: 'Not sure what you need? Describe it and we’ll sort it out', imgs: [[IMG.water, 'left:50%;bottom:4%;height:74%;translate:-50% 0']], tint: T.blue }
+  ];
+  const STATES_LC = ['NJ', 'NY', 'PA', 'CT', 'DE', 'Other'];
+  const STATES_R = ['NJ', 'NY', 'PA', 'CT', 'Other'];
+
+  // Each service: two job steps between "Service" and "Your details".
+  const FLOW = {
     'lane-closure': [
-      { id: 'location', label: 'Job address or route, plus the nearest cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd', hint: 'An exact spot helps us plan the right setup and drive time.' },
-      { id: 'town', label: 'Town or city', type: 'text', req: true, half: true },
-      { id: 'state', label: 'State', type: 'select', req: true, opts: STATES, half: true, hint: 'We close lanes in NJ, NY, PA, CT, DE and nearby. Elsewhere, ask us.' },
-      { id: 'roadType', label: 'Road type', type: 'radio', req: true, opts: ['Local road', 'County road', 'State highway', 'Interstate or parkway'] },
-      { id: 'speed', label: 'Posted speed limit', type: 'select', opts: ['25 mph or less', '30 mph', '35 mph', '40 mph', '45 mph', '50 mph', '55 mph', '60 mph', '65 mph or more', 'Not sure'], half: true },
-      { id: 'lanes', label: 'What needs to close?', type: 'check', opts: ['Right lane', 'Left lane', 'Center lane', 'Shoulder', 'Full road', 'Sidewalk or crosswalk', 'Not sure yet'] },
-      { id: 'work', label: 'Describe the work being done', type: 'textarea', req: true, ph: 'e.g. Crane pick over the right lane for rooftop HVAC units, need the lane and sidewalk closed', hint: 'The more detail here, the faster and more accurate your price.' },
-      { id: 'shift', label: 'When does the work happen?', type: 'radio', opts: ['Day work', 'Night work', '24-hour'] },
-      { id: 'startDate', label: 'Start date', type: 'date', req: true, third: true },
-      { id: 'endDate', label: 'Expected end date', type: 'date', third: true },
-      { id: 'startTime', label: 'Start time', type: 'time', third: true },
-      { id: 'crew', label: 'What should our crew handle?', type: 'radio', opts: ['Flaggers only', 'Full closure setup', 'Closure plus maintenance during the work', 'Traffic control plan drawings'] },
-      { id: 'equipment', label: 'Equipment you need from us', type: 'check', opts: ['TMA crash truck', 'Arrow board', 'VMS board', 'Cones or drums', 'Barricades', 'Signs', 'Lights', 'We have our own equipment'] },
-      { id: 'permit', label: 'Is a police detail or permit already arranged?', type: 'radio', opts: ['Yes', 'No', 'Not sure'] },
-      { id: 'authority', label: 'Road authority, if you know it', type: 'select', opts: ['NJDOT', 'County', 'Town or municipality', 'Utility authority', 'Turnpike or parkway authority', 'Not sure'], half: true },
-      { id: 'recur', label: 'Is this a one-time job?', type: 'radio', opts: ['One-time', 'Recurring work', 'Emergency, I need a crew now'] }
+      { name: 'The job', k: 'Lane closure', title: 'Tell us about the closure', lead: 'A few taps. The more we know, the sharper your price.', fields: [
+        { id: 'roadType', label: 'What kind of road?', type: 'pics', req: true, n: 4, opts: [
+          { v: 'Local road', art: road(2, false, false) }, { v: 'County road', art: road(2, false, true) }, { v: 'State highway', art: road(4, false, true) }, { v: 'Interstate or parkway', art: road(6, true, true) }] },
+        { id: 'speed', label: 'Posted speed limit', type: 'chips', opts: ['25 or less', '30 to 35', '40 to 45', '50 to 55', '60+', 'Not sure'] },
+        { id: 'lanes', label: 'What needs to close?', type: 'multi', req: true, opts: ['Right lane', 'Left lane', 'Center lane', 'Shoulder', 'Full road', 'Sidewalk or crosswalk', 'Not sure yet'] },
+        { id: 'crew', label: 'What should our crew handle?', type: 'pics', n: 4, opts: [
+          { v: 'Flaggers only', s: 'Certified flaggers direct traffic', icon: ICON.flag }, { v: 'Full closure setup', s: 'We set and remove the closure', icon: ICON.cone }, { v: 'Closure plus maintenance', s: 'Crew stays on site all shift', icon: ICON.crew }, { v: 'Traffic control plan', s: 'Drawings for your permit', icon: ICON.plan }] },
+        { id: 'equipment', label: 'Equipment you need from us', type: 'equip', opts: [
+          { v: 'TMA crash truck', img: IMG.tma, tint: T.red }, { v: 'Arrow board', img: IMG.arrow, tint: T.yellow }, { v: 'Message board (VMS)', img: IMG.vms, tint: T.orange }, { v: 'Cones or drums', img: IMG.cones, tint: T.orange },
+          { v: 'Barricades', img: IMG.barricades, tint: T.blue }, { v: 'Signs', img: IMG.signs, tint: T.red }, { v: 'Lights', img: IMG.tower, tint: T.yellow }, { v: 'We have our own', icon: ICON.box, tint: T.grey }] },
+        { id: 'work', label: 'Describe the work', type: 'textarea', req: true, ph: 'e.g. Crane pick over the right lane for rooftop HVAC units. Lane and sidewalk need to close.' }
+      ] },
+      { name: 'Where and when', k: 'Location and schedule', title: 'Where and when is the job?', lead: 'An exact spot helps us plan the right setup and drive time.', fields: [
+        { id: 'location', label: 'Job address or route, plus nearest cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd' },
+        { id: 'town', label: 'Town or city', type: 'text', req: true, w: 'half' },
+        { id: 'state', label: 'State', type: 'seg', req: true, opts: STATES_LC, w: 'half', hint: 'Lane closures in NJ, NY, PA, CT and DE.' },
+        { id: 'shift', label: 'When does the work happen?', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock]] },
+        { id: 'startDate', label: 'Start date', type: 'date', req: true, w: 'third', pair: 1 },
+        { id: 'endDate', label: 'End date', type: 'date', w: 'third', pair: 1 },
+        { id: 'startTime', label: 'Start time', type: 'time', w: 'third' },
+        { id: 'recur', label: 'Is this a one-time job?', type: 'chips', opts: ['One-time', 'Recurring work'] },
+        { id: 'permit', label: 'Police detail or permit arranged?', type: 'chips', opts: ['Yes', 'No', 'Not sure'] },
+        { id: 'authority', label: 'Road authority, if you know it', type: 'chips', opts: ['NJDOT', 'NYSDOT', 'PennDOT', 'County', 'Town or city', 'Turnpike or parkway', 'Not sure'] }
+      ] }
     ],
     rental: [
-      { id: 'items', label: 'What do you want to rent?', type: 'items', req: true, hint: 'Name the item and how many. Rough counts are fine.' },
-      { id: 'address', label: 'Delivery address', type: 'text', req: true, ph: 'Street address, or the jobsite if different' },
-      { id: 'town', label: 'Town or city', type: 'text', req: true, half: true },
-      { id: 'state', label: 'State', type: 'select', req: true, opts: STATES, half: true, hint: 'We rent, deliver and pick up in NJ, NY, PA and CT.' },
-      { id: 'deliverDate', label: 'Delivery date', type: 'date', req: true, half: true },
-      { id: 'pickupDate', label: 'Pickup date', type: 'date', half: true, hint: 'A guess is fine. Daily, weekly and monthly rates.' },
-      { id: 'setup', label: 'Should our crew set it up?', type: 'radio', opts: ['Yes, deliver and set up', 'Just deliver', 'Not sure yet'] },
-      { id: 'contact', label: 'On-site contact, name and phone', type: 'text', ph: 'Who meets the truck?' },
-      { id: 'notes', label: 'Anything else about the job?', type: 'textarea' }
+      { name: 'Equipment', k: 'Rental', title: 'What do you need to rent?', lead: 'Tap to add. Rough counts are fine, we’ll confirm everything.', fields: [
+        { id: 'cat', label: '', type: 'catalog', req: true, cat: RENT_CAT },
+        { id: 'setup', label: 'Should our crew set it up?', type: 'seg', opts: ['Deliver and set up', 'Just deliver', 'Not sure yet'] }
+      ] },
+      { name: 'Delivery', k: 'Delivery and dates', title: 'Where and when should it arrive?', lead: 'We deliver and pick up in NJ, NY, PA and CT.', fields: [
+        { id: 'address', label: 'Delivery address', type: 'text', req: true, ph: 'Street address or jobsite' },
+        { id: 'town', label: 'Town or city', type: 'text', req: true, w: 'half' },
+        { id: 'state', label: 'State', type: 'seg', req: true, opts: STATES_R, w: 'half' },
+        { id: 'deliverDate', label: 'Delivery date', type: 'date', req: true, w: 'half', pair: 1 },
+        { id: 'pickupDate', label: 'Pickup date', type: 'date', w: 'half', pair: 1, hint: 'A guess is fine.' },
+        { id: 'days', type: 'days' },
+        { id: 'contact', label: 'On-site contact, name and phone', type: 'text', ph: 'Who meets the truck?' },
+        { id: 'notes', label: 'Anything else about the job?', type: 'textarea', ph: 'Access, gate codes, placement, timing…' }
+      ] }
     ],
     products: [
-      { id: 'items', label: 'What do you need?', type: 'items', req: true, hint: 'Name the product and quantity. Rough counts are fine.' },
-      { id: 'shipTo', label: 'Ship-to city and state', type: 'text', req: true, ph: 'Products ship anywhere in the U.S.', half: true },
-      { id: 'needBy', label: 'Needed by', type: 'date', half: true },
-      { id: 'po', label: 'Bulk order or purchase order?', type: 'radio', opts: ['Bulk order', 'Purchase order', 'Both', 'Neither', 'Not sure'] },
-      { id: 'custom', label: 'Custom colors or your logo on the products?', type: 'radio', opts: ['Yes', 'No'] },
-      { id: 'customDesc', label: 'Describe the customization', type: 'textarea', ph: 'e.g. 200 orange cones stenciled "CITY OF NEWARK DPW", logo on both sides', showIf: { custom: 'Yes' } },
-      { id: 'notes', label: 'Anything else?', type: 'textarea' }
+      { name: 'Products', k: 'Purchase', title: 'What do you need?', lead: 'Tap to add. Rough counts are fine, we’ll confirm sizes and options.', fields: [
+        { id: 'cat', label: '', type: 'catalog', req: true, cat: BUY_CAT },
+        { id: 'custom', label: 'Custom colors, stenciling or your logo?', type: 'seg', opts: ['No', 'Yes'], cls: 'is-2' },
+        { id: 'customDesc', label: 'Describe the customization', type: 'textarea', ph: 'e.g. 200 orange cones stenciled "CITY OF NEWARK DPW", logo on both sides', showIf: { custom: 'Yes' } }
+      ] },
+      { name: 'Shipping', k: 'Shipping', title: 'Where should it ship?', lead: 'Products ship anywhere in the U.S.', fields: [
+        { id: 'shipTo', label: 'Ship-to city and state', type: 'text', req: true, ph: 'e.g. Newark, NJ', w: 'half' },
+        { id: 'needBy', label: 'Needed by', type: 'date', w: 'half' },
+        { id: 'po', label: 'How are you buying?', type: 'chips', opts: ['Credit card', 'Purchase order', 'Net terms account', 'Not sure'] },
+        { id: 'notes', label: 'Anything else?', type: 'textarea', ph: 'Sizes, colors, delivery details…' }
+      ] }
     ],
     general: [
-      { id: 'what', label: 'Tell us what you need', type: 'textarea', req: true, ph: 'Describe the job, the event or the problem. Plain words are perfect.' },
-      { id: 'where', label: 'Where is the job or delivery?', type: 'text', half: true },
-      { id: 'when', label: 'When do you need it?', type: 'text', half: true, ph: 'A date, or "ASAP"' }
+      { name: 'The job', k: 'Tell us more', title: 'What can we help with?', lead: 'Describe the job, the event or the problem. Plain words are perfect.', fields: [
+        { id: 'what', label: 'What do you need?', type: 'textarea', req: true, ph: 'e.g. Closing a street for a block party in June, need barricades and signs, maybe a crew.' },
+        { id: 'topics', label: 'Any of these involved?', type: 'multi', opts: ['Lane closure', 'Equipment rental', 'Buying products', 'WATERCADE barriers', 'Special event', 'Custom signs'] }
+      ] },
+      { name: 'Where and when', k: 'Location and timing', title: 'Where and when?', lead: 'Rough is fine.', fields: [
+        { id: 'where', label: 'Where is the job or delivery?', type: 'text', ph: 'Town and state', w: 'half' },
+        { id: 'when', label: 'When do you need it?', type: 'text', ph: 'A date, or "ASAP"', w: 'half' }
+      ] }
     ]
   };
   const ABOUT = [
-    { id: 'name', label: 'Your name', type: 'text', req: true, half: true },
-    { id: 'company', label: 'Company or agency', type: 'text', half: true },
-    { id: 'role', label: 'Which best describes you?', type: 'radio', opts: ['Contractor', 'Municipality or agency', 'Utility', 'Event organizer', 'Other'] },
-    { id: 'email', label: 'Email', type: 'text', half: true, ph: 'you@company.com' },
-    { id: 'phone', label: 'Phone', type: 'text', half: true, ph: '(908) 555-0123' },
-    { id: 'prefer', label: 'Best way to reach you', type: 'radio', opts: ['Phone call', 'Email', 'Text'] },
-    { id: 'urgency', label: 'How soon do you need pricing?', type: 'radio', opts: ['Today', 'This week', 'Just planning ahead'] },
-    { id: 'account', label: 'Do you have a TSS account or Net terms?', type: 'radio', opts: ['Yes', 'No', 'No, but I want to set one up'] },
+    { id: 'name', label: 'Your name', type: 'text', req: true, w: 'half', ac: 'name' },
+    { id: 'company', label: 'Company or agency', type: 'text', w: 'half', ac: 'organization' },
+    { id: 'email', label: 'Email', type: 'email', w: 'half', ph: 'you@company.com', ac: 'email' },
+    { id: 'phone', label: 'Phone', type: 'tel', w: 'half', ph: '(908) 555-0123', ac: 'tel' },
+    { id: 'role', label: 'Which best describes you?', type: 'chips', opts: ['Contractor', 'Municipality or agency', 'Utility', 'Event organizer', 'Other'] },
+    { id: 'prefer', label: 'Best way to reach you', type: 'seg', opts: ['Call', 'Email', 'Text'] },
+    { id: 'urgency', label: 'How soon do you need pricing?', type: 'chips', opts: ['Today', 'This week', 'Just planning ahead'] },
+    { id: 'account', label: 'Do you have a TSS account?', type: 'chips', opts: ['Yes', 'No', 'No, but I want one'] },
     { id: 'extra', label: 'Anything else we should know?', type: 'textarea' }
   ];
-  const STEP_NAMES = ['What you need', 'The job', 'About you', 'Review and send'];
+
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-  const today = () => new Date().toISOString().slice(0, 10);
+  const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+  const fmtDate = (s) => { if (!s) return ''; const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); };
+  const dayCount = (a, b) => { if (!a || !b) return 0; const n = Math.round((new Date(b) - new Date(a)) / 864e5) + 1; return n > 0 ? n : 0; };
+  const KEY = 'tss_quote_draft_v2';
 
   let uid = 0;
   document.querySelectorAll('[data-qw]').forEach((root) => {
-    const ns = 'qw' + uid++;
+    const ns = 'qs' + uid++;
     const body = root.querySelector('[data-qw-body]');
+    const stepsEl = root.querySelector('[data-qs-steps]');
+    const linesEl = root.querySelector('[data-qs-lines]');
     const PHONE = root.dataset.phone, TEL = root.dataset.tel, EMAIL = root.dataset.email, HOOK = root.dataset.webhook;
-    let state = { type: root.dataset.preset || 'general', job: {}, about: {}, step: 2, planApplied: false, listApplied: false };
-    if (!FIELDS[state.type]) state.type = 'general';
+    const preset = FLOW[root.dataset.preset] ? root.dataset.preset : 'general';
+    let state = { type: preset, job: {}, about: {}, step: 0, planApplied: false, listApplied: false };
+    try { const d = JSON.parse(sessionStorage.getItem(KEY) || 'null'); if (d && FLOW[d.type]) state = { ...state, ...d }; } catch {}
+    const qp = new URLSearchParams(location.search);
+    if (root.dataset.fromParam) {
+      if (qp.get('from') === 'builder') { state.type = 'lane-closure'; state.step = 1; }
+      const qt = qp.get('type'); if (qt && FLOW[qt]) { state.type = qt; if (state.step < 1) state.step = 1; }
+    }
+    if (preset !== 'general' && state.step < 1) { state.type = preset; state.step = 1; }
+    state.job.cat = state.job.cat || {};
+    let lastStep = state.step, seen = new Set();
 
-    try {
-      const d = JSON.parse(sessionStorage.getItem('tss_quote_draft') || 'null');
-      if (d && FIELDS[d.type]) state = { ...state, ...d };
-    } catch {}
-    if (root.dataset.fromParam && new URLSearchParams(location.search).get('from') === 'builder') { state.type = 'lane-closure'; state.step = 2; }
-    if (!root.dataset.preset || root.dataset.preset === 'general') { if (!state.touched) state.step = 1; }
-    { const qt = root.dataset.fromParam && new URLSearchParams(location.search).get('type'); if (qt && FIELDS[qt]) { state.type = qt; state.step = 2; } }
-
-    const save = () => { try { sessionStorage.setItem('tss_quote_draft', JSON.stringify(state)); } catch {} };
+    const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
     const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
+    const flow = () => FLOW[state.type];
+    const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
+    const catalog = () => (state.type === 'rental' ? RENT_CAT : state.type === 'products' ? BUY_CAT : []);
+    const visible = (f) => !f.showIf || Object.entries(f.showIf).every(([k, v]) => state.job[k] === v);
 
-    const fieldHtml = (f, scope) => {
+    /* ---------------- field html ---------------- */
+    const lbl = (f, forId) => f.label ? `<${forId ? `label for="${forId}"` : 'span'} class="qs-lbl" id="${ns}-${f.id}-l">${esc(f.label)}${f.req ? '' : '<em>Optional</em>'}</${forId ? 'label' : 'span'}>` : '';
+    function field(f, scope, i) {
       const v = state[scope][f.id];
       const id = `${ns}-${f.id}`;
-      const w = f.half ? ' qw-half' : f.third ? ' qw-third' : '';
-      const hint = f.hint ? `<p class="hint">${esc(f.hint)}</p>` : '';
-      const err = `<p class="qw-err" data-qw-err="${f.id}" hidden></p>`;
-      let ctrl = '';
-      if (f.type === 'text' || f.type === 'date' || f.type === 'time') {
-        const min = f.type === 'date' ? ` min="${today()}"` : '';
-        ctrl = `<input id="${id}" type="${f.type}" data-qw-f="${f.id}" value="${esc(v || '')}" ${f.ph ? `placeholder="${esc(f.ph)}"` : ''}${min} />`;
-      } else if (f.type === 'textarea') {
-        ctrl = `<textarea id="${id}" rows="4" data-qw-f="${f.id}" ${f.ph ? `placeholder="${esc(f.ph)}"` : ''}>${esc(v || '')}</textarea>`;
-      } else if (f.type === 'select') {
-        ctrl = `<select id="${id}" data-qw-f="${f.id}"><option value="">Choose</option>${f.opts.map((o) => `<option${v === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
-      } else if (f.type === 'radio' || f.type === 'check') {
-        const multi = f.type === 'check';
-        const vals = multi ? (Array.isArray(v) ? v : []) : v;
-        ctrl = `<div class="choice-row" role="group" aria-labelledby="${id}-l">${f.opts.map((o, i) =>
-          `<label class="choice"><input type="${multi ? 'checkbox' : 'radio'}" name="${id}" value="${esc(o)}" data-qw-f="${f.id}" data-qw-multi="${multi ? 1 : ''}" ${multi ? (vals.includes(o) ? 'checked' : '') : (vals === o ? 'checked' : '')} /><span>${esc(o)}</span></label>`).join('')}</div>`;
-        return `<div class="field${w}" data-qw-field="${f.id}"><span class="field" style="display:contents"><label id="${id}-l">${esc(f.label)}${f.req ? '' : ' <span style="font-weight:400;color:var(--ink-soft)">(optional)</span>'}</label></span>${ctrl}${hint}${err}</div>`;
-      } else if (f.type === 'items') {
-        const rows = (Array.isArray(v) && v.length ? v : [{ desc: '', qty: '' }]);
-        ctrl = `<div class="qw-items" data-qw-items="${f.id}">${rows.map((r) => itemRow(r)).join('')}</div>
-          <button type="button" class="btn btn--ghost btn--sm" data-qw-additem="${f.id}">Add another item</button>`;
+      const cls = ['qs-f', 'qs-in', f.w === 'half' && 'is-half', f.w === 'third' && 'is-third', f.pair && 'qs-pair'].filter(Boolean).join(' ');
+      const tail = `${f.hint ? `<p class="qs-hint">${esc(f.hint)}</p>` : ''}<p class="qs-err" data-qs-err="${f.id}" hidden></p>`;
+      const wrap = (inner, forId) => `<div class="${cls}" style="--i:${i}" data-qs-field="${f.id}"${visible(f) ? '' : ' hidden'}>${lbl(f, forId)}${inner}${tail}</div>`;
+      const name = `${id}-g`;
+      switch (f.type) {
+        case 'text': case 'email': case 'tel': case 'date': case 'time': {
+          let min = '';
+          if (f.type === 'date') min = ` min="${f.id === 'pickupDate' || f.id === 'endDate' ? esc(state.job.deliverDate || state.job.startDate || today()) : today()}"`;
+          return wrap(`<input class="qs-input" id="${id}" type="${f.type}" data-qs-f="${f.id}" value="${esc(v || '')}"${f.ph ? ` placeholder="${esc(f.ph)}"` : ''}${f.ac ? ` autocomplete="${f.ac}"` : ''}${f.type === 'email' ? ' inputmode="email"' : ''}${min} />`, id);
+        }
+        case 'textarea':
+          return wrap(`<textarea class="qs-input" id="${id}" rows="4" data-qs-f="${f.id}"${f.ph ? ` placeholder="${esc(f.ph)}"` : ''}>${esc(v || '')}</textarea>`, id);
+        case 'chips': case 'multi': {
+          const multi = f.type === 'multi'; const vals = multi ? (Array.isArray(v) ? v : []) : v;
+          return wrap(`<div class="qs-chips" role="group" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-chip"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${esc(o)}" data-qs-f="${f.id}"${multi ? ' data-qs-multi="1"' : ''}${(multi ? vals.includes(o) : vals === o) ? ' checked' : ''}><span>${multi ? ICON.check.replace('<svg', '<svg aria-hidden="true"') : ''}${esc(o)}</span></label>`).join('')}</div>`);
+        }
+        case 'seg':
+          return wrap(`<div class="qs-seg ${f.cls || ''}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => { const [t, ic] = Array.isArray(o) ? o : [o, '']; return `<label><input type="radio" name="${name}" value="${esc(t)}" data-qs-f="${f.id}"${v === t ? ' checked' : ''}><span>${ic}${esc(t)}</span></label>`; }).join('')}</div>`);
+        case 'pics':
+          return wrap(`<div class="qs-pics" style="--n:${f.n || 4}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="radio" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${v === o.v ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
+        case 'equip': {
+          const vals = Array.isArray(v) ? v : [];
+          return wrap(`<div class="qs-eqs" role="group" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-eq"><input type="checkbox" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}" data-qs-multi="1"${vals.includes(o.v) ? ' checked' : ''}><span style="--tint:${o.tint}">${o.img ? `<img src="${o.img}" alt="" loading="lazy">` : `<span class="qs-noimg">${o.icon}</span>`}<b>${esc(o.v)}</b><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
+        }
+        case 'catalog': {
+          const rows = Array.isArray(state.job.items) && state.job.items.length ? state.job.items : [];
+          return wrap(`<div class="qs-cat">${f.cat.map((c, k) => catTile(c, k)).join('')}</div>
+            <div class="qs-more"><p>Need something not shown?</p><div class="qs-rows" data-qs-rows>${rows.map(rowHtml).join('')}</div>
+            <button type="button" class="qs-addrow" data-qs-addrow>${ICON.plus}Add an item</button></div>`);
+        }
+        case 'days': {
+          const n = dayCount(state.job.deliverDate, state.job.pickupDate);
+          return `<div class="qs-f qs-in" style="--i:${i}" data-qs-days>${n ? daysPill(n) : ''}</div>`;
+        }
       }
-      return `<div class="field${w}" data-qw-field="${f.id}"><label for="${id}">${esc(f.label)}${f.req ? '' : ' <span style="font-weight:400;color:var(--ink-soft)">(optional)</span>'}</label>${ctrl}${hint}${err}</div>`;
+      return '';
+    }
+    const daysPill = (n) => `<span class="qs-pill">${ICON.cal}${n} day${n > 1 ? 's' : ''} on rent${n >= 28 ? ', monthly rates apply' : n >= 7 ? ', weekly rates apply' : ''}</span>`;
+    const catTile = (c) => {
+      const q = +state.job.cat[c.id] || 0;
+      return `<div class="qs-ci${q ? ' is-on' : ''}" style="--tint:${c.tint}" data-qs-ci="${c.id}">
+        <span class="qs-ci__badge" aria-hidden="true">${q || ''}</span>
+        <button type="button" class="qs-ci__pick" data-qs-pick aria-label="Add ${esc(c.t)}"><img src="${c.img}" alt="" loading="lazy"><b>${esc(c.t)}</b></button>
+        <div class="qs-ci__ctl">${q ? stepper(c, q) : `<button type="button" class="qs-ci__add" data-qs-pick>${ICON.plus}Add</button>`}</div></div>`;
     };
-    const itemRow = (r) => `<div class="qw-item"><input type="text" placeholder="Item, e.g. 28-inch reflective cones" value="${esc(r.desc || '')}" data-qw-idesc aria-label="Item" /><input type="number" min="1" placeholder="Qty" value="${esc(r.qty || '')}" data-qw-iqty aria-label="Quantity" /><button type="button" data-qw-rm aria-label="Remove item">&times;</button></div>`;
+    const stepper = (c, q) => `<div class="qs-step-ctl"><button type="button" data-qs-dec aria-label="Fewer ${esc(c.t)}">&minus;</button><input type="number" min="0" inputmode="numeric" value="${q}" data-qs-qty aria-label="${esc(c.t)} quantity"><button type="button" data-qs-inc aria-label="More ${esc(c.t)}">+</button></div>`;
+    const rowHtml = (r) => `<div class="qs-row"><input class="qs-input" type="text" placeholder="Item, e.g. 36-inch cones with collars" value="${esc(r.desc || '')}" data-qs-rdesc aria-label="Item"><input class="qs-input" type="number" min="1" placeholder="Qty" value="${esc(r.qty || '')}" data-qs-rqty aria-label="Quantity"><button type="button" data-qs-rrm aria-label="Remove item">${ICON.x}</button></div>`;
 
-    const visible = (f) => !f.showIf || Object.entries(f.showIf).every(([k, val]) => state.job[k] === val);
+    /* ---------------- items ---------------- */
+    function allItems() {
+      const cat = catalog().filter((c) => +state.job.cat[c.id] > 0).map((c) => ({ desc: c.t, qty: +state.job.cat[c.id], img: c.img }));
+      const extra = (state.job.items || []).filter((r) => r.desc && r.desc.trim()).map((r) => ({ desc: r.desc.trim(), qty: +r.qty || 1 }));
+      return [...cat, ...extra];
+    }
+
+    /* ---------------- stepper + ticket ---------------- */
+    function renderSteps() {
+      stepsEl.innerHTML = stepNames().map((n, i) => {
+        const st = i < state.step ? 'is-done' : i === state.step ? 'is-cur' : '';
+        return `<li class="${st}"><span class="qs-bar"><i></i></span><button type="button" data-qs-goto="${i}"${i < state.step ? '' : ' disabled'}${i === state.step ? ' aria-current="step"' : ''}><span class="qs-n">${i < state.step ? ICON.check : i + 1}</span><span class="qs-t">${esc(n)}</span></button></li>`;
+      }).join('');
+      stepsEl.querySelectorAll('[data-qs-goto]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.qsGoto)));
+    }
+    function ticketLines() {
+      const j = state.job, a = state.about, L = [];
+      const svc = SVC.find((s) => s.id === state.type);
+      if (state.step > 0 || state.touched) L.push(['svc', 'Service', esc(svc.b)]);
+      if (state.type === 'lane-closure') {
+        if (j.roadType) L.push(['road', 'Road', esc(j.roadType + (j.speed ? `, ${j.speed} mph` : ''))]);
+        if (j.lanes?.length) L.push(['lanes', 'Closing', esc(j.lanes.join(', '))]);
+        if (j.crew) L.push(['crew', 'Crew', esc(j.crew)]);
+        if (j.equipment?.length) L.push(['eq', 'Equipment', esc(j.equipment.join(', '))]);
+      }
+      if (state.type === 'rental' || state.type === 'products') {
+        const it = allItems();
+        if (it.length) L.push(['items:' + it.map((x) => x.desc + x.qty).join('|'), `${it.length} item${it.length > 1 ? 's' : ''}`, `<span class="qs-tk__thumbs">${it.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}${x.qty} &times; ${esc(x.desc)}</span>`).join('')}</span>`]);
+        if (j.setup) L.push(['setup', 'Setup', esc(j.setup)]);
+        if (j.custom === 'Yes') L.push(['custom', 'Custom', 'Colors, stenciling or logo']);
+      }
+      if (state.type === 'general' && j.what) L.push(['what', 'The job', esc(j.what.length > 90 ? j.what.slice(0, 90) + '…' : j.what)]);
+      const place = [j.location || j.address, j.town, j.state, j.shipTo, j.where].filter(Boolean).join(', ');
+      if (place) L.push(['place', state.type === 'products' ? 'Ships to' : 'Where', esc(place)]);
+      const d1 = j.startDate || j.deliverDate || j.needBy, d2 = j.endDate || j.pickupDate;
+      if (d1) L.push(['dates', state.type === 'products' ? 'Needed by' : 'Dates', esc(fmtDate(d1) + (d2 ? ` → ${fmtDate(d2)}` : '')) + (j.shift ? ` &middot; ${esc(j.shift)}` : '')]);
+      else if (j.when) L.push(['when', 'When', esc(j.when)]);
+      if (a.name) L.push(['who', 'For', esc([a.name, a.company].filter(Boolean).join(', '))]);
+      return L;
+    }
+    function renderTicket() {
+      const svc = SVC.find((s) => s.id === state.type);
+      root.querySelectorAll('[data-ph]').forEach((im) => im.classList.toggle('is-on', im.dataset.ph === state.type));
+      root.querySelector('[data-qs-tktitle]').textContent = state.step > 0 || state.touched ? svc.b : 'Start with what you need';
+      const L = ticketLines();
+      const ghosts = ['What you need', 'Where', 'When', 'Your details'].slice(Math.min(L.length, 4));
+      linesEl.innerHTML = L.map(([k, t, v]) => `<li class="${seen.has(k) ? '' : 'is-new'}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')
+        + (L.length < 4 ? ghosts.map((g) => `<li class="is-ghost"><span class="qs-dot"></span><div><span class="v">${g}</span></div></li>`).join('') : '');
+      seen = new Set(L.map((l) => l[0]));
+    }
+
+    /* ---------------- steps ---------------- */
+    function go(n) { state.step = n; state.touched = true; save(); render(); const y = root.getBoundingClientRect().top + scrollY - 110; if (scrollY > y) scrollTo({ top: y, behavior: 'smooth' }); }
+    const head = (k, title, lead) => `<div class="qs-head qs-in" style="--i:0"><p class="qs-k">${esc(k)}</p><h2>${esc(title)}</h2>${lead ? `<p>${esc(lead)}</p>` : ''}</div>`;
+    const navHtml = (next = 'Continue', back = true) => `<div class="qs-nav">${back ? `<button type="button" class="qs-back" data-qs-back>${ICON.back}<span class="qs-t">Back</span></button>` : '<span class="qs-skip">Takes about 2 minutes</span>'}<button type="button" class="qs-btn" data-qs-next>${esc(next)}${ICON.arrow}</button></div>`;
 
     function render() {
-      const totalSteps = 4;
-      root.querySelector('[data-qw-progress]').textContent = `Step ${state.step} of ${totalSteps}: ${STEP_NAMES[state.step - 1]}`;
-      root.querySelector('[data-qw-bar]').style.width = (state.step / totalSteps) * 100 + '%';
-      if (state.step === 1) renderType();
-      else if (state.step === 2) renderJob();
-      else if (state.step === 3) renderAbout();
-      else renderReview();
-      body.querySelector('input, select, textarea, button')?.focus({ preventScroll: true });
+      renderSteps(); renderTicket();
+      const dir = state.step < lastStep ? ' is-back' : '';
+      lastStep = state.step;
+      if (state.step === 0) stepService(dir);
+      else if (state.step === 1 || state.step === 2) stepJob(state.step - 1, dir);
+      else if (state.step === 3) stepAbout(dir);
+      else stepReview(dir);
+      body.querySelector('[data-qs-back]')?.addEventListener('click', () => go(state.step - 1));
     }
 
-    function nav(backStep, nextLabel = 'Continue') {
-      return `<div class="qw-nav">${backStep ? `<button type="button" class="qw-back" data-qw-back="${backStep}">Back</button>` : '<span></span>'}<button type="button" class="btn" data-qw-next>${nextLabel}</button></div>`;
+    function stepService(dir) {
+      body.innerHTML = `<div class="qs-step${dir}">${head('Get started', 'What can we quote for you?', 'Pick the closest fit. You can change it any time.')}
+        <div class="qs-svc" role="radiogroup" aria-label="Service">${SVC.map((s, i) => `<label class="qs-in" style="--i:${i + 1}"><input type="radio" name="${ns}-svc" value="${s.id}"${state.touched && state.type === s.id ? ' checked' : ''}><span class="qs-svc__card"><span class="qs-svc__art${s.photo ? ' is-photo' : ''}" style="--tint:${s.tint || '#ececea'}">${s.photo ? `<img class="is-photo" src="${s.photo}" alt="" style="object-position:58% 45%">` : s.imgs.map(([src, st]) => `<img src="${src}" alt="" style="${st}">`).join('')}</span><span class="qs-svc__txt"><b>${esc(s.b)}</b><small>${esc(s.s)}</small></span><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>
+        ${navHtml('Continue', false)}</div>`;
+      body.querySelectorAll(`[name="${ns}-svc"]`).forEach((r) => r.addEventListener('change', () => {
+        state.type = r.value; state.touched = true; save(); renderTicket();
+        setTimeout(() => go(1), 380);
+      }));
+      body.querySelector('[data-qs-next]').addEventListener('click', () => {
+        if (!state.touched) { const c = body.querySelector('.qs-svc'); c.classList.remove('is-err'); void c.offsetWidth; c.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 300 }); return; }
+        go(1);
+      });
     }
 
-    function renderType() {
-      body.innerHTML = `<div class="qw-step">
-        <p class="qw-lead">Pick the closest fit. You can change it later.</p>
-        <div class="qw-cards">${TYPES.map((t) => `<label class="qw-card"><input type="radio" name="${ns}-type" value="${t.id}" ${state.type === t.id ? 'checked' : ''} /><span><b>${t.b}</b><small>${t.s}</small></span></label>`).join('')}</div>
-        ${nav(0)}</div>`;
-      body.querySelectorAll(`[name="${ns}-type"]`).forEach((r) => r.addEventListener('change', () => { state.type = r.value; state.touched = true; save(); }));
-      body.querySelector('[data-qw-next]').addEventListener('click', () => { state.step = 2; state.touched = true; save(); render(); });
-    }
-
-    function renderJob() {
-      const fs = FIELDS[state.type];
+    function stepJob(k, dir) {
+      const s = flow()[k];
       let banners = '';
-      if (state.type === 'lane-closure' && plan && !state.planApplied) {
-        banners += `<p class="qw-note">You built a work zone plan. <button type="button" data-qw-useplan>Use it to fill in this form</button></p>`;
-      }
-      const list = (window.TSSQuote?.items() || []);
-      if ((state.type === 'rental' || state.type === 'products' || state.type === 'general') && list.length && !state.listApplied) {
-        banners += `<p class="qw-note">You have ${list.length} item${list.length > 1 ? 's' : ''} in your quote list. <button type="button" data-qw-uselist>Add them to this request</button></p>`;
-      }
-      body.innerHTML = `<div class="qw-step">${banners}
-        <div class="qw-grid" data-qw-fields>${fs.map((f) => fieldHtml(f, 'job')).join('')}</div>
-        <div class="qw-emergency" data-qw-sos hidden>
-          <p><strong>If crews or the public are at risk right now, don't wait on a form.</strong></p>
-          <p>Our emergency line answers 24/7 and we dispatch immediately.</p>
-          <a class="btn" href="${TEL}">Call ${PHONE} now</a>
-        </div>
-        ${nav(1)}</div>`;
-      wireFields('job');
-      syncConditional();
-      body.querySelector('[data-qw-useplan]')?.addEventListener('click', () => {
-        const eq = (plan.equipment || []).map((e) => (typeof e === 'string' ? e : e.title || '')).join(', ');
-        const map = { 'TMA': 'TMA crash truck', 'attenuator': 'TMA crash truck', 'arrow': 'Arrow board', 'cone': 'Cones or drums', 'drum': 'Cones or drums', 'barricade': 'Barricades', 'sign': 'Signs', 'light': 'Lights' };
-        const checks = new Set(state.job.equipment || []);
-        Object.entries(map).forEach(([k, v]) => { if (new RegExp(k, 'i').test(eq)) checks.add(v); });
-        state.job.equipment = [...checks];
-        state.job.work = ((state.job.work || '') + '\n\nWork zone plan: ' + (plan.summary || '')).trim();
-        if (plan.inputs?.speed) state.job.speed = undefined;
-        state.planApplied = true; save(); renderJob();
+      if (k === 0 && state.type === 'lane-closure' && plan && !state.planApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You built a work zone plan. Use it to fill in this step?</p><button type="button" data-qs-useplan>Use my plan</button></div>`;
+      const list = window.TSSQuote?.items?.() || [];
+      if (k === 0 && state.type !== 'lane-closure' && list.length && !state.listApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You have ${list.length} item${list.length > 1 ? 's' : ''} in your quote list.</p><button type="button" data-qs-uselist>Add them here</button></div>`;
+      body.innerHTML = `<div class="qs-step${dir}">${head(s.k, s.title, s.lead)}${banners}
+        <div class="qs-fields">${s.fields.map((f, i) => field(f, 'job', i + 2)).join('')}</div>${navHtml()}</div>`;
+      wire('job');
+      body.querySelector('[data-qs-useplan]')?.addEventListener('click', () => {
+        const eq = (plan.equipment || []).map((e) => (typeof e === 'string' ? e : e.name || e.title || '')).join(' ');
+        const map = [['TMA|attenuator', 'TMA crash truck'], ['arrow', 'Arrow board'], ['VMS|message', 'Message board (VMS)'], ['cone|drum', 'Cones or drums'], ['barricade', 'Barricades'], ['sign', 'Signs'], ['light', 'Lights']];
+        const set = new Set(state.job.equipment || []);
+        map.forEach(([re, v]) => { if (new RegExp(re, 'i').test(eq)) set.add(v); });
+        state.job.equipment = [...set];
+        if (plan.summary) state.job.work = ((state.job.work || '') + '\n\nWork zone plan: ' + plan.summary).trim();
+        state.planApplied = true; save(); render();
       });
-      body.querySelector('[data-qw-uselist]')?.addEventListener('click', () => {
+      body.querySelector('[data-qs-uselist]')?.addEventListener('click', () => {
         const rows = list.map((it) => ({ desc: `${it.title}${it.variant ? ` (${it.variant})` : ''}${it.mode ? `, ${it.mode}` : ''}${it.note ? `. ${it.note}` : ''}`, qty: it.qty || 1 }));
-        if (state.type === 'general') {
-          state.job.what = ((state.job.what || '') + '\nQuote list: ' + rows.map((r) => `${r.qty} x ${r.desc}`).join('; ')).trim();
-        } else {
-          state.job.items = [...rows, ...(state.job.items || []).filter((r) => r.desc)];
-        }
-        state.listApplied = true; save(); renderJob();
+        if (state.type === 'general') state.job.what = ((state.job.what || '') + '\nQuote list: ' + rows.map((r) => `${r.qty} x ${r.desc}`).join('; ')).trim();
+        else state.job.items = [...rows, ...(state.job.items || []).filter((r) => r.desc)];
+        state.listApplied = true; save(); render();
       });
-      body.querySelector('[data-qw-next]').addEventListener('click', () => { if (validate(FIELDS[state.type], 'job')) { state.step = 3; save(); render(); window.scrollTo({ top: root.offsetTop - 90, behavior: 'smooth' }); } });
-      wireBack();
+      body.querySelector('[data-qs-next]').addEventListener('click', () => { if (validate(s.fields, 'job')) go(state.step + 1); });
     }
 
-    function renderAbout() {
-      body.innerHTML = `<div class="qw-step">
-        <p class="qw-lead">Who should the quote go to?</p>
-        <div data-qw-fields>${ABOUT.map((f) => fieldHtml(f, 'about')).join('')}</div>
-        ${nav(2, 'Review my request')}</div>`;
-      wireFields('about');
-      body.querySelector('[data-qw-next]').addEventListener('click', () => {
+    function stepAbout(dir) {
+      body.innerHTML = `<div class="qs-step${dir}">${head('Your details', 'Who should the quote go to?', 'We only use this to send your price.')}
+        <div class="qs-fields">${ABOUT.map((f, i) => field(f, 'about', i + 1)).join('')}</div>${navHtml('Review my request')}</div>`;
+      wire('about');
+      body.querySelector('[data-qs-next]').addEventListener('click', () => {
         if (!validate(ABOUT, 'about')) return;
         const a = state.about;
-        if (!a.email && !a.phone) return showErr('email', 'Give us an email or a phone number so the quote can reach you.');
+        if (!a.email && !a.phone) return showErr('email', 'Add an email or a phone number so the quote can reach you.');
         if (a.email && !/^\S+@\S+\.\S+$/.test(a.email)) return showErr('email', 'That email doesn’t look complete.');
-        state.step = 4; save(); render(); window.scrollTo({ top: root.offsetTop - 90, behavior: 'smooth' });
+        if (a.phone && a.phone.replace(/\D/g, '').length < 10) return showErr('phone', 'Add the full 10-digit number.');
+        go(4);
       });
-      wireBack();
     }
 
-    const label = (fs, id) => fs.find((f) => f.id === id)?.label || id;
-    const fmtVal = (v) => Array.isArray(v) ? (v[0]?.desc !== undefined ? v.filter((r) => r.desc).map((r) => `${r.qty || 1} x ${r.desc}`).join('\n') : v.join(', ')) : v;
-
-    function summaryPairs() {
-      const fs = FIELDS[state.type];
-      const job = fs.filter((f) => visible(f) && state.job[f.id] && String(fmtVal(state.job[f.id])).trim()).map((f) => [f.label, fmtVal(state.job[f.id])]);
-      const about = ABOUT.filter((f) => state.about[f.id] && String(state.about[f.id]).trim()).map((f) => [f.label, fmtVal(state.about[f.id])]);
+    /* ---------------- review + send ---------------- */
+    const fmtVal = (v) => Array.isArray(v) ? v.join(', ') : v;
+    function pairs() {
+      const job = [];
+      flow().forEach((s) => s.fields.forEach((f) => {
+        if (!visible(f) || f.type === 'catalog' || f.type === 'days') return;
+        const v = state.job[f.id];
+        if (v && String(fmtVal(v)).trim()) job.push([f.label, f.type === 'date' ? fmtDate(v) : fmtVal(v), f.type === 'textarea' || f.id === 'location' || f.type === 'equip' || f.type === 'multi']);
+      }));
+      const n = dayCount(state.job.deliverDate, state.job.pickupDate);
+      if (state.type === 'rental' && n) job.push(['Rental length', `${n} day${n > 1 ? 's' : ''}`]);
+      const about = ABOUT.filter((f) => state.about[f.id] && String(state.about[f.id]).trim()).map((f) => [f.label, state.about[f.id], f.type === 'textarea']);
       return { job, about };
     }
-
-    function renderReview() {
-      const t = TYPES.find((x) => x.id === state.type);
-      const { job, about } = summaryPairs();
-      const dl = (pairs) => `<dl>${pairs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;
-      body.innerHTML = `<div class="qw-step qw-review">
-        <div class="qw-rsec"><header><h3>What you need</h3><button class="qw-edit" data-qw-goto="1">Edit</button></header><p style="margin:0">${esc(t.b)}</p></div>
-        <div class="qw-rsec"><header><h3>The job</h3><button class="qw-edit" data-qw-goto="2">Edit</button></header>${job.length ? dl(job) : '<p style="margin:0">Nothing filled in yet.</p>'}</div>
-        <div class="qw-rsec"><header><h3>About you</h3><button class="qw-edit" data-qw-goto="3">Edit</button></header>${dl(about)}</div>
-        <p class="qw-consent">A TSS team member will contact you, usually within 1 business day. Nothing is booked or charged by sending this.</p>
-        <div class="qw-fail" data-qw-fail hidden></div>
-        <div class="qw-nav"><button type="button" class="qw-back" data-qw-back="3">Back</button><button type="button" class="btn" data-qw-send>Send my request</button></div>
-      </div>`;
-      body.querySelectorAll('[data-qw-goto]').forEach((b) => b.addEventListener('click', () => { state.step = +b.dataset.qwGoto; save(); render(); }));
-      wireBack();
-      body.querySelector('[data-qw-send]').addEventListener('click', submit);
+    function stepReview(dir) {
+      const svc = SVC.find((s) => s.id === state.type);
+      const { job, about } = pairs();
+      const items = allItems();
+      const dl = (ps) => `<dl>${ps.map(([k, v, wide]) => `<div${wide ? ' class="is-wide"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;
+      body.innerHTML = `<div class="qs-step${dir}">${head('Review', 'Look good?', 'Check the details, then send it over.')}
+        <div class="qs-rv">
+          <section class="qs-in" style="--i:1"><header><h3>${esc(svc.b)}</h3><button type="button" data-qs-goto2="0">Change</button></header>
+            ${items.length ? `<div class="qs-rv__items">${items.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}<b>${x.qty}</b>${esc(x.desc)}</span>`).join('')}</div>` : `<p class="qs-fine" style="margin:0">${esc(svc.s)}</p>`}
+          </section>
+          <section class="qs-in" style="--i:2"><header><h3>The job</h3><button type="button" data-qs-goto2="1">Edit</button></header>${job.length ? dl(job) : '<p class="qs-fine">Nothing added.</p>'}</section>
+          <section class="qs-in" style="--i:3"><header><h3>Your details</h3><button type="button" data-qs-goto2="3">Edit</button></header>${dl(about)}</section>
+        </div>
+        <p class="qs-fine qs-in" style="--i:4">A TSS team member will reach out, usually within 1 business day. Nothing is booked or charged by sending this.</p>
+        <div class="qs-fail" data-qs-fail hidden></div>
+        <div class="qs-nav"><button type="button" class="qs-back" data-qs-back>${ICON.back}<span class="qs-t">Back</span></button><button type="button" class="qs-btn" data-qs-send>Send my request${ICON.arrow}</button></div></div>`;
+      body.querySelectorAll('[data-qs-goto2]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.qsGoto2)));
+      body.querySelector('[data-qs-send]').addEventListener('click', submit);
     }
-
     function summaryText() {
-      const t = TYPES.find((x) => x.id === state.type);
-      const { job, about } = summaryPairs();
-      return [`Quote request: ${t.b}`, '', 'THE JOB', ...job.map(([k, v]) => `${k}: ${v}`), '', 'CONTACT', ...about.map(([k, v]) => `${k}: ${v}`)].join('\n');
+      const svc = SVC.find((s) => s.id === state.type);
+      const { job, about } = pairs();
+      const items = allItems();
+      return [`Quote request: ${svc.b}`, '', ...(items.length ? ['ITEMS', ...items.map((x) => `${x.qty} x ${x.desc}`), ''] : []), 'THE JOB', ...job.map(([k, v]) => `${k}: ${v}`), '', 'CONTACT', ...about.map(([k, v]) => `${k}: ${v}`)].join('\n');
     }
-
     async function submit() {
-      const btn = body.querySelector('[data-qw-send]');
-      btn.disabled = true; btn.textContent = 'Sending';
-      const payload = { type: state.type, answers: { job: state.job, about: state.about }, summary: summaryText(), quoteList: window.TSSQuote?.items() || [], page: location.pathname, submittedAt: new Date().toISOString() };
+      const btn = body.querySelector('[data-qs-send]');
+      btn.disabled = true; btn.classList.add('is-sending'); btn.innerHTML = `Sending<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg>`;
+      const items = allItems().map(({ desc, qty }) => ({ desc, qty }));
+      const { cat, ...rest } = state.job;
+      const payload = { type: state.type, answers: { job: { ...rest, items }, about: state.about }, summary: summaryText(), quoteList: window.TSSQuote?.items?.() || [], page: location.pathname, submittedAt: new Date().toISOString() };
       try {
         if (!HOOK) throw new Error('no webhook');
         const r = await fetch(HOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        try { sessionStorage.removeItem('tss_quote_draft'); } catch {}
-        window.TSSQuote?.clear();
-        body.innerHTML = `<div class="qw-done">
-          <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="var(--ok)"/><path d="M19 33l9 9 17-19" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <h3>Request sent</h3>
-          <p>A TSS team member is on it. You'll hear from us, usually within 1 business day, often sooner.</p>
-          <p>Need it faster? Call <a href="${TEL}"><strong>${PHONE}</strong></a> and mention you just sent a request.</p>
-        </div>`;
-        root.querySelector('[data-qw-progress]').textContent = 'Done';
-        root.querySelector('[data-qw-bar]').style.width = '100%';
+        try { sessionStorage.removeItem(KEY); } catch {}
+        window.TSSQuote?.clear?.();
+        done();
       } catch (e) {
-        const fail = body.querySelector('[data-qw-fail]');
+        const fail = body.querySelector('[data-qs-fail]');
         fail.hidden = false;
-        fail.innerHTML = `<p><strong>That didn't go through.</strong> Your answers are still here, so nothing is lost.</p>
-          <p><a class="textlink" href="mailto:${EMAIL}?subject=${encodeURIComponent('Quote request from the website')}&body=${encodeURIComponent(summaryText())}">Email this request instead</a>, try again in a minute, or call <a href="${TEL}"><strong>${PHONE}</strong></a>.</p>`;
-        btn.disabled = false; btn.textContent = 'Try again';
+        fail.innerHTML = `<p><strong>That didn’t go through.</strong> Your answers are still here, nothing is lost.</p>
+          <p><a href="mailto:${EMAIL}?subject=${encodeURIComponent('Quote request from the website')}&body=${encodeURIComponent(summaryText())}">Email this request instead</a>, try again in a minute, or call <a href="${TEL}"><strong>${PHONE}</strong></a>.</p>`;
+        btn.disabled = false; btn.classList.remove('is-sending'); btn.innerHTML = `Try again${ICON.arrow}`;
       }
     }
+    function done() {
+      const ref = 'TSS-' + Date.now().toString(36).slice(-6).toUpperCase();
+      stepsEl.querySelectorAll('li').forEach((li) => { li.className = 'is-done'; li.querySelector('.qs-n').innerHTML = ICON.check; li.querySelector('button').disabled = true; });
+      body.innerHTML = `<div class="qs-done">
+        <svg class="qs-done__check" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44"/><path d="M31 51l13 13 26-28"/></svg>
+        <h2 class="qs-in" style="--i:6">Request sent</h2>
+        <p class="qs-in" style="--i:7">Thanks${state.about.name ? ', ' + esc(state.about.name.split(' ')[0]) : ''}. A TSS team member is on it.</p>
+        <span class="qs-ref qs-in" style="--i:8">Reference <b>${ref}</b></span>
+        <ol class="qs-next">
+          <li class="qs-in" style="--i:9"><span>Now</span><b>We review it</b><small>A real person reads every request.</small></li>
+          <li class="qs-in" style="--i:10"><span>Within 1 business day</span><b>You get pricing</b><small>By ${esc((state.about.prefer || 'email').toLowerCase())}, often sooner.</small></li>
+          <li class="qs-in" style="--i:11"><span>When you're ready</span><b>We schedule it</b><small>Delivery, shipping or crews, locked in.</small></li>
+        </ol>
+        <div class="qs-done__acts qs-in" style="--i:12"><a class="qs-btn" href="/collections">Keep browsing${ICON.arrow}</a><a class="qs-back" href="${TEL}">Call ${esc(PHONE)}</a></div>
+      </div>`;
+      root.querySelector('[data-qs-tktitle]').textContent = 'Request sent';
+      body.querySelector('.qs-done')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
 
-    function wireBack() { body.querySelectorAll('[data-qw-back]').forEach((b) => b.addEventListener('click', () => { state.step = +b.dataset.qwBack; save(); render(); })); }
-
-    function wireFields(scope) {
-      body.querySelectorAll('[data-qw-f]').forEach((el) => {
-        el.addEventListener(el.matches('select, [type=radio], [type=checkbox]') ? 'change' : 'input', () => {
-          const id = el.dataset.qwF;
-          if (el.dataset.qwMulti) {
-            const set = new Set(state[scope][id] || []);
-            el.checked ? set.add(el.value) : set.delete(el.value);
-            state[scope][id] = [...set];
-          } else state[scope][id] = el.value;
-          save();
-          clearErr(id);
-          if (scope === 'job') syncConditional();
+    /* ---------------- wiring ---------------- */
+    function wire(scope) {
+      body.querySelectorAll('[data-qs-f]').forEach((el) => {
+        el.addEventListener(el.matches('[type=radio], [type=checkbox], [type=date], [type=time]') ? 'change' : 'input', () => {
+          const id = el.dataset.qsF;
+          if (el.dataset.qsMulti) { const set = new Set(state[scope][id] || []); el.checked ? set.add(el.value) : set.delete(el.value); state[scope][id] = [...set]; }
+          else state[scope][id] = el.value;
+          save(); clearErr(id);
+          if (scope === 'job') sync(id);
+          renderTicket();
         });
       });
-      body.querySelectorAll('[data-qw-items]').forEach((wrap) => {
-        const fid = wrap.dataset.qwItems;
-        const sync = () => {
-          state[scope][fid] = [...wrap.querySelectorAll('.qw-item')].map((r) => ({ desc: r.querySelector('[data-qw-idesc]').value.trim(), qty: r.querySelector('[data-qw-iqty]').value }));
-          save(); clearErr(fid);
+      // catalog tiles
+      body.querySelectorAll('[data-qs-ci]').forEach((tile) => {
+        const c = catalog().find((x) => x.id === tile.dataset.qsCi);
+        const set = (q) => {
+          q = Math.max(0, Math.min(99999, Math.round(+q || 0)));
+          if (q) state.job.cat[c.id] = q; else delete state.job.cat[c.id];
+          save(); clearErr('cat');
+          const was = tile.classList.contains('is-on');
+          tile.classList.toggle('is-on', !!q);
+          tile.querySelector('.qs-ci__badge').textContent = q || '';
+          const ctl = tile.querySelector('.qs-ci__ctl');
+          if (!!q !== was) { ctl.innerHTML = q ? stepper(c, q) : `<button type="button" class="qs-ci__add" data-qs-pick>${ICON.plus}Add</button>`; bindTile(); }
+          else { const inp = ctl.querySelector('[data-qs-qty]'); if (inp && document.activeElement !== inp) inp.value = q; }
+          renderTicket();
         };
-        wrap.addEventListener('input', sync);
-        wrap.addEventListener('click', (e) => { if (e.target.closest('[data-qw-rm]')) { const rows = wrap.querySelectorAll('.qw-item'); if (rows.length > 1) e.target.closest('.qw-item').remove(); else rows[0].querySelectorAll('input').forEach((i) => (i.value = '')); sync(); } });
-        body.querySelector(`[data-qw-additem="${fid}"]`)?.addEventListener('click', () => { wrap.insertAdjacentHTML('beforeend', itemRow({})); wrap.lastElementChild.querySelector('input').focus(); });
+        const bindTile = () => {
+          tile.querySelectorAll('[data-qs-pick]').forEach((b) => (b.onclick = () => set((+state.job.cat[c.id] || 0) + c.step)));
+          const dec = tile.querySelector('[data-qs-dec]'), inc = tile.querySelector('[data-qs-inc]'), inp = tile.querySelector('[data-qs-qty]');
+          if (dec) dec.onclick = () => set((+state.job.cat[c.id] || 0) - c.step);
+          if (inc) inc.onclick = () => set((+state.job.cat[c.id] || 0) + c.step);
+          if (inp) { inp.oninput = () => { if (inp.value !== '') set(inp.value); }; inp.onblur = () => set(inp.value); }
+        };
+        bindTile();
       });
+      // custom rows
+      const rowsEl = body.querySelector('[data-qs-rows]');
+      if (rowsEl) {
+        const syncRows = () => { state.job.items = [...rowsEl.querySelectorAll('.qs-row')].map((r) => ({ desc: r.querySelector('[data-qs-rdesc]').value, qty: r.querySelector('[data-qs-rqty]').value })); save(); clearErr('cat'); renderTicket(); };
+        rowsEl.addEventListener('input', syncRows);
+        rowsEl.addEventListener('click', (e) => { const b = e.target.closest('[data-qs-rrm]'); if (b) { b.closest('.qs-row').remove(); syncRows(); } });
+        body.querySelector('[data-qs-addrow]').addEventListener('click', () => { rowsEl.insertAdjacentHTML('beforeend', rowHtml({})); rowsEl.lastElementChild.querySelector('input').focus(); });
+      }
     }
-
-    function syncConditional() {
-      (FIELDS[state.type] || []).forEach((f) => {
-        if (f.showIf) { const el = body.querySelector(`[data-qw-field="${f.id}"]`); if (el) el.toggleAttribute('data-qw-hidden', !visible(f)); }
-      });
-      const sos = body.querySelector('[data-qw-sos]');
-      if (sos) sos.hidden = !/Emergency/.test(state.job.recur || '');
+    function sync(id) {
+      flow().forEach((s) => s.fields.forEach((f) => { if (f.showIf) { const el = body.querySelector(`[data-qs-field="${f.id}"]`); if (el) el.hidden = !visible(f); } }));
+      if (id === 'deliverDate' || id === 'startDate') { const end = body.querySelector(`[data-qs-f="${id === 'deliverDate' ? 'pickupDate' : 'endDate'}"]`); if (end) end.min = state.job[id] || today(); }
+      const days = body.querySelector('[data-qs-days]');
+      if (days) { const n = dayCount(state.job.deliverDate, state.job.pickupDate); days.innerHTML = n ? daysPill(n) : ''; }
     }
-
     function showErr(id, msg) {
-      const p = body.querySelector(`[data-qw-err="${id}"]`);
-      const wrap = body.querySelector(`[data-qw-field="${id}"]`);
+      const p = body.querySelector(`[data-qs-err="${id}"]`), w = body.querySelector(`[data-qs-field="${id}"]`);
       if (p) { p.hidden = false; p.textContent = msg; }
-      wrap?.classList.add('qw-field-err');
-      wrap?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      if (w) { w.classList.remove('is-err'); void w.offsetWidth; w.classList.add('is-err'); w.scrollIntoView({ block: 'center', behavior: 'smooth' }); w.querySelector('input:not([type=radio]):not([type=checkbox]), textarea')?.focus({ preventScroll: true }); }
       return false;
     }
-    function clearErr(id) {
-      const p = body.querySelector(`[data-qw-err="${id}"]`); if (p) p.hidden = true;
-      body.querySelector(`[data-qw-field="${id}"]`)?.classList.remove('qw-field-err');
-    }
+    function clearErr(id) { const p = body.querySelector(`[data-qs-err="${id}"]`); if (p) p.hidden = true; body.querySelector(`[data-qs-field="${id}"]`)?.classList.remove('is-err'); }
     function validate(fs, scope) {
       for (const f of fs) {
         if (!f.req || !visible(f)) continue;
         const v = state[scope][f.id];
-        if (f.type === 'items') { if (!Array.isArray(v) || !v.some((r) => r.desc)) return showErr(f.id, 'List at least one item.'); continue; }
-        if (f.type === 'check') { if (!Array.isArray(v) || !v.length) return showErr(f.id, 'Pick at least one.'); continue; }
-        if (!v || !String(v).trim()) return showErr(f.id, f.type === 'date' ? 'Pick a date. A best guess is fine.' : 'We need this one to price the job.');
+        if (f.type === 'catalog') { if (!allItems().length) return showErr('cat', 'Add at least one item, or describe it under “Need something not shown?”'); continue; }
+        if (f.type === 'multi' || f.type === 'equip') { if (!Array.isArray(v) || !v.length) return showErr(f.id, 'Pick at least one.'); continue; }
+        if (!v || !String(v).trim()) return showErr(f.id, f.type === 'date' ? 'Pick a date. A best guess is fine.' : f.type === 'pics' || f.type === 'seg' ? 'Pick one to continue.' : 'We need this one to price the job.');
       }
       return true;
     }
