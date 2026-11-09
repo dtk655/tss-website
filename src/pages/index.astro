@@ -4,7 +4,7 @@ import ProductCard from '../components/ProductCard.astro';
 import QuickView from '../components/QuickView.astro';
 import CategoryRails from '../components/CategoryRails.astro';
 import WatercadeBand from '../components/WatercadeBand.astro';
-import HomeDoors from '../components/HomeDoors.astro';
+import HomeHero from '../components/HomeHero.astro';
 import BuyOrRent from '../components/BuyOrRent.astro';
 import { loadCatalog, img } from '../lib/shopify.js';
 import { YEARS } from '../lib/config.js';
@@ -19,7 +19,7 @@ const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
 const prompts = ['I need 200 cones in Newark next week', 'Price a lane closure on a state highway', 'Rent an arrow board for 3 days'];
 ---
 <Layout title="Traffic Safety Service: traffic control products, rentals and lane closures">
-  <HomeDoors />
+  <HomeHero />
 
   <BuyOrRent />
 
