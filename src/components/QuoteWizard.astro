@@ -8,7 +8,7 @@ const { preset = 'general', fromParam = false } = Astro.props;
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
 const photos = [
   ['lane-closure', '/fleet/lc-hero.webp', '58% 45%'],
-  ['rental', CDN + 'thumbnail_IMG_1133_c2839bba-db54-470f-80d2-804e82e3fd23.jpg?width=900', '45% 50%'],
+  ['rental', '/fleet/vms-yard.webp', '30% 45%'],
   ['products', CDN + 'TRAILER13.jpg?width=900', '50% 50%'],
   ['general', CDN + 'thumbnail_Safety_Day_Team_Photo.jpg?width=900', '40% 40%']
 ];
@@ -561,7 +561,7 @@ const photos = [
 
   const SVC = [
     { id: 'lane-closure', b: 'Lane Closure Project', s: 'Flaggers, full closures, TMA protection and traffic control plans', photo: '/fleet/lc-hero.webp', pos: '58% 45%' },
-    { id: 'rental', b: 'Rental Pricing', s: 'VMS boards, arrow boards, crash trucks and more, delivered and picked up in NJ, NY, PA and CT', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/1742906746_0.jpg?width=800', fit: 'contain', tint: T.yellow },
+    { id: 'rental', b: 'Rental Pricing', s: 'VMS boards, arrow boards, crash trucks and more, delivered and picked up in NJ, NY, PA and CT', photo: '/fleet/vms-yard.webp', pos: '30% 45%' },
     { id: 'products', b: 'Purchase Pricing', s: 'Ships nationwide. Bulk orders, POs and custom branding', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/TRAILER13.jpg?width=800', pos: '50% 50%' },
     { id: 'general', b: 'Something Else?', s: 'Not sure what you need? Describe it and we\u2019ll sort it out', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_Safety_Day_Team_Photo.jpg?width=800', pos: '40% 45%' }
   ];
