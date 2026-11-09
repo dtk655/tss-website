@@ -110,7 +110,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
         </div>
           </div>
         ) : (
-          <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-label={n.label === 'WATERCADE' ? 'WATERCADE' : undefined}>{n.label === 'WATERCADE' ? <span class="nav__wc"><img src="/brand/watercade-nav.png" alt="" width="724" height="96" /></span> : <span>{n.label}</span>}</a>
+          <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-label={n.label === 'WATERCADE' ? 'WATERCADE' : undefined}>{n.label === 'WATERCADE' ? <span class="nav__wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span> : <span>{n.label}</span>}</a>
         ))}
       </nav>
       <p class="hdr__tag">Ships nationwide · Rentals &amp; crews in NJ, NY, PA, CT</p>
@@ -414,7 +414,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .nav__chev { width: 14px; height: 14px; margin-top: 1px; transition: rotate .2s; }
   .nav__item--mega.is-open .nav__chev { rotate: 180deg; }
   .nav__wc { display: inline-flex; align-items: center; }
-  .nav__wc img { height: 22px; width: auto; display: block; transition: transform .2s; }
+  .nav__wc img { height: 20px; width: auto; display: block; transition: transform .2s; }
   .nav > a:hover .nav__wc img { transform: translateY(-1px); }
   .hdr__tag { margin: 0; color: var(--steel); font-size: .86rem; white-space: nowrap; }
 
