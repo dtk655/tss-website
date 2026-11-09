@@ -12,17 +12,17 @@ const modes = {
 };
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
-<section class="br" data-br data-mode="buy">
+<section class="br" data-br data-mode="rent">
   <div class="wrap">
     <div class="br__top">
       <div>
-        <p class="br__k"><span></span>Buy or rent</p>
+        <p class="br__k"><span></span>Rent or buy</p>
         <h2>Everything we sell, <em>we also rent.</em></h2>
       </div>
       <div class="br__switch" role="tablist" aria-label="Buy or rent">
         <i class="br__thumb" aria-hidden="true"></i>
-        <button type="button" role="tab" aria-selected="true" data-set="buy">Buy</button>
-        <button type="button" role="tab" aria-selected="false" data-set="rent">Rent</button>
+        <button type="button" role="tab" aria-selected="true" data-set="rent">Rent</button>
+        <button type="button" role="tab" aria-selected="false" data-set="buy">Buy</button>
       </div>
     </div>
 
@@ -66,8 +66,8 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .br__switch button { all: unset; position: relative; z-index: 1; cursor: pointer; text-align: center; padding: 14px 28px 13px; font-size: 1.05rem; font-variation-settings: 'wght' 720; color: var(--steel); transition: color .35s; border-radius: 999px; }
   .br__switch button:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; }
   .br__switch button[aria-selected="true"] { color: #fff; }
-  .br__thumb { position: absolute; top: 6px; bottom: 6px; left: 6px; width: calc(50% - 6px); border-radius: 999px; background: var(--ink); box-shadow: 0 10px 20px -10px rgba(20,23,26,.6); transition: transform .5s cubic-bezier(.2,.8,.2,1), background .4s; }
-  [data-mode="rent"] .br__thumb { transform: translateX(100%); background: var(--red); }
+  .br__thumb { position: absolute; top: 6px; bottom: 6px; left: 6px; width: calc(50% - 6px); border-radius: 999px; background: var(--red); box-shadow: 0 10px 20px -10px rgba(20,23,26,.6); transition: transform .5s cubic-bezier(.2,.8,.2,1), background .4s; }
+  [data-mode="buy"] .br__thumb { transform: translateX(100%); background: var(--ink); }
 
   .br__panel { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); border-radius: 26px; overflow: hidden; border: 1px solid var(--line); background: #fff; box-shadow: 0 40px 80px -60px rgba(20,23,26,.5); }
 
@@ -169,7 +169,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
       stop(); set(b.dataset.set!);
       clearTimeout(resume); resume = window.setTimeout(start, 12000);
     }));
-    set('buy');
+    set('rent');
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     new IntersectionObserver(([en]) => {
       visible = en.isIntersecting;
