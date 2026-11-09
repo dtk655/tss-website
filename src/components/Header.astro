@@ -135,7 +135,6 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
           {nav.map((n, i) => n.mega ? (
             <div class="mdrw__grp mdrw__in" style={`--i:${i + 1}`}>
               <button type="button" class={`mdrw__link${current(n.href) ? ' is-cur' : ''}`} aria-expanded="false" aria-controls="mdrw-cats" data-macc>
-                <span class="mdrw__ico"><svg viewBox="0 0 24 24"><path d={icons[n.label]} /></svg></span>
                 <span class="mdrw__lbl">{n.label}</span>
                 <svg class="mdrw__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
@@ -159,20 +158,14 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
             <a href={n.href} class={`mdrw__link mdrw__in${current(n.href) ? ' is-cur' : ''}`} style={`--i:${i + 1}`}>
               {n.label === 'WATERCADE'
                 ? <span class="mdrw__lbl mdrw__wc" aria-label="WATERCADE"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span>
-                : <Fragment><span class="mdrw__ico"><svg viewBox="0 0 24 24"><path d={icons[n.label]} /></svg></span><span class="mdrw__lbl">{n.label}</span></Fragment>}
+                : <span class="mdrw__lbl">{n.label}</span>}
               <svg class="mdrw__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           ))}
         </nav>
         <div class="mdrw__quick mdrw__in" style={`--i:${nav.length + 1}`}>
-          <a href="tel:+19085614800" class="mdrw__qa">
-            <span class="mdrw__qaico"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z"/></svg></span>
-            <span><small>Call us 24/7</small><b>908-561-4800</b></span>
-          </a>
-          <a href="/pages/request-a-quote" class="mdrw__qa mdrw__qa--red">
-            <span class="mdrw__qaico"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6"/></svg></span>
-            <span><small>Products, rentals or crews</small><b>Build a quote</b></span>
-          </a>
+          <a href="/pages/request-a-quote" class="mdrw__btn mdrw__btn--solid">Request a quote<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <a href="tel:+19085614800" class="mdrw__btn mdrw__btn--line">Call 908-561-4800</a>
         </div>
         <p class="mdrw__foot mdrw__in" style={`--i:${nav.length + 2}`}>Ships nationwide · Rentals &amp; crews in NJ, NY, PA and CT · Since 1971</p>
       </div>
@@ -501,6 +494,36 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .mdrw__qa--red small { color: #fbd2cc; }
   .mdrw__qa--red .mdrw__qaico { background: rgba(255, 255, 255, .18); color: #fff; }
   .mdrw__foot { margin: 2px 4px 0; color: var(--steel); font-size: .8rem; line-height: 1.5; text-align: center; }
+
+  /* ---------- drawer v2: editorial, no icons ---------- */
+  .mdrw__panel { width: min(100vw, 460px); }
+  .mdrw__top { padding: 14px 18px; }
+  .mdrw__logo img { height: 46px; }
+  .mdrw__x { background: none; border: 1px solid var(--line); }
+  .mdrw__scroll { padding: 8px 22px calc(24px + env(safe-area-inset-bottom)); gap: 0; }
+  .mdrw__ask { margin: 10px 0 14px; padding: 10px 12px 10px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--haze); gap: 10px; }
+  .mdrw__askcone { width: 24px; height: 28px; margin-left: 4px; }
+  .mdrw__asktxt b { font-size: .95rem; font-variation-settings: 'wght' 680; }
+  .mdrw__asktxt small { font-size: .76rem; }
+  .mdrw__nav { gap: 0; border-top: 1px solid var(--line); }
+  .mdrw__nav > a, .mdrw__grp { border-bottom: 1px solid var(--line); }
+  .mdrw__link { gap: 12px; padding: 18px 2px; border-radius: 0; }
+  .mdrw__link:hover, .mdrw__link:active { background: none; }
+  .mdrw__lbl { font-size: 1.5rem; line-height: 1.1; letter-spacing: -.025em; font-variation-settings: 'wght' 740; transition: color .2s, translate .25s cubic-bezier(.2,.8,.2,1); }
+  .mdrw__link:hover .mdrw__lbl, .mdrw__link:active .mdrw__lbl { color: var(--red); translate: 4px 0; }
+  .mdrw__link.is-cur .mdrw__lbl { color: var(--red); }
+  .mdrw__arr, .mdrw__chev { width: 20px; height: 20px; color: var(--ink); }
+  .mdrw__grp.is-exp .mdrw__lbl { color: var(--red); }
+  .mdrw__wc { min-height: 0; padding: 4px 0; }
+  .mdrw__wc img { height: 22px; }
+  .mdrw__cats { padding: 0 0 12px; }
+  .mdrw__all { margin: 0 0 16px; border-radius: 999px; }
+  .mdrw__quick { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 22px; padding-top: 0; border-top: 0; }
+  .mdrw__btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; border-radius: 999px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; }
+  .mdrw__btn svg { width: 18px; height: 18px; }
+  .mdrw__btn--solid { background: var(--red); color: #fff; box-shadow: 0 16px 30px -16px rgba(182, 6, 6, .7); }
+  .mdrw__btn--line { border: 1.5px solid var(--line-dark); color: var(--ink); }
+  .mdrw__foot { margin: 18px 0 0; text-align: left; font-size: .78rem; }
 
   /* hamburger morphs to X while open */
   .menu-btn svg path { transition: d .3s ease; }
