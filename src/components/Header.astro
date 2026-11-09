@@ -157,8 +157,9 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
             </div>
           ) : (
             <a href={n.href} class={`mdrw__link mdrw__in${current(n.href) ? ' is-cur' : ''}`} style={`--i:${i + 1}`}>
-              <span class="mdrw__ico"><svg viewBox="0 0 24 24"><path d={icons[n.label]} /></svg></span>
-              <span class="mdrw__lbl">{n.label}</span>
+              {n.label === 'WATERCADE'
+                ? <span class="mdrw__lbl mdrw__wc" aria-label="WATERCADE"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span>
+                : <Fragment><span class="mdrw__ico"><svg viewBox="0 0 24 24"><path d={icons[n.label]} /></svg></span><span class="mdrw__lbl">{n.label}</span></Fragment>}
               <svg class="mdrw__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           ))}
@@ -469,6 +470,8 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .mdrw__link:hover .mdrw__ico, .mdrw__link.is-cur .mdrw__ico, .mdrw__grp.is-exp .mdrw__ico { background: var(--red-tint); color: var(--red); }
   .mdrw__lbl { flex: 1; font-size: 1.08rem; font-variation-settings: 'wght' 680; }
   .mdrw__link.is-cur .mdrw__lbl { color: var(--red); }
+  .mdrw__wc { display: flex; align-items: center; min-height: 40px; padding-left: 2px; }
+  .mdrw__wc img { height: 24px; width: auto; display: block; }
   .mdrw__arr, .mdrw__chev { width: 18px; height: 18px; color: var(--steel); flex: none; transition: rotate .25s ease, translate .2s ease; }
   .mdrw__link:hover .mdrw__arr { translate: 3px 0; color: var(--red); }
   .mdrw__grp.is-exp .mdrw__chev { rotate: 180deg; color: var(--red); }
