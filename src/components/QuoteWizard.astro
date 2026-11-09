@@ -480,6 +480,22 @@ const photos = [
     .qs-rv dl { grid-template-columns: 1fr; }
     .qs-note { flex-direction: column; align-items: stretch; }
   }
+  /* ---------- ZIP lookup ---------- */
+  .qs-zip { display: grid; grid-template-columns: minmax(0, 190px) minmax(0, 1fr); align-items: center; gap: 10px 16px; }
+  .qs-zip__in { letter-spacing: .08em; font-variation-settings: 'wght' 600; }
+  .qs-zip__out { min-width: 0; display: grid; gap: 6px; }
+  .qs-zip__hint { color: var(--steel); font-size: .9rem; }
+  .qs-zip__hint.is-busy::before { content: ''; display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: -1px; border: 2px solid var(--line-dark); border-top-color: var(--red); border-radius: 50%; animation: qsSpin .7s linear infinite; }
+  .qs-zip__hit { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 1.02rem; color: var(--ink); animation: qsPop .35s cubic-bezier(.3, 1.6, .5, 1); }
+  .qs-zip__hit svg { width: 20px; height: 20px; margin-right: 4px; fill: none; stroke: var(--red); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-zip__hit b { font-variation-settings: 'wght' 720; }
+  .qs-zip button { margin-left: 8px; padding: 2px 0; border: 0; background: none; font: inherit; font-size: .88rem; color: var(--red); font-variation-settings: 'wght' 650; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .qs-zip__miss { color: var(--ink-2); font-size: .92rem; }
+  .qs-zip__miss button { margin-left: 4px; }
+  .qs-zip__area { margin: 0; padding: 8px 12px; border-radius: 10px; background: #fff7e0; color: #6b5200; font-size: .86rem; line-height: 1.4; }
+  .qs-zip__man[hidden] { display: none; }
+  @media (max-width: 640px) { .qs-zip { grid-template-columns: 1fr; gap: 8px; } }
+
   /* ---------- quote button + sheet (where the side ticket is hidden) ---------- */
   .qs-qbtn { display: none; position: relative; align-items: center; gap: 7px; min-height: 54px; padding: 0 16px 0 14px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font: inherit; font-size: .96rem; color: var(--ink); font-variation-settings: 'wght' 660; cursor: pointer; }
   .qs-qbtn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
@@ -606,8 +622,6 @@ const photos = [
     { id: 'products', b: 'Purchase Pricing', s: 'Ships nationwide. Bulk orders, POs and custom branding', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/TRAILER13.jpg?width=800', pos: '50% 50%' },
     { id: 'general', b: 'Something Else?', s: 'Not sure what you need? Describe it and we\u2019ll sort it out', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_Safety_Day_Team_Photo.jpg?width=800', pos: '40% 45%' }
   ];
-  const STATES_LC = ['NJ', 'NY', 'PA', 'CT', 'DE', 'Other'];
-  const STATES_R = ['NJ', 'NY', 'PA', 'CT', 'Other'];
 
   // Each service: two job steps between "Service" and "Your details".
   const FLOW = {
@@ -626,8 +640,7 @@ const photos = [
       ] },
       { name: 'Where and when', k: 'Location and schedule', title: 'Where and when is the job?', lead: 'An exact spot helps us plan the right setup and drive time.', fields: [
         { id: 'location', label: 'Job address or route, plus nearest cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd' },
-        { id: 'town', label: 'Town or city', type: 'text', req: true, w: 'half' },
-        { id: 'state', label: 'State', type: 'seg', req: true, opts: STATES_LC, w: 'half', hint: 'Lane closures in NJ, NY, PA, CT and DE.' },
+        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT', 'DE'], areaMsg: 'Our lane closure crews work in NJ, NY, PA, CT and DE. Send it anyway and we\u2019ll let you know.' },
         { id: 'shift', label: 'When does the work happen?', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock]] },
         { id: 'startDate', label: 'Start date', type: 'date', req: true, w: 'third', pair: 1 },
         { id: 'endDate', label: 'End date', type: 'date', w: 'third', pair: 1 },
@@ -644,8 +657,7 @@ const photos = [
       ] },
       { name: 'Delivery', k: 'Delivery and dates', title: 'Where and when should it arrive?', lead: 'We deliver and pick up in NJ, NY, PA and CT.', fields: [
         { id: 'address', label: 'Delivery address', type: 'text', req: true, ph: 'Street address or jobsite' },
-        { id: 'town', label: 'Town or city', type: 'text', req: true, w: 'half' },
-        { id: 'state', label: 'State', type: 'seg', req: true, opts: STATES_R, w: 'half' },
+        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT'], areaMsg: 'Rentals deliver in NJ, NY, PA and CT. Send it anyway and we\u2019ll let you know.' },
         { id: 'deliverDate', label: 'Delivery date', type: 'date', req: true, w: 'half', pair: 1 },
         { id: 'pickupDate', label: 'Pickup date', type: 'date', w: 'half', pair: 1, hint: 'A guess is fine.' },
         { id: 'days', type: 'days' },
@@ -660,7 +672,7 @@ const photos = [
         { id: 'customDesc', label: 'Describe the customization', type: 'textarea', ph: 'e.g. 200 orange cones stenciled "CITY OF NEWARK DPW", logo on both sides', showIf: { custom: 'Yes' } }
       ] },
       { name: 'Shipping', k: 'Shipping', title: 'Where should it ship?', lead: 'Products ship anywhere in the U.S.', fields: [
-        { id: 'shipTo', label: 'Ship-to city and state', type: 'text', req: true, ph: 'e.g. Newark, NJ', w: 'half' },
+        { id: 'zip', label: 'Ship-to ZIP code', type: 'zip', req: true },
         { id: 'needBy', label: 'Needed by', type: 'date', w: 'half' },
         { id: 'po', label: 'How are you buying?', type: 'chips', opts: ['Credit card', 'Purchase order', 'Net terms account', 'Not sure'] },
         { id: 'notes', label: 'Anything else?', type: 'textarea', ph: 'Sizes, colors, delivery details…' }
@@ -774,6 +786,10 @@ const photos = [
             <div class="qs-more"><p>Need something not shown?</p><div class="qs-rows" data-qs-rows>${rows.map(rowHtml).join('')}</div>
             <button type="button" class="qs-addrow" data-qs-addrow>${ICON.plus}Add an item</button></div>`);
         }
+        case 'zip': {
+          return wrap(`<div class="qs-zip"><input class="qs-input qs-zip__in" id="${id}" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="e.g. 07080" value="${esc(state.job.zip || '')}" data-qs-zip aria-describedby="${id}-out"><div class="qs-zip__out" id="${id}-out" data-qs-zipout aria-live="polite">${zipOut(f)}</div></div>
+            <div class="qs-zip__man" data-qs-zipman${state.job.zipManual ? '' : ' hidden'}><input class="qs-input" type="text" placeholder="Town, state (e.g. West New York, NJ)" value="${esc(state.job.zipManual ? [state.job.town, state.job.state].filter(Boolean).join(', ') : '')}" data-qs-zipcity aria-label="Town and state"></div>`, id);
+        }
         case 'days': {
           const n = dayCount(state.job.deliverDate, state.job.pickupDate);
           return `<div class="qs-f qs-in" style="--i:${i}" data-qs-days>${n ? daysPill(n) : ''}</div>`;
@@ -781,6 +797,19 @@ const photos = [
       }
       return '';
     }
+    const zipCache = {};
+    const zipLookup = (z) => (zipCache[z.slice(0, 3)] ||= fetch(`/zip/${z.slice(0, 3)}.json`).then((r) => (r.ok ? r.json() : {})).catch(() => ({}))).then((d) => d[z] || null);
+    const PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg>';
+    function zipOut(f) {
+      const j = state.job, z = j.zip || '';
+      if (j.zipManual) return `<span class="qs-zip__hint">Using the town you typed.</span>`;
+      if (z.length < 5) return `<span class="qs-zip__hint">City and state fill in automatically.</span>`;
+      if (j.zipLook === 'busy') return `<span class="qs-zip__hint is-busy">Looking up ${esc(z)}\u2026</span>`;
+      if (j.zipLook === 'miss' || !j.town) return `<span class="qs-zip__miss">We couldn\u2019t find that ZIP. <button type="button" data-qs-zipedit>Type the town instead</button></span>`;
+      const out = f && f.area && j.state && !f.area.includes(j.state) ? `<p class="qs-zip__area">${esc(f.areaMsg)}</p>` : '';
+      return `<span class="qs-zip__hit">${PIN}<span><b>${esc(j.town)}</b>, ${esc(j.state)}</span><button type="button" data-qs-zipedit>Change</button></span>${out}`;
+    }
+    const zipText = () => { const j = state.job; return [j.zip, [j.town, j.state].filter(Boolean).join(', ')].filter(Boolean).join(' \u00b7 '); };
     const daysPill = (n) => `<span class="qs-pill">${ICON.cal}${n} day${n > 1 ? 's' : ''} on rent${n >= 28 ? ', monthly rates apply' : n >= 7 ? ', weekly rates apply' : ''}</span>`;
     let curShop = null;
     const lines = (fn) => Object.values(state.job.sel).filter((e) => e.q > 0 && fn(e));
@@ -849,7 +878,8 @@ const photos = [
         if (j.custom === 'Yes') L.push(['custom', 'Custom', 'Colors, stenciling or logo']);
       }
       if (state.type === 'general' && j.what) L.push(['what', 'The job', esc(j.what.length > 90 ? j.what.slice(0, 90) + '…' : j.what)]);
-      const place = [j.location || j.address, j.town, j.state, j.shipTo, j.where].filter(Boolean).join(', ');
+      const cityLine = j.town ? `${j.town}${j.state ? ', ' + j.state : ''}${j.zip && !j.zipManual ? ' ' + j.zip : ''}` : '';
+      const place = [j.location || j.address, cityLine, !j.town && j.shipTo, j.where].filter(Boolean).join(', ');
       if (place) L.push(['place', state.type === 'products' ? 'Ships to' : 'Where', esc(place)]);
       const d1 = j.startDate || j.deliverDate || j.needBy, d2 = j.endDate || j.pickupDate;
       if (d1) L.push(['dates', state.type === 'products' ? 'Needed by' : 'Dates', esc(fmtDate(d1) + (d2 ? ` → ${fmtDate(d2)}` : '')) + (j.shift ? ` &middot; ${esc(j.shift)}` : '')]);
@@ -991,7 +1021,7 @@ const photos = [
       const job = [];
       flow().forEach((s) => s.fields.forEach((f) => {
         if (!visible(f) || f.type === 'catalog' || f.type === 'days') return;
-        const v = state.job[f.id];
+        const v = f.type === 'zip' ? zipText() : state.job[f.id];
         if (v && String(fmtVal(v)).trim()) job.push([f.label, f.type === 'date' ? fmtDate(v) : fmtVal(v), f.type === 'textarea' || f.id === 'location' || f.type === 'equip' || f.type === 'multi']);
       }));
       const n = dayCount(state.job.deliverDate, state.job.pickupDate);
@@ -1078,6 +1108,33 @@ const photos = [
         });
       });
       wireShop();
+      // ZIP lookup
+      body.querySelectorAll('[data-qs-zip]').forEach((inp) => {
+        const fld = inp.closest('[data-qs-field]'), f = flow().flatMap((x) => x.fields).find((x) => x.id === fld.dataset.qsField);
+        const out = fld.querySelector('[data-qs-zipout]'), man = fld.querySelector('[data-qs-zipman]'), city = fld.querySelector('[data-qs-zipcity]');
+        const paint = () => { out.innerHTML = zipOut(f); out.querySelector('[data-qs-zipedit]')?.addEventListener('click', () => { state.job.zipManual = true; man.hidden = false; city.value = city.value || [state.job.town, state.job.state].filter(Boolean).join(', '); paint(); city.focus(); city.select(); save(); }); };
+        const setPlace = (town, st) => { state.job.town = town; state.job.state = st; if (state.type === 'products') state.job.shipTo = [town, st].filter(Boolean).join(', '); };
+        inp.addEventListener('input', async () => {
+          const z = inp.value.replace(/\D/g, '').slice(0, 5);
+          if (inp.value !== z) inp.value = z;
+          state.job.zip = z; clearErr('zip');
+          if (!state.job.zipManual) setPlace('', '');
+          if (z.length === 5 && !state.job.zipManual) {
+            state.job.zipLook = 'busy'; paint();
+            const hit = await zipLookup(z);
+            if (state.job.zip !== z) return;
+            state.job.zipLook = hit ? 'ok' : 'miss';
+            if (hit) setPlace(hit[0], hit[1]);
+          } else state.job.zipLook = '';
+          save(); paint(); renderTicket();
+        });
+        city?.addEventListener('input', () => {
+          const m = city.value.trim().match(/^(.*?)[,\s]+([A-Za-z]{2})$/);
+          setPlace(m ? m[1].trim() : city.value.trim(), m ? m[2].toUpperCase() : '');
+          clearErr('zip'); save(); renderTicket();
+        });
+        paint();
+      });
       // custom rows
       const rowsEl = body.querySelector('[data-qs-rows]');
       if (rowsEl) {
@@ -1265,6 +1322,12 @@ const photos = [
         if (!f.req || !visible(f)) continue;
         const v = state[scope][f.id];
         if (f.type === 'catalog') { if (!allItems().length) return showErr('cat', 'Add at least one item, or describe it under “Need something not shown?”'); continue; }
+        if (f.type === 'zip') {
+          const j = state.job;
+          if (!/^\d{5}$/.test(j.zip || '') && !(j.zipManual && j.town)) return showErr('zip', 'Enter the 5-digit ZIP code.');
+          if (!j.town) return showErr('zip', j.zipManual ? 'Type the town and state.' : 'We couldn\u2019t find that ZIP. Check it, or type the town instead.');
+          continue;
+        }
         if (f.type === 'multi' || f.type === 'equip') { if (!Array.isArray(v) || !v.length) return showErr(f.id, 'Pick at least one.'); continue; }
         if (!v || !String(v).trim()) return showErr(f.id, f.type === 'date' ? 'Pick a date. A best guess is fine.' : f.type === 'pics' || f.type === 'seg' ? 'Pick one to continue.' : 'We need this one to price the job.');
       }
