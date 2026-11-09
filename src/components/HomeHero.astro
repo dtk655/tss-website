@@ -135,8 +135,10 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     .cx-card__go :global(svg) { width: 20px; height: 20px; }
   }
   @media (max-width: 640px) {
-    .cx { min-height: clamp(520px, calc(100svh - 150px), 680px); }
-    .cx__shade { background: linear-gradient(180deg, rgba(8,9,11,.25) 0%, rgba(8,9,11,.1) 18%, rgba(8,9,11,.62) 42%, rgba(8,9,11,.9) 100%); }
+    .cx { min-height: 0; padding-top: clamp(96px, 26vw, 130px); }
+    .cx__lede { text-wrap: balance; }
+    .cx__in { padding-bottom: 22px; }
+    .cx__shade { background: linear-gradient(180deg, rgba(8,9,11,.15) 0%, rgba(8,9,11,.05) 14%, rgba(8,9,11,.55) 34%, rgba(8,9,11,.88) 100%); }
     .cx__k { font-size: .7rem; letter-spacing: .14em; margin-bottom: 14px; }
     .cx__h { font-size: clamp(1.9rem, 10.2vw, 3.4rem); }
     .cx__row { margin-top: 18px; gap: 16px; }
