@@ -22,14 +22,25 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
 ---
 <section class="hb">
   <div class="wrap hb__in">
-    <div>
-      <p class="hb__k">Traffic Safety Service · Since 1971</p>
-      <h1>The trusted leader in <span>traffic safety.</span></h1>
+    <div class="hb__main">
+      <p class="hb__k">Traffic Safety Service</p>
+      <h1>The trusted leader in traffic safety.</h1>
     </div>
-    <div class="hb__cta">
-      <a href="/pages/request-a-quote" class="hb__btn hb__btn--solid">Build a quote</a>
-      <a href="tel:+19085614800" class="hb__btn hb__btn--line">908-561-4800</a>
+    <div class="hb__side">
+      <p class="hb__lede">Products, rentals and certified lane closure crews for contractors, agencies and venues since 1971.</p>
+      <div class="hb__cta">
+        <a href="/pages/request-a-quote" class="hb__btn hb__btn--solid">Request a quote<Fragment set:html={ARROW} /></a>
+        <a href="tel:+19085614800" class="hb__btn hb__btn--line">908-561-4800</a>
+      </div>
     </div>
+  </div>
+  <div class="wrap">
+    <ul class="hb__trust">
+      <li><b>55+</b> years in business</li>
+      <li><b>25,000+</b> lane closures</li>
+      <li><b>Nationwide</b> product shipping</li>
+      <li><b>NJ · NY · PA · CT</b> rentals</li>
+    </ul>
   </div>
 </section>
 
@@ -38,15 +49,18 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     <ul class="hc__grid">
       {cards.map((c, i) => (
         <li>
-          <a href={c.href} class:list={['hc__card', i === 0 && 'is-on']} data-card style={`--i:${i}`}>
-            <span class="hc__photo"><img src={c.img} alt="" style={`object-position:${c.pos}`} loading="eager" /></span>
-            <span class="hc__body">
-              <span class="hc__top"><span class="hc__n">0{i + 1}</span><span class="hc__t">{c.t}</span></span>
-              <span class="hc__h">{c.h}</span>
-              <span class="hc__d">{c.d}</span>
-              <span class="hc__go">{c.cta}<Fragment set:html={ARROW} /></span>
-            </span>
+          <a href={c.href} class:list={['hc__card', i === 0 && 'is-on']} data-card>
+            <img src={c.img} alt="" style={`object-position:${c.pos}`} loading="eager" />
+            <span class="hc__shade" aria-hidden="true"></span>
             <i class="hc__bar" aria-hidden="true"></i>
+            <span class="hc__body">
+              <span class="hc__txt">
+                <span class="hc__t">{c.t}</span>
+                <span class="hc__h">{c.h}</span>
+                <span class="hc__d">{c.d}</span>
+              </span>
+              <span class="hc__go" aria-label={c.cta}><Fragment set:html={ARROW} /></span>
+            </span>
           </a>
         </li>
       ))}
@@ -55,75 +69,85 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
 </section>
 
 <style>
-  .hb { position: relative; overflow: hidden; color: #fff; background: radial-gradient(120% 170% at 88% -30%, #e13a1a, #b60606 42%, #8a0404); }
-  .hb::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,.035) 0 18px, transparent 18px 36px); pointer-events: none; }
-  .hb__in { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 40px; padding-block: clamp(28px, 3.4vw, 46px); }
-  .hb__k { margin: 0 0 8px; color: var(--gold); font-size: clamp(.8rem, .95vw, .94rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 720; }
-  .hb h1 { margin: 0; color: #fff; font-size: clamp(2rem, 4vw, 3.8rem); line-height: 1.02; letter-spacing: -.035em; font-variation-settings: 'wght' 800; text-wrap: balance; }
-  .hb h1 span { color: #ffd9d2; }
-  .hb__cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .hb__btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 14px 24px 13px; border-radius: 12px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .15s, transform .15s; }
-  .hb__btn:hover { transform: translateY(-1px); }
-  .hb__btn--solid { background: #fff; color: var(--red); box-shadow: 0 14px 30px -14px rgba(0,0,0,.5); }
-  .hb__btn--solid:hover { background: var(--haze); }
-  .hb__btn--line { border: 1.5px solid rgba(255,255,255,.6); color: #fff; }
-  .hb__btn--line:hover { background: rgba(255,255,255,.1); }
+  .hb { color: #fff; background: linear-gradient(135deg, #c00808 0%, #a30505 55%, #860303 100%); }
+  .hb__in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px clamp(32px, 5vw, 80px); align-items: end; padding-block: clamp(30px, 3.6vw, 50px) clamp(22px, 2.6vw, 30px); }
+  .hb__k { margin: 0 0 14px; color: rgba(255,255,255,.7); font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 650; }
+  .hb h1 { margin: 0; color: #fff; font-size: clamp(2.2rem, 4.4vw, 4.2rem); line-height: 1; letter-spacing: -.04em; font-variation-settings: 'wght' 760; text-wrap: balance; }
+  .hb__lede { margin: 0; color: rgba(255,255,255,.82); font-size: clamp(1rem, 1.15vw, 1.1rem); line-height: 1.55; max-width: 44ch; }
+  .hb__cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .hb__btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 20px 11px; border-radius: 10px; font-size: .98rem; font-variation-settings: 'wght' 660; text-decoration: none; white-space: nowrap; transition: background .2s, border-color .2s; }
+  .hb__btn :global(svg) { flex: none; width: 16px; height: 16px; transition: transform .2s; }
+  .hb__btn:hover :global(svg) { transform: translateX(3px); }
+  .hb__btn--solid { background: #fff; color: var(--ink); }
+  .hb__btn--solid:hover { background: #f1f2f3; }
+  .hb__btn--line { border: 1px solid rgba(255,255,255,.4); color: #fff; }
+  .hb__btn--line:hover { border-color: #fff; background: rgba(255,255,255,.06); }
+  .hb__trust { list-style: none; margin: 0; padding: 16px 0 20px; border-top: 1px solid rgba(255,255,255,.18); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .hb__trust li { font-size: .88rem; color: rgba(255,255,255,.72); }
+  .hb__trust li + li { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.18); }
+  .hb__trust b { display: block; color: #fff; font-size: 1.05rem; font-variation-settings: 'wght' 700; letter-spacing: -.01em; }
 
-  .hc { padding: clamp(22px, 2.8vw, 36px) 0 clamp(36px, 4vw, 56px); background: var(--haze); }
-  .hc__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 20px); }
-  .hc__card { position: relative; overflow: hidden; display: flex; flex-direction: column; height: 100%; border-radius: 22px; background: #fff; border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s, border-color .4s, opacity .4s; opacity: .72; }
-  .hc__card.is-on { opacity: 1; transform: translateY(-6px); border-color: var(--red); box-shadow: 0 0 0 3px rgba(182,6,6,.14), 0 30px 50px -30px rgba(20,23,26,.55); }
-  .hc__card:focus-visible { outline: 3px solid rgba(182,6,6,.4); outline-offset: 3px; }
-  .hc__photo { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #222; }
-  .hc__photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.85) brightness(.9); transform: scale(1.04); transition: filter .6s, transform 1.2s cubic-bezier(.2,.8,.2,1); }
-  .hc__card.is-on .hc__photo img { filter: none; transform: scale(1); }
-  .hc__body { display: flex; flex-direction: column; gap: 6px; padding: clamp(16px, 1.8vw, 24px); flex: 1; }
-  .hc__top { display: flex; align-items: baseline; gap: 10px; }
-  .hc__n { font-size: .8rem; font-variation-settings: 'wght' 780; color: var(--steel); letter-spacing: .06em; transition: color .3s; }
-  .hc__card.is-on .hc__n { color: var(--red); }
-  .hc__t { font-size: clamp(1.4rem, 2vw, 1.85rem); line-height: 1.05; letter-spacing: -.025em; font-variation-settings: 'wght' 800; }
-  .hc__h { font-size: 1rem; font-variation-settings: 'wght' 680; color: var(--ink-2); }
-  .hc__d { font-size: .9rem; line-height: 1.45; color: var(--steel); }
-  .hc__go { display: inline-flex; align-items: center; gap: 7px; width: fit-content; margin-top: auto; padding-top: 12px; color: var(--steel); font-size: .95rem; font-variation-settings: 'wght' 720; transition: color .3s; }
-  .hc__go :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
-  .hc__card.is-on .hc__go { color: var(--red); }
-  .hc__card:hover .hc__go :global(svg) { transform: translateX(3px); }
-  .hc__bar { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--red); }
-  .hc__card.is-on .hc__bar { animation: hcBar var(--hc-t, 3800ms) linear forwards; }
-  .hc.is-paused .hc__card.is-on .hc__bar { animation: none; width: 100%; }
+  .hc { padding: clamp(20px, 2.4vw, 32px) 0 clamp(40px, 4.4vw, 64px); background: #fff; }
+  .hc__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 18px); }
+  .hc__card { position: relative; display: block; overflow: hidden; height: clamp(280px, 26vw, 390px); width: 100%; border-radius: 18px; background: #111; color: #fff; text-decoration: none; isolation: isolate; }
+  .hc__card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transform: scale(1.02); filter: brightness(.55) saturate(.7); transition: transform 1.4s cubic-bezier(.2,.8,.2,1), filter .7s; }
+  .hc__card.is-on img { transform: scale(1.07); filter: none; }
+  .hc__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(8,9,11,.82) 100%); }
+  .hc__bar { position: absolute; left: 22px; right: 22px; top: 20px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.28); overflow: hidden; }
+  .hc__bar::after { content: ''; position: absolute; inset: 0; width: 0; background: #fff; }
+  .hc__card.is-on .hc__bar::after { animation: hcBar var(--hc-t, 4200ms) linear forwards; }
+  .hc.is-paused .hc__card.is-on .hc__bar::after { animation: none; width: 100%; }
   @keyframes hcBar { to { width: 100%; } }
+  .hc__body { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: clamp(18px, 2vw, 26px); }
+  .hc__txt { display: grid; gap: 4px; min-width: 0; }
+  .hc__t { font-size: clamp(1.5rem, 2.2vw, 2.1rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 760; }
+  .hc__h { font-size: 1rem; font-variation-settings: 'wght' 600; color: rgba(255,255,255,.92); }
+  .hc__d { display: grid; grid-template-rows: 0fr; font-size: .9rem; line-height: 1.45; color: rgba(255,255,255,.72); transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1), opacity .4s; opacity: 0; overflow: hidden; }
+  .hc__card.is-on .hc__d { grid-template-rows: 1fr; opacity: 1; }
+  .hc__go { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.45); color: #fff; transition: background .3s, color .3s, border-color .3s; }
+  .hc__go :global(svg) { width: 18px; height: 18px; }
+  .hc__card.is-on .hc__go, .hc__card:hover .hc__go { background: #fff; color: var(--red); border-color: #fff; }
+  .hc__card:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
 
-  @media (max-width: 760px) {
-    .hb__in { flex-direction: column; text-align: center; padding-block: 24px 26px; gap: 16px; }
-    .hb h1 { font-size: 2rem; }
-    .hb__cta { width: 100%; }
-    .hb__btn { flex: 1; min-height: 50px; padding-inline: 14px; }
-    .hc { padding-top: 16px; }
-    .hc__grid { grid-template-columns: 1fr; gap: 10px; }
-    .hc__card { flex-direction: row; border-radius: 18px; }
-    .hc__card.is-on { transform: none; }
-    .hc__photo { flex: 0 0 34%; aspect-ratio: auto; }
-    .hc__body { gap: 3px; padding: 13px 14px; }
-    .hc__t { font-size: 1.25rem; }
-    .hc__h { font-size: .88rem; }
-    .hc__d { display: none; }
-    .hc__go { padding-top: 6px; font-size: .86rem; }
+  @media (max-width: 900px) {
+    .hb__in { grid-template-columns: 1fr; align-items: start; }
+    .hb__trust { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+    .hb__trust li:nth-child(odd) { padding-left: 0; border-left: 0; }
   }
-  @media (prefers-reduced-motion: reduce) { .hc__card, .hc__photo img { transition: none; } .hc__bar { animation: none !important; } }
+  @media (max-width: 760px) {
+    .hb__in { text-align: center; padding-block: 26px 20px; gap: 14px; }
+    .hb__k { margin-bottom: 10px; }
+    .hb h1 { font-size: 2.1rem; }
+    .hb__lede { margin-inline: auto; font-size: .95rem; }
+    .hb__cta { margin-top: 16px; }
+    .hb__btn { flex: 1; }
+    .hb__trust { padding: 14px 0 18px; text-align: center; }
+    .hb__trust li { font-size: .78rem; }
+    .hb__trust b { font-size: .96rem; }
+    .hc { padding-top: 14px; }
+    .hc__grid { grid-template-columns: 1fr; gap: 10px; }
+    .hc__card { height: auto; aspect-ratio: 16 / 9; border-radius: 16px; }
+    .hc__bar { left: 16px; right: 16px; top: 14px; }
+    .hc__body { padding: 16px; }
+    .hc__t { font-size: 1.5rem; }
+    .hc__h { font-size: .9rem; }
+    .hc__d { display: none; }
+    .hc__go { width: 38px; height: 38px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hc__card img, .hc__d { transition: none; } .hc__bar::after { animation: none !important; } }
 </style>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-hc]').forEach((root) => {
     const cards = [...root.querySelectorAll<HTMLElement>('[data-card]')];
-    const T = 3800;
+    const T = 4200;
     root.style.setProperty('--hc-t', T + 'ms');
     let i = 0, hover = false;
     const show = (n: number) => {
       i = n;
       cards.forEach((c, k) => {
         c.classList.toggle('is-on', k === n);
-        const bar = c.querySelector<HTMLElement>('.hc__bar');
-        if (bar && k === n) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
+        if (k === n) { c.classList.remove('is-on'); void c.offsetWidth; c.classList.add('is-on'); }
       });
     };
     cards.forEach((c, k) => {
