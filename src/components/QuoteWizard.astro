@@ -275,6 +275,79 @@ const photos = [
   .qs-next small { color: var(--steel); font-size: .88rem; }
   .qs-done__acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
 
+  /* ---------- shop sections + category popup ---------- */
+  .qs-sub { margin: 6px 0 -4px; display: flex; align-items: center; gap: 12px; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 700; }
+  .qs-sub::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  [data-qs-shop] { display: grid; gap: 14px; }
+  .qs-ci.is-skel { min-height: 196px; background: linear-gradient(100deg, var(--haze) 30%, #fff 50%, var(--haze) 70%) 0 0 / 300% 100%; animation: qsSkel 1.2s linear infinite; }
+  @keyframes qsSkel { to { background-position: -150% 0; } }
+  .qs-ci__pick img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .qs-ci__add svg { transition: transform .2s; }
+  .qs-ci--cat .qs-ci__add:hover svg { transform: translateX(2px); }
+  .qs-ci__add.is-sel { background: var(--red-tint); border-color: #f0c9c9; color: var(--red); }
+  .qs-ci__add.is-sel:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
+  .qs-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; font-family: var(--font); }
+  .qs-modal[hidden] { display: none; }
+  .qs-modal__bg { position: absolute; inset: 0; background: rgba(12, 13, 15, .55); backdrop-filter: blur(6px); opacity: 0; transition: opacity .3s; }
+  .qs-modal__panel { position: relative; width: min(760px, 100%); max-height: min(86vh, 900px); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 60px 120px -40px rgba(0, 0, 0, .6); opacity: 0; transform: translateY(24px) scale(.97); transition: opacity .3s, transform .45s cubic-bezier(.2, .8, .2, 1); }
+  .qs-modal.is-open .qs-modal__bg { opacity: 1; }
+  .qs-modal.is-open .qs-modal__panel { opacity: 1; transform: none; }
+  .qs-modal__head { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 20px 22px 18px; border-bottom: 1px solid var(--line); }
+  .qs-modal__art { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 18px; background: linear-gradient(185deg, var(--tint), #fff); }
+  .qs-modal__art img { width: 80%; height: 80%; object-fit: contain; filter: drop-shadow(0 8px 8px rgba(20, 23, 26, .2)); }
+  .qs-modal__ttl { display: grid; gap: 2px; min-width: 0; }
+  .qs-modal__ttl .qs-k { font-size: .72rem; }
+  .qs-modal__ttl h3 { margin: 0; font-size: clamp(1.4rem, 2.4vw, 1.8rem); letter-spacing: -.03em; line-height: 1.1; font-variation-settings: 'wght' 770; font-weight: 400; }
+  .qs-modal__ttl small { color: var(--steel); font-size: .88rem; }
+  .qs-modal__x { align-self: start; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: background .2s, transform .3s; }
+  .qs-modal__x:hover { background: var(--haze); transform: rotate(90deg); }
+  .qs-modal__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+  .qs-modal__search { grid-column: 1 / -1; position: relative; display: block; }
+  .qs-modal__search svg { position: absolute; left: 15px; top: 50%; translate: 0 -50%; width: 19px; height: 19px; fill: none; stroke: var(--steel); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+  .qs-modal__search input { width: 100%; min-height: 48px; padding: 10px 16px 10px 44px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: var(--haze); font: inherit; font-size: .98rem; color: var(--ink); transition: border-color .2s, background .2s; }
+  .qs-modal__search input:focus { outline: none; border-color: var(--ink); background: #fff; }
+  .qs-modal__list { overflow-y: auto; overscroll-behavior: contain; padding: 8px 14px; }
+  .qs-modal__none { margin: 0; padding: 28px 10px; text-align: center; color: var(--steel); }
+  .qs-modal__none[hidden] { display: none; }
+  .qs-pr { display: grid; grid-template-columns: 72px minmax(0, 1fr) 156px; align-items: center; gap: 16px; padding: 12px 10px; border-radius: 16px; border: 1.5px solid transparent; transition: background .2s, border-color .2s; animation: qsIn .45s cubic-bezier(.2, .8, .2, 1) both; }
+  .qs-pr + .qs-pr { margin-top: 2px; }
+  .qs-pr:hover { background: var(--haze); }
+  .qs-pr.is-on { background: #fff; border-color: var(--red); box-shadow: 0 10px 24px -18px rgba(182, 6, 6, .6); }
+  .qs-pr[hidden] { display: none; }
+  .qs-pr__img { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 14px; background: #fff; border: 1px solid var(--line); overflow: hidden; }
+  .qs-pr__img img { width: 88%; height: 88%; object-fit: contain; }
+  .qs-pr__main { display: grid; gap: 8px; min-width: 0; }
+  .qs-pr__main > b { font-size: .98rem; line-height: 1.3; font-variation-settings: 'wght' 660; }
+  .qs-pr__varl { display: grid; gap: 4px; }
+  .qs-pr__varl span { font-size: .76rem; color: var(--steel); font-variation-settings: 'wght' 600; }
+  .qs-pr__var { min-height: 42px; padding: 8px 36px 8px 12px; font-size: .92rem; border-radius: 10px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9.5l6 6 6-6' fill='none' stroke='%2314171a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center / 16px; cursor: pointer; }
+  .qs-vchips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .qs-vchip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line-dark); background: #fff; font: inherit; font-size: .8rem; color: var(--ink-2); cursor: pointer; animation: qsPop .3s; }
+  .qs-vchip b { color: var(--red); font-variation-settings: 'wght' 760; }
+  .qs-vchip.is-cur { border-color: var(--ink); color: var(--ink); }
+  .qs-pr__ctl .qs-ci__add { min-height: 42px; }
+  .qs-pr__ctl .qs-step-ctl { min-height: 42px; }
+  .qs-pr__ctl .qs-step-ctl button { height: 42px; }
+  .qs-modal__foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 22px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: #fff; }
+  .qs-modal__count { font-size: .95rem; color: var(--steel); }
+  .qs-modal__count b { color: var(--ink); font-variation-settings: 'wght' 720; }
+  .qs-modal__foot .qs-btn { min-height: 50px; padding: 0 26px; }
+  @media (max-width: 640px) {
+    .qs-modal { padding: 0; place-items: end stretch; }
+    .qs-modal__panel { width: 100%; max-height: 92svh; border-radius: 22px 22px 0 0; transform: translateY(100%); }
+    .qs-modal__head { grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; padding: 16px 16px 14px; }
+    .qs-modal__head::before { content: ''; position: absolute; top: 7px; left: 50%; translate: -50% 0; width: 40px; height: 4px; border-radius: 4px; background: var(--line-dark); }
+    .qs-modal__art { width: 56px; height: 56px; border-radius: 14px; }
+    .qs-modal__list { padding: 6px 8px; }
+    .qs-pr { grid-template-columns: 60px minmax(0, 1fr); gap: 8px 12px; padding: 12px 8px; }
+    .qs-pr__img { width: 60px; height: 60px; grid-row: span 2; align-self: start; }
+    .qs-pr__ctl { grid-column: 2; }
+    .qs-pr__ctl .qs-ci__add, .qs-pr__ctl .qs-step-ctl { max-width: 180px; }
+    .qs-modal__foot { padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
+    .qs-modal__foot .qs-btn { flex: none; }
+  }
+
   /* ---------- live ticket ---------- */
   .qs-tk { position: relative; border-radius: var(--qs-r); overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: 0 40px 80px -50px rgba(20, 23, 26, .55); }
   .qs-tk__ph { position: relative; height: 150px; background: var(--asphalt); overflow: hidden; }
@@ -365,34 +438,27 @@ const photos = [
   /* ---------------- content ---------------- */
   const IMG = { cones: '/cats/cones.svg', drums: '/cats/traffic-drums.svg', barricades: '/cats/barricades.png', water: '/cats/water-filled-barriers.png', signs: '/cats/sign-shop.png', stands: '/cats/sign-stands.png', lights: '/cats/lights.png', delin: '/cats/deliniators.png', reflectors: '/cats/reflectors.png', gear: '/cats/safety-gear.png', arrow: '/fleet/cut/arrow-board.png', vms: '/fleet/cut/vms.png', tower: '/fleet/cut/light-tower.png', signal: '/fleet/cut/traffic-light.png', tma: '/fleet/tma-side.png', van: '/fleet/cut/bucket-van.png' };
   const T = { orange: '#ffe7d2', blue: '#e2edf8', coral: '#ffe1da', red: '#ffdede', yellow: '#fff1c9', green: '#e3f3d8', grey: '#ebebe8' };
-  const RENT_CAT = [
-    { id: 'cones', t: 'Traffic cones', img: IMG.cones, tint: T.orange, step: 25 },
-    { id: 'drums', t: 'Traffic drums', img: IMG.drums, tint: T.orange, step: 10 },
-    { id: 'barricades', t: 'Barricades', img: IMG.barricades, tint: T.blue, step: 5 },
-    { id: 'water', t: 'WATERCADE barriers', img: IMG.water, tint: T.coral, step: 10 },
-    { id: 'signs', t: 'Signs and stands', img: IMG.signs, tint: T.red, step: 2 },
-    { id: 'arrow', t: 'Arrow board', img: IMG.arrow, tint: T.yellow, step: 1 },
-    { id: 'vms', t: 'Message board (VMS)', img: IMG.vms, tint: T.orange, step: 1 },
-    { id: 'tower', t: 'Light tower', img: IMG.tower, tint: T.blue, step: 1 },
-    { id: 'signal', t: 'Portable traffic light', img: IMG.signal, tint: T.green, step: 1 },
-    { id: 'tma', t: 'TMA crash truck', img: IMG.tma, tint: T.red, step: 1 },
-    { id: 'van', t: 'Bucket van', img: IMG.van, tint: T.grey, step: 1 },
-    { id: 'lights', t: 'Barricade lights', img: IMG.lights, tint: T.yellow, step: 10 }
-  ];
-  const BUY_CAT = [
-    { id: 'cones', t: 'Traffic cones', img: IMG.cones, tint: T.orange, step: 25 },
-    { id: 'drums', t: 'Traffic drums', img: IMG.drums, tint: T.orange, step: 10 },
-    { id: 'barricades', t: 'Barricades', img: IMG.barricades, tint: T.blue, step: 5 },
-    { id: 'water', t: 'Water-filled barriers', img: IMG.water, tint: T.coral, step: 10 },
-    { id: 'signs', t: 'Signs', img: IMG.signs, tint: T.red, step: 5 },
-    { id: 'stands', t: 'Sign stands', img: IMG.stands, tint: T.grey, step: 5 },
-    { id: 'lights', t: 'Lights and flares', img: IMG.lights, tint: T.yellow, step: 10 },
-    { id: 'delin', t: 'Delineators', img: IMG.delin, tint: T.orange, step: 10 },
-    { id: 'reflectors', t: 'Reflectors', img: IMG.reflectors, tint: T.blue, step: 25 },
-    { id: 'gear', t: 'Safety gear', img: IMG.gear, tint: T.green, step: 10 },
-    { id: 'arrow', t: 'Arrow board', img: IMG.arrow, tint: T.yellow, step: 1 },
-    { id: 'vms', t: 'Message board (VMS)', img: IMG.vms, tint: T.orange, step: 1 }
-  ];
+  // Category tiles; each opens a popup listing every product in that Shopify collection.
+  const CATS = {
+    cones: { t: 'Traffic cones', img: IMG.cones, tint: T.orange },
+    'traffic-drums': { t: 'Traffic drums', img: IMG.drums, tint: T.orange },
+    barricades: { t: 'Barricades', img: IMG.barricades, tint: T.blue },
+    'water-filled-barriers': { t: 'Water-filled barriers', img: IMG.water, tint: T.coral },
+    'sign-shop': { t: 'Signs', img: IMG.signs, tint: T.red },
+    'sign-stands': { t: 'Sign stands', img: IMG.stands, tint: T.grey },
+    lights: { t: 'Lights', img: IMG.lights, tint: T.yellow },
+    deliniators: { t: 'Delineators', img: IMG.delin, tint: T.orange },
+    reflectors: { t: 'Reflectors', img: IMG.reflectors, tint: T.blue },
+    'safety-gear': { t: 'Safety gear', img: IMG.gear, tint: T.green },
+    'equipment-sale': { t: 'Equipment', img: IMG.vms, tint: T.yellow }
+  };
+  const BUY_CATS = ['cones', 'traffic-drums', 'barricades', 'water-filled-barriers', 'sign-shop', 'sign-stands', 'lights', 'deliniators', 'reflectors', 'safety-gear', 'equipment-sale'];
+  const RENT_CATS = ['cones', 'traffic-drums', 'barricades'];
+  const CUT = { 'arrow-board': IMG.arrow, 'variable-message-sign-vms-board': IMG.vms, 'light-tower': IMG.tower, 'portable-traffic-light': IMG.signal, 'bucket-van': IMG.van, 'truck-mounted-attenuator-tma': IMG.tma };
+  const EQ_TINTS = [T.yellow, T.orange, T.blue, T.green, T.red, T.grey, T.coral];
+  const short = (t) => t.replace(/\s*\(.*?\)\s*/g, ' ').trim();
+  let CAT = null;
+  const catReady = fetch('/quote-catalog.json').then((r) => r.json()).then((d) => { CAT = d; return d; }).catch(() => { CAT = { cats: {}, prods: {} }; return CAT; });
   const ICON = {
     check: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>',
     arrow: '<svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>',
@@ -466,8 +532,8 @@ const photos = [
       ] }
     ],
     rental: [
-      { name: 'Equipment', k: 'Rental', title: 'What do you need to rent?', lead: 'Tap to add. Rough counts are fine, we’ll confirm everything.', fields: [
-        { id: 'cat', label: '', type: 'catalog', req: true, cat: RENT_CAT },
+      { name: 'Equipment', k: 'Rental', title: 'What do you need to rent?', lead: 'Equipment and fleet first, then supplies. Tap a category to see every option.', fields: [
+        { id: 'cat', label: '', type: 'catalog', req: true, shop: { equip: true, cats: RENT_CATS } },
         { id: 'setup', label: 'Should our crew set it up?', type: 'seg', opts: ['Deliver and set up', 'Just deliver', 'Not sure yet'] }
       ] },
       { name: 'Delivery', k: 'Delivery and dates', title: 'Where and when should it arrive?', lead: 'We deliver and pick up in NJ, NY, PA and CT.', fields: [
@@ -482,8 +548,8 @@ const photos = [
       ] }
     ],
     products: [
-      { name: 'Products', k: 'Purchase', title: 'What do you need?', lead: 'Tap to add. Rough counts are fine, we’ll confirm sizes and options.', fields: [
-        { id: 'cat', label: '', type: 'catalog', req: true, cat: BUY_CAT },
+      { name: 'Products', k: 'Purchase', title: 'What do you need?', lead: 'Tap a category to see every product, then pick options and exact quantities.', fields: [
+        { id: 'cat', label: '', type: 'catalog', req: true, shop: { cats: BUY_CATS } },
         { id: 'custom', label: 'Custom colors, stenciling or your logo?', type: 'seg', opts: ['No', 'Yes'], cls: 'is-2' },
         { id: 'customDesc', label: 'Describe the customization', type: 'textarea', ph: 'e.g. 200 orange cones stenciled "CITY OF NEWARK DPW", logo on both sides', showIf: { custom: 'Yes' } }
       ] },
@@ -539,14 +605,13 @@ const photos = [
       const qt = qp.get('type'); if (qt && FLOW[qt]) { state.type = qt; if (state.step < 1) state.step = 1; }
     }
     if (preset !== 'general' && state.step < 1) { state.type = preset; state.step = 1; }
-    state.job.cat = state.job.cat || {};
+    delete state.job.cat; state.job.sel = state.job.sel || {};
     let lastStep = state.step, seen = new Set();
 
     const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
     const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
     const flow = () => FLOW[state.type];
     const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
-    const catalog = () => (state.type === 'rental' ? RENT_CAT : state.type === 'products' ? BUY_CAT : []);
     const visible = (f) => !f.showIf || Object.entries(f.showIf).every(([k, v]) => state.job[k] === v);
 
     /* ---------------- field html ---------------- */
@@ -580,7 +645,8 @@ const photos = [
         }
         case 'catalog': {
           const rows = Array.isArray(state.job.items) && state.job.items.length ? state.job.items : [];
-          return wrap(`<div class="qs-cat">${f.cat.map((c, k) => catTile(c, k)).join('')}</div>
+          curShop = f.shop;
+          return wrap(`<div data-qs-shop>${shopHtml(f.shop)}</div>
             <div class="qs-more"><p>Need something not shown?</p><div class="qs-rows" data-qs-rows>${rows.map(rowHtml).join('')}</div>
             <button type="button" class="qs-addrow" data-qs-addrow>${ICON.plus}Add an item</button></div>`);
         }
@@ -592,19 +658,44 @@ const photos = [
       return '';
     }
     const daysPill = (n) => `<span class="qs-pill">${ICON.cal}${n} day${n > 1 ? 's' : ''} on rent${n >= 28 ? ', monthly rates apply' : n >= 7 ? ', weekly rates apply' : ''}</span>`;
-    const catTile = (c) => {
-      const q = +state.job.cat[c.id] || 0;
-      return `<div class="qs-ci${q ? ' is-on' : ''}" style="--tint:${c.tint}" data-qs-ci="${c.id}">
-        <span class="qs-ci__badge" aria-hidden="true">${q || ''}</span>
-        <button type="button" class="qs-ci__pick" data-qs-pick aria-label="Add ${esc(c.t)}"><img src="${c.img}" alt="" loading="lazy"><b>${esc(c.t)}</b></button>
-        <div class="qs-ci__ctl">${q ? stepper(c, q) : `<button type="button" class="qs-ci__add" data-qs-pick>${ICON.plus}Add</button>`}</div></div>`;
-    };
-    const stepper = (c, q) => `<div class="qs-step-ctl"><button type="button" data-qs-dec aria-label="Fewer ${esc(c.t)}">&minus;</button><input type="number" min="0" inputmode="numeric" value="${q}" data-qs-qty aria-label="${esc(c.t)} quantity"><button type="button" data-qs-inc aria-label="More ${esc(c.t)}">+</button></div>`;
+    let curShop = null;
+    const lines = (fn) => Object.values(state.job.sel).filter((e) => e.q > 0 && fn(e));
+    const addBtn = (lbl = 'Add', attr = 'data-qs-pick') => `<button type="button" class="qs-ci__add" ${attr}>${ICON.plus}${lbl}</button>`;
+    const stepper = (t, q) => `<div class="qs-step-ctl"><button type="button" data-qs-dec aria-label="Fewer ${esc(t)}">&minus;</button><input type="number" min="0" inputmode="numeric" value="${q}" data-qs-qty aria-label="${esc(t)} quantity"><button type="button" data-qs-inc aria-label="More ${esc(t)}">+</button></div>`;
+    function shopHtml(cfg) {
+      if (!CAT) return `<div class="qs-cat">${'<div class="qs-ci is-skel"></div>'.repeat(8)}</div>`;
+      let h = '';
+      if (cfg.equip) {
+        const hs = [...new Set([...(CAT.cats['equipment-rentals']?.p || []), ...(CAT.cats['truck-rentals']?.p || [])])].filter((x) => CAT.prods[x]);
+        h += `<p class="qs-sub">Equipment and fleet</p><div class="qs-cat">${hs.map(eqTile).join('')}</div><p class="qs-sub">Supplies</p>`;
+      }
+      return h + `<div class="qs-cat">${cfg.cats.filter((c) => CAT.cats[c]?.p.length).map(catTileHtml).join('')}</div>`;
+    }
+    function eqTile(hd, k) {
+      const p = CAT.prods[hd], multi = p.v.length > 1;
+      const n = multi ? lines((e) => e.h === hd).length : state.job.sel[hd + '::']?.q || 0;
+      return `<div class="qs-ci${n ? ' is-on' : ''}" style="--tint:${EQ_TINTS[k % EQ_TINTS.length]}" data-qs-eq="${esc(hd)}">
+        <span class="qs-ci__badge" aria-hidden="true">${n || ''}</span>
+        <button type="button" class="qs-ci__pick" data-qs-pick aria-label="Add ${esc(p.t)}">${CUT[hd] ? `<img src="${CUT[hd]}" alt="" loading="lazy">` : p.i ? `<img class="is-blend" src="${p.i}" alt="" loading="lazy">` : ''}<b>${esc(short(p.t))}</b></button>
+        <div class="qs-ci__ctl">${multi ? addBtn(n ? 'Edit' : 'Choose') : n ? stepper(p.t, n) : addBtn()}</div></div>`;
+    }
+    function catTileHtml(c) {
+      const m = CATS[c], cnt = CAT.cats[c].p.length, n = lines((e) => e.c === c).length;
+      return `<div class="qs-ci qs-ci--cat${n ? ' is-on' : ''}" style="--tint:${m.tint}" data-qs-cat="${c}">
+        <span class="qs-ci__badge" aria-hidden="true">${n || ''}</span>
+        <button type="button" class="qs-ci__pick" data-qs-open aria-label="Browse ${esc(m.t)}"><img src="${m.img}" alt="" loading="lazy"><b>${esc(m.t)}</b></button>
+        <div class="qs-ci__ctl"><button type="button" class="qs-ci__add${n ? ' is-sel' : ''}" data-qs-open>${n ? `${n} selected &middot; Edit` : `Browse ${cnt}`}${ICON.arrow}</button></div></div>`;
+    }
+    function setSel(key, base, q) {
+      q = Math.max(0, Math.min(99999, Math.round(+q || 0)));
+      if (q) state.job.sel[key] = { ...base, q }; else delete state.job.sel[key];
+      save(); clearErr('cat'); renderTicket();
+    }
     const rowHtml = (r) => `<div class="qs-row"><input class="qs-input" type="text" placeholder="Item, e.g. 36-inch cones with collars" value="${esc(r.desc || '')}" data-qs-rdesc aria-label="Item"><input class="qs-input" type="number" min="1" placeholder="Qty" value="${esc(r.qty || '')}" data-qs-rqty aria-label="Quantity"><button type="button" data-qs-rrm aria-label="Remove item">${ICON.x}</button></div>`;
 
     /* ---------------- items ---------------- */
     function allItems() {
-      const cat = catalog().filter((c) => +state.job.cat[c.id] > 0).map((c) => ({ desc: c.t, qty: +state.job.cat[c.id], img: c.img }));
+      const cat = Object.values(state.job.sel || {}).filter((e) => e.q > 0).map((e) => ({ desc: e.t + (e.v ? ` (${e.v})` : ''), qty: e.q, img: e.i }));
       const extra = (state.job.items || []).filter((r) => r.desc && r.desc.trim()).map((r) => ({ desc: r.desc.trim(), qty: +r.qty || 1 }));
       return [...cat, ...extra];
     }
@@ -767,7 +858,7 @@ const photos = [
       const btn = body.querySelector('[data-qs-send]');
       btn.disabled = true; btn.classList.add('is-sending'); btn.innerHTML = `Sending<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg>`;
       const items = allItems().map(({ desc, qty }) => ({ desc, qty }));
-      const { cat, ...rest } = state.job;
+      const { sel, ...rest } = state.job;
       const payload = { type: state.type, answers: { job: { ...rest, items }, about: state.about }, summary: summaryText(), quoteList: window.TSSQuote?.items?.() || [], page: location.pathname, submittedAt: new Date().toISOString() };
       try {
         if (!HOOK) throw new Error('no webhook');
@@ -815,30 +906,7 @@ const photos = [
           renderTicket();
         });
       });
-      // catalog tiles
-      body.querySelectorAll('[data-qs-ci]').forEach((tile) => {
-        const c = catalog().find((x) => x.id === tile.dataset.qsCi);
-        const set = (q) => {
-          q = Math.max(0, Math.min(99999, Math.round(+q || 0)));
-          if (q) state.job.cat[c.id] = q; else delete state.job.cat[c.id];
-          save(); clearErr('cat');
-          const was = tile.classList.contains('is-on');
-          tile.classList.toggle('is-on', !!q);
-          tile.querySelector('.qs-ci__badge').textContent = q || '';
-          const ctl = tile.querySelector('.qs-ci__ctl');
-          if (!!q !== was) { ctl.innerHTML = q ? stepper(c, q) : `<button type="button" class="qs-ci__add" data-qs-pick>${ICON.plus}Add</button>`; bindTile(); }
-          else { const inp = ctl.querySelector('[data-qs-qty]'); if (inp && document.activeElement !== inp) inp.value = q; }
-          renderTicket();
-        };
-        const bindTile = () => {
-          tile.querySelectorAll('[data-qs-pick]').forEach((b) => (b.onclick = () => set((+state.job.cat[c.id] || 0) + c.step)));
-          const dec = tile.querySelector('[data-qs-dec]'), inc = tile.querySelector('[data-qs-inc]'), inp = tile.querySelector('[data-qs-qty]');
-          if (dec) dec.onclick = () => set((+state.job.cat[c.id] || 0) - c.step);
-          if (inc) inc.onclick = () => set((+state.job.cat[c.id] || 0) + c.step);
-          if (inp) { inp.oninput = () => { if (inp.value !== '') set(inp.value); }; inp.onblur = () => set(inp.value); }
-        };
-        bindTile();
-      });
+      wireShop();
       // custom rows
       const rowsEl = body.querySelector('[data-qs-rows]');
       if (rowsEl) {
@@ -848,6 +916,131 @@ const photos = [
         body.querySelector('[data-qs-addrow]').addEventListener('click', () => { rowsEl.insertAdjacentHTML('beforeend', rowHtml({})); rowsEl.lastElementChild.querySelector('input').focus(); });
       }
     }
+    function wireShop() {
+      const box = body.querySelector('[data-qs-shop]');
+      if (!box || !CAT) return;
+      box.querySelectorAll('[data-qs-cat]').forEach((t) => t.querySelectorAll('[data-qs-open]').forEach((b) => (b.onclick = () => openModal({ cat: t.dataset.qsCat }))));
+      box.querySelectorAll('[data-qs-eq]').forEach((tile) => {
+        const hd = tile.dataset.qsEq, p = CAT.prods[hd];
+        if (p.v.length > 1) { tile.querySelectorAll('[data-qs-pick]').forEach((b) => (b.onclick = () => openModal({ prod: hd }))); return; }
+        const key = hd + '::', base = { h: hd, v: '', t: short(p.t), i: CUT[hd] || p.i, c: 'equip' };
+        const set = (q) => { setSel(key, base, q); refreshShop(); };
+        tile.querySelectorAll('[data-qs-pick]').forEach((b) => (b.onclick = () => set((state.job.sel[key]?.q || 0) + 1)));
+        const dec = tile.querySelector('[data-qs-dec]'), inc = tile.querySelector('[data-qs-inc]'), inp = tile.querySelector('[data-qs-qty]');
+        if (dec) dec.onclick = () => set((state.job.sel[key]?.q || 0) - 1);
+        if (inc) inc.onclick = () => set((state.job.sel[key]?.q || 0) + 1);
+        if (inp) {
+          inp.oninput = () => { if (inp.value !== '' && +inp.value > 0) { setSel(key, base, inp.value); tile.querySelector('.qs-ci__badge').textContent = state.job.sel[key]?.q || ''; } };
+          inp.onblur = () => set(inp.value);
+        }
+      });
+    }
+    function refreshShop() {
+      const box = body.querySelector('[data-qs-shop]');
+      if (!box || !curShop || !box.isConnected) return;
+      box.innerHTML = shopHtml(curShop); wireShop();
+    }
+    catReady.then(() => refreshShop());
+
+    /* ---------------- category popup ---------------- */
+    const modal = document.createElement('div');
+    modal.className = 'qs-modal'; modal.hidden = true;
+    modal.innerHTML = `<div class="qs-modal__bg" data-qs-mclose></div><div class="qs-modal__panel" role="dialog" aria-modal="true" aria-labelledby="${ns}-mt"><header class="qs-modal__head" data-qs-mhead></header><div class="qs-modal__list" data-qs-mlist></div><footer class="qs-modal__foot"><span class="qs-modal__count" data-qs-mcount></span><button type="button" class="qs-btn" data-qs-mclose>Done${ICON.check}</button></footer></div>`;
+    document.body.appendChild(modal);
+    const mHead = modal.querySelector('[data-qs-mhead]'), mList = modal.querySelector('[data-qs-mlist]'), mCount = modal.querySelector('[data-qs-mcount]');
+    let mctx = null, mOpener = null;
+    const rowVar = {};
+    const inCtx = (e) => (mctx.cat ? e.c === mctx.cat : e.h === mctx.prod);
+    const rowSel = (h) => `[data-qs-pr="${CSS.escape(h)}"]`;
+    function prodRow(h) {
+      const p = CAT.prods[h];
+      const mine = lines((e) => e.h === h);
+      const cur = rowVar[h] ?? (mine[0]?.v || p.v[0] || '');
+      rowVar[h] = cur;
+      const q = state.job.sel[h + '::' + cur]?.q || 0;
+      const chips = p.v.length > 1 ? mine.map((e) => `<button type="button" class="qs-vchip${e.v === cur ? ' is-cur' : ''}" data-qs-vsel="${esc(e.v)}">${esc(e.v)}<b>&times;${e.q}</b></button>`).join('') : '';
+      const im = CUT[h] || p.i;
+      return `<div class="qs-pr${mine.length ? ' is-on' : ''}" data-qs-pr="${esc(h)}" data-t="${esc(p.t.toLowerCase())}">
+        <span class="qs-pr__img">${im ? `<img src="${im}" alt="" loading="lazy">` : ''}</span>
+        <div class="qs-pr__main"><b>${esc(p.t)}</b>
+          ${p.v.length > 1 ? `<label class="qs-pr__varl"><span>${p.v.length} options</span><select class="qs-input qs-pr__var" data-qs-var aria-label="Option for ${esc(p.t)}">${p.v.map((v) => `<option${v === cur ? ' selected' : ''}>${esc(v)}</option>`).join('')}</select></label>` : ''}
+          ${chips ? `<div class="qs-vchips">${chips}</div>` : ''}
+        </div>
+        <div class="qs-pr__ctl">${q ? stepper(p.t, q) : addBtn('Add', 'data-qs-padd')}</div></div>`;
+    }
+    function rerow(h, focusSel) {
+      const row = mList.querySelector(rowSel(h));
+      if (!row) return;
+      const hid = row.hidden;
+      row.outerHTML = prodRow(h);
+      const nr = mList.querySelector(rowSel(h)); nr.hidden = hid;
+      if (focusSel) nr.querySelector(focusSel)?.focus();
+      updateCount();
+    }
+    function setQ(h, q) {
+      const p = CAT.prods[h], v = rowVar[h] || '';
+      setSel(h + '::' + v, { h, v, t: p.t, i: CUT[h] || p.i, c: mctx.cat || 'equip' }, q);
+    }
+    function updateCount() {
+      const ls = lines(inCtx), units = ls.reduce((a, e) => a + e.q, 0);
+      mCount.innerHTML = ls.length ? `<b>${ls.length} selected</b> &middot; ${units.toLocaleString()} unit${units > 1 ? 's' : ''}` : 'Nothing selected yet';
+    }
+    function openModal(ctx) {
+      mctx = ctx; mOpener = document.activeElement;
+      const hs = (ctx.cat ? CAT.cats[ctx.cat].p : [ctx.prod]).filter((h) => CAT.prods[h]);
+      const meta = ctx.cat ? CATS[ctx.cat] : { t: short(CAT.prods[ctx.prod].t), img: CUT[ctx.prod] || CAT.prods[ctx.prod].i, tint: T.yellow };
+      mHead.innerHTML = `<span class="qs-modal__art" style="--tint:${meta.tint}"><img src="${meta.img}" alt=""></span>
+        <div class="qs-modal__ttl"><p class="qs-k">${state.type === 'rental' ? 'Rent' : 'Buy'}</p><h3 id="${ns}-mt">${esc(meta.t)}</h3><small>${hs.length} product${hs.length > 1 ? 's' : ''}. Pick options and exact quantities.</small></div>
+        <button type="button" class="qs-modal__x" data-qs-mclose aria-label="Close">${ICON.x}</button>
+        ${hs.length > 5 ? `<label class="qs-modal__search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input type="search" placeholder="Search ${esc(meta.t.toLowerCase())}" data-qs-msearch aria-label="Search ${esc(meta.t)}"></label>` : ''}`;
+      mList.innerHTML = hs.map(prodRow).join('') + '<p class="qs-modal__none" hidden>No matches. You can add it under “Need something not shown?”</p>';
+      mList.scrollTop = 0;
+      updateCount();
+      modal.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('is-open')));
+      document.documentElement.style.overflow = 'hidden';
+      { const c = document.getElementById('tss-chat-assistant'); if (c) c.style.visibility = 'hidden'; }
+      setTimeout(() => modal.querySelector('.qs-modal__x')?.focus({ preventScroll: true }), 80);
+    }
+    function closeModal() {
+      if (modal.hidden) return;
+      modal.classList.remove('is-open');
+      document.documentElement.style.overflow = '';
+      setTimeout(() => { modal.hidden = true; }, 320);
+      { const c = document.getElementById('tss-chat-assistant'); if (c) c.style.visibility = ''; }
+      refreshShop();
+      const t = mctx.cat ? body.querySelector(`[data-qs-cat="${mctx.cat}"] .qs-ci__add`) : body.querySelector(`[data-qs-eq="${CSS.escape(mctx.prod)}"] .qs-ci__add`);
+      (t || mOpener)?.focus?.({ preventScroll: true });
+    }
+    modal.addEventListener('click', (e) => {
+      if (e.target.closest('[data-qs-mclose]')) return closeModal();
+      const row = e.target.closest('[data-qs-pr]'); if (!row) return;
+      const h = row.dataset.qsPr, cur = state.job.sel[h + '::' + (rowVar[h] || '')]?.q || 0;
+      if (e.target.closest('[data-qs-padd]')) { setQ(h, 1); rerow(h, '[data-qs-qty]'); mList.querySelector(rowSel(h) + ' [data-qs-qty]')?.select(); }
+      else if (e.target.closest('[data-qs-inc]')) { setQ(h, cur + 1); rerow(h, '[data-qs-inc]'); }
+      else if (e.target.closest('[data-qs-dec]')) { setQ(h, cur - 1); rerow(h, cur - 1 > 0 ? '[data-qs-dec]' : '[data-qs-padd]'); }
+      else { const vc = e.target.closest('[data-qs-vsel]'); if (vc) { rowVar[h] = vc.dataset.qsVsel; rerow(h, '[data-qs-var]'); } }
+    });
+    modal.addEventListener('change', (e) => { const sv = e.target.closest('[data-qs-var]'); if (sv) { const h = sv.closest('[data-qs-pr]').dataset.qsPr; rowVar[h] = sv.value; rerow(h, '[data-qs-var]'); } });
+    modal.addEventListener('input', (e) => {
+      const qi = e.target.closest('[data-qs-qty]');
+      if (qi && qi.value !== '' && +qi.value > 0) { const row = qi.closest('[data-qs-pr]'); setQ(row.dataset.qsPr, qi.value); row.classList.add('is-on'); updateCount(); }
+      const se = e.target.closest('[data-qs-msearch]');
+      if (se) {
+        const q = se.value.trim().toLowerCase(); let any = false;
+        mList.querySelectorAll('[data-qs-pr]').forEach((r) => { const on = !q || q.split(/\s+/).every((w) => r.dataset.t.includes(w)); r.hidden = !on; any = any || on; });
+        mList.querySelector('.qs-modal__none').hidden = any;
+      }
+    });
+    modal.addEventListener('focusout', (e) => {
+      const qi = e.target.closest && e.target.closest('[data-qs-qty]');
+      if (!qi || modal.hidden) return;
+      const h = qi.closest('[data-qs-pr]').dataset.qsPr;
+      setQ(h, qi.value);
+      setTimeout(() => { const a = document.activeElement; if (!a || !a.closest || !a.closest(rowSel(h))) rerow(h); else updateCount(); }, 0);
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
     function sync(id) {
       flow().forEach((s) => s.fields.forEach((f) => { if (f.showIf) { const el = body.querySelector(`[data-qs-field="${f.id}"]`); if (el) el.hidden = !visible(f); } }));
       if (id === 'deliverDate' || id === 'startDate') { const end = body.querySelector(`[data-qs-f="${id === 'deliverDate' ? 'pickupDate' : 'endDate'}"]`); if (end) end.min = state.job[id] || today(); }
