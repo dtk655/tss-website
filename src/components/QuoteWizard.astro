@@ -15,6 +15,9 @@ const photos = [
 ---
 <section class="qs" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
   <div class="qs__main">
+    <div class="qs__top" data-qs-top hidden>
+      <button type="button" class="qs-restart" data-qs-restart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span data-qs-restart-t>Restart quote</span></button>
+    </div>
     <ol class="qs__steps" data-qs-steps aria-label="Progress"></ol>
     <div class="qs__stage" data-qw-body aria-live="polite">
       <noscript>
@@ -51,6 +54,15 @@ const photos = [
   .qs { --qs-r: 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 390px); gap: clamp(22px, 3vw, 40px); align-items: start; }
   .qs__main { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--qs-r); padding: clamp(20px, 3.4vw, 44px); box-shadow: 0 40px 80px -60px rgba(20, 23, 26, .45); }
   .qs__side { position: sticky; top: calc(var(--header-h, 72px) + 76px); display: grid; gap: 14px; }
+
+  /* ---------- restart ---------- */
+  .qs__top { display: flex; justify-content: flex-end; margin: -6px 0 12px; }
+  .qs__top[hidden] { display: none; }
+  .qs-restart { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 14px 0 11px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font: inherit; font-size: .86rem; color: var(--steel); font-variation-settings: 'wght' 620; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
+  .qs-restart:hover { color: var(--ink); border-color: var(--line-dark); }
+  .qs-restart svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .qs-restart:hover svg { transform: rotate(-200deg); }
+  .qs-restart.is-confirm { color: #fff; background: var(--red); border-color: var(--red); animation: qsPop .3s cubic-bezier(.3, 1.6, .5, 1); }
 
   /* ---------- stepper ---------- */
   .qs__steps { list-style: none; margin: 0 0 clamp(26px, 3.4vw, 38px); padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
@@ -607,6 +619,26 @@ const photos = [
     if (preset !== 'general' && state.step < 1) { state.type = preset; state.step = 1; }
     delete state.job.cat; state.job.sel = state.job.sel || {};
     let lastStep = state.step, seen = new Set();
+    const topEl = root.querySelector('[data-qs-top]'), rsBtn = root.querySelector('[data-qs-restart]'), rsTxt = root.querySelector('[data-qs-restart-t]');
+    let rsTimer = 0;
+    function restart() {
+      clearTimeout(rsTimer); rsBtn.classList.remove('is-confirm'); rsTxt.textContent = 'Restart quote';
+      try { sessionStorage.removeItem(KEY); } catch {}
+      state = { type: 'general', job: { sel: {} }, about: {}, step: 0, planApplied: false, listApplied: false };
+      Object.keys(rowVar).forEach((k) => delete rowVar[k]);
+      seen = new Set(); lastStep = 1;
+      if (location.search) history.replaceState(null, '', location.pathname);
+      render();
+      const y = root.getBoundingClientRect().top + scrollY - 110;
+      if (scrollY > y) scrollTo({ top: y, behavior: 'smooth' });
+      body.querySelector('.qs-svc input')?.focus({ preventScroll: true });
+    }
+    rsBtn.addEventListener('click', () => {
+      if (rsBtn.classList.contains('is-confirm') || body.querySelector('.qs-done')) return restart();
+      rsBtn.classList.add('is-confirm'); rsTxt.textContent = 'Tap again to clear';
+      clearTimeout(rsTimer);
+      rsTimer = setTimeout(() => { rsBtn.classList.remove('is-confirm'); rsTxt.textContent = 'Restart quote'; }, 3500);
+    });
 
     const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
     const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
@@ -751,6 +783,7 @@ const photos = [
 
     function render() {
       renderSteps(); renderTicket();
+      topEl.hidden = state.step === 0 && !state.touched;
       const dir = state.step < lastStep ? ' is-back' : '';
       lastStep = state.step;
       if (state.step === 0) stepService(dir);
@@ -888,9 +921,10 @@ const photos = [
           <li class="qs-in" style="--i:10"><span>Within 1 business day</span><b>You get pricing</b><small>By ${esc((state.about.prefer || 'email').toLowerCase())}, often sooner.</small></li>
           <li class="qs-in" style="--i:11"><span>When you're ready</span><b>We schedule it</b><small>Delivery, shipping or crews, locked in.</small></li>
         </ol>
-        <div class="qs-done__acts qs-in" style="--i:12"><a class="qs-btn" href="/collections">Keep browsing${ICON.arrow}</a><a class="qs-back" href="${TEL}">Call ${esc(PHONE)}</a></div>
+        <div class="qs-done__acts qs-in" style="--i:12"><button type="button" class="qs-btn" data-qs-new>Start a new quote${ICON.arrow}</button><a class="qs-back" href="/collections">Keep browsing</a></div>
       </div>`;
       root.querySelector('[data-qs-tktitle]').textContent = 'Request sent';
+      body.querySelector('[data-qs-new]').addEventListener('click', restart);
       body.querySelector('.qs-done')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
 
