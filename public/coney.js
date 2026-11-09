@@ -92,6 +92,7 @@
     /* lifted while a page's sticky buy bar is visible */
     ':host([data-lift]) .launcher{bottom:94px}' +
     ':host([data-lift]) .teaser{bottom:102px}' +
+    ':host([data-quiet]) .teaser{display:none!important}' +
     ':host([data-lift]) .panel{bottom:182px;height:min(640px,calc(100vh - 202px))}' +
 
     '.backdrop{display:none}' +

@@ -466,6 +466,31 @@ const photos = [
     .qs-rv dl { grid-template-columns: 1fr; }
     .qs-note { flex-direction: column; align-items: stretch; }
   }
+  /* ---------- phone ergonomics ---------- */
+  .qs, .qs-modal { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .qs input[type=date], .qs input[type=time] { display: block; min-width: 0; -webkit-appearance: none; appearance: none; text-align: left; }
+  .qs input::-webkit-date-and-time-value { text-align: left; }
+  @media (hover: none) {
+    .qs-svc label:hover .qs-svc__card, .qs-ci:hover, .qs-pic > span:hover, .qs-eq > span:hover, .qs-call:hover, .qs-sw:hover { transform: none; }
+    .qs-ci:hover .qs-ci__pick img, .qs-svc label:hover .qs-svc__art img { transform: none; }
+    .qs-ci:hover:not(.is-on) { border-color: var(--line); box-shadow: none; }
+  }
+  @media (max-width: 640px) {
+    .qs-input, .qs-step-ctl input, .qs-modal__search input, .qs-pr__var, .qs-row .qs-input { font-size: 16px; }
+    .qs-f.is-half.qs-pair, .qs-f.is-third.qs-pair { grid-column: span 6; }
+    .qs-step-ctl { min-height: 44px; grid-template-columns: 44px minmax(0, 1fr) 44px; }
+    .qs-step-ctl button { height: 44px; font-size: 1.3rem; }
+    .qs-ci__add { min-height: 44px; }
+    .qs-sw { width: 36px; height: 36px; }
+    .qs-og__v.is-sw { gap: 10px; }
+    .qs-ob { min-height: 40px; padding: 8px 14px; font-size: .88rem; }
+    .qs-vchip { min-height: 34px; padding: 6px 12px; }
+    .qs-restart { min-height: 40px; }
+    .qs-pr__ctl .qs-ci__add, .qs-pr__ctl .qs-step-ctl { min-height: 44px; }
+    .qs-pr__ctl .qs-step-ctl button { height: 44px; }
+    .qs-chips { gap: 8px; }
+    .qs-modal__x { width: 44px; height: 44px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .qs *, .qs *::before, .qs *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
   }
@@ -653,9 +678,7 @@ const photos = [
       Object.keys(rowVar).forEach((k) => delete rowVar[k]);
       seen = new Set(); lastStep = 1;
       if (location.search) history.replaceState(null, '', location.pathname);
-      render();
-      const y = root.getBoundingClientRect().top + scrollY - 110;
-      if (scrollY > y) scrollTo({ top: y, behavior: 'smooth' });
+      render(); toTop();
       body.querySelector('.qs-svc input')?.focus({ preventScroll: true });
     }
     rsBtn.addEventListener('click', () => {
@@ -802,7 +825,9 @@ const photos = [
     }
 
     /* ---------------- steps ---------------- */
-    function go(n) { state.step = n; state.touched = true; save(); render(); const y = root.getBoundingClientRect().top + scrollY - 110; if (scrollY > y) scrollTo({ top: y, behavior: 'smooth' }); }
+    const hdrOff = () => (document.querySelector('header')?.getBoundingClientRect().bottom || 90) + 14;
+    const toTop = () => { const y = root.getBoundingClientRect().top + scrollY - hdrOff(); if (scrollY > y) scrollTo({ top: y, behavior: 'smooth' }); };
+    function go(n) { state.step = n; state.touched = true; save(); render(); toTop(); }
     const head = (k, title, lead) => `<div class="qs-head qs-in" style="--i:0"><p class="qs-k">${esc(k)}</p><h2>${esc(title)}</h2>${lead ? `<p>${esc(lead)}</p>` : ''}</div>`;
     const navHtml = (next = 'Continue', back = true) => `<div class="qs-nav">${back ? `<button type="button" class="qs-back" data-qs-back>${ICON.back}<span class="qs-t">Back</span></button>` : '<span class="qs-skip">Takes about 2 minutes</span>'}<button type="button" class="qs-btn" data-qs-next>${esc(next)}${ICON.arrow}</button></div>`;
 
@@ -1155,6 +1180,15 @@ const photos = [
       }
       return true;
     }
+
+    // Phones: lift the Conner launcher above the sticky Back / Continue bar (same hook product pages use)
+    // and hold its greeting bubble while the form is on screen so it doesn't cover fields.
+    const mq = matchMedia('(max-width: 640px)');
+    let inView = false;
+    const lift = () => { const c = document.getElementById('tss-chat-assistant'); if (!c) return; c.toggleAttribute('data-lift', mq.matches && inView); c.toggleAttribute('data-quiet', mq.matches && inView); };
+    if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => { inView = en.isIntersecting; lift(); }).observe(root);
+    mq.addEventListener?.('change', lift);
+    [800, 2500, 6000].forEach((t) => setTimeout(lift, t));
 
     render();
   });
