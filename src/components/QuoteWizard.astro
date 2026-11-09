@@ -480,6 +480,36 @@ const photos = [
     .qs-rv dl { grid-template-columns: 1fr; }
     .qs-note { flex-direction: column; align-items: stretch; }
   }
+  /* ---------- quote button + sheet (where the side ticket is hidden) ---------- */
+  .qs-qbtn { display: none; position: relative; align-items: center; gap: 7px; min-height: 54px; padding: 0 16px 0 14px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font: inherit; font-size: .96rem; color: var(--ink); font-variation-settings: 'wght' 660; cursor: pointer; }
+  .qs-qbtn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .qs-qbtn:hover { border-color: var(--ink); }
+  .qs-qbadge { position: absolute; top: -6px; right: -6px; display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--red); color: #fff; font-size: .74rem; font-variation-settings: 'wght' 760; box-shadow: 0 0 0 2px #fff; }
+  .qs-qbadge[hidden] { display: none; }
+  .qs-qbadge.is-bump { animation: qsPop .4s cubic-bezier(.3, 1.6, .5, 1); }
+  @media (max-width: 980px) {
+    .qs-qbtn { display: inline-flex; }
+    .qs-nav .qs-btn { margin-left: auto; }
+    .qs-nav .qs-qbtn + .qs-btn { margin-left: 0; }
+    .qs-nav:has(.qs-qbtn) { justify-content: flex-start; }
+    .qs-nav:has(.qs-qbtn) .qs-btn { flex: 1; }
+  }
+  .qs-qsheet .qs-modal__panel { width: min(520px, 100%); }
+  .qs-qsheet__body { overflow-y: auto; overscroll-behavior: contain; }
+  .qs-qsheet .qs-tk__ph { height: 140px; }
+  .qs-qsheet .qs-tk__ph img { opacity: 0; transform: none; }
+  .qs-qsheet .qs-tk__ph img.is-on { opacity: 1; }
+  .qs-qsheet__x { position: absolute; top: 14px; right: 14px; z-index: 2; background: rgba(255, 255, 255, .92); border: 0; }
+  .qs-qsheet .qs-tk__lines { padding: 10px 20px 6px; }
+  .qs-qsheet__empty { margin: 0; padding: 4px 20px 18px; color: var(--steel); font-size: .92rem; }
+  .qs-qsheet .qs-modal__count { font-size: .84rem; line-height: 1.35; }
+  .qs-modal__foot .qs-btn { white-space: nowrap; flex: none; }
+  @media (max-width: 640px) {
+    .qs-qbtn { padding: 0 14px 0 12px; }
+    .qs-qsheet .qs-modal__head::before { display: none; }
+    .qs-qsheet .qs-tk__ph::before { content: ''; position: absolute; top: 7px; left: 50%; translate: -50% 0; z-index: 2; width: 40px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .7); }
+  }
+
   /* ---------- phone ergonomics ---------- */
   .qs, .qs-modal { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   .qs input[type=date], .qs input[type=time] { display: block; min-width: 0; -webkit-appearance: none; appearance: none; text-align: left; }
@@ -836,14 +866,55 @@ const photos = [
       linesEl.innerHTML = L.map(([k, t, v]) => `<li class="${seen.has(k) ? '' : 'is-new'}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')
         + (L.length < 4 ? ghosts.map((g) => `<li class="is-ghost"><span class="qs-dot"></span><div><span class="v">${g}</span></div></li>`).join('') : '');
       seen = new Set(L.map((l) => l[0]));
+      qBadge();
     }
+
+    /* ---------------- quote sheet (phones and tablets, where the side ticket is hidden) ---------------- */
+    const RECEIPT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>';
+    let lastBadge = -1;
+    function qCount() { const it = allItems().length; return it || Math.max(0, ticketLines().length - 1); }
+    function qBadge() {
+      const b = body.querySelector('[data-qs-qbadge]'); if (!b) return;
+      const n = qCount();
+      b.textContent = n; b.hidden = !n;
+      if (n !== lastBadge && lastBadge !== -1) { b.classList.remove('is-bump'); void b.offsetWidth; b.classList.add('is-bump'); }
+      lastBadge = n;
+    }
+    const sheet = document.createElement('div');
+    sheet.className = 'qs-modal qs-qsheet'; sheet.hidden = true;
+    sheet.innerHTML = `<div class="qs-modal__bg" data-qs-sclose></div><div class="qs-modal__panel" role="dialog" aria-modal="true" aria-label="Your quote so far"><div class="qs-qsheet__body" data-qs-sbody></div><footer class="qs-modal__foot"><span class="qs-modal__count">Priced by a real person, usually within 1 business day</span><button type="button" class="qs-btn" data-qs-sclose>Keep going${ICON.arrow}</button></footer></div>`;
+    document.body.appendChild(sheet);
+    function openSheet() {
+      const svc = SVC.find((x) => x.id === state.type);
+      const ph = root.querySelector('.qs-tk__ph');
+      const L = ticketLines();
+      sheet.querySelector('[data-qs-sbody]').innerHTML = `<div class="qs-tk__ph">${[...ph.querySelectorAll('img')].map((im) => im.outerHTML.replace('loading="lazy"', '')).join('')}<div class="qs-tk__cap"><span class="qs-tk__k">Your quote</span><b>${esc(svc.b)}</b></div><button type="button" class="qs-modal__x qs-qsheet__x" data-qs-sclose aria-label="Close">${ICON.x}</button></div>
+        <ul class="qs-tk__lines">${L.map(([k, t, v], i) => `<li class="qs-in" style="--i:${i}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')}</ul>
+        ${L.length < 2 ? '<p class="qs-qsheet__empty">Your answers show up here as you go.</p>' : ''}`;
+      sheet.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('is-open')));
+      document.documentElement.style.overflow = 'hidden';
+      { const c = document.getElementById('tss-chat-assistant'); if (c) c.style.visibility = 'hidden'; }
+      setTimeout(() => sheet.querySelector('.qs-qsheet__x')?.focus({ preventScroll: true }), 80);
+    }
+    function closeSheet() {
+      if (sheet.hidden) return;
+      sheet.classList.remove('is-open');
+      document.documentElement.style.overflow = '';
+      { const c = document.getElementById('tss-chat-assistant'); if (c) c.style.visibility = ''; }
+      setTimeout(() => { sheet.hidden = true; }, 320);
+      body.querySelector('[data-qs-qbtn]')?.focus({ preventScroll: true });
+    }
+    sheet.addEventListener('click', (e) => { if (e.target.closest('[data-qs-sclose]')) closeSheet(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
 
     /* ---------------- steps ---------------- */
     const hdrOff = () => (document.querySelector('header')?.getBoundingClientRect().bottom || 90) + 14;
     const toTop = () => { const y = root.getBoundingClientRect().top + scrollY - hdrOff(); if (scrollY > y) scrollTo({ top: y, behavior: 'smooth' }); };
     function go(n) { state.step = n; state.touched = true; save(); render(); toTop(); }
     const head = (k, title, lead) => `<div class="qs-head qs-in" style="--i:0"><p class="qs-k">${esc(k)}</p><h2>${esc(title)}</h2>${lead ? `<p>${esc(lead)}</p>` : ''}</div>`;
-    const navHtml = (next = 'Continue', back = true) => `<div class="qs-nav">${back ? `<button type="button" class="qs-back" data-qs-back>${ICON.back}<span class="qs-t">Back</span></button>` : '<span class="qs-skip">Takes about 2 minutes</span>'}<button type="button" class="qs-btn" data-qs-next>${esc(next)}${ICON.arrow}</button></div>`;
+    const qBtn = () => `<button type="button" class="qs-qbtn" data-qs-qbtn aria-label="View your quote so far">${RECEIPT}<span>Quote</span><b class="qs-qbadge" data-qs-qbadge hidden></b></button>`;
+    const navHtml = (next = 'Continue', back = true) => `<div class="qs-nav">${back ? `<button type="button" class="qs-back" data-qs-back>${ICON.back}<span class="qs-t">Back</span></button>` : '<span class="qs-skip">Takes about 2 minutes</span>'}${back ? qBtn() : ''}<button type="button" class="qs-btn" data-qs-next>${esc(next)}${ICON.arrow}</button></div>`;
 
     function render() {
       renderSteps(); renderTicket();
@@ -855,6 +926,8 @@ const photos = [
       else if (state.step === 3) stepAbout(dir);
       else stepReview(dir);
       body.querySelector('[data-qs-back]')?.addEventListener('click', () => go(state.step - 1));
+      body.querySelector('[data-qs-qbtn]')?.addEventListener('click', openSheet);
+      lastBadge = -1; qBadge();
     }
 
     function stepService(dir) {
