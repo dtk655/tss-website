@@ -30,7 +30,7 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
       <a href="/" class="logo" aria-label="Traffic Safety Service home">
-        <img class="logo__img" src="/brand/tss-logo-dark.png" alt="TSS, Traffic Safety Service" width="392" height="154" />
+        <img class="logo__img" src="/brand/tss-logo-420.png" alt="TSS, Traffic Safety Service" width="420" height="210" />
       </a>
       <div class="search" data-search>
         <span class="search__coney" aria-hidden="true">
@@ -328,8 +328,8 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .hdr__in { height: 92px; display: flex; align-items: center; gap: clamp(12px, 1.4vw, 24px); transition: height .25s ease; }
   .hdr.is-stuck .hdr__in { height: 72px; }
   .logo { flex: none; display: flex; }
-  .logo__img { height: 62px; width: auto; transition: height .25s ease; }
-  .hdr.is-stuck .logo__img { height: 50px; }
+  .logo__img { height: 72px; width: auto; transition: height .25s ease; }
+  .hdr.is-stuck .logo__img { height: 56px; }
 
   /* ---------- mega panel ---------- */
   .mega { position: fixed; left: 0; right: 0; top: var(--megatop, 92px); background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 32px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity .22s ease, translate .22s ease, visibility .22s; z-index: 30; }
@@ -421,8 +421,8 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
     .menu-btn { justify-self: start; }
     .logo { justify-self: center; }
     .hdr__act { justify-self: end; margin-left: 0; }
-    .logo__img { height: 52px; }
-    .hdr.is-stuck .logo__img { height: 46px; }
+    .logo__img { height: 64px; }
+    .hdr.is-stuck .logo__img { height: 56px; }
     .msearch { display: block; }
   }
   @media (min-width: 1011px) { .mdrw { display: none !important; } }
@@ -492,28 +492,7 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .menu-btn svg path { transition: d .3s ease; }
   .menu-btn[aria-expanded="true"] svg path { d: path("M6 6L18 18M18 6L6 18"); }
   @media (prefers-reduced-motion: reduce) { .mdrw__panel, .mdrw__bg, .mdrw__in, .mdrw__sub { transition: none; } }
-  /* ---------- dark theme: matches the cinematic homepage ---------- */
-  .hdr { background: #0b0c0e; color: #fff; }
-  .hdr__main { background: rgba(11, 12, 14, .94); }
-  .hdr.is-stuck .hdr__main { box-shadow: 0 14px 34px -18px rgba(0, 0, 0, .7); }
-  .search input { background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .16); color: #fff; }
-  .search input::placeholder { color: rgba(255, 255, 255, .62); }
-  .search input:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .26); }
-  .search input:focus { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .5); box-shadow: 0 0 0 4px rgba(182, 6, 6, .25); }
-  .hdr__phone { color: #fff; }
-  .hdr__phonebadge { background: rgba(255, 255, 255, .08); color: #fff; }
-  .hdr__phonetxt small { color: rgba(255, 255, 255, .58); }
-  .hdr__sep { background: rgba(255, 255, 255, .14); }
-  .icon-btn { color: #fff; }
-  .icon-btn:hover { background: rgba(255, 255, 255, .08); }
-  .badge { box-shadow: 0 0 0 2px #0b0c0e; }
   .hdr__cta { border-radius: 999px; }
-  .hdr__nav { background: #0b0c0e; border-top: 1px solid rgba(255, 255, 255, .07); border-bottom: 1px solid rgba(255, 255, 255, .07); }
-  .nav > a, .nav__item > a { color: rgba(255, 255, 255, .72); }
-  .nav > a:hover, .nav__item > a:hover, .nav > a[aria-current], .nav__item > a[aria-current] { color: #fff; }
-  .hdr__tag { color: rgba(255, 255, 255, .5); }
-  .menu-btn { color: #fff; }
-  .msearch { border-top-color: rgba(255, 255, 255, .08); }
 </style>
 <style is:global>
   .search__row--ask { width: 100%; border: 0; background: var(--red-tint); font: inherit; cursor: pointer; text-align: left; margin-bottom: 4px; }
