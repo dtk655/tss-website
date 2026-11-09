@@ -1,161 +1,155 @@
 ---
-// Homepage header: slim slogan banner, then all three businesses as photo cards with one highlighted at a time.
+// Cinematic homepage header: full-screen photo loop with slow motion, one bold headline, then a slim three-business bar.
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
-const cards = [
-  {
-    t: 'Products', h: 'Cones, barriers, signs and drums.', d: 'In stock and shipped anywhere in the U.S. No minimum order.',
-    img: CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg', pos: '50% 50%',
-    href: '/collections', cta: 'Shop products'
-  },
-  {
-    t: 'Rentals', h: 'TMAs, VMS boards and more.', d: 'Everything we sell, rented by the job in NJ, NY, PA and CT.',
-    img: '/fleet/tma-rear-2.jpg', pos: '50% 40%',
-    href: '/collections/equipment-rentals', cta: 'See rentals'
-  },
-  {
-    t: 'Lane closures', h: 'Certified, experienced crews.', d: 'MUTCD-compliant closures across NJ, NY, PA, CT and DE.',
-    img: '/fleet/lc-hero.webp', pos: '62% 45%',
-    href: '/pages/lane-closure', cta: 'Book a crew'
-  }
+const shots = [
+  { img: '/fleet/lc-hero.webp', pos: '58% 45%', cap: 'Overnight bridge work, lanes closed by TSS crews' },
+  { img: '/fleet/tma-rear-2.jpg', pos: '50% 40%', cap: 'TMA crash truck from the TSS fleet' },
+  { img: CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg', pos: '50% 50%', cap: 'Reflective cones, in stock and ready to ship' }
 ];
-const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const lines = [
+  { t: 'Products', d: 'Cones, barriers, signs and drums. Shipped nationwide.', href: '/collections' },
+  { t: 'Rentals', d: 'TMAs, message boards and more. NJ, NY, PA and CT.', href: '/collections/equipment-rentals' },
+  { t: 'Lane closures', d: 'Certified, experienced crews. NJ, NY, PA, CT and DE.', href: '/pages/lane-closure' }
+];
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
-<section class="hb">
-  <div class="wrap hb__in">
-    <div class="hb__main">
-      <p class="hb__k">Traffic Safety Service</p>
-      <h1>The trusted leader in traffic safety.</h1>
-    </div>
-    <div class="hb__side">
-      <p class="hb__lede">Products, rentals and certified lane closure crews for contractors, agencies and venues since 1971.</p>
-      <div class="hb__cta">
-        <a href="/pages/request-a-quote" class="hb__btn hb__btn--solid">Request a quote<Fragment set:html={ARROW} /></a>
-        <a href="tel:+19085614800" class="hb__btn hb__btn--line">908-561-4800</a>
+<section class="cx" data-cx>
+  <div class="cx__media" aria-hidden="true">
+    {shots.map((s, i) => <img class:list={['cx__img', i === 0 && 'is-on']} src={s.img} alt="" style={`object-position:${s.pos}`} loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} data-shot={i} />)}
+    <span class="cx__shade"></span>
+  </div>
+
+  <div class="wrap cx__in">
+    <p class="cx__k"><span></span>Products · Rentals · Lane closures</p>
+    <h1 class="cx__h"><span><span>The trusted leader</span></span><span><span>in traffic safety.</span></span></h1>
+    <div class="cx__row">
+      <p class="cx__lede">Serving contractors, agencies and venues since 1971.</p>
+      <div class="cx__cta">
+        <a href="/pages/request-a-quote" class="cx__btn cx__btn--solid">Request a quote<Fragment set:html={ARROW} /></a>
+        <a href="tel:+19085614800" class="cx__btn cx__btn--ghost">908-561-4800</a>
       </div>
     </div>
   </div>
-  <div class="wrap">
-    <ul class="hb__trust">
-      <li><b>55+</b> years in business</li>
-      <li><b>25,000+</b> lane closures</li>
-      <li><b>Nationwide</b> product shipping</li>
-      <li><b>NJ · NY · PA · CT</b> rentals</li>
-    </ul>
+
+  <div class="wrap cx__foot">
+    <p class="cx__cap" aria-live="polite">
+      {shots.map((s, i) => <span class:list={[i === 0 && 'is-on']} data-cap={i}>{s.cap}</span>)}
+    </p>
+    <div class="cx__dots" role="tablist" aria-label="Photos">
+      {shots.map((_, i) => <button type="button" role="tab" aria-label={`Photo ${i + 1}`} aria-selected={i === 0 ? 'true' : 'false'} data-dot={i}><i></i></button>)}
+    </div>
   </div>
 </section>
 
-<section class="hc" data-hc>
-  <div class="wrap">
-    <ul class="hc__grid">
-      {cards.map((c, i) => (
-        <li>
-          <a href={c.href} class:list={['hc__card', i === 0 && 'is-on']} data-card>
-            <img src={c.img} alt="" style={`object-position:${c.pos}`} loading="eager" />
-            <span class="hc__shade" aria-hidden="true"></span>
-            <i class="hc__bar" aria-hidden="true"></i>
-            <span class="hc__body">
-              <span class="hc__txt">
-                <span class="hc__t">{c.t}</span>
-                <span class="hc__h">{c.h}</span>
-                <span class="hc__d">{c.d}</span>
-              </span>
-              <span class="hc__go" aria-label={c.cta}><Fragment set:html={ARROW} /></span>
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </div>
-</section>
+<nav class="cx-bar" aria-label="What we do">
+  <ul class="wrap cx-bar__in">
+    {lines.map((l) => (
+      <li><a href={l.href}><span><b>{l.t}</b><small>{l.d}</small></span><Fragment set:html={ARROW} /></a></li>
+    ))}
+  </ul>
+</nav>
 
 <style>
-  .hb { color: #fff; background: linear-gradient(135deg, #c00808 0%, #a30505 55%, #860303 100%); }
-  .hb__in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px clamp(32px, 5vw, 80px); align-items: end; padding-block: clamp(30px, 3.6vw, 50px) clamp(22px, 2.6vw, 30px); }
-  .hb__k { margin: 0 0 14px; color: rgba(255,255,255,.7); font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 650; }
-  .hb h1 { margin: 0; color: #fff; font-size: clamp(2.2rem, 4.4vw, 4.2rem); line-height: 1; letter-spacing: -.04em; font-variation-settings: 'wght' 760; text-wrap: balance; }
-  .hb__lede { margin: 0; color: rgba(255,255,255,.82); font-size: clamp(1rem, 1.15vw, 1.1rem); line-height: 1.55; max-width: 44ch; }
-  .hb__cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-  .hb__btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 20px 11px; border-radius: 10px; font-size: .98rem; font-variation-settings: 'wght' 660; text-decoration: none; white-space: nowrap; transition: background .2s, border-color .2s; }
-  .hb__btn :global(svg) { flex: none; width: 16px; height: 16px; transition: transform .2s; }
-  .hb__btn:hover :global(svg) { transform: translateX(3px); }
-  .hb__btn--solid { background: #fff; color: var(--ink); }
-  .hb__btn--solid:hover { background: #f1f2f3; }
-  .hb__btn--line { border: 1px solid rgba(255,255,255,.4); color: #fff; }
-  .hb__btn--line:hover { border-color: #fff; background: rgba(255,255,255,.06); }
-  .hb__trust { list-style: none; margin: 0; padding: 16px 0 20px; border-top: 1px solid rgba(255,255,255,.18); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  .hb__trust li { font-size: .88rem; color: rgba(255,255,255,.72); }
-  .hb__trust li + li { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.18); }
-  .hb__trust b { display: block; color: #fff; font-size: 1.05rem; font-variation-settings: 'wght' 700; letter-spacing: -.01em; }
+  .cx { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: clamp(560px, calc(100svh - 144px), 860px); color: #fff; background: #0b0c0e; overflow: hidden; isolation: isolate; }
+  .cx__media { position: absolute; inset: 0; z-index: -1; }
+  .cx__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.1); transition: opacity 1.6s ease; }
+  .cx__img.is-on { opacity: 1; animation: cxDrift 9s linear forwards; }
+  @keyframes cxDrift { from { transform: scale(1.1) translateX(1%); } to { transform: scale(1.02) translateX(-1%); } }
+  .cx__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,9,11,.35) 0%, rgba(8,9,11,0) 28%, rgba(8,9,11,.15) 50%, rgba(8,9,11,.88) 100%), linear-gradient(90deg, rgba(8,9,11,.55) 0%, rgba(8,9,11,0) 60%); }
 
-  .hc { padding: clamp(20px, 2.4vw, 32px) 0 clamp(40px, 4.4vw, 64px); background: #fff; }
-  .hc__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 18px); }
-  .hc__card { position: relative; display: block; overflow: hidden; height: clamp(280px, 26vw, 390px); width: 100%; border-radius: 18px; background: #111; color: #fff; text-decoration: none; isolation: isolate; }
-  .hc__card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transform: scale(1.02); filter: brightness(.55) saturate(.7); transition: transform 1.4s cubic-bezier(.2,.8,.2,1), filter .7s; }
-  .hc__card.is-on img { transform: scale(1.07); filter: none; }
-  .hc__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(8,9,11,.82) 100%); }
-  .hc__bar { position: absolute; left: 22px; right: 22px; top: 20px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.28); overflow: hidden; }
-  .hc__bar::after { content: ''; position: absolute; inset: 0; width: 0; background: #fff; }
-  .hc__card.is-on .hc__bar::after { animation: hcBar var(--hc-t, 4200ms) linear forwards; }
-  .hc.is-paused .hc__card.is-on .hc__bar::after { animation: none; width: 100%; }
-  @keyframes hcBar { to { width: 100%; } }
-  .hc__body { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: clamp(18px, 2vw, 26px); }
-  .hc__txt { display: grid; gap: 4px; min-width: 0; }
-  .hc__t { font-size: clamp(1.5rem, 2.2vw, 2.1rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 760; }
-  .hc__h { font-size: 1rem; font-variation-settings: 'wght' 600; color: rgba(255,255,255,.92); }
-  .hc__d { display: grid; grid-template-rows: 0fr; font-size: .9rem; line-height: 1.45; color: rgba(255,255,255,.72); transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1), opacity .4s; opacity: 0; overflow: hidden; }
-  .hc__card.is-on .hc__d { grid-template-rows: 1fr; opacity: 1; }
-  .hc__go { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.45); color: #fff; transition: background .3s, color .3s, border-color .3s; }
-  .hc__go :global(svg) { width: 18px; height: 18px; }
-  .hc__card.is-on .hc__go, .hc__card:hover .hc__go { background: #fff; color: var(--red); border-color: #fff; }
-  .hc__card:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+  .cx > .wrap { width: 100%; box-sizing: border-box; }
+  .cx__in { padding-bottom: clamp(26px, 3vw, 40px); }
+  .cx__k { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; font-size: .82rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 650; color: rgba(255,255,255,.85); opacity: 0; animation: cxFade .8s .2s ease forwards; }
+  .cx__k span { width: 34px; height: 3px; background: var(--red); border-radius: 2px; }
+  .cx__h { margin: 0; color: #fff; font-size: clamp(2.8rem, 7.4vw, 7.6rem); line-height: .94; letter-spacing: -.045em; font-variation-settings: 'wght' 780; }
+  .cx__h > span { display: block; overflow: hidden; padding-bottom: .04em; white-space: nowrap; }
+  .cx__h > span > span { display: inline-block; transform: translateY(105%); animation: cxRise 1s cubic-bezier(.2,.8,.2,1) forwards; }
+  .cx__h > span:nth-child(2) > span { animation-delay: .12s; }
+  @keyframes cxRise { to { transform: none; } }
+  @keyframes cxFade { to { opacity: 1; } }
+  .cx__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 40px; margin-top: clamp(22px, 2.6vw, 34px); opacity: 0; animation: cxFade .8s .55s ease forwards; }
+  .cx__lede { margin: 0; font-size: clamp(1.02rem, 1.3vw, 1.25rem); color: rgba(255,255,255,.82); }
+  .cx__cta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cx__btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 14px 26px 13px; border-radius: 999px; font-size: 1rem; font-variation-settings: 'wght' 680; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+  .cx__btn :global(svg) { flex: none; width: 17px; height: 17px; transition: transform .2s; }
+  .cx__btn:hover :global(svg) { transform: translateX(3px); }
+  .cx__btn--solid { background: var(--red); color: #fff; }
+  .cx__btn--solid:hover { background: #d10a0a; }
+  .cx__btn--ghost { border: 1px solid rgba(255,255,255,.45); color: #fff; backdrop-filter: blur(8px); background: rgba(255,255,255,.06); }
+  .cx__btn--ghost:hover { border-color: #fff; background: rgba(255,255,255,.14); }
+
+  .cx__foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-block: 16px 22px; border-top: 1px solid rgba(255,255,255,.16); }
+  .cx__cap { position: relative; margin: 0; flex: 1; min-height: 1.4em; font-size: .84rem; color: rgba(255,255,255,.6); }
+  .cx__cap span { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .8s; white-space: nowrap; }
+  .cx__cap span.is-on { opacity: 1; }
+  .cx__dots { display: flex; gap: 8px; }
+  .cx__dots button { all: unset; cursor: pointer; padding: 8px 0; }
+  .cx__dots i { display: block; position: relative; width: 44px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.28); overflow: hidden; }
+  .cx__dots i::after { content: ''; position: absolute; inset: 0; width: 0; background: #fff; }
+  .cx__dots [aria-selected="true"] i::after { animation: cxBar var(--cx-t, 7000ms) linear forwards; }
+  .cx.is-paused .cx__dots [aria-selected="true"] i::after { animation: none; width: 100%; }
+  .cx__dots button:focus-visible i { outline: 2px solid #fff; outline-offset: 3px; }
+  @keyframes cxBar { to { width: 100%; } }
+
+  .cx-bar { background: #0b0c0e; color: #fff; border-top: 1px solid rgba(255,255,255,.08); }
+  .cx-bar__in { list-style: none; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cx-bar__in li + li { border-left: 1px solid rgba(255,255,255,.1); }
+  .cx-bar a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px clamp(16px, 2vw, 30px); color: inherit; text-decoration: none; transition: background .25s; }
+  .cx-bar li:first-child a { padding-left: 0; }
+  .cx-bar a:hover { background: rgba(255,255,255,.04); }
+  .cx-bar b { display: block; font-size: 1.2rem; letter-spacing: -.015em; font-variation-settings: 'wght' 720; }
+  .cx-bar small { display: block; margin-top: 3px; font-size: .86rem; color: rgba(255,255,255,.6); }
+  .cx-bar :global(svg) { flex: none; width: 20px; height: 20px; color: var(--red); transition: transform .25s; }
+  .cx-bar a:hover :global(svg) { transform: translateX(4px); }
 
   @media (max-width: 900px) {
-    .hb__in { grid-template-columns: 1fr; align-items: start; }
-    .hb__trust { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
-    .hb__trust li:nth-child(odd) { padding-left: 0; border-left: 0; }
+    .cx-bar__in { grid-template-columns: 1fr; }
+    .cx-bar__in li + li { border-left: 0; border-top: 1px solid rgba(255,255,255,.1); }
+    .cx-bar a, .cx-bar li:first-child a { padding: 18px 0; }
   }
-  @media (max-width: 760px) {
-    .hb__in { text-align: center; padding-block: 26px 20px; gap: 14px; }
-    .hb__k { margin-bottom: 10px; }
-    .hb h1 { font-size: 2.1rem; }
-    .hb__lede { margin-inline: auto; font-size: .95rem; }
-    .hb__cta { margin-top: 16px; }
-    .hb__btn { flex: 1; }
-    .hb__trust { padding: 14px 0 18px; text-align: center; }
-    .hb__trust li { font-size: .78rem; }
-    .hb__trust b { font-size: .96rem; }
-    .hc { padding-top: 14px; }
-    .hc__grid { grid-template-columns: 1fr; gap: 10px; }
-    .hc__card { height: auto; aspect-ratio: 16 / 9; border-radius: 16px; }
-    .hc__bar { left: 16px; right: 16px; top: 14px; }
-    .hc__body { padding: 16px; }
-    .hc__t { font-size: 1.5rem; }
-    .hc__h { font-size: .9rem; }
-    .hc__d { display: none; }
-    .hc__go { width: 38px; height: 38px; }
+  @media (max-width: 640px) {
+    .cx { min-height: clamp(520px, calc(100svh - 150px), 680px); }
+    .cx__shade { background: linear-gradient(180deg, rgba(8,9,11,.3) 0%, rgba(8,9,11,0) 25%, rgba(8,9,11,.3) 50%, rgba(8,9,11,.92) 100%); }
+    .cx__k { font-size: .7rem; letter-spacing: .14em; margin-bottom: 14px; }
+    .cx__h { font-size: clamp(1.9rem, 10.2vw, 3.4rem); }
+    .cx__row { margin-top: 18px; gap: 16px; }
+    .cx__lede { font-size: .98rem; }
+    .cx__cta { width: 100%; }
+    .cx__btn { flex: 1; min-height: 50px; padding-inline: 16px; font-size: .95rem; }
+    .cx__cap { display: none; }
+    .cx__foot { justify-content: flex-start; padding-block: 12px 16px; }
+    .cx__dots i { width: 36px; }
+    .cx-bar b { font-size: 1.08rem; }
+    .cx-bar small { font-size: .8rem; }
   }
-  @media (prefers-reduced-motion: reduce) { .hc__card img, .hc__d { transition: none; } .hc__bar::after { animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) {
+    .cx__img.is-on, .cx__h > span > span, .cx__k, .cx__row { animation: none; opacity: 1; transform: none; }
+    .cx__dots i::after { animation: none !important; }
+  }
 </style>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-hc]').forEach((root) => {
-    const cards = [...root.querySelectorAll<HTMLElement>('[data-card]')];
-    const T = 4200;
-    root.style.setProperty('--hc-t', T + 'ms');
-    let i = 0, hover = false;
+  document.querySelectorAll<HTMLElement>('[data-cx]').forEach((root) => {
+    const imgs = [...root.querySelectorAll<HTMLElement>('[data-shot]')];
+    const caps = [...root.querySelectorAll<HTMLElement>('[data-cap]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-dot]')];
+    const T = 7000;
+    root.style.setProperty('--cx-t', T + 'ms');
+    let i = 0, timer = 0, resume = 0;
     const show = (n: number) => {
       i = n;
-      cards.forEach((c, k) => {
-        c.classList.toggle('is-on', k === n);
-        if (k === n) { c.classList.remove('is-on'); void c.offsetWidth; c.classList.add('is-on'); }
-      });
+      imgs.forEach((im, k) => { if (k === n) { im.classList.remove('is-on'); void im.offsetWidth; } im.classList.toggle('is-on', k === n); });
+      caps.forEach((c, k) => c.classList.toggle('is-on', k === n));
+      dots.forEach((d, k) => d.setAttribute('aria-selected', String(k === n)));
     };
-    cards.forEach((c, k) => {
-      c.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) { hover = true; root.classList.add('is-paused'); show(k); } });
-      c.addEventListener('focus', () => show(k));
+    const start = () => { if (!timer) timer = window.setInterval(() => { if (document.visibilityState === 'visible') show((i + 1) % imgs.length); }, T); };
+    root.addEventListener('click', (e) => {
+      const d = (e.target as Element).closest<HTMLElement>('[data-dot]');
+      if (!d) return;
+      clearInterval(timer); timer = 0; root.classList.add('is-paused'); show(Number(d.dataset.dot));
+      clearTimeout(resume); resume = window.setTimeout(() => { root.classList.remove('is-paused'); start(); }, 14000);
     });
-    root.addEventListener('mouseleave', () => { hover = false; root.classList.remove('is-paused'); show(i); });
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    window.setInterval(() => { if (!hover && document.visibilityState === 'visible') show((i + 1) % cards.length); }, T);
+    start();
   });
 </script>
