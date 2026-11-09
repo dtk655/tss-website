@@ -104,6 +104,9 @@ const photos = [
   .qs-svc__art { position: relative; height: clamp(130px, 12vw, 168px); background: linear-gradient(180deg, var(--tint, #ececea), #fff); overflow: hidden; }
   .qs-svc__art img { position: absolute; object-fit: contain; filter: drop-shadow(0 14px 12px rgba(20, 23, 26, .22)); transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
   .qs-svc__art img.is-photo { inset: 0; width: 100%; height: 100%; object-fit: cover; filter: none; }
+  .qs-svc__art img.is-photo.is-contain { inset: 8% 6% 4%; width: 88%; height: 88%; object-fit: contain; mix-blend-mode: multiply; }
+  .qs-svc__art.is-photo:has(.is-contain)::after { display: none; }
+  .qs-svc__art.is-photo { background: linear-gradient(180deg, var(--tint, #ececea), #fff); }
   .qs-svc__art.is-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .35)); }
   .qs-svc label:hover .qs-svc__art img { transform: translateY(-4px) scale(1.04); }
   .qs-svc label:hover .qs-svc__art img.is-photo { transform: scale(1.06); }
@@ -558,7 +561,7 @@ const photos = [
 
   const SVC = [
     { id: 'lane-closure', b: 'Lane Closure Project', s: 'Flaggers, full closures, TMA protection and traffic control plans', photo: '/fleet/lc-hero.webp', pos: '58% 45%' },
-    { id: 'rental', b: 'Rental Pricing', s: 'Cones to crash trucks, delivered and picked up in NJ, NY, PA and CT', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_1133_c2839bba-db54-470f-80d2-804e82e3fd23.jpg?width=800', pos: '45% 55%' },
+    { id: 'rental', b: 'Rental Pricing', s: 'VMS boards, arrow boards, crash trucks and more, delivered and picked up in NJ, NY, PA and CT', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/1742906746_0.jpg?width=800', fit: 'contain', tint: T.yellow },
     { id: 'products', b: 'Purchase Pricing', s: 'Ships nationwide. Bulk orders, POs and custom branding', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/TRAILER13.jpg?width=800', pos: '50% 50%' },
     { id: 'general', b: 'Something Else?', s: 'Not sure what you need? Describe it and we\u2019ll sort it out', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_Safety_Day_Team_Photo.jpg?width=800', pos: '40% 45%' }
   ];
@@ -845,7 +848,7 @@ const photos = [
 
     function stepService(dir) {
       body.innerHTML = `<div class="qs-step${dir}">${head('Get started', 'What can we quote for you?', 'Pick the closest fit. You can change it any time.')}
-        <div class="qs-svc" role="radiogroup" aria-label="Service">${SVC.map((s, i) => `<label class="qs-in" style="--i:${i + 1}"><input type="radio" name="${ns}-svc" value="${s.id}"${state.touched && state.type === s.id ? ' checked' : ''}><span class="qs-svc__card"><span class="qs-svc__art${s.photo ? ' is-photo' : ''}" style="--tint:${s.tint || '#ececea'}"><img class="is-photo" src="${s.photo}" alt="" style="object-position:${s.pos}" loading="lazy"></span><span class="qs-svc__txt"><b>${esc(s.b)}</b><small>${esc(s.s)}</small></span><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>
+        <div class="qs-svc" role="radiogroup" aria-label="Service">${SVC.map((s, i) => `<label class="qs-in" style="--i:${i + 1}"><input type="radio" name="${ns}-svc" value="${s.id}"${state.touched && state.type === s.id ? ' checked' : ''}><span class="qs-svc__card"><span class="qs-svc__art${s.photo ? ' is-photo' : ''}" style="--tint:${s.tint || '#ececea'}"><img class="is-photo${s.fit ? ' is-contain' : ''}" src="${s.photo}" alt="" style="object-position:${s.pos || '50% 50%'}" loading="lazy"></span><span class="qs-svc__txt"><b>${esc(s.b)}</b><small>${esc(s.s)}</small></span><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>
         ${navHtml('Continue', false)}</div>`;
       body.querySelectorAll(`[name="${ns}-svc"]`).forEach((r) => r.addEventListener('change', () => {
         state.type = r.value; state.touched = true; save(); renderTicket();
