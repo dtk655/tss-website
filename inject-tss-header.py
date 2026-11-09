@@ -88,7 +88,7 @@ STYLE = '''<style id="tss-shell">
 @font-face{font-family:'Archivo Variable';src:url('/brand/archivo-var.woff2') format('woff2-variations');font-weight:100 900;font-style:normal;font-display:swap}
 .tsshdr{position:sticky;top:0;z-index:40;background:#fff;font-family:'Archivo Variable','Archivo','Helvetica Neue',Arial,sans-serif;line-height:1.4}
 .tsshdr a{color:inherit}
-.tsshdr-wrap{max-width:1600px;margin:0 auto;padding-inline:clamp(18px,4vw,44px)}
+.tsshdr-wrap{max-width:none;margin:0 auto;padding-inline:clamp(18px,4vw,160px)}
 .tsshdr-main{position:relative;z-index:2;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:box-shadow .25s ease}
 .tsshdr.is-stuck .tsshdr-main{box-shadow:0 12px 32px -20px rgba(20,23,26,.35)}
 .tsshdr-in{height:92px;display:flex;align-items:center;gap:clamp(12px,1.4vw,24px);transition:height .25s ease}

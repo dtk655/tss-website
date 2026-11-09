@@ -215,6 +215,8 @@ const desc = c.description || (rentalOnly
   .density svg { width: 17px; height: 17px; fill: currentColor; }
   .grid--cols3 { grid-template-columns: repeat(3, 1fr); }
   .grid--cols4 { grid-template-columns: repeat(4, 1fr); }
+  @media (min-width: 1900px) { .grid--cols4 { grid-template-columns: repeat(5, 1fr); } }
+  @media (min-width: 2400px) { .grid--cols4 { grid-template-columns: repeat(6, 1fr); } }
   .cell[hidden] { display: none; }
   .noresults { margin: 48px 0; color: var(--steel); }
   .noresults button { background: none; border: 0; cursor: pointer; padding: 0; font: inherit; }

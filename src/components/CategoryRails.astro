@@ -167,7 +167,7 @@ const catImg = (h) => (h === 'cones' || h === 'traffic-drums' ? `/cats/${h}.svg`
     padding: 64px var(--gutter) 26px; margin-top: -10px;
     scroll-padding-inline: var(--gutter);
   }
-  @media (min-width: 1600px) { .rail { padding-inline: calc((100vw - var(--wrap)) / 2 + var(--gutter)); scroll-padding-inline: calc((100vw - var(--wrap)) / 2 + var(--gutter)); } }
+  /* rails run edge to edge with the page gutter (the site is fluid, no max width) */
   .rail::-webkit-scrollbar { display: none; }
   .rcard {
     position: relative; flex: none; width: clamp(240px, 18.5vw, 290px);

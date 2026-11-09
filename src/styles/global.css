@@ -40,8 +40,9 @@
   --fs-6: clamp(2.5rem, 5.4vw, 4.2rem);
 
   /* shape + depth */
-  --wrap: 1600px;
-  --gutter: clamp(18px, 4vw, 44px);
+  /* fluid: content spans the screen on every desktop size; side margins grow with it */
+  --wrap: none;
+  --gutter: clamp(18px, 4vw, 160px);
   --r-s: 8px;
   --r-m: 12px;
   --r-l: 16px;
@@ -63,6 +64,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+/* Large screens: everything sized in rem grows gently with the screen (16px at 1500px, 20px at about 2650px+). */
+html { font-size: clamp(100%, calc(0.35vw + 10.75px), 125%); }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
