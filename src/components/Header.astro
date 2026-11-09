@@ -22,6 +22,7 @@ const icons = {
 };
 const path = Astro.url.pathname.replace(/\.html$/, '');
 const current = (href) => (href === '/collections' ? path === '/collections' || (path.startsWith('/collections/') && !path.includes('rentals')) || path.startsWith('/products/') : path.startsWith(href));
+const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barriers': '#ffe1da', 'traffic-drums': '#ffe7d2', 'sign-shop': '#ffdede', lights: '#fff1c9', reflectors: '#e2edf8', 'safety-gear': '#e3f3d8', 'sign-stands': '#ebebe8', deliniators: '#ffe7d2' };
 ---
 <header class="hdr">
   <div class="hdr__main">
@@ -86,9 +87,9 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
           <div class="wrap mega__in">
             <div class="mega__cats">
               {megaCats.map((c) => (
-                <a href={`/collections/${c.handle}`} class="mega__cat">
-                  <span class="mega__thumb">{c.cover && <img src={img(c.cover.url, 120)} alt="" loading="lazy" width="56" height="56" />}</span>
-                  <span class="mega__txt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}</small></span>
+                <a href={`/collections/${c.handle}`} class="mega__cat" style={`--tint:${megaTints[c.handle] || '#ececea'}`}>
+                  <span class="mega__txt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></small></span>
+                  <img class="mega__img" src={c.handle === 'cones' || c.handle === 'traffic-drums' ? `/cats/${c.handle}.svg` : `/cats/${c.handle}.png`} alt="" loading="lazy" />
                 </a>
               ))}
             </div>
@@ -335,15 +336,19 @@ const current = (href) => (href === '/collections' ? path === '/collections' || 
   .mega { position: fixed; left: 0; right: 0; top: var(--megatop, 92px); background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 32px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity .22s ease, translate .22s ease, visibility .22s; z-index: 30; }
   .nav__item--mega.is-open .mega { opacity: 1; translate: 0 0; visibility: visible; }
   .mega__in { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 36px; padding-block: 28px 30px; }
-  .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 16px; align-content: start; }
-  .mega__cat { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; padding: 9px 10px; border-radius: 10px; transition: background .12s; }
-  .mega__cat:hover { background: var(--haze); }
-  .mega__thumb { width: 52px; height: 52px; border-radius: 9px; border: 1px solid var(--haze-2); background: #fff; display: grid; place-items: center; overflow: hidden; flex: none; }
-  .mega__thumb img { width: 42px; height: 42px; object-fit: contain; }
-  .mega__txt { display: grid; line-height: 1.25; min-width: 0; }
-  .mega__txt b { font-variation-settings: 'wght' 650; font-size: .97rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-content: start; }
+  .mega__cat { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; height: 84px; padding: 0 12px 0 18px; text-decoration: none; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(115deg, var(--tint, #ececea) 0%, #ffffff 78%); overflow: hidden; transition: border-color .2s, box-shadow .2s, translate .2s; }
+  .mega__cat:hover { border-color: var(--line-dark); box-shadow: 0 14px 28px -18px rgba(20, 23, 26, .45); translate: 0 -2px; }
+  .mega__txt { display: grid; gap: 3px; line-height: 1.2; min-width: 0; }
+  .mega__txt b { font-size: 1.04rem; line-height: 1.15; letter-spacing: -.01em; font-variation-settings: 'wght' 740; color: var(--ink); }
   .mega__cat:hover .mega__txt b { color: var(--red); }
-  .mega__txt small { color: var(--steel); font-size: .82rem; }
+  .mega__txt small { display: flex; align-items: center; gap: 4px; color: var(--ink-2); font-size: .82rem; font-variation-settings: 'wght' 620; }
+  .mega__txt small svg { width: 13px; height: 13px; transition: translate .15s; }
+  .mega__cat:hover .mega__txt small { color: var(--red); }
+  .mega__cat:hover .mega__txt small svg { translate: 3px 0; }
+  @media (max-width: 1400px) { .mega__cats { grid-template-columns: repeat(3, minmax(0, 1fr)); } .mega__in { grid-template-columns: minmax(0, 1fr) 260px; } }
+  .mega__img { flex: none; height: 70px; width: 76px; object-fit: contain; filter: drop-shadow(0 8px 8px rgba(20, 23, 26, .18)); transition: scale .25s, translate .25s; }
+  .mega__cat:hover .mega__img { scale: 1.08; translate: 0 -2px; }
   .mega__side { display: grid; gap: 10px; align-content: start; border-left: 1px solid var(--line); padding-left: 36px; }
   .mega__all { display: flex; align-items: center; gap: 7px; text-decoration: none; font-variation-settings: 'wght' 700; color: var(--red); padding: 4px 0 8px; }
   .mega__all svg { width: 15px; height: 15px; transition: translate .15s; }
