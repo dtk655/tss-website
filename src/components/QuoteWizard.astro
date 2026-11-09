@@ -371,6 +371,16 @@ const photos = [
   .qs-modal__count { font-size: .95rem; color: var(--steel); }
   .qs-modal__count b { color: var(--ink); font-variation-settings: 'wght' 720; }
   .qs-modal__foot .qs-btn { min-height: 50px; padding: 0 26px; }
+  .qs-modal__foot .qs-btn.is-close { background: #fff; color: var(--ink); border: 1.5px solid var(--line-dark); box-shadow: none; }
+  .qs-modal__foot .qs-btn.is-close:hover { border-color: var(--ink); background: #fff; }
+  .qs-modal__foot .qs-btn.is-bump { animation: qsPop .35s cubic-bezier(.3, 1.6, .5, 1); }
+  .qs-step-ctl.is-zero { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line-dark); animation: none; }
+  .qs-step-ctl.is-zero button, .qs-step-ctl.is-zero input { color: var(--ink); }
+  .qs-step-ctl.is-zero input { color: var(--steel); }
+  .qs-step-ctl.is-zero button:hover { background: var(--haze); }
+  .qs-step-ctl button:disabled { opacity: .3; cursor: default; background: none; }
+  .qs-pr__ctl { display: grid; gap: 5px; }
+  .qs-pr__qty { font-size: .74rem; color: var(--steel); font-variation-settings: 'wght' 620; text-align: center; }
   @media (max-width: 640px) {
     .qs-modal { padding: 0; place-items: end stretch; }
     .qs-modal__panel { width: 100%; max-height: 92svh; border-radius: 22px 22px 0 0; transform: translateY(100%); }
@@ -384,6 +394,7 @@ const photos = [
     .qs-pr__img img { width: 52px; height: 52px; }
     .qs-pr__ctl { grid-column: 2; }
     .qs-pr__ctl .qs-ci__add, .qs-pr__ctl .qs-step-ctl { max-width: 180px; }
+    .qs-pr__qty { text-align: left; }
     .qs-modal__foot { padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
     .qs-modal__foot .qs-btn { flex: none; }
   }
@@ -744,7 +755,7 @@ const photos = [
     let curShop = null;
     const lines = (fn) => Object.values(state.job.sel).filter((e) => e.q > 0 && fn(e));
     const addBtn = (lbl = 'Add', attr = 'data-qs-pick') => `<button type="button" class="qs-ci__add" ${attr}>${ICON.plus}${lbl}</button>`;
-    const stepper = (t, q) => `<div class="qs-step-ctl"><button type="button" data-qs-dec aria-label="Fewer ${esc(t)}">&minus;</button><input type="number" min="0" inputmode="numeric" value="${q}" data-qs-qty aria-label="${esc(t)} quantity"><button type="button" data-qs-inc aria-label="More ${esc(t)}">+</button></div>`;
+    const stepper = (t, q) => `<div class="qs-step-ctl${q ? '' : ' is-zero'}"><button type="button" data-qs-dec aria-label="Fewer ${esc(t)}"${q ? '' : ' disabled'}>&minus;</button><input type="number" min="0" inputmode="numeric" value="${q}" data-qs-qty aria-label="${esc(t)} quantity" onfocus="this.select()"><button type="button" data-qs-inc aria-label="More ${esc(t)}">+</button></div>`;
     function shopHtml(cfg) {
       if (!CAT) return `<div class="qs-cat">${'<div class="qs-ci is-skel"></div>'.repeat(8)}</div>`;
       let h = '';
@@ -760,7 +771,7 @@ const photos = [
       return `<div class="qs-ci${n ? ' is-on' : ''}" style="--tint:${EQ_TINTS[k % EQ_TINTS.length]}" data-qs-eq="${esc(hd)}">
         <span class="qs-ci__badge" aria-hidden="true">${n || ''}</span>
         <button type="button" class="qs-ci__pick" data-qs-pick aria-label="Add ${esc(p.t)}">${CUT[hd] ? `<img src="${CUT[hd]}" alt="" loading="lazy">` : p.i ? `<img class="is-blend" src="${p.i}" alt="" loading="lazy">` : ''}<b>${esc(short(p.t))}</b></button>
-        <div class="qs-ci__ctl">${multi ? addBtn(n ? 'Edit' : 'Choose') : n ? stepper(p.t, n) : addBtn()}</div></div>`;
+        <div class="qs-ci__ctl">${multi ? addBtn(n ? 'Edit' : 'Choose') : stepper(p.t, n)}</div></div>`;
     }
     function catTileHtml(c) {
       const m = CATS[c], cnt = CAT.cats[c].p.length, n = lines((e) => e.c === c).length;
@@ -1017,7 +1028,7 @@ const photos = [
         if (dec) dec.onclick = () => set((state.job.sel[key]?.q || 0) - 1);
         if (inc) inc.onclick = () => set((state.job.sel[key]?.q || 0) + 1);
         if (inp) {
-          inp.oninput = () => { if (inp.value !== '' && +inp.value > 0) { setSel(key, base, inp.value); tile.querySelector('.qs-ci__badge').textContent = state.job.sel[key]?.q || ''; } };
+          inp.oninput = () => { if (inp.value === '') return; setSel(key, base, inp.value); const q = state.job.sel[key]?.q || 0; tile.querySelector('.qs-ci__badge').textContent = q || ''; tile.classList.toggle('is-on', !!q); const sc = tile.querySelector('.qs-step-ctl'); sc.classList.toggle('is-zero', !q); sc.querySelector('[data-qs-dec]').disabled = !q; };
           inp.onblur = () => set(inp.value);
         }
       });
@@ -1032,7 +1043,7 @@ const photos = [
     /* ---------------- category popup ---------------- */
     const modal = document.createElement('div');
     modal.className = 'qs-modal'; modal.hidden = true;
-    modal.innerHTML = `<div class="qs-modal__bg" data-qs-mclose></div><div class="qs-modal__panel" role="dialog" aria-modal="true" aria-labelledby="${ns}-mt"><header class="qs-modal__head" data-qs-mhead></header><div class="qs-modal__list" data-qs-mlist></div><footer class="qs-modal__foot"><span class="qs-modal__count" data-qs-mcount></span><button type="button" class="qs-btn" data-qs-mclose>Done${ICON.check}</button></footer></div>`;
+    modal.innerHTML = `<div class="qs-modal__bg" data-qs-mclose></div><div class="qs-modal__panel" role="dialog" aria-modal="true" aria-labelledby="${ns}-mt"><header class="qs-modal__head" data-qs-mhead></header><div class="qs-modal__list" data-qs-mlist></div><footer class="qs-modal__foot"><span class="qs-modal__count" data-qs-mcount></span><button type="button" class="qs-btn" data-qs-mclose data-qs-mdone></button></footer></div>`;
     document.body.appendChild(modal);
     const mHead = modal.querySelector('[data-qs-mhead]'), mList = modal.querySelector('[data-qs-mlist]'), mCount = modal.querySelector('[data-qs-mcount]');
     let mctx = null, mOpener = null;
@@ -1055,7 +1066,7 @@ const photos = [
           ${p.v.length > 1 && !p.o ? `<label class="qs-pr__varl"><span>${p.v.length} options</span><select class="qs-input qs-pr__var" data-qs-var aria-label="Option for ${esc(p.t)}">${p.v.map((v) => `<option${v === cur ? ' selected' : ''}>${esc(v)}</option>`).join('')}</select></label>` : ''}
           ${chips ? `<div class="qs-vchips">${chips}</div>` : ''}
         </div>
-        <div class="qs-pr__ctl">${q ? stepper(p.t, q) : addBtn('Add', 'data-qs-padd')}</div></div>`;
+        <div class="qs-pr__ctl"><span class="qs-pr__qty">Quantity</span>${stepper(p.t, q)}</div></div>`;
     }
     const lastImg = {};
     const SWATCH = { orange: '#f26a1b', 'safety orange': '#f26a1b', lime: '#b8e02a', 'lime green': '#b8e02a', 'dark green': '#1f5e2e', green: '#2e7d32', 'navy blue': '#1f2f5c', navy: '#1f2f5c', blue: '#1e5bd8', 'sky blue': '#6ec6f0', 'light blue': '#6ec6f0', pink: '#f48fb1', red: '#c62828', white: '#ffffff', yellow: '#f5d000', black: '#16181b', silver: '#c4c8cc', gray: '#9aa0a6', grey: '#9aa0a6', purple: '#7b3fb0', brown: '#7a4b2a' };
@@ -1094,7 +1105,10 @@ const photos = [
     }
     function updateCount() {
       const ls = lines(inCtx), units = ls.reduce((a, e) => a + e.q, 0);
-      mCount.innerHTML = ls.length ? `<b>${ls.length} selected</b> &middot; ${units.toLocaleString()} unit${units > 1 ? 's' : ''}` : 'Nothing selected yet';
+      mCount.innerHTML = ls.length ? `<b>${ls.length} selected</b> &middot; ${units.toLocaleString()} unit${units > 1 ? 's' : ''}` : 'Set a quantity to add an item';
+      const db = modal.querySelector('[data-qs-mdone]');
+      const lbl = ls.length ? `Add ${ls.length} item${ls.length > 1 ? 's' : ''} to quote` : 'Close';
+      if (db.dataset.lbl !== lbl) { db.dataset.lbl = lbl; db.innerHTML = lbl + (ls.length ? ICON.check : ''); db.classList.toggle('is-close', !ls.length); if (ls.length) { db.classList.remove('is-bump'); void db.offsetWidth; db.classList.add('is-bump'); } }
     }
     function openModal(ctx) {
       mctx = ctx; mOpener = document.activeElement;
@@ -1129,7 +1143,7 @@ const photos = [
       const h = row.dataset.qsPr, cur = state.job.sel[h + '::' + (rowVar[h] || '')]?.q || 0;
       if (e.target.closest('[data-qs-padd]')) { setQ(h, 1); rerow(h, '[data-qs-qty]'); mList.querySelector(rowSel(h) + ' [data-qs-qty]')?.select(); }
       else if (e.target.closest('[data-qs-inc]')) { setQ(h, cur + 1); rerow(h, '[data-qs-inc]'); }
-      else if (e.target.closest('[data-qs-dec]')) { setQ(h, cur - 1); rerow(h, cur - 1 > 0 ? '[data-qs-dec]' : '[data-qs-padd]'); }
+      else if (e.target.closest('[data-qs-dec]')) { setQ(h, cur - 1); rerow(h, cur - 1 > 0 ? '[data-qs-dec]' : '[data-qs-inc]'); }
       else if (e.target.closest('[data-qs-opt]')) {
         const ob = e.target.closest('[data-qs-opt]'), p = CAT.prods[h], k = +ob.dataset.qsOpt, val = ob.dataset.val;
         const want = [...p.vo[varIdx(p, rowVar[h])]]; want[k] = val;
@@ -1143,7 +1157,7 @@ const photos = [
     modal.addEventListener('change', (e) => { const sv = e.target.closest('[data-qs-var]'); if (sv) { const h = sv.closest('[data-qs-pr]').dataset.qsPr; rowVar[h] = sv.value; rerow(h, '[data-qs-var]'); } });
     modal.addEventListener('input', (e) => {
       const qi = e.target.closest('[data-qs-qty]');
-      if (qi && qi.value !== '' && +qi.value > 0) { const row = qi.closest('[data-qs-pr]'); setQ(row.dataset.qsPr, qi.value); row.classList.add('is-on'); updateCount(); }
+      if (qi && qi.value !== '') { const row = qi.closest('[data-qs-pr]'), h = row.dataset.qsPr; setQ(h, qi.value); const q = state.job.sel[h + '::' + (rowVar[h] || '')]?.q || 0; const sc = qi.closest('.qs-step-ctl'); sc.classList.toggle('is-zero', !q); sc.querySelector('[data-qs-dec]').disabled = !q; row.classList.toggle('is-on', !!q || lines((e) => e.h === h).length > 0); updateCount(); }
       const se = e.target.closest('[data-qs-msearch]');
       if (se) {
         const q = se.value.trim().toLowerCase(); let any = false;
