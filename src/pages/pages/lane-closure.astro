@@ -47,7 +47,7 @@ const agencies = [
     <div class="wrap lch__in">
       <div class="lch__copy">
         <p class="lch__k">Lane closure division</p>
-        <h1>25,000+ closures. Zero shortcuts.</h1>
+        <h1><span class="lch__ln"><span>25,000+ closures.</span></span> <span class="lch__ln"><span>Zero shortcuts.</span></span></h1>
         <p class="lch__lede">Certified, experienced crews setting up MUTCD-compliant work zones across NJ, NY, PA, CT and DE.</p>
         <div class="lch__ways">
           <a href="/tools/lane-closure-plan" class="lway lway--solid">
@@ -94,6 +94,20 @@ const agencies = [
   .lch h1 { font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; margin: 0 0 16px; text-wrap: balance; color: #fff; }
   .lch__lede { color: #fde0db; font-size: clamp(1.05rem, 1.35vw, 1.24rem); line-height: 1.5; max-width: 46ch; margin: 0 0 26px; text-wrap: balance; }
 
+  /* load-in animation (matches homepage header) */
+  .lch__k { opacity: 0; animation: lchFade .8s .2s ease forwards; }
+  .lch__ln { display: block; overflow: hidden; padding-bottom: .05em; }
+  .lch__ln > span { display: inline-block; transform: translateY(105%); animation: lchRise 1s cubic-bezier(.2,.8,.2,1) forwards; }
+  .lch__ln + .lch__ln > span { animation-delay: .12s; }
+  .lch__lede, .lch__call { opacity: 0; transform: translateY(12px); animation: lchUp .8s .55s cubic-bezier(.2,.8,.2,1) forwards; }
+  .lch__call { animation-delay: .85s; }
+  .lch__ways .lway { opacity: 0; translate: 0 16px; animation: lchUpT .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: .65s; }
+  .lch__ways .lway + .lway { animation-delay: .77s; }
+  @keyframes lchRise { to { transform: none; } }
+  @keyframes lchFade { to { opacity: 1; } }
+  @keyframes lchUp { to { opacity: 1; transform: none; } }
+  @keyframes lchUpT { to { opacity: 1; translate: 0 0; } }
+  @media (prefers-reduced-motion: reduce) { .lch__k, .lch__ln > span, .lch__lede, .lch__call, .lch__ways .lway { animation: none; opacity: 1; transform: none; translate: none; } }
   .lch__ways { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 700px; }
   .lway { display: grid; grid-template-columns: 38px 1fr 18px; align-items: center; gap: 10px; padding: 14px 14px; border-radius: 14px; text-decoration: none; transition: transform .2s, background .15s, border-color .15s, box-shadow .2s; }
   .lway:hover { transform: translateY(-2px); }
