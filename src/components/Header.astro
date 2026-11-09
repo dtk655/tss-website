@@ -143,9 +143,9 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
                 <div class="mdrw__subin">
                   <div class="mdrw__cats">
                     {megaCats.map((c) => (
-                      <a href={`/collections/${c.handle}`} class="mdrw__cat">
+                      <a href={`/collections/${c.handle}`} class="mdrw__cat" style={`--tint:${megaTints[c.handle] || '#ececea'}`}>
+                        <span class="mdrw__cattxt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}</small></span>
                         <span class="mdrw__catimg"><img src={c.handle === 'cones' || c.handle === 'traffic-drums' ? `/cats/${c.handle}.svg` : `/cats/${c.handle}.png`} alt="" loading="lazy" /></span>
-                        <span>{c.title}</span>
                       </a>
                     ))}
                   </div>
@@ -474,10 +474,13 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .mdrw__grp.is-exp .mdrw__sub { grid-template-rows: 1fr; }
   .mdrw__subin { overflow: hidden; min-height: 0; }
   .mdrw__cats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 6px 4px 8px 4px; }
-  .mdrw__cat { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 8px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); font-size: .88rem; line-height: 1.2; font-variation-settings: 'wght' 640; background: #fff; transition: border-color .15s, background .15s; }
-  .mdrw__cat:hover { border-color: var(--red); background: var(--red-tint); }
-  .mdrw__catimg { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 9px; background: var(--haze); }
-  .mdrw__catimg img { max-width: 32px; max-height: 32px; object-fit: contain; }
+  .mdrw__cat { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 68px; padding: 8px 6px 8px 12px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); background: linear-gradient(115deg, var(--tint, #ececea) 0%, #ffffff 80%); overflow: hidden; transition: border-color .15s, translate .15s; }
+  .mdrw__cat:active { translate: 0 1px; border-color: var(--line-dark); }
+  .mdrw__cattxt { display: grid; gap: 2px; min-width: 0; line-height: 1.15; }
+  .mdrw__cattxt b { font-size: .9rem; letter-spacing: -.01em; font-variation-settings: 'wght' 740; }
+  .mdrw__cattxt small { font-size: .72rem; color: var(--ink-2); font-variation-settings: 'wght' 600; }
+  .mdrw__catimg { flex: none; width: 46px; height: 50px; display: grid; place-items: center; }
+  .mdrw__catimg img { max-width: 46px; max-height: 50px; object-fit: contain; filter: drop-shadow(0 6px 6px rgba(20, 23, 26, .18)); }
   .mdrw__all { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 4px 10px; padding: 12px; border-radius: 12px; background: var(--ink); color: #fff; text-decoration: none; font-size: .95rem; font-variation-settings: 'wght' 700; }
   .mdrw__all svg { width: 18px; height: 18px; }
 

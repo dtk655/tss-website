@@ -34,6 +34,21 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     </div>
   </div>
 
+  <nav class="wrap cx-cards" aria-label="What we do">
+    <ul>
+      {lines.map((l, i) => (
+        <li style={`--i:${i}`}>
+          <a href={l.href} class="cx-card">
+            <span class="cx-card__n">0{i + 1}</span>
+            <b class="cx-card__t">{l.t}</b>
+            <span class="cx-card__d">{l.d}</span>
+            <span class="cx-card__go"><span>{l.cta}</span><Fragment set:html={ARROW} /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
   <div class="wrap cx__foot">
     <p class="cx__cap" aria-live="polite">
       {shots.map((s, i) => <span class:list={[i === 0 && 'is-on']} data-cap={i}>{s.cap}</span>)}
@@ -44,22 +59,6 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   </div>
 </section>
 
-<nav class="cx-bar" aria-label="What we do">
-  <ul class="wrap cx-bar__in">
-    {lines.map((l, i) => (
-      <li style={`--i:${i}`}>
-        <a href={l.href} class="cx-card">
-          <span class="cx-card__ic" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={l.ic} /></span>
-          <span class="cx-card__n">0{i + 1}</span>
-          <b class="cx-card__t">{l.t}</b>
-          <span class="cx-card__d">{l.d}</span>
-          <span class="cx-card__go">{l.cta}<Fragment set:html={ARROW} /></span>
-          <i class="cx-card__line" aria-hidden="true"></i>
-        </a>
-      </li>
-    ))}
-  </ul>
-</nav>
 
 <style>
   .cx { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: clamp(560px, calc(100svh - 144px), 860px); color: #fff; background: #0b0c0e; overflow: hidden; isolation: isolate; }
@@ -103,58 +102,48 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .cx__dots button:focus-visible i { outline: 2px solid #fff; outline-offset: 3px; }
   @keyframes cxBar { to { width: 100%; } }
 
-  .cx { padding-bottom: 96px; }
-  .cx::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 150px; z-index: -1; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 55%, #fff 100%); pointer-events: none; }
-  .cx__foot { border-top-color: rgba(255,255,255,.2); }
-  .cx-bar { position: relative; z-index: 2; margin-top: -96px; padding-bottom: clamp(28px, 3vw, 44px); background: linear-gradient(180deg, transparent 0, transparent 96px, #fff 96px); }
-  .cx-bar__in { list-style: none; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
-  .cx-bar__in li { opacity: 0; transform: translateY(30px); animation: cxCardIn .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(.7s + var(--i) * .13s); }
+  .cx-cards ul { list-style: none; margin: 0 0 clamp(18px, 2vw, 26px); padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .cx-cards li { opacity: 0; transform: translateY(24px); animation: cxCardIn .9s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(.8s + var(--i) * .12s); }
   @keyframes cxCardIn { to { opacity: 1; transform: none; } }
-  .cx-card { position: relative; overflow: hidden; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic n" "t t" "d d" "go go"; align-items: center; column-gap: 12px; height: 100%; box-sizing: border-box; padding: clamp(20px, 2vw, 28px); border-radius: 20px; background: #fff; color: var(--ink); text-decoration: none; border: 1px solid var(--line); box-shadow: 0 30px 60px -34px rgba(10,12,14,.55); transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s; }
-  .cx-card:hover { transform: translateY(-6px); border-color: rgba(182,6,6,.35); box-shadow: 0 36px 70px -34px rgba(182,6,6,.45); }
-  .cx-card:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
-  .cx-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 90% at 100% 0%, rgba(182,6,6,.08), transparent 60%); opacity: 0; transition: opacity .35s; }
-  .cx-card:hover::before { opacity: 1; }
-  .cx-card__ic { grid-area: ic; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--red); color: #fff; box-shadow: 0 12px 22px -12px rgba(182,6,6,.8); transition: transform .45s cubic-bezier(.2,.8,.2,1.5); }
-  .cx-card__ic svg { width: 27px; height: 27px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-  .cx-card:hover .cx-card__ic { transform: rotate(-8deg) scale(1.08); }
-  .cx-card__n { grid-area: n; justify-self: end; align-self: start; font-size: .82rem; font-variation-settings: 'wght' 780; letter-spacing: .08em; color: #c3c9cf; }
-  .cx-card__t { grid-area: t; margin-top: 18px; font-size: clamp(1.55rem, 2.1vw, 2.05rem); line-height: 1.05; letter-spacing: -.03em; font-variation-settings: 'wght' 820; }
-  .cx-card__d { grid-area: d; margin-top: 8px; font-size: .96rem; line-height: 1.45; color: var(--steel); }
-  .cx-card__go { grid-area: go; display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; color: var(--red); font-size: 1rem; font-variation-settings: 'wght' 740; }
-  .cx-card__go :global(svg) { width: 18px; height: 18px; transition: transform .25s; }
+  .cx-card { position: relative; display: grid; gap: 6px; height: 100%; box-sizing: border-box; padding: clamp(18px, 1.8vw, 24px) clamp(18px, 1.8vw, 26px); border-radius: 16px; color: #fff; text-decoration: none; background: rgba(12,13,15,.42); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); overflow: hidden; transition: background .45s cubic-bezier(.2,.8,.2,1), color .45s, border-color .45s, transform .45s cubic-bezier(.2,.8,.2,1); }
+  .cx-card::before { content: ''; position: absolute; left: 0; top: 0; height: 3px; width: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .55s cubic-bezier(.2,.8,.2,1); }
+  .cx-card:hover, .cx-card:focus-visible { background: #fff; color: var(--ink); border-color: #fff; transform: translateY(-4px); outline: none; }
+  .cx-card:hover::before, .cx-card:focus-visible::before { transform: scaleX(1); }
+  .cx-card__n { font-size: .78rem; letter-spacing: .14em; font-variation-settings: 'wght' 700; color: rgba(255,255,255,.55); transition: color .45s; }
+  .cx-card:hover .cx-card__n { color: var(--red); }
+  .cx-card__t { font-size: clamp(1.45rem, 2vw, 1.95rem); line-height: 1.04; letter-spacing: -.03em; font-variation-settings: 'wght' 780; }
+  .cx-card__d { font-size: .92rem; line-height: 1.45; color: rgba(255,255,255,.72); transition: color .45s; }
+  .cx-card:hover .cx-card__d { color: var(--steel); }
+  .cx-card__go { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.16); font-size: .95rem; font-variation-settings: 'wght' 680; transition: border-color .45s, color .45s; }
+  .cx-card:hover .cx-card__go { border-top-color: var(--line); color: var(--red); }
+  .cx-card__go :global(svg) { width: 20px; height: 20px; transition: transform .3s; }
   .cx-card:hover .cx-card__go :global(svg) { transform: translateX(5px); }
-  .cx-card__line { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
-  .cx-card:hover .cx-card__line { transform: scaleX(1); }
 
   @media (max-width: 900px) {
-    .cx-bar__in { grid-template-columns: 1fr; gap: 10px; }
-    .cx-card { grid-template-columns: auto 1fr auto; grid-template-areas: "ic t go" "ic d go"; column-gap: 14px; padding: 16px 18px; }
+    .cx-cards ul { grid-template-columns: 1fr; gap: 8px; }
+    .cx-card { grid-template-columns: 1fr auto; column-gap: 12px; row-gap: 2px; padding: 14px 16px; }
     .cx-card__n { display: none; }
-    .cx-card__t { margin-top: 0; font-size: 1.3rem; }
-    .cx-card__d { margin-top: 2px; font-size: .86rem; }
-    .cx-card__go { margin-top: 0; font-size: 0; gap: 0; }
-    .cx-card__go :global(svg) { width: 22px; height: 22px; }
+    .cx-card__t { font-size: 1.25rem; }
+    .cx-card__d { grid-column: 1; font-size: .84rem; }
+    .cx-card__go { grid-column: 2; grid-row: 1 / 3; margin: 0; padding: 0; border: 0; }
+    .cx-card__go span { display: none; }
   }
   @media (max-width: 640px) {
     .cx { min-height: clamp(520px, calc(100svh - 150px), 680px); }
-    .cx__shade { background: linear-gradient(180deg, rgba(8,9,11,.3) 0%, rgba(8,9,11,0) 25%, rgba(8,9,11,.3) 50%, rgba(8,9,11,.92) 100%); }
+    .cx__shade { background: linear-gradient(180deg, rgba(8,9,11,.25) 0%, rgba(8,9,11,.1) 18%, rgba(8,9,11,.62) 42%, rgba(8,9,11,.9) 100%); }
     .cx__k { font-size: .7rem; letter-spacing: .14em; margin-bottom: 14px; }
     .cx__h { font-size: clamp(1.9rem, 10.2vw, 3.4rem); }
     .cx__row { margin-top: 18px; gap: 16px; }
     .cx__lede { font-size: .98rem; }
     .cx__cta { width: 100%; }
     .cx__btn { flex: 1; min-height: 50px; padding-inline: 16px; font-size: .95rem; }
-    .cx { padding-bottom: 60px; }
-    .cx-bar { margin-top: -60px; background: linear-gradient(180deg, transparent 0, transparent 60px, #fff 60px); }
     .cx__cap { display: none; }
     .cx__foot { justify-content: flex-start; padding-block: 12px 16px; }
     .cx__dots i { width: 36px; }
-    .cx-card__ic { width: 44px; height: 44px; border-radius: 12px; }
-    .cx-card__ic svg { width: 23px; height: 23px; }
+
   }
   @media (prefers-reduced-motion: reduce) {
-    .cx__img.is-on, .cx__h > span > span, .cx__k, .cx__row, .cx-bar__in li { animation: none; opacity: 1; transform: none; }
+    .cx__img.is-on, .cx__h > span > span, .cx__k, .cx__row, .cx-cards li { animation: none; opacity: 1; transform: none; }
     .cx__dots i::after { animation: none !important; }
   }
 </style>
