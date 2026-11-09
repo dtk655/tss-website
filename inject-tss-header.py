@@ -31,7 +31,7 @@ HEADER = '''<header class="tsshdr">
 <a href="/collections"><span>Products</span></a>
 <a href="/collections/equipment-rentals"><span>Equipment</span></a>
 <a href="/collections/truck-rentals"><span>Fleet</span></a>
-<a href="/pages/lane-closure"><span>Lane closures</span></a>
+<a href="/pages/lane-closure"><span>Lane Closures</span></a>
 <a href="/watercade/" aria-current="page" aria-label="WATERCADE"><span class="tsshdr-wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72"></span></a>
 <div class="tsshdr-more"><a href="#" aria-haspopup="true" aria-expanded="false" data-tssmore><span>More</span><svg class="tsshdr-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="tsshdr-moremenu"><a href="/pages/custom-stenciling"><b>Custom shop</b><small>Your colors, logo and stenciling</small></a><a href="/tools"><b>Planning tools</b><small>Work zone builder, closure plan, calculators</small></a><a href="/collections/equipment-rentals"><b>All rentals</b><small>Everything you can rent, in one place</small></a><a href="/pages/about"><b>About TSS</b><small>Since 1971, South Plainfield, NJ</small></a><a href="/pages/contact"><b>Contact</b><small>908-561-4800</small></a></div></div>
 </nav>
