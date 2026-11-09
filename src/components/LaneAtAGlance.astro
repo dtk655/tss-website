@@ -1,152 +1,176 @@
 ---
-// "At a glance" bento: one bold fact per tile; hover (desktop) or tap (touch) reveals the detail.
+// Service explorer: numbered list on the left, a large photo panel on the right that changes with the selected service.
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
-const I: Record<string, string> = {
-  cone: '<path d="M9.5 4h5l3.6 14H5.9z"/><path d="M8.4 9.5h7.2M7.2 14h9.6"/><path d="M3.5 20.5h17"/>',
-  flag: '<path d="M8.5 3.5h7l5 5v7l-5 5h-7l-5-5v-7z"/><path d="M8 12h8"/>',
-  truck: '<path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 9.5h4l3.5 3.5v3.5h-7.5"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/>',
-  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
-  event: '<path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/>',
-  siren: '<path d="M6 18v-5a6 6 0 0 1 12 0v5"/><path d="M4 21h16M4 18h16"/><path d="M12 2.5v2M4.2 6.2l1.4 1.4M19.8 6.2l-1.4 1.4"/>'
-};
 const services = [
-  { ic: 'cone', t: 'Lane and road closures', s: 'Single lane to full detour', more: ['Single, double and full closures', 'Lane shifts and detours', 'Set to MUTCD and agency drawings'], href: '/tools/lane-closure-plan?work=right', cta: 'Plan a closure' },
-  { ic: 'flag', t: 'Flagging', s: 'ATSSA-certified flaggers', more: ['One-lane, two-way traffic', 'Intersections and driveways', 'STOP/SLOW paddles and radios'], href: '/tools/lane-closure-plan?work=flagging', cta: 'Plan a flagging job' },
-  { ic: 'truck', t: 'TMA protection', s: 'Crash trucks and operators', more: ['Truck-mounted attenuators', 'Arrow boards on every truck', 'Certified TMA operators'], href: '/pages/request-a-quote?type=lane-closure', cta: 'Book a TMA' },
-  { ic: 'moon', t: 'Night and weekend', s: 'Off-peak closure windows', more: ['Light towers and lit devices', 'Overnight setup and pickup', 'Authority closure hours met'], href: '/tools/lane-closure-plan?work=right', cta: 'Plan night work' },
-  { ic: 'event', t: 'Special events', s: 'Parades, races, game days', more: ['Road closures and detours', 'Barricades and crowd control', 'Planned with towns and police'], href: '/pages/request-a-quote?type=lane-closure', cta: 'Reserve a crew' },
-  { ic: 'siren', t: 'Emergency response', s: 'For account customers', more: ['Water main breaks', 'Downed lines and incidents', 'Rapid setup, around the clock'], href: '/pages/create-c-m-account', cta: 'Open an account' }
+  { t: 'Lane and road closures', s: 'Single lane to full detour', img: CDN + 'thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg', pos: '50% 45%',
+    more: ['Single, double and full closures', 'Lane shifts and detours', 'Set to MUTCD and agency drawings'], href: '/tools/lane-closure-plan?work=right', cta: 'Plan a closure' },
+  { t: 'Flagging operations', s: 'ATSSA-certified flaggers', img: CDN + 'thumbnail_IMG_0308.jpg', pos: '50% 60%',
+    more: ['One-lane, two-way traffic', 'Intersections and driveways', 'STOP/SLOW paddles and radios'], href: '/tools/lane-closure-plan?work=flagging', cta: 'Plan a flagging job' },
+  { t: 'TMA protection', s: 'Crash trucks and certified operators', img: CDN + 'thumbnail_IMG_1133_c2839bba-db54-470f-80d2-804e82e3fd23.jpg', pos: '50% 50%',
+    more: ['Truck-mounted attenuators', 'Arrow boards on every truck', 'Certified TMA operators'], href: '/pages/request-a-quote?type=lane-closure', cta: 'Book a TMA' },
+  { t: 'Night and weekend work', s: 'Off-peak closure windows', img: '/fleet/tma-dusk.jpg', pos: '50% 55%',
+    more: ['Light towers and lit devices', 'Overnight setup and pickup', 'Authority closure hours met'], href: '/tools/lane-closure-plan?work=right', cta: 'Plan night work' },
+  { t: 'Special events', s: 'Parades, races and game days', img: CDN + 'Water-Filled-Barricades-In-Use-3-1.png', pos: '50% 50%',
+    more: ['Road closures and detours', 'Barricades and crowd control', 'Planned with towns and police'], href: '/pages/request-a-quote?type=lane-closure', cta: 'Reserve a crew' },
+  { t: 'Emergency response', s: 'For account customers', img: CDN + 'tss.jpg', pos: '50% 55%',
+    more: ['Water main breaks', 'Downed lines and incidents', 'Rapid setup, around the clock'], href: '/pages/create-c-m-account', cta: 'Open an account' }
 ];
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
-<section class="lg" data-lg>
+<section class="sx" data-sx>
   <div class="wrap">
-    <div class="lg__head">
-      <div>
-        <p class="lg__kicker">What our crews handle</p>
-        <h2><span class="lg__l">Every kind of closure.</span> <span class="lg__l">One call.</span></h2>
-      </div>
-      <p class="lg__hint"><span class="lg__hint-d">Hover any tile for the details</span><span class="lg__hint-m">Tap any tile for the details</span></p>
+    <div class="sx__head">
+      <p class="sx__k"><span></span>What our crews handle</p>
+      <h2>Every kind of closure. <em>One call.</em></h2>
     </div>
 
-    <div class="lg__grid">
-      {services.map((s, i) => (
-        <article class="lg__t lg__t--svc" tabindex="0" data-t style={`--d:${i}`}>
-          <div class="lg__front">
-            <span class="lg__ic" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={I[s.ic]} /></span>
-            <h3>{s.t}</h3>
-            <p class="lg__s">{s.s}</p>
-            <span class="lg__plus" aria-hidden="true">+</span>
-          </div>
-          <div class="lg__more">
-            <p class="lg__more-t">{s.t}</p>
-            <ul class="lg__list">{s.more.map((m) => <li><i set:html={CHK} />{m}</li>)}</ul>
-            <a href={s.href} class="lg__cta">{s.cta}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
-          </div>
-        </article>
-      ))}
+    <div class="sx__grid">
+      <ol class="sx__list" role="tablist" aria-label="Services">
+        {services.map((s, i) => (
+          <li>
+            <button type="button" role="tab" class:list={['sx__item', i === 0 && 'is-on']} aria-selected={i === 0 ? 'true' : 'false'} data-i={i} style={`--d:${i}`}>
+              <span class="sx__n">0{i + 1}</span>
+              <span class="sx__tt"><b>{s.t}</b><small>{s.s}</small></span>
+              <span class="sx__arr" set:html={ARROW} />
+              <i class="sx__bar" aria-hidden="true"></i>
+            </button>
+          </li>
+        ))}
+      </ol>
+
+      <div class="sx__stage">
+        {services.map((s, i) => (
+          <article class:list={['sx__panel', i === 0 && 'is-on']} data-p={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+            <img src={s.img} alt="" style={`object-position:${s.pos}`} loading={i === 0 ? 'eager' : 'lazy'} />
+            <span class="sx__shade" aria-hidden="true"></span>
+            <div class="sx__card">
+              <p class="sx__cn">0{i + 1} / 0{services.length}</p>
+              <h3>{s.t}</h3>
+              <ul>{s.more.map((m, k) => <li style={`--k:${k}`}><i set:html={CHK} />{m}</li>)}</ul>
+              <a href={s.href} class="sx__cta" tabindex={i === 0 ? 0 : -1}>{s.cta}<Fragment set:html={ARROW} /></a>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  .lg { padding: clamp(52px, 6.5vw, 92px) 0; background: var(--haze); }
-  .lg__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; margin-bottom: clamp(22px, 3vw, 34px); }
-  .lg__kicker { margin: 0 0 8px; color: var(--red); font-size: .84rem; letter-spacing: .12em; text-transform: uppercase; font-variation-settings: 'wght' 740; }
-  .lg h2 { margin: 0; max-width: 20ch; font-size: clamp(1.9rem, 3.6vw, 3.1rem); line-height: 1.04; letter-spacing: -.03em; font-variation-settings: 'wght' 800; text-wrap: balance; }
-  .lg__hint { margin: 0; display: inline-flex; align-items: center; gap: 0; padding: 8px 14px 7px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: .86rem; color: var(--steel); }
-  .lg__hint::before { content: ''; margin-right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: lgPulse 1.6s infinite; }
-  @keyframes lgPulse { 50% { opacity: .3; } }
-  .lg__hint-m { display: none; }
-  @media (hover: none) { .lg__hint-d { display: none; } .lg__hint-m { display: inline; } }
+  .sx { padding: clamp(56px, 7vw, 104px) 0; background: #fff; }
+  .sx__head { margin-bottom: clamp(28px, 3.4vw, 48px); }
+  .sx__k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--steel); }
+  .sx__k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .sx h2 { margin: 0; font-size: clamp(2.2rem, 4.6vw, 4.2rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; }
+  .sx h2 em { font-style: normal; color: var(--red); }
 
-  .lg__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .sx__grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr); gap: clamp(24px, 3.4vw, 56px); align-items: stretch; }
+  .sx__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .sx__list li { border-bottom: 1px solid var(--line); display: flex; }
+  @media (min-width: 1001px) { .sx__list { display: flex; flex-direction: column; } .sx__list li { flex: 1; } .sx__item { height: 100%; } }
+  .sx__item { all: unset; box-sizing: border-box; position: relative; cursor: pointer; width: 100%; display: grid; grid-template-columns: 42px 1fr 24px; align-items: center; gap: 10px; padding: clamp(16px, 1.6vw, 22px) 4px; opacity: 0; transform: translateY(14px); transition: opacity .6s, transform .6s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--d) * 70ms); }
+  .sx.is-in .sx__item { opacity: 1; transform: none; }
+  .sx__item:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; border-radius: 8px; }
+  .sx__n { font-size: .8rem; letter-spacing: .1em; font-variation-settings: 'wght' 720; color: #b8bec5; transition: color .3s; }
+  .sx__tt b { display: block; font-size: clamp(1.15rem, 1.6vw, 1.5rem); line-height: 1.15; letter-spacing: -.02em; font-variation-settings: 'wght' 700; color: #8a939c; transition: color .3s, transform .45s cubic-bezier(.2,.8,.2,1); }
+  .sx__tt small { display: block; max-height: 0; overflow: hidden; opacity: 0; margin-top: 0; font-size: .9rem; color: var(--steel); transition: max-height .45s cubic-bezier(.2,.8,.2,1), opacity .35s, margin .35s; }
+  .sx__arr { color: var(--red); opacity: 0; transform: translateX(-8px); transition: opacity .3s, transform .35s cubic-bezier(.2,.8,.2,1); }
+  .sx__arr :global(svg) { width: 22px; height: 22px; display: block; }
+  .sx__item:hover .sx__tt b { color: var(--ink); }
+  .sx__item.is-on .sx__n { color: var(--red); }
+  .sx__item.is-on .sx__tt b { color: var(--ink); transform: translateX(4px); }
+  .sx__item.is-on .sx__tt small { max-height: 2em; opacity: 1; margin-top: 4px; }
+  .sx__item.is-on .sx__arr { opacity: 1; transform: none; }
+  .sx__bar { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; }
+  .sx__item.is-on .sx__bar { animation: sxBar var(--sx-t, 5200ms) linear forwards; }
+  .sx.is-paused .sx__item.is-on .sx__bar { animation: none; transform: scaleX(1); }
+  @keyframes sxBar { to { transform: scaleX(1); } }
 
-  .lg__t { position: relative; overflow: hidden; border-radius: 22px; background: #fff; border: 1px solid var(--line); min-height: 196px; outline: none; cursor: pointer; opacity: 0; transform: translateY(22px); transition: opacity .6s, transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s; transition-delay: calc(var(--d) * 70ms); }
-  .lg.is-in .lg__t { opacity: 1; transform: none; }
-  .lg__t:hover, .lg__t:focus-visible, .lg__t.is-open { box-shadow: 0 24px 44px -26px rgba(20,23,26,.45); border-color: var(--line-dark); transition-delay: 0s; }
-  .lg__t:focus-visible { box-shadow: 0 0 0 3px rgba(182,6,6,.3); }
-  .lg__front { position: relative; height: 100%; box-sizing: border-box; padding: 22px; display: flex; flex-direction: column; }
+  .sx__stage { position: relative; min-height: clamp(440px, 40vw, 600px); border-radius: 24px; overflow: hidden; background: #111; isolation: isolate; opacity: 0; transform: translateY(20px) scale(.985); transition: opacity .8s .15s, transform .9s .15s cubic-bezier(.2,.8,.2,1); }
+  .sx.is-in .sx__stage { opacity: 1; transform: none; }
+  .sx__panel { position: absolute; inset: 0; visibility: hidden; }
+  .sx__panel.is-on { visibility: visible; z-index: 1; }
+  .sx__panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; clip-path: inset(0 0 0 100%); transform: scale(1.12); transition: clip-path .9s cubic-bezier(.7,0,.2,1), transform 6s ease-out; }
+  .sx__panel.is-on img { clip-path: inset(0 0 0 0); transform: scale(1); }
+  .sx__panel.is-out { visibility: visible; z-index: 0; }
+  .sx__panel.is-out img { clip-path: inset(0 0 0 0); transform: scale(1.03); }
+  .sx__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,9,11,0) 35%, rgba(8,9,11,.78) 100%); }
+  .sx__card { position: absolute; left: clamp(16px, 2vw, 28px); right: clamp(16px, 2vw, 28px); bottom: clamp(16px, 2vw, 28px); max-width: 460px; padding: clamp(20px, 2vw, 28px); border-radius: 18px; color: #fff; background: rgba(12,13,15,.5); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2); opacity: 0; transform: translateY(18px); transition: opacity .5s, transform .6s cubic-bezier(.2,.8,.2,1); }
+  .sx__panel.is-on .sx__card { opacity: 1; transform: none; transition-delay: .45s; }
+  .sx__cn { margin: 0 0 8px; font-size: .74rem; letter-spacing: .16em; font-variation-settings: 'wght' 700; color: rgba(255,255,255,.6); }
+  .sx__card h3 { margin: 0 0 14px; color: #fff; font-size: clamp(1.4rem, 2vw, 1.9rem); line-height: 1.05; letter-spacing: -.025em; font-variation-settings: 'wght' 780; }
+  .sx__card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .sx__card li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: center; font-size: .97rem; color: rgba(255,255,255,.9); opacity: 0; transform: translateX(-8px); transition: opacity .4s, transform .5s cubic-bezier(.2,.8,.2,1); }
+  .sx__panel.is-on .sx__card li { opacity: 1; transform: none; transition-delay: calc(.65s + var(--k) * 90ms); }
+  .sx__card li i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--red); }
+  .sx__card li i :global(svg) { width: 12px; height: 12px; }
+  .sx__cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; padding: 12px 20px 11px; border-radius: 999px; background: #fff; color: var(--ink); font-size: .96rem; font-variation-settings: 'wght' 700; text-decoration: none; transition: background .2s, color .2s; }
+  .sx__cta :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .sx__cta:hover { background: var(--red); color: #fff; }
+  .sx__cta:hover :global(svg) { transform: translateX(3px); }
 
-  /* detail layer slides up over the tile */
-  .lg__more { position: absolute; inset: 0; z-index: 2; padding: 22px; display: flex; flex-direction: column; justify-content: center; gap: 12px; background: radial-gradient(120% 150% at 100% 0%, #c40a0a, #8a0404); color: #fff; transform: translateY(101%); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
-  .lg__t.is-open .lg__more { transform: none; }
-  @media (hover: hover) { .lg__t:hover .lg__more, .lg__t:focus-within .lg__more { transform: none; } }
-  .lg__more-t { margin: 0; font-size: 1.05rem; font-variation-settings: 'wght' 760; }
-  .lg__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .lg__list li { display: grid; grid-template-columns: 22px 1fr; gap: 9px; align-items: start; font-size: .93rem; line-height: 1.35; }
-  .lg__list i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.18); }
-  .lg__list i :global(svg) { width: 13px; height: 13px; }
-  .lg__list--2 { grid-template-columns: 1fr 1fr; column-gap: 18px; }
-  .lg__cta { display: inline-flex; align-items: center; gap: 6px; width: fit-content; margin-top: 4px; padding: 9px 14px; border-radius: 10px; background: #fff; color: var(--red); font-size: .9rem; font-variation-settings: 'wght' 720; text-decoration: none; }
-  .lg__cta svg { width: 16px; height: 16px; }
-
-  /* service tiles */
-  .lg__ic { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 15px; background: var(--red-tint); color: var(--red); transition: transform .4s cubic-bezier(.2,.8,.2,1.5), background .3s, color .3s; }
-  .lg__ic svg { width: 27px; height: 27px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-  .lg__t--svc h3 { margin: auto 0 0; padding-top: 18px; font-size: 1.18rem; line-height: 1.15; letter-spacing: -.01em; font-variation-settings: 'wght' 760; }
-  .lg__s { margin: 4px 0 0; font-size: .88rem; color: var(--steel); }
-  .lg__plus { position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line-dark); color: var(--steel); font-size: 1.1rem; line-height: 1; transition: transform .3s; }
-  .lg__t:hover .lg__ic, .lg__t.is-open .lg__ic { transform: rotate(-8deg) scale(1.06); background: var(--red); color: #fff; }
-  .lg__t.is-open .lg__plus { transform: rotate(45deg); }
-
-
-  /* cert tile */
-
-  @media (max-width: 1100px) {
-    .lg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 1000px) {
+    .sx__grid { grid-template-columns: 1fr; }
+    .sx__stage { order: -1; min-height: 420px; }
   }
   @media (max-width: 640px) {
-    .lg__head { display: block; text-align: center; }
-    .lg h2 { max-width: none; margin-inline: auto; font-size: 2rem; line-height: 1.04; }
-    .lg h2 .lg__l { display: block; }
-    .lg__hint { display: flex; justify-content: center; width: 100%; box-sizing: border-box; }
-    .lg__hint { margin-top: 14px; }
-    .lg__grid { grid-template-columns: 1fr; gap: 10px; }
-    .lg__t { min-height: 0; border-radius: 18px; }
-    .lg__front { padding: 16px; height: auto; }
-    .lg__t--svc .lg__front { display: grid; grid-template-columns: 44px 1fr 26px; grid-template-rows: auto auto; column-gap: 12px; align-items: center; padding: 13px 14px; }
-    .lg__t--svc .lg__ic { grid-row: 1 / 3; width: 44px; height: 44px; border-radius: 13px; }
-    .lg__ic svg { width: 23px; height: 23px; }
-    .lg__t--svc h3 { grid-column: 2; margin: 0; padding: 0; font-size: 1.02rem; }
-    .lg__s { grid-column: 2; margin-top: 2px; font-size: .82rem; }
-    .lg__plus { position: static; grid-column: 3; grid-row: 1 / 3; width: 26px; height: 26px; }
-    /* details open inline under the tile on phones */
-    .lg__more { position: static; transform: none; display: none; padding: 14px 16px 16px; border-radius: 0 0 18px 18px; justify-content: flex-start; }
-    .lg__t.is-open .lg__more { display: flex; animation: lgDrop .35s cubic-bezier(.2,.8,.2,1); }
-    .lg__more-t { display: none; }
-    .lg__list li { font-size: .88rem; }
-    .lg__list--2 { grid-template-columns: 1fr; }
-    .lg__cta { font-size: .86rem; }
+    .sx__head { text-align: center; }
+    .sx__k { justify-content: center; }
+    .sx h2 { font-size: 2rem; }
+    .sx h2 em { display: block; }
+    .sx__stage { min-height: 380px; border-radius: 18px; }
+    .sx__card { padding: 16px; border-radius: 14px; }
+    .sx__card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+    .sx__card li { font-size: .88rem; }
+    .sx__cta { margin-top: 14px; font-size: .9rem; }
+    .sx__item { grid-template-columns: 32px 1fr 20px; padding: 14px 2px; }
+    .sx__tt b { font-size: 1.08rem; }
   }
-  @keyframes lgDrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .lg__t { opacity: 1; transform: none; transition: none; }
+    .sx__item, .sx__stage, .sx__card, .sx__card li { opacity: 1; transform: none; transition: none; }
+    .sx__panel img { transition: none; }
+    .sx__bar { animation: none !important; }
   }
 </style>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-lg]').forEach((root) => {
-    const tiles = [...root.querySelectorAll<HTMLElement>('[data-t]')];
-    const touch = matchMedia('(hover: none)').matches;
-    // Touch: tap a tile to open its details, tap again (or another tile) to close.
-    root.addEventListener('click', (e) => {
-      const el = e.target as Element;
-      if (el.closest('a')) return;
-      const t = el.closest<HTMLElement>('[data-t]');
-      if (!t || !t.querySelector('.lg__more')) return;
-      const open = !t.classList.contains('is-open');
-      tiles.forEach((x) => x.classList.remove('is-open'));
-      if (open) t.classList.add('is-open');
-      if (!open && !touch) (document.activeElement as HTMLElement)?.blur();
+  document.querySelectorAll<HTMLElement>('[data-sx]').forEach((root) => {
+    const items = [...root.querySelectorAll<HTMLElement>('[data-i]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-p]')];
+    const T = 5200;
+    root.style.setProperty('--sx-t', T + 'ms');
+    let i = 0, timer = 0, resume = 0, visible = false;
+    const show = (n: number) => {
+      if (n === i) return;
+      panels.forEach((p) => p.classList.remove('is-out'));
+      panels[i].classList.add('is-out'); panels[i].classList.remove('is-on');
+      panels[i].setAttribute('aria-hidden', 'true'); panels[i].querySelector('a')?.setAttribute('tabindex', '-1');
+      const old = panels[i];
+      setTimeout(() => old.classList.remove('is-out'), 950);
+      i = n;
+      panels[i].classList.add('is-on'); panels[i].setAttribute('aria-hidden', 'false'); panels[i].querySelector('a')?.setAttribute('tabindex', '0');
+      items.forEach((b, k) => { b.classList.toggle('is-on', k === i); b.setAttribute('aria-selected', String(k === i)); });
+    };
+    const start = () => { if (!timer && visible && !root.classList.contains('is-paused')) timer = window.setInterval(() => show((i + 1) % items.length), T); };
+    const stop = () => { clearInterval(timer); timer = 0; };
+    const pick = (n: number) => {
+      stop(); root.classList.add('is-paused'); show(n);
+      clearTimeout(resume); resume = window.setTimeout(() => { root.classList.remove('is-paused'); const b = items[i].querySelector<HTMLElement>('.sx__bar'); if (b) { b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; } start(); }, 12000);
+    };
+    items.forEach((b, k) => {
+      b.addEventListener('click', () => pick(k));
+      b.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover) and (min-width: 1001px)').matches) pick(k); });
     });
     root.addEventListener('keydown', (e) => {
-      const t = (e.target as Element).closest?.<HTMLElement>('[data-t]');
-      if (t && (e.key === 'Enter' || e.key === ' ') && e.target === t) { e.preventDefault(); t.click(); }
-      if (e.key === 'Escape') tiles.forEach((x) => x.classList.remove('is-open'));
+      const k = items.indexOf(document.activeElement as HTMLElement);
+      if (k < 0) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); const n = (k + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length; items[n].focus(); pick(n); }
     });
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { root.classList.add('is-in'); return; }
-    const io = new IntersectionObserver(([en]) => { if (!en.isIntersecting) return; io.disconnect(); root.classList.add('is-in'); }, { threshold: 0.15 });
-    io.observe(root);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    new IntersectionObserver(([en]) => {
+      visible = en.isIntersecting;
+      if (visible) { root.classList.add('is-in'); if (!reduce) start(); } else stop();
+    }, { threshold: 0.25 }).observe(root);
   });
 </script>
