@@ -7,9 +7,12 @@ const shots = [
   { img: CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg', pos: '50% 50%', cap: 'Reflective cones, in stock and ready to ship' }
 ];
 const lines = [
-  { t: 'Products', d: 'Cones, barriers, signs and drums. Shipped nationwide.', href: '/collections' },
-  { t: 'Rentals', d: 'TMAs, message boards and more. NJ, NY, PA and CT.', href: '/collections/equipment-rentals' },
-  { t: 'Lane closures', d: 'Certified, experienced crews. NJ, NY, PA, CT and DE.', href: '/pages/lane-closure' }
+  { t: 'Products', d: 'Cones, barriers, signs and drums. Shipped nationwide.', href: '/collections', cta: 'Shop products',
+    ic: '<path d="M9.5 4h5l3.6 14H5.9z"/><path d="M8.4 9.5h7.2M7.2 14h9.6"/><path d="M3.5 20.5h17"/>' },
+  { t: 'Rentals', d: 'TMAs, message boards and more. NJ, NY, PA and CT.', href: '/collections/equipment-rentals', cta: 'See rentals',
+    ic: '<path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 9.5h4l3.5 3.5v3.5h-7.5"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/>' },
+  { t: 'Lane closures', d: 'Certified, experienced crews. NJ, NY, PA, CT and DE.', href: '/pages/lane-closure', cta: 'Book a crew',
+    ic: '<path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M8.6 12l2.3 2.3 4.5-4.6"/>' }
 ];
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
@@ -43,8 +46,17 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
 
 <nav class="cx-bar" aria-label="What we do">
   <ul class="wrap cx-bar__in">
-    {lines.map((l) => (
-      <li><a href={l.href}><span><b>{l.t}</b><small>{l.d}</small></span><Fragment set:html={ARROW} /></a></li>
+    {lines.map((l, i) => (
+      <li style={`--i:${i}`}>
+        <a href={l.href} class="cx-card">
+          <span class="cx-card__ic" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={l.ic} /></span>
+          <span class="cx-card__n">0{i + 1}</span>
+          <b class="cx-card__t">{l.t}</b>
+          <span class="cx-card__d">{l.d}</span>
+          <span class="cx-card__go">{l.cta}<Fragment set:html={ARROW} /></span>
+          <i class="cx-card__line" aria-hidden="true"></i>
+        </a>
+      </li>
     ))}
   </ul>
 </nav>
@@ -68,10 +80,10 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   @keyframes cxRise { to { transform: none; } }
   @keyframes cxFade { to { opacity: 1; } }
   .cx__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 40px; margin-top: clamp(22px, 2.6vw, 34px); opacity: 0; animation: cxFade .8s .55s ease forwards; }
-  .cx__lede { margin: 0; font-size: clamp(1.02rem, 1.3vw, 1.25rem); color: rgba(255,255,255,.82); }
+  .cx__lede { margin: 0; font-size: clamp(1.1rem, 1.5vw, 1.45rem); color: rgba(255,255,255,.82); }
   .cx__cta { display: flex; flex-wrap: wrap; gap: 10px; }
-  .cx__btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 14px 26px 13px; border-radius: 999px; font-size: 1rem; font-variation-settings: 'wght' 680; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
-  .cx__btn :global(svg) { flex: none; width: 17px; height: 17px; transition: transform .2s; }
+  .cx__btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 60px; padding: 16px 32px 15px; border-radius: 999px; font-size: 1.1rem; font-variation-settings: 'wght' 680; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+  .cx__btn :global(svg) { flex: none; width: 19px; height: 19px; transition: transform .2s; }
   .cx__btn:hover :global(svg) { transform: translateX(3px); }
   .cx__btn--solid { background: var(--red); color: #fff; }
   .cx__btn--solid:hover { background: #d10a0a; }
@@ -91,21 +103,38 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .cx__dots button:focus-visible i { outline: 2px solid #fff; outline-offset: 3px; }
   @keyframes cxBar { to { width: 100%; } }
 
-  .cx-bar { background: #0b0c0e; color: #fff; border-top: 1px solid rgba(255,255,255,.08); }
-  .cx-bar__in { list-style: none; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .cx-bar__in li + li { border-left: 1px solid rgba(255,255,255,.1); }
-  .cx-bar a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px clamp(16px, 2vw, 30px); color: inherit; text-decoration: none; transition: background .25s; }
-  .cx-bar li:first-child a { padding-left: 0; }
-  .cx-bar a:hover { background: rgba(255,255,255,.04); }
-  .cx-bar b { display: block; font-size: 1.2rem; letter-spacing: -.015em; font-variation-settings: 'wght' 720; }
-  .cx-bar small { display: block; margin-top: 3px; font-size: .86rem; color: rgba(255,255,255,.6); }
-  .cx-bar :global(svg) { flex: none; width: 20px; height: 20px; color: var(--red); transition: transform .25s; }
-  .cx-bar a:hover :global(svg) { transform: translateX(4px); }
+  .cx { padding-bottom: 96px; }
+  .cx::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 150px; z-index: -1; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 55%, #fff 100%); pointer-events: none; }
+  .cx__foot { border-top-color: rgba(255,255,255,.2); }
+  .cx-bar { position: relative; z-index: 2; margin-top: -96px; padding-bottom: clamp(28px, 3vw, 44px); background: linear-gradient(180deg, transparent 0, transparent 96px, #fff 96px); }
+  .cx-bar__in { list-style: none; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
+  .cx-bar__in li { opacity: 0; transform: translateY(30px); animation: cxCardIn .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(.7s + var(--i) * .13s); }
+  @keyframes cxCardIn { to { opacity: 1; transform: none; } }
+  .cx-card { position: relative; overflow: hidden; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ic n" "t t" "d d" "go go"; align-items: center; column-gap: 12px; height: 100%; box-sizing: border-box; padding: clamp(20px, 2vw, 28px); border-radius: 20px; background: #fff; color: var(--ink); text-decoration: none; border: 1px solid var(--line); box-shadow: 0 30px 60px -34px rgba(10,12,14,.55); transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s; }
+  .cx-card:hover { transform: translateY(-6px); border-color: rgba(182,6,6,.35); box-shadow: 0 36px 70px -34px rgba(182,6,6,.45); }
+  .cx-card:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+  .cx-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 90% at 100% 0%, rgba(182,6,6,.08), transparent 60%); opacity: 0; transition: opacity .35s; }
+  .cx-card:hover::before { opacity: 1; }
+  .cx-card__ic { grid-area: ic; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--red); color: #fff; box-shadow: 0 12px 22px -12px rgba(182,6,6,.8); transition: transform .45s cubic-bezier(.2,.8,.2,1.5); }
+  .cx-card__ic svg { width: 27px; height: 27px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .cx-card:hover .cx-card__ic { transform: rotate(-8deg) scale(1.08); }
+  .cx-card__n { grid-area: n; justify-self: end; align-self: start; font-size: .82rem; font-variation-settings: 'wght' 780; letter-spacing: .08em; color: #c3c9cf; }
+  .cx-card__t { grid-area: t; margin-top: 18px; font-size: clamp(1.55rem, 2.1vw, 2.05rem); line-height: 1.05; letter-spacing: -.03em; font-variation-settings: 'wght' 820; }
+  .cx-card__d { grid-area: d; margin-top: 8px; font-size: .96rem; line-height: 1.45; color: var(--steel); }
+  .cx-card__go { grid-area: go; display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; color: var(--red); font-size: 1rem; font-variation-settings: 'wght' 740; }
+  .cx-card__go :global(svg) { width: 18px; height: 18px; transition: transform .25s; }
+  .cx-card:hover .cx-card__go :global(svg) { transform: translateX(5px); }
+  .cx-card__line { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+  .cx-card:hover .cx-card__line { transform: scaleX(1); }
 
   @media (max-width: 900px) {
-    .cx-bar__in { grid-template-columns: 1fr; }
-    .cx-bar__in li + li { border-left: 0; border-top: 1px solid rgba(255,255,255,.1); }
-    .cx-bar a, .cx-bar li:first-child a { padding: 18px 0; }
+    .cx-bar__in { grid-template-columns: 1fr; gap: 10px; }
+    .cx-card { grid-template-columns: auto 1fr auto; grid-template-areas: "ic t go" "ic d go"; column-gap: 14px; padding: 16px 18px; }
+    .cx-card__n { display: none; }
+    .cx-card__t { margin-top: 0; font-size: 1.3rem; }
+    .cx-card__d { margin-top: 2px; font-size: .86rem; }
+    .cx-card__go { margin-top: 0; font-size: 0; gap: 0; }
+    .cx-card__go :global(svg) { width: 22px; height: 22px; }
   }
   @media (max-width: 640px) {
     .cx { min-height: clamp(520px, calc(100svh - 150px), 680px); }
@@ -116,14 +145,16 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     .cx__lede { font-size: .98rem; }
     .cx__cta { width: 100%; }
     .cx__btn { flex: 1; min-height: 50px; padding-inline: 16px; font-size: .95rem; }
+    .cx { padding-bottom: 60px; }
+    .cx-bar { margin-top: -60px; background: linear-gradient(180deg, transparent 0, transparent 60px, #fff 60px); }
     .cx__cap { display: none; }
     .cx__foot { justify-content: flex-start; padding-block: 12px 16px; }
     .cx__dots i { width: 36px; }
-    .cx-bar b { font-size: 1.08rem; }
-    .cx-bar small { font-size: .8rem; }
+    .cx-card__ic { width: 44px; height: 44px; border-radius: 12px; }
+    .cx-card__ic svg { width: 23px; height: 23px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .cx__img.is-on, .cx__h > span > span, .cx__k, .cx__row { animation: none; opacity: 1; transform: none; }
+    .cx__img.is-on, .cx__h > span > span, .cx__k, .cx__row, .cx-bar__in li { animation: none; opacity: 1; transform: none; }
     .cx__dots i::after { animation: none !important; }
   }
 </style>
