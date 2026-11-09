@@ -334,6 +334,29 @@ const photos = [
   .qs-pr__varl { display: grid; gap: 4px; }
   .qs-pr__varl span { font-size: .76rem; color: var(--steel); font-variation-settings: 'wght' 600; }
   .qs-pr__var { min-height: 42px; padding: 8px 36px 8px 12px; font-size: .92rem; border-radius: 10px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9.5l6 6 6-6' fill='none' stroke='%2314171a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center / 16px; cursor: pointer; }
+  .qs-ogs { display: grid; gap: 10px; }
+  .qs-og { display: grid; gap: 6px; }
+  .qs-og__l { font-size: .78rem; color: var(--steel); font-variation-settings: 'wght' 620; }
+  .qs-og__l b { color: var(--ink); font-variation-settings: 'wght' 700; }
+  .qs-og__v { display: flex; flex-wrap: wrap; gap: 6px; }
+  .qs-og__v.is-sw { gap: 8px; }
+  .qs-sw { position: relative; width: 30px; height: 30px; padding: 0; border-radius: 50%; border: 0; background: var(--sw); box-shadow: inset 0 0 0 1px rgba(20, 23, 26, .18); cursor: pointer; transition: transform .2s cubic-bezier(.3, 1.6, .5, 1); }
+  .qs-sw::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid transparent; transition: border-color .2s; }
+  .qs-sw:hover { transform: scale(1.1); }
+  .qs-sw.is-on::after { border-color: var(--ink); }
+  .qs-sw.is-na { opacity: .35; }
+  .qs-sw:focus-visible { outline: none; }
+  .qs-sw:focus-visible::after { border-color: var(--red); }
+  .qs-ob { min-height: 34px; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--line-dark); background: #fff; font: inherit; font-size: .84rem; color: var(--ink-2); font-variation-settings: 'wght' 580; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+  .qs-ob:hover { border-color: var(--ink-2); }
+  .qs-ob.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .qs-ob.is-na { border-style: dashed; color: #9aa2a9; }
+  .qs-pr__img img.is-swap { animation: qsSwap .45s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes qsSwap { from { opacity: 0; transform: scale(.82) rotate(-4deg); } to { opacity: 1; transform: none; } }
+  .qs-vchip img { width: 18px; height: 18px; object-fit: contain; margin: -2px 0 -2px -4px; }
+  .qs-pr { align-items: start; }
+  .qs-pr__img { align-self: start; }
+  .qs-pr__ctl { align-self: center; }
   .qs-vchips { display: flex; flex-wrap: wrap; gap: 6px; }
   .qs-vchip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line-dark); background: #fff; font: inherit; font-size: .8rem; color: var(--ink-2); cursor: pointer; animation: qsPop .3s; }
   .qs-vchip b { color: var(--red); font-variation-settings: 'wght' 760; }
@@ -992,15 +1015,39 @@ const photos = [
       const cur = rowVar[h] ?? (mine[0]?.v || p.v[0] || '');
       rowVar[h] = cur;
       const q = state.job.sel[h + '::' + cur]?.q || 0;
-      const chips = p.v.length > 1 ? mine.map((e) => `<button type="button" class="qs-vchip${e.v === cur ? ' is-cur' : ''}" data-qs-vsel="${esc(e.v)}">${esc(e.v)}<b>&times;${e.q}</b></button>`).join('') : '';
-      const im = CUT[h] || p.i;
+      const chips = p.v.length > 1 ? mine.map((e) => `<button type="button" class="qs-vchip${e.v === cur ? ' is-cur' : ''}" data-qs-vsel="${esc(e.v)}">${p.vi ? `<img src="${varImg(h, e.v)}" alt="">` : ''}${esc(e.v)}<b>&times;${e.q}</b></button>`).join('') : '';
+      const im = varImg(h, cur);
+      const swap = lastImg[h] && lastImg[h] !== im; lastImg[h] = im;
       return `<div class="qs-pr${mine.length ? ' is-on' : ''}" data-qs-pr="${esc(h)}" data-t="${esc(p.t.toLowerCase())}">
-        <span class="qs-pr__img">${im ? `<img src="${im}" alt="" loading="lazy">` : ''}</span>
+        <span class="qs-pr__img">${im ? `<img src="${im}" alt=""${swap ? ' class="is-swap"' : ' loading="lazy"'}>` : ''}</span>
         <div class="qs-pr__main"><b>${esc(p.t)}</b>
-          ${p.v.length > 1 ? `<label class="qs-pr__varl"><span>${p.v.length} options</span><select class="qs-input qs-pr__var" data-qs-var aria-label="Option for ${esc(p.t)}">${p.v.map((v) => `<option${v === cur ? ' selected' : ''}>${esc(v)}</option>`).join('')}</select></label>` : ''}
+          ${p.v.length > 1 && p.o ? optsHtml(p, cur) : ''}
+          ${p.v.length > 1 && !p.o ? `<label class="qs-pr__varl"><span>${p.v.length} options</span><select class="qs-input qs-pr__var" data-qs-var aria-label="Option for ${esc(p.t)}">${p.v.map((v) => `<option${v === cur ? ' selected' : ''}>${esc(v)}</option>`).join('')}</select></label>` : ''}
           ${chips ? `<div class="qs-vchips">${chips}</div>` : ''}
         </div>
         <div class="qs-pr__ctl">${q ? stepper(p.t, q) : addBtn('Add', 'data-qs-padd')}</div></div>`;
+    }
+    const lastImg = {};
+    const SWATCH = { orange: '#f26a1b', 'safety orange': '#f26a1b', lime: '#b8e02a', 'lime green': '#b8e02a', 'dark green': '#1f5e2e', green: '#2e7d32', 'navy blue': '#1f2f5c', navy: '#1f2f5c', blue: '#1e5bd8', 'sky blue': '#6ec6f0', 'light blue': '#6ec6f0', pink: '#f48fb1', red: '#c62828', white: '#ffffff', yellow: '#f5d000', black: '#16181b', silver: '#c4c8cc', gray: '#9aa0a6', grey: '#9aa0a6', purple: '#7b3fb0', brown: '#7a4b2a' };
+    const swatch = (v) => SWATCH[v.toLowerCase()] || (CSS.supports('color', v) ? v : null);
+    const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+    const varIdx = (p, v) => Math.max(0, p.v.indexOf(v));
+    const varImg = (h, v) => { const p = CAT.prods[h]; return (p.vi && p.vi[varIdx(p, v)]) || CUT[h] || p.i; };
+    function optsHtml(p, curV) {
+      const cur = p.vo[varIdx(p, curV)];
+      return `<div class="qs-ogs">${p.o.map(([name, vals], k) => {
+        if (vals.length < 2) return `<div class="qs-og"><span class="qs-og__l">${esc(cap(name))}: <b>${esc(vals[0])}</b></span></div>`;
+        const isColor = /colou?r/i.test(name) && vals.filter((v) => swatch(v)).length >= vals.length / 2;
+        const avail = (val) => p.vo.some((vo) => vo[k] === val && vo.every((x, j) => j === k || x === cur[j]));
+        const btns = vals.map((val) => {
+          const on = cur[k] === val, na = !avail(val);
+          const a = `data-qs-opt="${k}" data-val="${esc(val)}" aria-pressed="${on}"`;
+          return isColor
+            ? `<button type="button" class="qs-sw${on ? ' is-on' : ''}${na ? ' is-na' : ''}" style="--sw:${swatch(val) || '#d9dcdf'}" ${a} title="${esc(val)}" aria-label="${esc(cap(name))}: ${esc(val)}"></button>`
+            : `<button type="button" class="qs-ob${on ? ' is-on' : ''}${na ? ' is-na' : ''}" ${a}>${esc(val)}</button>`;
+        }).join('');
+        return `<div class="qs-og"><span class="qs-og__l">${esc(cap(name))}${isColor ? `: <b>${esc(cur[k])}</b>` : ''}</span><div class="qs-og__v${isColor ? ' is-sw' : ''}">${btns}</div></div>`;
+      }).join('')}</div>`;
     }
     function rerow(h, focusSel) {
       const row = mList.querySelector(rowSel(h));
@@ -1013,7 +1060,7 @@ const photos = [
     }
     function setQ(h, q) {
       const p = CAT.prods[h], v = rowVar[h] || '';
-      setSel(h + '::' + v, { h, v, t: p.t, i: CUT[h] || p.i, c: mctx.cat || 'equip' }, q);
+      setSel(h + '::' + v, { h, v, t: p.t, i: varImg(h, v), c: mctx.cat || 'equip' }, q);
     }
     function updateCount() {
       const ls = lines(inCtx), units = ls.reduce((a, e) => a + e.q, 0);
@@ -1053,7 +1100,15 @@ const photos = [
       if (e.target.closest('[data-qs-padd]')) { setQ(h, 1); rerow(h, '[data-qs-qty]'); mList.querySelector(rowSel(h) + ' [data-qs-qty]')?.select(); }
       else if (e.target.closest('[data-qs-inc]')) { setQ(h, cur + 1); rerow(h, '[data-qs-inc]'); }
       else if (e.target.closest('[data-qs-dec]')) { setQ(h, cur - 1); rerow(h, cur - 1 > 0 ? '[data-qs-dec]' : '[data-qs-padd]'); }
-      else { const vc = e.target.closest('[data-qs-vsel]'); if (vc) { rowVar[h] = vc.dataset.qsVsel; rerow(h, '[data-qs-var]'); } }
+      else if (e.target.closest('[data-qs-opt]')) {
+        const ob = e.target.closest('[data-qs-opt]'), p = CAT.prods[h], k = +ob.dataset.qsOpt, val = ob.dataset.val;
+        const want = [...p.vo[varIdx(p, rowVar[h])]]; want[k] = val;
+        let i = p.vo.findIndex((vo) => vo.every((x, j) => x === want[j]));
+        if (i < 0) i = p.vo.findIndex((vo) => vo[k] === val);
+        rowVar[h] = p.v[i];
+        rerow(h, `[data-qs-opt="${k}"][data-val="${CSS.escape(val)}"]`);
+      }
+      else { const vc = e.target.closest('[data-qs-vsel]'); if (vc) { rowVar[h] = vc.dataset.qsVsel; rerow(h, '.qs-og button.is-on, [data-qs-var]'); } }
     });
     modal.addEventListener('change', (e) => { const sv = e.target.closest('[data-qs-var]'); if (sv) { const h = sv.closest('[data-qs-pr]').dataset.qsPr; rowVar[h] = sv.value; rerow(h, '[data-qs-var]'); } });
     modal.addEventListener('input', (e) => {
