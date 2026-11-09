@@ -43,6 +43,7 @@ const related = primary ? colByHandle.get(primary)?.products.filter((x) => x.han
 const crumbCol = primary ? colByHandle.get(primary) : null;
 const desc = (p.seo?.description || p.description || '').slice(0, 155);
 const firstImg = p.featuredImage?.url;
+const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p.collections.includes('truck-rentals');
 ---
 <Layout title={p.seo?.title || p.title} description={desc} image={firstImg}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify({
@@ -61,11 +62,12 @@ const firstImg = p.featuredImage?.url;
       <ProductGallery images={p.images} title={p.title} />
 
       <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
-        {p.isRental && <span class="tag-rent">Rental equipment</span>}
+        {p.isRental && !sellable && <span class="tag-rent">Rental equipment</span>}
+        {sellable && <div class="mode" role="tablist" aria-label="Rent or buy" data-mode-sw><i aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
         <h1 class="buy__title">{p.title}</h1>
 
         {p.isRental ? (
-          <p class="buy__price">Priced per job. Request a quote for daily, weekly or monthly rates.</p>
+          <p class="buy__price" data-mode-txt>Priced per job. Request a quote for daily, weekly or monthly rates.</p>
         ) : (
           <p class="buy__price"><strong data-price>{money(first.price)}</strong> <span class="buy__unit">each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
         )}
@@ -92,7 +94,7 @@ const firstImg = p.featuredImage?.url;
             <button type="button" data-q="1" aria-label="Increase quantity">+</button>
           </label>
           {!p.isRental && <button class="btn buy__add" data-add-cart>Add to cart</button>}
-          {p.isRental && <button class="btn buy__add" data-add-quote="rent">Add to rental quote</button>}
+          {p.isRental && <button class="btn buy__add" data-add-quote="rent" data-mode-btn>Add to rental quote</button>}
         </div>
         <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Add it to your quote list and we'll source it.</p>
 
@@ -281,7 +283,7 @@ const firstImg = p.featuredImage?.url;
         document.getElementById('tss-chat-assistant')?.toggleAttribute('data-lift', on);
       }, { threshold: 0 }).observe(qtyRow);
       bar.querySelector('[data-bar-add]').addEventListener('click', () => {
-        (root.querySelector('[data-add-cart]') || root.querySelector('[data-add-quote="rent"]'))?.click();
+        (root.querySelector('[data-add-cart]') || root.querySelector('[data-mode-btn]') || root.querySelector('[data-add-quote="rent"]'))?.click();
       });
     }
 
@@ -301,6 +303,24 @@ const firstImg = p.featuredImage?.url;
       if (notes) parts.push(notes);
       window.TSSQuote.add([{ title: root.dataset.title + ' (custom)', handle: root.dataset.handle, image: logoData || root.dataset.image, variant: vtitle(v), qty: qty(), mode: 'buy', note: parts.join('. '), logo: logoData }]);
     });
+  }
+
+  {
+    const sw = document.querySelector('[data-mode-sw]');
+    if (sw) {
+      const btn = document.querySelector('[data-mode-btn]');
+      const txt = document.querySelector('[data-mode-txt]');
+      const bar = document.querySelector('[data-bar-add]');
+      const copy = { rent: ['Add to rental quote', 'Priced per job. Request a quote for daily, weekly or monthly rates.'], buy: ['Add to purchase quote', 'Available to buy new. Add it to your quote list for pricing and lead time.'] };
+      sw.querySelectorAll('[data-m]').forEach((b) => b.addEventListener('click', () => {
+        const m = b.dataset.m;
+        sw.dataset.on = m;
+        sw.querySelectorAll('[data-m]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+        if (btn) { btn.dataset.addQuote = m; btn.textContent = copy[m][0]; }
+        if (bar) bar.textContent = copy[m][0];
+        if (txt) txt.textContent = copy[m][1];
+      }));
+    }
   }
 </script>
 
@@ -383,4 +403,10 @@ const firstImg = p.featuredImage?.url;
   .buybar__txt span { color: var(--steel); font-size: .92rem; font-variation-settings: 'wght' 620; }
   .buybar__btn { min-height: 46px; padding: 12px 22px 11px; white-space: nowrap; }
   @media (max-width: 560px) { .buybar__img { display: none; } .buybar__btn { padding-inline: 16px; font-size: .95rem; } }
+  .mode { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; width: 220px; padding: 5px; margin-bottom: 14px; border-radius: 999px; background: var(--haze); border: 1px solid var(--line); }
+  .mode i { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc(50% - 5px); border-radius: 999px; background: var(--red); transition: transform .45s cubic-bezier(.2,.8,.2,1), background .3s; }
+  .mode[data-on="buy"] i { transform: translateX(100%); background: var(--ink); }
+  .mode button { all: unset; position: relative; z-index: 1; cursor: pointer; text-align: center; padding: 10px 0 9px; font-variation-settings: 'wght' 720; color: var(--steel); transition: color .3s; }
+  .mode button[aria-selected="true"] { color: #fff; }
+  .mode button:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; border-radius: 999px; }
 </style>

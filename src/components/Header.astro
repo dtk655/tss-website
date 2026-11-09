@@ -2,15 +2,33 @@
 import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../lib/shopify.js';
 const { colByHandle } = await loadCatalog();
 const megaCats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
+const fleetCol = colByHandle.get('truck-rentals');
+const equipCol = colByHandle.get('equipment-rentals');
+const fleetHandles = new Set((fleetCol?.products || []).map((p) => p.handle));
+const cutouts = { 'arrow-board': '/fleet/cut/arrow-board.png', 'variable-message-sign-vms-board': '/fleet/cut/vms.png', 'light-tower': '/fleet/cut/light-tower.png', 'portable-traffic-light': '/fleet/cut/traffic-light.png', 'bucket-van': '/fleet/cut/bucket-van.png', 'truck-mounted-attenuator-tma': '/fleet/tma-side.png' };
+const itemTints = ['#fff1c9', '#ffe7d2', '#e2edf8', '#e3f3d8', '#ffdede', '#ebebe8'];
+const toItem = (p, i, rentOnly) => ({ href: `/products/${p.handle}`, title: p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim(), sub: rentOnly ? 'Rent' : 'Buy or rent', img: cutouts[p.handle] || (p.featuredImage ? img(p.featuredImage.url, 240) : ''), cut: !!cutouts[p.handle], tint: itemTints[i % itemTints.length] });
+const equipItems = (equipCol?.products || []).filter((p) => !fleetHandles.has(p.handle)).map((p, i) => toItem(p, i, false));
+const fleetItems = (fleetCol?.products || []).map((p, i) => toItem(p, i + 2, true));
 const nav = [
-  { href: '/collections', label: 'Products', mega: true },
-  { href: '/collections/equipment-rentals', label: 'Rentals' },
+  { href: '/collections', label: 'Products', mega: 'products' },
+  { href: '/collections/equipment-rentals', label: 'Equipment', mega: 'equipment' },
+  { href: '/collections/truck-rentals', label: 'Fleet', mega: 'fleet' },
   { href: '/pages/lane-closure', label: 'Lane closures' },
   { href: '/watercade/', label: 'WATERCADE' },
-  { href: '/tools', label: 'Planning tools' },
-  { href: '/pages/custom-stenciling', label: 'Custom shop' },
-  { href: '/pages/contact', label: 'Contact' }
+  { href: '#', label: 'More', mega: 'more' }
 ];
+const moreLinks = [
+  { href: '/pages/custom-stenciling', t: 'Custom shop', s: 'Your colors, logo and stenciling' },
+  { href: '/tools', t: 'Planning tools', s: 'Work zone builder, closure plan, calculators' },
+  { href: '/collections/equipment-rentals', t: 'All rentals', s: 'Everything you can rent, in one place' },
+  { href: '/pages/about-us', t: 'About TSS', s: 'Since 1971, South Plainfield, NJ' },
+  { href: '/pages/contact', t: 'Contact', s: '908-561-4800' }
+];
+const megaData = {
+  equipment: { items: equipItems, all: ['All equipment', '/collections/equipment-rentals'], promos: [['Rent or buy?', 'Most equipment can be bought or rented. Run your numbers.', '/tools/rent-vs-buy'], ['Need it set up?', 'Our certified, experienced crews can run the whole closure.', '/pages/lane-closure']] },
+  fleet: { items: fleetItems, all: ['All fleet', '/collections/truck-rentals'], promos: [['Book a TMA', 'Crash trucks with certified operators, by the day or job.', '/pages/request-a-quote?type=lane-closure'], ['Rentals in NJ, NY, PA, CT', 'Delivered and picked up from our yard.', '/collections/equipment-rentals']] }
+};
 const icons = {
   Products: 'M4.5 4.5h6v6h-6z M13.5 4.5h6v6h-6z M4.5 13.5h6v6h-6z M13.5 13.5h6v6h-6z',
   Rentals: 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01',
@@ -21,7 +39,7 @@ const icons = {
   Contact: 'M4 5h16v11H9l-5 4z M8 10h8 M8 13h5'
 };
 const path = Astro.url.pathname.replace(/\.html$/, '');
-const current = (href) => (href === '/collections' ? path === '/collections' || (path.startsWith('/collections/') && !path.includes('rentals')) || path.startsWith('/products/') : path.startsWith(href));
+const current = (href) => (href === '#' ? false : href === '/collections' ? path === '/collections' || (path.startsWith('/collections/') && !path.includes('rentals')) : path.startsWith(href));
 const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barriers': '#ffe1da', 'traffic-drums': '#ffe7d2', 'sign-shop': '#ffdede', lights: '#fff1c9', reflectors: '#e2edf8', 'safety-gear': '#e3f3d8', 'sign-stands': '#ebebe8', deliniators: '#ffe7d2' };
 ---
 <header class="hdr">
@@ -78,11 +96,12 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
     <div class="wrap hdr__navin">
       <nav class="nav" aria-label="Main">
         {nav.map((n) => n.mega ? (
-          <div class="nav__item nav__item--mega">
-            <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-haspopup="true" aria-expanded="false">
+          <div class={`nav__item nav__item--mega${n.mega === 'more' ? ' nav__item--more' : ''}`}>
+            <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-haspopup="true" aria-expanded="false" onclick={n.mega === 'more' ? 'event.preventDefault()' : undefined}>
               <span>{n.label}</span>
               <svg class="nav__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
+            {n.mega === 'products' && (
         <div class="mega" role="region" aria-label="Product categories">
           <div class="wrap mega__in">
             <div class="mega__cats">
@@ -101,13 +120,39 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
                 <b>Custom branding</b>
                 <span>Your colors, logo and stenciling on cones, drums and barriers.</span>
               </a>
-              <a href="/tools/rent-vs-buy" class="mega__promo">
-                <b>Rent or buy?</b>
-                <span>Run your real numbers in the calculator.</span>
+              <a href="/collections/equipment-rentals" class="mega__promo">
+                <b>Rent it instead</b>
+                <span>Everything we sell can be rented in NJ, NY, PA and CT.</span>
               </a>
             </div>
           </div>
         </div>
+            )}
+            {(n.mega === 'equipment' || n.mega === 'fleet') && (
+        <div class="mega" role="region" aria-label={n.label}>
+          <div class="wrap mega__in">
+            <div class="mega__cats">
+              {megaData[n.mega].items.map((it) => (
+                <a href={it.href} class="mega__cat" style={`--tint:${it.tint}`}>
+                  <span class="mega__txt"><b>{it.title}</b><small><i class={`mega__mode${it.sub === 'Rent' ? ' mega__mode--rent' : ''}`}>{it.sub}</i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></small></span>
+                  {it.img && <img class:list={['mega__img', !it.cut && 'mega__img--blend']} src={it.img} alt="" loading="lazy" />}
+                </a>
+              ))}
+            </div>
+            <div class="mega__side">
+              <a href={megaData[n.mega].all[1]} class="mega__all">{megaData[n.mega].all[0]}
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+              {megaData[n.mega].promos.map(([b, s2, h]) => <a href={h} class="mega__promo"><b>{b}</b><span>{s2}</span></a>)}
+            </div>
+          </div>
+        </div>
+            )}
+            {n.mega === 'more' && (
+        <div class="more" role="region" aria-label="More">
+          {moreLinks.map((m) => <a href={m.href}><b>{m.t}</b><span>{m.s}</span></a>)}
+        </div>
+            )}
           </div>
         ) : (
           <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-label={n.label === 'WATERCADE' ? 'WATERCADE' : undefined}>{n.label === 'WATERCADE' ? <span class="nav__wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span> : <span>{n.label}</span>}</a>
@@ -132,23 +177,28 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
           <span class="mdrw__ai">AI</span>
         </button>
         <nav class="mdrw__nav" aria-label="Mobile">
-          {nav.map((n, i) => n.mega ? (
+          {nav.filter((n) => n.mega !== 'more').map((n, i) => n.mega ? (
             <div class="mdrw__grp mdrw__in" style={`--i:${i + 1}`}>
-              <button type="button" class={`mdrw__link${current(n.href) ? ' is-cur' : ''}`} aria-expanded="false" aria-controls="mdrw-cats" data-macc>
+              <button type="button" class={`mdrw__link${current(n.href) ? ' is-cur' : ''}`} aria-expanded="false" data-macc>
                 <span class="mdrw__lbl">{n.label}</span>
                 <svg class="mdrw__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
-              <div class="mdrw__sub" id="mdrw-cats">
+              <div class="mdrw__sub">
                 <div class="mdrw__subin">
                   <div class="mdrw__cats">
-                    {megaCats.map((c) => (
+                    {n.mega === 'products' ? megaCats.map((c) => (
                       <a href={`/collections/${c.handle}`} class="mdrw__cat" style={`--tint:${megaTints[c.handle] || '#ececea'}`}>
                         <span class="mdrw__cattxt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}</small></span>
                         <span class="mdrw__catimg"><img src={c.handle === 'cones' || c.handle === 'traffic-drums' ? `/cats/${c.handle}.svg` : `/cats/${c.handle}.png`} alt="" loading="lazy" /></span>
                       </a>
+                    )) : megaData[n.mega].items.map((it) => (
+                      <a href={it.href} class="mdrw__cat" style={`--tint:${it.tint}`}>
+                        <span class="mdrw__cattxt"><b>{it.title}</b><small>{it.sub}</small></span>
+                        <span class="mdrw__catimg">{it.img && <img class:list={[!it.cut && 'mdrw__blend']} src={it.img} alt="" loading="lazy" />}</span>
+                      </a>
                     ))}
                   </div>
-                  <a href="/collections" class="mdrw__all">Browse all products
+                  <a href={n.mega === 'products' ? '/collections' : megaData[n.mega].all[1]} class="mdrw__all">{n.mega === 'products' ? 'Browse all products' : megaData[n.mega].all[0]}
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </a>
                 </div>
@@ -162,6 +212,9 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
               <svg class="mdrw__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           ))}
+          <div class="mdrw__more mdrw__in" style="--i:7">
+            {moreLinks.map((m) => <a href={m.href}>{m.t}</a>)}
+          </div>
         </nav>
         <div class="mdrw__quick mdrw__in" style={`--i:${nav.length + 1}`}>
           <a href="/pages/request-a-quote" class="mdrw__btn mdrw__btn--solid">Request a quote<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
@@ -215,12 +268,13 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drw.classList.contains('is-open')) close(); });
     drw.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setTimeout(close, 50)));
     drw.querySelector('[data-mask]')?.addEventListener('click', () => { close(); setTimeout(() => window.TSSChat?.open(), 250); });
-    const acc = drw.querySelector('[data-macc]');
-    acc?.addEventListener('click', () => {
+    const accs = [...drw.querySelectorAll('[data-macc]')];
+    accs.forEach((acc) => acc.addEventListener('click', () => {
       const on = acc.getAttribute('aria-expanded') !== 'true';
+      accs.forEach((o) => { o.setAttribute('aria-expanded', 'false'); o.closest('.mdrw__grp').classList.remove('is-exp'); });
       acc.setAttribute('aria-expanded', String(on));
       acc.closest('.mdrw__grp').classList.toggle('is-exp', on);
-    });
+    }));
     // swipe left on the panel to close
     let sx = 0, sy = 0;
     const panel = drw.querySelector('.mdrw__panel');
@@ -235,24 +289,25 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   const onScroll = () => hdr.classList.toggle('is-stuck', window.scrollY > 56);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  /* mega menu: hover intent + click + keyboard */
-  const mi = document.querySelector('.nav__item--mega');
-  if (mi) {
-    const link = mi.querySelector('a');
-    let t;
+  /* mega menus: hover intent + click + keyboard (one open at a time) */
+  const mis = [...document.querySelectorAll('.nav__item--mega')];
+  const setMega = (mi, open) => {
     const mega = mi.querySelector('.mega');
-    const set = (open) => {
-      if (open && mega) mega.style.top = document.querySelector('.hdr').getBoundingClientRect().bottom + 'px';
-      mi.classList.toggle('is-open', open);
-      link.setAttribute('aria-expanded', String(open));
-    };
-    mi.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { clearTimeout(t); set(true); } });
-    mi.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { t = setTimeout(() => set(false), 160); } });
-    mi.addEventListener('focusin', () => set(true));
-    mi.addEventListener('focusout', (e) => { if (!mi.contains(e.relatedTarget)) set(false); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
-    document.addEventListener('click', (e) => { if (!mi.contains(e.target)) set(false); });
-  }
+    if (open) mis.forEach((o) => { if (o !== mi) setMega(o, false); });
+    if (open && mega) mega.style.top = document.querySelector('.hdr').getBoundingClientRect().bottom + 'px';
+    mi.classList.toggle('is-open', open);
+    mi.querySelector('a').setAttribute('aria-expanded', String(open));
+  };
+  mis.forEach((mi) => {
+    let t;
+    mi.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { clearTimeout(t); setMega(mi, true); } });
+    mi.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { t = setTimeout(() => setMega(mi, false), 160); } });
+    mi.addEventListener('focusin', () => setMega(mi, true));
+    mi.addEventListener('focusout', (e) => { if (!mi.contains(e.relatedTarget)) setMega(mi, false); });
+    if (mi.classList.contains('nav__item--more')) mi.querySelector('a').addEventListener('click', (e) => { e.preventDefault(); setMega(mi, !mi.classList.contains('is-open')); });
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') mis.forEach((mi) => setMega(mi, false)); });
+  document.addEventListener('click', (e) => mis.forEach((mi) => { if (!mi.contains(e.target)) setMega(mi, false); }));
 
   /* instant search */
   let idx = null, loading = null;
@@ -524,6 +579,23 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .mdrw__btn--solid { background: var(--red); color: #fff; box-shadow: 0 16px 30px -16px rgba(182, 6, 6, .7); }
   .mdrw__btn--line { border: 1.5px solid var(--line-dark); color: var(--ink); }
   .mdrw__foot { margin: 18px 0 0; text-align: left; font-size: .78rem; }
+
+  /* ---------- equipment/fleet tiles + more menu ---------- */
+  .nav__item { position: relative; }
+  .mega__mode { font-style: normal; padding: 2px 8px 1px; border-radius: 999px; background: var(--ink); color: #fff; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
+  .mega__mode--rent { background: var(--red); }
+  .mega__img--blend { mix-blend-mode: multiply; }
+  .more { position: absolute; top: calc(100% + 1px); left: -8px; width: 300px; display: grid; gap: 2px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 30px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -6px; visibility: hidden; transition: opacity .2s, translate .2s, visibility .2s; z-index: 30; }
+  .nav__item--more.is-open .more { opacity: 1; translate: 0 0; visibility: visible; }
+  .more a { display: grid; gap: 2px; padding: 11px 12px; border-radius: 10px; text-decoration: none; color: var(--ink); transition: background .15s; }
+  .more a:hover { background: var(--haze); }
+  .more a b { font-variation-settings: 'wght' 680; font-size: .98rem; }
+  .more a:hover b { color: var(--red); }
+  .more a span { color: var(--steel); font-size: .82rem; }
+  .mdrw__blend { mix-blend-mode: multiply; }
+  .mdrw__more { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; padding: 18px 2px 4px; }
+  .mdrw__more a { padding: 8px 0; color: var(--ink-2); font-size: 1rem; font-variation-settings: 'wght' 620; text-decoration: none; }
+  .mdrw__more a:hover { color: var(--red); }
 
   /* hamburger morphs to X while open */
   .menu-btn svg path { transition: d .3s ease; }

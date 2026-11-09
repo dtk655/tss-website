@@ -29,27 +29,15 @@ HEADER = '''<header class="tsshdr">
 <div class="tsshdr-navrow"><div class="tsshdr-wrap tsshdr-navin">
 <nav class="tsshdr-nav" aria-label="Main">
 <a href="/collections"><span>Products</span></a>
-<a href="/collections/equipment-rentals"><span>Rentals</span></a>
+<a href="/collections/equipment-rentals"><span>Equipment</span></a>
+<a href="/collections/truck-rentals"><span>Fleet</span></a>
 <a href="/pages/lane-closure"><span>Lane closures</span></a>
 <a href="/watercade/" aria-current="page" aria-label="WATERCADE"><span class="tsshdr-wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72"></span></a>
-<a href="/tools"><span>Planning tools</span></a>
-<a href="/pages/custom-stenciling"><span>Custom shop</span></a>
-<a href="/pages/contact"><span>Contact</span></a>
+<div class="tsshdr-more"><a href="#" aria-haspopup="true" aria-expanded="false" data-tssmore><span>More</span><svg class="tsshdr-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="tsshdr-moremenu"><a href="/pages/custom-stenciling"><b>Custom shop</b><small>Your colors, logo and stenciling</small></a><a href="/tools"><b>Planning tools</b><small>Work zone builder, closure plan, calculators</small></a><a href="/collections/equipment-rentals"><b>All rentals</b><small>Everything you can rent, in one place</small></a><a href="/pages/about"><b>About TSS</b><small>Since 1971, South Plainfield, NJ</small></a><a href="/pages/contact"><b>Contact</b><small>908-561-4800</small></a></div></div>
 </nav>
 <p class="tsshdr-tag">Ships nationwide &middot; Rentals &amp; crews in NJ, NY, PA, CT</p>
 </div></div>
-<div class="tssd" id="tssmnav" hidden data-mdrw>
-<div class="tssd__bg" data-mclose></div>
-<aside class="tssd__panel" role="dialog" aria-modal="true" aria-label="Menu">
-<div class="tssd__top"><a href="/" class="tssd__logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo-420.png" alt="TSS" width="420" height="210"></a><button type="button" class="tssd__x" data-mclose aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
-<div class="tssd__scroll">
-<button type="button" class="tssd__ask tssd__in" style="--i:0" data-mask><span class="tssd__askcone" aria-hidden="true"><svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg></span><span class="tssd__asktxt"><b>Ask Conner</b><small>Products, prices, quotes &mdash; answered fast</small></span><span class="tssd__ai">AI</span></button>
-<nav class="tssd__nav" aria-label="Mobile"><div class="tssd__grp tssd__in" style="--i:1"><button type="button" class="tssd__link" aria-expanded="false" data-macc><span class="tssd__lbl">Products</span><svg class="tssd__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="tssd__sub"><div class="tssd__subin"><div class="tssd__cats"><a href="/collections/cones" class="tssd__cat" style="--tint:#ffe7d2"><span class="tssd__cattxt"><b>Cones</b></span><span class="tssd__catimg"><img src="/cats/cones.svg" alt="" loading="lazy"></span></a><a href="/collections/barricades" class="tssd__cat" style="--tint:#e2edf8"><span class="tssd__cattxt"><b>Barricades</b></span><span class="tssd__catimg"><img src="/cats/barricades.png" alt="" loading="lazy"></span></a><a href="/collections/water-filled-barriers" class="tssd__cat" style="--tint:#ffe1da"><span class="tssd__cattxt"><b>Water-Filled Barriers</b></span><span class="tssd__catimg"><img src="/cats/water-filled-barriers.png" alt="" loading="lazy"></span></a><a href="/collections/traffic-drums" class="tssd__cat" style="--tint:#ffe7d2"><span class="tssd__cattxt"><b>Traffic Drums</b></span><span class="tssd__catimg"><img src="/cats/traffic-drums.svg" alt="" loading="lazy"></span></a><a href="/collections/sign-shop" class="tssd__cat" style="--tint:#ffdede"><span class="tssd__cattxt"><b>Sign Shop</b></span><span class="tssd__catimg"><img src="/cats/sign-shop.png" alt="" loading="lazy"></span></a><a href="/collections/lights" class="tssd__cat" style="--tint:#fff1c9"><span class="tssd__cattxt"><b>Lights</b></span><span class="tssd__catimg"><img src="/cats/lights.png" alt="" loading="lazy"></span></a><a href="/collections/reflectors" class="tssd__cat" style="--tint:#e2edf8"><span class="tssd__cattxt"><b>Reflectors</b></span><span class="tssd__catimg"><img src="/cats/reflectors.png" alt="" loading="lazy"></span></a><a href="/collections/safety-gear" class="tssd__cat" style="--tint:#e3f3d8"><span class="tssd__cattxt"><b>Safety Gear</b></span><span class="tssd__catimg"><img src="/cats/safety-gear.png" alt="" loading="lazy"></span></a><a href="/collections/sign-stands" class="tssd__cat" style="--tint:#ebebe8"><span class="tssd__cattxt"><b>Sign Stands</b></span><span class="tssd__catimg"><img src="/cats/sign-stands.png" alt="" loading="lazy"></span></a><a href="/collections/deliniators" class="tssd__cat" style="--tint:#ffe7d2"><span class="tssd__cattxt"><b>Delineators</b></span><span class="tssd__catimg"><img src="/cats/deliniators.png" alt="" loading="lazy"></span></a></div><a href="/collections" class="tssd__all">Browse all products <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div></div><a href="/collections/equipment-rentals" class="tssd__link tssd__in" style="--i:2"><span class="tssd__lbl">Rentals</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/pages/lane-closure" class="tssd__link tssd__in" style="--i:3"><span class="tssd__lbl">Lane closures</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/watercade/" class="tssd__link tssd__in is-cur" style="--i:4"><span class="tssd__lbl tssd__wc" aria-label="WATERCADE"><img src="/brand/watercade-nav.png" alt="" width="540" height="72"></span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/tools" class="tssd__link tssd__in" style="--i:5"><span class="tssd__lbl">Planning tools</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/pages/custom-stenciling" class="tssd__link tssd__in" style="--i:6"><span class="tssd__lbl">Custom shop</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="/pages/contact" class="tssd__link tssd__in" style="--i:7"><span class="tssd__lbl">Contact</span><svg class="tssd__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></nav>
-<div class="tssd__quick tssd__in" style="--i:8"><a href="/pages/request-a-quote" class="tssd__btn tssd__btn--solid">Request a quote<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a href="tel:+19085614800" class="tssd__btn tssd__btn--line">Call 908-561-4800</a></div>
-<p class="tssd__foot tssd__in" style="--i:9">Ships nationwide &middot; Rentals &amp; crews in NJ, NY, PA and CT &middot; Since 1971</p>
-</div>
-</aside>
-</div>
+__DRAWER_HTML__
 </header>
 <script id="tss-shell-js">(function(){
 var b=document.querySelector('.tsshdr-menu'),d=document.querySelector('[data-mdrw]');
@@ -61,9 +49,10 @@ d.querySelectorAll('[data-mclose]').forEach(function(e){e.addEventListener('clic
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.classList.contains('is-open'))cl()});
 d.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setTimeout(cl,50)})});
 var mk=d.querySelector('[data-mask]');mk&&mk.addEventListener('click',function(){cl();setTimeout(function(){window.TSSChat&&window.TSSChat.open()},250)});
-var ac=d.querySelector('[data-macc]');ac&&ac.addEventListener('click',function(){var on=ac.getAttribute('aria-expanded')!=='true';ac.setAttribute('aria-expanded',String(on));ac.closest('.tssd__grp').classList.toggle('is-exp',on)});
+var acs=[].slice.call(d.querySelectorAll('[data-macc]'));acs.forEach(function(ac){ac.addEventListener('click',function(){var on=ac.getAttribute('aria-expanded')!=='true';acs.forEach(function(o){o.setAttribute('aria-expanded','false');o.closest('.tssd__grp').classList.remove('is-exp')});ac.setAttribute('aria-expanded',String(on));ac.closest('.tssd__grp').classList.toggle('is-exp',on)})});
 var sx=0,sy=0,pn=d.querySelector('.tssd__panel');pn.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});pn.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(dx<-70&&Math.abs(dy)<60)cl()},{passive:true});
 addEventListener('resize',function(){if(innerWidth>1010&&d.classList.contains('is-open'))cl()});}
+var mo=document.querySelector('[data-tssmore]');if(mo){var mw=mo.parentNode;function ms(on){mw.classList.toggle('is-open',on);mo.setAttribute('aria-expanded',String(on))}mo.addEventListener('click',function(e){e.preventDefault();ms(!mw.classList.contains('is-open'))});mw.addEventListener('mouseenter',function(){ms(true)});mw.addEventListener('mouseleave',function(){ms(false)});document.addEventListener('click',function(e){if(!mw.contains(e.target))ms(false)});document.addEventListener('keydown',function(e){if(e.key==='Escape')ms(false)})}
 var h=document.querySelector('.tsshdr');function s(){h.classList.toggle('is-stuck',window.scrollY>56)}addEventListener('scroll',s,{passive:true});s();
 var idx=null,loading=null;function load(){return loading||(loading=fetch('/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d}).catch(function(){idx={cats:[],prods:[]}}))}
 function fmt(n){return Number(n).toLocaleString('en-US',{style:'currency',currency:'USD'})}
@@ -158,6 +147,10 @@ STYLE = '''<style id="tss-shell">
 .tsshdr-nav a:hover span::after{right:0}
 .tsshdr-nav a[aria-current]{color:#14171a;font-variation-settings:'wght' 700}
 .tsshdr-nav a[aria-current] span::after{right:0}
+.tsshdr-more{position:relative;display:flex}.tsshdr-chev{width:14px;height:14px;margin-left:4px;transition:rotate .2s}.tsshdr-more.is-open .tsshdr-chev{rotate:180deg}
+.tsshdr-nav .tsshdr-moremenu{position:absolute;top:100%;left:-8px;width:300px;display:grid;gap:2px;padding:8px;background:#fff;border:1px solid #e4e7ea;border-radius:16px;box-shadow:0 30px 60px -28px rgba(20,23,26,.35);opacity:0;translate:0 -6px;visibility:hidden;transition:opacity .2s,translate .2s,visibility .2s;z-index:60}
+.tsshdr-more.is-open .tsshdr-moremenu{opacity:1;translate:0 0;visibility:visible}
+.tsshdr-nav .tsshdr-moremenu a{display:grid;gap:2px;padding:11px 12px;border-radius:10px;white-space:normal;color:#14171a}.tsshdr-nav .tsshdr-moremenu a:hover{background:#f5f6f7}.tsshdr-moremenu b{font-variation-settings:'wght' 680;font-size:.98rem}.tsshdr-moremenu a:hover b{color:#b60606}.tsshdr-moremenu small{color:#5b6670;font-size:.82rem;font-variation-settings:'wght' 450}
 .tsshdr-tag{margin:0;color:#5b6670;font-size:.86rem;white-space:nowrap}
 .tsshdr-menu{display:none;width:44px;height:44px;place-items:center;background:none;border:0;border-radius:10px;cursor:pointer;color:#14171a;padding:0}
 .tsshdr-menu:hover{background:#f5f6f7}
@@ -185,6 +178,21 @@ def drawer_css():
     return tokens + css + morph
 
 STYLE = STYLE.replace('__DRAWER_CSS__', drawer_css())
+
+def drawer_html():
+    # The mobile drawer is copied from the built homepage (run `astro build` first) so it never drifts.
+    h = open('dist/index.html', encoding='utf8').read()
+    i = h.index('data-mdrw'); a = h.rfind('<div', 0, i); depth = 0; j = a
+    for m in re.finditer(r'<(/?)div\b', h[a:]):
+        depth += -1 if m.group(1) else 1
+        if depth == 0: j = a + m.end(); break
+    d = h[a:h.index('>', j) + 1]
+    d = re.sub(r' data-astro-cid-[a-z0-9]+(="[^"]*")?', '', d).replace('mdrw', 'tssd').replace('id="mnav"', 'id="tssmnav"').replace('data-tssd', 'data-mdrw')
+    d = d.replace(' is-cur', '')
+    d = re.sub(r'(<a href="/watercade/" class="tssd__link)', r'\1 is-cur', d, count=1)
+    return d
+
+HEADER = HEADER.replace('__DRAWER_HTML__', drawer_html())
 
 for p in sys.argv[1:]:
     s = open(p, encoding='utf8').read()
