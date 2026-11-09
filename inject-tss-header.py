@@ -31,7 +31,7 @@ HEADER = '''<header class="tsshdr">
 <a href="/collections"><span>Products</span></a>
 <a href="/collections/equipment-rentals"><span>Rentals</span></a>
 <a href="/pages/lane-closure"><span>Lane closures</span></a>
-<a href="/watercade/" aria-current="page"><span>WATERCADE</span></a>
+<a href="/watercade/" aria-current="page" aria-label="WATERCADE"><span class="tsshdr-wc"><img src="/brand/watercade-nav.png" alt="" width="724" height="96"></span></a>
 <a href="/tools"><span>Planning tools</span></a>
 <a href="/pages/custom-stenciling"><span>Custom shop</span></a>
 <a href="/pages/contact"><span>Contact</span></a>
@@ -169,6 +169,7 @@ STYLE = '''<style id="tss-shell">
 @media(max-width:640px){.tsshdr-ai{display:none}}
 @media(max-width:1010px){.tsshdr-navrow,.tsshdr-cta,.tsshdr-phone,.tsshdr-in>.tsshdr-search{display:none}.tsshdr-menu{display:grid;justify-self:start}.tsshdr-in{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;height:82px}.tsshdr.is-stuck .tsshdr-in{height:72px}.tsshdr-logo{justify-self:center}.tsshdr-act{justify-self:end;margin-left:0}.tsshdr-logo img{height:64px}.tsshdr.is-stuck .tsshdr-logo img{height:56px}.tsshdr-msearch{display:block}}
 .tsshdr-cta{border-radius:999px}
+.tsshdr-wc{display:inline-flex;align-items:center}.tsshdr-wc img{height:22px;width:auto;display:block}
 @media(min-width:1011px){.tssd{display:none!important}}
 __DRAWER_CSS__
 </style>'''
