@@ -10,7 +10,7 @@ const nav = [
   { href: '/watercade/', label: 'WATERCADE' },
   // desktop only; the mobile drawer lists these in its own link grid
   { href: '/pages/custom-stenciling', label: 'Custom Shop', desk: true },
-  { href: '/tools', label: 'Planning Tools', desk: true },
+  { href: '/pages/request-a-quote', label: 'Quote Builder', desk: true },
   { href: '/pages/about-us', label: 'About', desk: true },
   { href: '/pages/contact', label: 'Contact', desk: true }
 ];
@@ -23,7 +23,7 @@ const allHandles = new Set(['equipment-rentals', 'truck-rentals'].flatMap((h) =>
 const peeks = Object.fromEntries(Object.entries(peekDefs).map(([k, d]) => [k, { all: d.all, items: d.items.filter(([h]) => allHandles.has(h)) }]));
 const moreLinks = [
   { href: '/pages/custom-stenciling', t: 'Custom Shop', s: 'Your colors, logo and stenciling' },
-  { href: '/tools', t: 'Planning Tools', s: 'Work zone builder, closure plan, calculators' },
+  { href: '/pages/request-a-quote', t: 'Quote Builder', s: 'Build your quote in two minutes' },
   { href: '/collections/equipment-rentals', t: 'All Rentals', s: 'Everything you can rent, in one place' },
   { href: '/pages/about-us', t: 'About TSS', s: 'Since 1971, South Plainfield, NJ' },
   { href: '/pages/contact', t: 'Contact', s: '908-561-4800' }

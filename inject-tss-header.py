@@ -34,7 +34,7 @@ HEADER = '''<header class="tsshdr">
 <a href="/pages/lane-closure"><span>Lane Closures</span></a>
 <a href="/watercade/" aria-current="page" aria-label="WATERCADE"><span class="tsshdr-wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72"></span></a>
 <a href="/pages/custom-stenciling"><span>Custom Shop</span></a>
-<a href="/tools"><span>Planning Tools</span></a>
+<a href="/pages/request-a-quote"><span>Quote Builder</span></a>
 <a href="/pages/about-us"><span>About</span></a>
 <a href="/pages/contact"><span>Contact</span></a>
 </nav>
