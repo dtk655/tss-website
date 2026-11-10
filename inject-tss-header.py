@@ -37,6 +37,7 @@ HEADER = '''<header class="tsshdr">
 <a href="/pages/request-a-quote"><span>Quote Builder</span></a>
 <a href="/pages/about-us"><span>About</span></a>
 <a href="/pages/contact"><span>Contact</span></a>
+<a href="/pages/create-c-m-account"><span>Create Account</span></a>
 </nav>
 <p class="tsshdr-tag">Ships nationwide &middot; Rentals &amp; crews in NJ, NY, PA, CT</p>
 </div></div>
@@ -160,7 +161,7 @@ STYLE = '''<style id="tss-shell">
 .tsshdr-menu svg{width:23px;height:23px}
 .tsshdr-msearch{display:none;border-top:1px solid #e4e7ea;padding-block:10px}
 .tsshdr-msearch .tsshdr-search{max-width:none;height:46px}
-@media(max-width:1420px){.tsshdr-tag{display:none}}
+@media(max-width:1640px){.tsshdr-tag{display:none}}
 @media(max-width:1230px){.tsshdr-phonetxt{display:none}.tsshdr-phone{gap:0}}
 @media(max-width:640px){.tsshdr-ai{display:none}}
 @media(max-width:1010px){.tsshdr-navrow,.tsshdr-cta,.tsshdr-phone,.tsshdr-in>.tsshdr-search{display:none}.tsshdr-menu{display:grid;justify-self:start}.tsshdr-in{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;height:82px}.tsshdr.is-stuck .tsshdr-in{height:72px}.tsshdr-logo{justify-self:center}.tsshdr-act{justify-self:end;margin-left:0}.tsshdr-logo img{height:50px}.tsshdr.is-stuck .tsshdr-logo img{height:54px}.tsshdr-msearch{display:block}}
@@ -168,6 +169,7 @@ STYLE = '''<style id="tss-shell">
 .tssd__wc{display:flex;align-items:center}.tssd__wc img{width:auto;display:block}.tssd .tssd__foot{margin-top:18px}
 .tsshdr-wc{display:inline-flex;align-items:center}.tsshdr-wc img{height:20px;width:auto;display:block}
 @media(max-width:1240px){.tsshdr-nav a{padding-inline:9px;font-size:.93rem}.tsshdr-wc img{height:15px}}
+@media(max-width:1120px){.tsshdr-nav a{padding-inline:7px;font-size:.88rem}.tsshdr-wc img{height:14px}}
 @media(min-width:1011px){.tssd{display:none!important}}
 __DRAWER_CSS__
 </style>'''

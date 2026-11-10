@@ -11,7 +11,8 @@ const nav = [
   { href: '/pages/custom-stenciling', label: 'Custom Shop', desk: true },
   { href: '/pages/request-a-quote', label: 'Quote Builder', desk: true },
   { href: '/pages/about-us', label: 'About', desk: true },
-  { href: '/pages/contact', label: 'Contact', desk: true }
+  { href: '/pages/contact', label: 'Contact', desk: true },
+  { href: '/pages/create-c-m-account', label: 'Create Account', desk: true }
 ];
 // Hover previews under Equipment and Fleet: a quick look at what the tab covers (only products that exist).
 const peekDefs = {
@@ -449,7 +450,8 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .hdr__tag { margin: 0; color: var(--steel); font-size: .86rem; white-space: nowrap; }
 
 
-  @media (max-width: 1420px) { .hdr__tag { display: none; } }
+  @media (max-width: 1640px) { .hdr__tag { display: none; } }
+  @media (max-width: 1120px) { .nav { gap: 0; } .nav > a, .nav__item > a { padding-inline: 8px; font-size: .9rem; } .nav__wc img { height: 14px; width: auto; } }
   @media (max-width: 1230px) { .hdr__phonetxt { display: none; } .hdr__phone { gap: 0; } }
   @media (max-width: 1010px) {
     .hdr__nav, .hdr__cta, .hdr__phone, .hdr__sep, .hdr__in > .search { display: none; }
