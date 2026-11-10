@@ -6,13 +6,13 @@ const cols = [
   ['Shop', [['Cones', '/collections/cones'], ['Barricades', '/collections/barricades'], ['Water-filled barriers', '/collections/water-filled-barriers'], ['Traffic drums', '/collections/traffic-drums'], ['Signs', '/collections/sign-shop'], ['Safety gear', '/collections/safety-gear'], ['All products', '/collections']]],
   ['Services', [['Equipment', '/pages/equipment'], ['Truck fleet', '/pages/fleet'], ['Lane closures', '/pages/lane-closure'], ['WATERCADE barriers', '/watercade/'], ['Custom shop', '/pages/custom-stenciling']]],
   ['Planning tools', [['Work zone builder', '/tools/work-zone-builder'], ['Lane closure plan', '/tools/lane-closure-plan'], ['WATERCADE planner', '/tools/watercade-planner'], ['Rent or buy calculator', '/tools/rent-vs-buy'], ['3D showroom', '/tools/3d-showroom']]],
-  ['Company', [['About TSS', '/pages/about-us'], ['Contact', '/pages/contact'], ['Request a quote', '/pages/request-a-quote']]]
+  ['Company', [['About TSS', '/pages/about-us'], ['Contact', '/pages/contact'], ['Open an account', '/pages/create-c-m-account'], ['Request a quote', '/pages/request-a-quote']]]
 ];
 const tiles = [
   ['Call us', PHONE, PHONE_TEL, 'M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z'],
   ['Email', EMAIL, `mailto:${EMAIL}`, 'M3.5 6h17v12h-17z M3.5 6.5l8.5 6.5 8.5-6.5'],
   ['Free quote', 'Reply within 1 business day', '/pages/request-a-quote', 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6M9 16h3'],
-  ['Visit the yard', 'South Plainfield, NJ', '/pages/contact', 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z M12 7.6a2.4 2.4 0 1 0 0 .01']
+  ['Visit the yard', '601 Hadley Rd, South Plainfield, NJ', 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Traffic Safety Service, 601 Hadley Road, South Plainfield, NJ 07080'), 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z M12 7.6a2.4 2.4 0 1 0 0 .01']
 ];
 ---
 <footer class="ftr">
@@ -20,7 +20,7 @@ const tiles = [
   <div class="wrap">
     <div class="ftr__tiles">
       {tiles.map(([k, v, h, ic]) => (
-        <a href={h} class="ftr__tile">
+        <a href={h} class="ftr__tile" {...(h.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>
           <span class="ftr__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
           <span class="ftr__tt"><small>{k}</small><b>{v}</b></span>
         </a>
