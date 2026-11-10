@@ -8,7 +8,6 @@ const nav = [
   { href: '/pages/fleet', label: 'Fleet', peek: 'fleet', sub: 'TMA crash trucks, bucket trucks, cone trucks' },
   { href: '/pages/lane-closure', label: 'Lane Closures' },
   { href: '/watercade/', label: 'WATERCADE' },
-  // desktop only; the mobile drawer lists these in its own link grid
   { href: '/pages/custom-stenciling', label: 'Custom Shop', desk: true },
   { href: '/pages/request-a-quote', label: 'Quote Builder', desk: true },
   { href: '/pages/about-us', label: 'About', desk: true },
@@ -21,13 +20,6 @@ const peekDefs = {
 };
 const allHandles = new Set(['equipment-rentals', 'truck-rentals'].flatMap((h) => (colByHandle.get(h)?.products || []).map((p) => p.handle)));
 const peeks = Object.fromEntries(Object.entries(peekDefs).map(([k, d]) => [k, { all: d.all, items: d.items.filter(([h]) => allHandles.has(h)) }]));
-const moreLinks = [
-  { href: '/pages/custom-stenciling', t: 'Custom Shop', s: 'Your colors, logo and stenciling' },
-  { href: '/pages/request-a-quote', t: 'Quote Builder', s: 'Build your quote in two minutes' },
-  { href: '/collections/equipment-rentals', t: 'All Rentals', s: 'Everything you can rent, in one place' },
-  { href: '/pages/about-us', t: 'About TSS', s: 'Since 1971, South Plainfield, NJ' },
-  { href: '/pages/contact', t: 'Contact', s: '908-561-4800' }
-];
 const icons = {
   Products: 'M4.5 4.5h6v6h-6z M13.5 4.5h6v6h-6z M4.5 13.5h6v6h-6z M13.5 13.5h6v6h-6z',
   Rentals: 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01',
@@ -161,7 +153,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
           <span class="mdrw__ai">AI</span>
         </button>
         <nav class="mdrw__nav" aria-label="Mobile">
-          {nav.filter((n) => n.mega !== 'more' && !n.desk).map((n, i) => n.mega ? (
+          {nav.filter((n) => n.mega !== 'more').map((n, i) => n.mega ? (
             <div class="mdrw__grp mdrw__in" style={`--i:${i + 1}`}>
               <button type="button" class={`mdrw__link${current(n.href) ? ' is-cur' : ''}`} aria-expanded="false" data-macc>
                 <span class="mdrw__lbl">{n.label}</span>
@@ -191,9 +183,6 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
               <svg class="mdrw__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           ))}
-          <div class="mdrw__more mdrw__in" style="--i:7">
-            {moreLinks.map((m) => <a href={m.href}>{m.t}</a>)}
-          </div>
         </nav>
         <div class="mdrw__quick mdrw__in" style={`--i:${nav.length + 1}`}>
           <a href="/pages/request-a-quote" class="mdrw__btn mdrw__btn--solid">Request a quote<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
@@ -375,7 +364,6 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .peek__all svg { width: 18px; height: 18px; transition: transform .2s; }
   .peek__all:hover { background: var(--red); }
   .peek__all:hover svg { transform: translateX(3px); }
-  .mdrw__hint { display: block; margin-top: 3px; font-size: .78rem; line-height: 1.3; color: var(--steel); letter-spacing: 0; font-variation-settings: 'wght' 500; }
   .nav__item--mega.is-open .mega { opacity: 1; translate: 0 0; visibility: visible; }
   .mega__in { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 36px; padding-block: 28px 30px; }
   .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-content: start; }
@@ -478,6 +466,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   @media (min-width: 1011px) { .mdrw { display: none !important; } }
 
   /* ---------- mobile drawer ---------- */
+  .mdrw__hint { display: block; margin-top: 3px; font-size: .78rem; line-height: 1.3; color: var(--steel); letter-spacing: 0; font-variation-settings: 'wght' 500; }
   .mdrw { position: fixed; inset: 0; z-index: 90; }
   .mdrw[hidden] { display: none; }
   .mdrw__bg { position: absolute; inset: 0; background: rgba(20, 23, 26, .5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; transition: opacity .32s ease; }
@@ -586,9 +575,6 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .more a:hover b { color: var(--red); }
   .more a span { color: var(--steel); font-size: .82rem; }
   .mdrw__blend { mix-blend-mode: multiply; }
-  .mdrw__more { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; padding: 18px 2px 4px; }
-  .mdrw__more a { padding: 8px 0; color: var(--ink-2); font-size: 1rem; font-variation-settings: 'wght' 620; text-decoration: none; }
-  .mdrw__more a:hover { color: var(--red); }
 
   /* hamburger morphs to X while open */
   .menu-btn svg path { transition: d .3s ease; }
