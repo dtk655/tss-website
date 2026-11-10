@@ -5,6 +5,7 @@ import ProductCard from '../../components/ProductCard.astro';
 import QuickView from '../../components/QuickView.astro';
 import RecentlyViewed from '../../components/RecentlyViewed.astro';
 import { loadCatalog, money, img } from '../../lib/shopify.js';
+import { CATEGORY_META } from '../../lib/categories.js';
 
 export async function getStaticPaths() {
   const { products } = await loadCatalog();
@@ -38,12 +39,45 @@ const first = variants.find((v) => v.available) || variants[0];
 const viewerColors = model === 'cone' ? (options.find((o) => isColor(o.name))?.values || ['Orange']) : model === 'watercade' ? ['Orange', 'White'] : undefined;
 
 // Related: same primary collection
-const primary = ['cones', 'barricades', 'water-filled-barriers', 'traffic-drums', 'sign-shop', 'safety-gear', 'lights', 'reflectors', 'equipment-rentals', 'truck-rentals'].find(inCol);
+const primary = ['cones', 'water-filled-barriers', 'barricades', 'traffic-drums', 'sign-shop', 'safety-gear', 'lights', 'reflectors', 'equipment-rentals', 'truck-rentals'].find(inCol);
 const related = primary ? colByHandle.get(primary)?.products.filter((x) => x.handle !== handle).slice(0, 4) || [] : [];
 const crumbCol = primary ? colByHandle.get(primary) : null;
 const desc = (p.seo?.description || p.description || '').slice(0, 155);
 const firstImg = p.featuredImage?.url;
 const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p.collections.includes('truck-rentals');
+// Theme bits: category tint, short intro line, at-a-glance specs drawn from real product data.
+const meta = primary ? CATEGORY_META[primary] : null;
+const tint = meta?.tint || '#ebebe8';
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const plain = (p.description || '').replace(/\s+/g, ' ').trim();
+const intro = (() => {
+  if (!plain) return '';
+  const cut = plain.slice(0, 220);
+  const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '));
+  return end > 60 ? cut.slice(0, end + 1) : cut.length < plain.length ? cut.replace(/\s+\S*$/, '') + '…' : cut;
+})();
+const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+const specs = [
+  crumbCol && ['Category', crumbCol.title],
+  ...options.map((o) => [cap(o.name), o.values.length > 6 ? `${o.values.length} options: ${o.values.slice(0, 5).join(', ')} and more` : o.values.join(', ')]),
+  !p.isRental && ['Price', p.minPrice === p.maxPrice ? `${money(+p.minPrice)} each` : `${money(+p.minPrice)} to ${money(+p.maxPrice)} each`],
+  p.isRental ? ['Rental area', 'NJ, NY, PA and CT'] : ['Shipping', 'Ships anywhere in the U.S.'],
+  !p.isRental && ['Rent it', 'Available to rent in NJ, NY, PA and CT'],
+  sellable && ['Buy it', 'Also available to buy new'],
+  customizable && ['Customizing', 'Your logo, colors or stenciling'],
+  ['Ordering', p.isRental ? 'Daily, weekly, monthly or long-term' : 'Card, net terms or purchase order']
+].filter(Boolean);
+const perks = p.isRental ? [
+  ['Delivered and picked up', 'Anywhere in NJ, NY, PA and CT', 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01'],
+  ['Day, week or month', 'Rates that fit the job', 'M4 5h16v15H4z M4 9h16 M8 3v4M16 3v4'],
+  ['Crews on call', 'We can set it up and run it', 'M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z M8.5 12l2.4 2.4 4.6-4.8']
+] : [
+  ['Ships nationwide', 'Fast from our NJ yard', 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01'],
+  ['Net terms and POs', 'For agencies and contractors', 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6M9 16h3'],
+  ['Rent it too', 'In NJ, NY, PA and CT', 'M15 7a3 3 0 1 1-3 3 M12 10l-8 8 2 2 2-2 1 1 2-2-1-1 2-2']
+];
+const inStock = !p.isRental && variants.some((v) => v.available);
+const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 ---
 <Layout title={p.seo?.title || p.title} description={desc} image={firstImg}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify({
@@ -52,144 +86,213 @@ const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p
     ...(p.isRental ? {} : { offers: { '@type': 'AggregateOffer', priceCurrency: 'USD', lowPrice: p.minPrice, highPrice: p.maxPrice, availability: 'https://schema.org/InStock' } })
   })} />
 
-  <div class="wrap pdp">
-    <nav class="crumbs" aria-label="Breadcrumb">
-      <a href="/collections">Shop</a>
-      {crumbCol && <><span aria-hidden="true">/</span><a href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a></>}
-    </nav>
+  <!-- ================= TOP: gallery + buy panel ================= -->
+  <section class="px" style={`--tint:${tint}`}>
+    <div class="px__bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <nav class="px__crumbs" aria-label="Breadcrumb">
+        <a href="/collections">Shop</a>
+        {crumbCol && <><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><a href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a></>}
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span aria-current="page">{p.title}</span>
+      </nav>
 
-    <div class="pdp__grid">
-      <ProductGallery images={p.images} title={p.title} />
-
-      <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
-        {p.isRental && !sellable && <span class="tag-rent">Rental equipment</span>}
-        {sellable && <div class="mode" role="tablist" aria-label="Rent or buy" data-mode-sw><i aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
-        <h1 class="buy__title">{p.title}</h1>
-
-        {p.isRental ? (
-          <p class="buy__price" data-mode-txt>Priced per job. Request a quote for daily, weekly or monthly rates.</p>
-        ) : (
-          <p class="buy__price"><strong data-price>{money(first.price)}</strong> <span class="buy__unit">each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
-        )}
-
-        {options.map((o) => (
-          <fieldset class="opt" data-option={o.name}>
-            <legend>{o.name.charAt(0).toUpperCase() + o.name.slice(1)}: <span data-opt-val>{first.opts[o.name]}</span></legend>
-            <div class={isColor(o.name) ? 'swatches' : 'pills'}>
-              {o.values.map((val) => (
-                <label class={isColor(o.name) ? 'sw' : 'pill'} title={val}>
-                  <input type="radio" name={`opt-${o.name}`} value={val} checked={first.opts[o.name] === val} />
-                  {isColor(o.name) ? <span style={`--c:${SWATCH[val.toLowerCase()] || '#ccc'}`}><span class="sr-only">{val}</span></span> : <span>{val}</span>}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-        ))}
-
-        <div class="qty-row">
-          <label class="qty">
-            <span class="sr-only">Quantity</span>
-            <button type="button" data-q="-1" aria-label="Decrease quantity">−</button>
-            <input type="number" min="1" value="1" data-qty inputmode="numeric" />
-            <button type="button" data-q="1" aria-label="Increase quantity">+</button>
-          </label>
-          {!p.isRental && <button class="btn buy__add" data-add-cart>Add to cart</button>}
-          {p.isRental && <button class="btn buy__add" data-add-quote="rent" data-mode-btn>Add to rental quote</button>}
-        </div>
-        <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Add it to your quote list and we'll source it.</p>
-
-        <div class="alt-actions">
-          {!p.isRental && <button class="btn btn--ghost btn--sm" data-add-quote="rent">Rent this instead</button>}
-          {!p.isRental && <button class="btn btn--ghost btn--sm" data-add-quote="buy">Bulk or PO quote</button>}
-          <button class="btn btn--ghost btn--sm" data-ask>Ask Conner about this</button>
+      <div class="px__grid">
+        <div class="px__gal">
+          <ProductGallery images={p.images} title={p.title} />
         </div>
 
-        <ul class="assure">
-          {p.isRental ? <>
-            <li>Rentals delivered and picked up in NJ, NY, PA and CT</li>
-            <li>Daily, weekly, monthly and long-term rates</li>
-            <li>Need it set up? Our crews can install and maintain it</li>
-          </> : <>
-            <li>Ships anywhere in the U.S.</li>
-            <li>Net terms and purchase orders for agencies and contractors</li>
-            <li>Everything we sell can also be rented in NJ, NY, PA and CT</li>
-          </>}
-        </ul>
+        <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
+          <div class="buy__chips px__in" style="--d:0">
+            {crumbCol && <a href={`/collections/${crumbCol.handle}`} class="chip chip--cat"><i></i>{crumbCol.title}</a>}
+            {p.isRental ? <span class="chip chip--rent">Rental</span> : inStock ? <span class="chip chip--ok"><i></i>In stock</span> : <span class="chip">Made to order</span>}
+            {customizable && <span class="chip">Customizable</span>}
+          </div>
 
-        {customizable && (
-          <details class="custom" data-custom>
-            <summary>
-              <span><strong>Make it yours</strong><br /><span class="custom__sub">Custom colors, your logo, stenciling and bulk branding</span></span>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-            </summary>
-            <div class="custom__body">
-              <div class="field">
-                <label for="cc-color">Color you want</label>
-                <div class="custom__color">
-                  <input type="color" id="cc-color" value="#f26a1b" data-cc-color />
-                  <input type="text" placeholder="Or describe it, e.g. PMS 286 blue" data-cc-colortext aria-label="Describe the color" />
+          {sellable && <div class="mode px__in" style="--d:1" role="tablist" aria-label="Rent or buy" data-mode-sw><i aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
+
+          <h1 class="buy__title"><span class="buy__ln"><span>{p.title}</span></span></h1>
+
+          {p.isRental ? (
+            <p class="buy__price buy__price--q px__in" style="--d:2" data-mode-txt>Priced per job. Request a quote for daily, weekly or monthly rates.</p>
+          ) : (
+            <p class="buy__price px__in" style="--d:2"><strong data-price>{money(first.price)}</strong> <span class="buy__unit">each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
+          )}
+          {intro && <p class="buy__intro px__in" style="--d:3">{intro}</p>}
+
+          {options.map((o, oi) => (
+            <fieldset class="opt px__in" style={`--d:${4 + oi}`} data-option={o.name}>
+              <legend>{cap(o.name)} <span data-opt-val>{first.opts[o.name]}</span></legend>
+              <div class={isColor(o.name) ? 'swatches' : 'pills'}>
+                {o.values.map((val) => (
+                  <label class={isColor(o.name) ? 'sw' : 'pill'} title={val}>
+                    <input type="radio" name={`opt-${o.name}`} value={val} checked={first.opts[o.name] === val} />
+                    {isColor(o.name) ? <span style={`--c:${SWATCH[val.toLowerCase()] || '#ccc'}`}><span class="sr-only">{val}</span></span> : <span>{val}</span>}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ))}
+
+          <div class="qty-row px__in" style={`--d:${4 + options.length}`}>
+            <label class="qty">
+              <span class="sr-only">Quantity</span>
+              <button type="button" data-q="-1" aria-label="Decrease quantity">−</button>
+              <input type="number" min="1" value="1" data-qty inputmode="numeric" />
+              <button type="button" data-q="1" aria-label="Increase quantity">+</button>
+            </label>
+            {!p.isRental && <button class="buy__add" data-add-cart><span class="buy__addt">Add to cart</span><Fragment set:html={ARROW} /></button>}
+            {p.isRental && <button class="buy__add" data-add-quote="rent" data-mode-btn><span class="buy__addt">Add to rental quote</span><Fragment set:html={ARROW} /></button>}
+          </div>
+          <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Add it to your quote list and we'll source it.</p>
+
+          <div class="alt-actions px__in" style={`--d:${5 + options.length}`}>
+            {!p.isRental && <button class="alt" data-add-quote="rent">Rent this instead</button>}
+            {!p.isRental && <button class="alt" data-add-quote="buy">Bulk or PO quote</button>}
+            <button class="alt alt--ai" data-ask><span class="alt__ai">AI</span>Ask Conner about this</button>
+          </div>
+
+          <ul class="assure px__in" style={`--d:${6 + options.length}`}>
+            {perks.map(([t, d, ic]) => (
+              <li>
+                <span class="assure__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+                <span><b>{t}</b><small>{d}</small></span>
+              </li>
+            ))}
+          </ul>
+
+          {customizable && (
+            <details class="custom px__in" style={`--d:${7 + options.length}`} data-custom>
+              <summary>
+                <span class="custom__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.4-9-7.4z M7.5 11.5a1 1 0 1 0 0-.01 M10 7.5a1 1 0 1 0 0-.01 M14.5 7.5a1 1 0 1 0 0-.01"/></svg></span>
+                <span class="custom__t"><strong>Make it yours</strong><span class="custom__sub">Custom colors, your logo, stenciling and bulk branding</span></span>
+                <svg class="custom__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              </summary>
+              <div class="custom__body">
+                <div class="field">
+                  <label for="cc-color">Color you want</label>
+                  <div class="custom__color">
+                    <input type="color" id="cc-color" value="#f26a1b" data-cc-color />
+                    <input type="text" placeholder="Or describe it, e.g. PMS 286 blue" data-cc-colortext aria-label="Describe the color" />
+                  </div>
                 </div>
-              </div>
-              <div class="field">
-                <label for="cc-logo">Your logo</label>
-                <input type="file" id="cc-logo" accept="image/png,image/jpeg,image/svg+xml,image/webp" data-cc-logo />
-                <p class="hint">PNG, JPG or SVG. A transparent background works best. You'll approve a proof before production.</p>
-                <div class="custom__preview" data-cc-preview hidden>
-                  <img data-cc-img alt="Your uploaded logo" />
-                  <button type="button" class="line__rm" data-cc-clear>Remove logo</button>
+                <div class="field">
+                  <label for="cc-logo">Your logo</label>
+                  <input type="file" id="cc-logo" accept="image/png,image/jpeg,image/svg+xml,image/webp" data-cc-logo />
+                  <p class="hint">PNG, JPG or SVG. A transparent background works best. You'll approve a proof before production.</p>
+                  <div class="custom__preview" data-cc-preview hidden>
+                    <img data-cc-img alt="Your uploaded logo" />
+                    <button type="button" class="line__rm" data-cc-clear>Remove logo</button>
+                  </div>
                 </div>
+                <div class="field">
+                  <label for="cc-notes">Placement, text or stenciling</label>
+                  <textarea id="cc-notes" rows="3" placeholder="e.g. Logo on both sides, your company name stenciled on the base, 200 units" data-cc-notes></textarea>
+                </div>
+                <button type="button" class="buy__add buy__add--dark" data-cc-add><span class="buy__addt">Add custom order to quote list</span><Fragment set:html={ARROW} /></button>
+                {model && <p class="hint">Preview your logo and color on the 3D model below.</p>}
               </div>
-              <div class="field">
-                <label for="cc-notes">Placement, text or stenciling</label>
-                <textarea id="cc-notes" rows="3" placeholder="e.g. Logo on both sides, &quot;CITY OF NEWARK DPW&quot; stenciled on the base, 200 units" data-cc-notes></textarea>
-              </div>
-              <button type="button" class="btn btn--dark" data-cc-add>Add custom order to quote list</button>
-              {model && <p class="hint">Preview your logo and color on the 3D model below.</p>}
-            </div>
-          </details>
-        )}
+            </details>
+          )}
+        </div>
       </div>
     </div>
+  </section>
 
-    {model && Viewer3D && (
-      <section class="pdp__3d" aria-labelledby="h3d">
-        <div class="pdp__3dhead">
-          <h2 id="h3d">Turn it around</h2>
-          <p class="lede">Drag to rotate, pinch or scroll to zoom.{customizable && ' Pick a color or upload your logo above to preview it.'}</p>
+  <!-- ================= SPECS + DETAILS ================= -->
+  <section class="pxd" data-in>
+    <div class="wrap">
+      <div class="eq-head">
+        <div>
+          <p class="eq-k"><span></span>At a glance</p>
+          <h2>Specs and <em>details.</em></h2>
         </div>
-        <Viewer3D model={model} colors={viewerColors} customize={customizable} controls="minimal" height="min(70vh, 560px)" />
-      </section>
-    )}
+      </div>
+    </div>
+    <div class="wrap pxd__grid">
+      <div>
+        <ul class="spec">
+          {specs.map(([k, v], i) => (
+            <li style={`--i:${i}`}><span>{k}</span><b>{v}</b></li>
+          ))}
+        </ul>
+      </div>
+      {p.descriptionHtml ? (
+        <div class="pxd__desc">
+          <div class="rte" set:html={p.descriptionHtml} />
+        </div>
+      ) : (
+        <div class="pxd__desc pxd__desc--empty">
+          <p>Need dimensions, weights or a spec sheet for a bid? Our team can send it over, usually the same day.</p>
+          <a href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`} class="eq-link">Request specs<Fragment set:html={ARROW} /></a>
+        </div>
+      )}
+    </div>
+  </section>
 
-    {WatercadePlanner && (
-      <section class="pdp__3d" aria-labelledby="hplan">
-        <div class="pdp__3dhead">
-          <h2 id="hplan">Plan your layout</h2>
-          <p class="lede">See how many barriers your run or perimeter needs.</p>
+  {model && Viewer3D && (
+    <section class="px3" aria-labelledby="h3d">
+      <div class="wrap">
+        <div class="eq-head">
+          <div>
+            <p class="eq-k"><span></span>3D view</p>
+            <h2 id="h3d">Turn it <em>around.</em></h2>
+          </div>
+          <p class="px3__lede">Drag to rotate, pinch or scroll to zoom.{customizable && ' Pick a color or upload your logo above to preview it.'}</p>
+        </div>
+        <div class="px3__frame">
+          <Viewer3D model={model} colors={viewerColors} customize={customizable} controls="minimal" height="min(70vh, 560px)" />
+        </div>
+      </div>
+    </section>
+  )}
+
+  {WatercadePlanner && (
+    <section class="px3" aria-labelledby="hplan">
+      <div class="wrap">
+        <div class="eq-head">
+          <div>
+            <p class="eq-k"><span></span>Layout planner</p>
+            <h2 id="hplan">Plan your <em>layout.</em></h2>
+          </div>
+          <p class="px3__lede">See how many barriers your run or perimeter needs.</p>
         </div>
         <WatercadePlanner heading="" variants={p.variants.map((v) => ({ id: v.id, title: v.title, price: v.price }))} image={firstImg} />
-      </section>
-    )}
+      </div>
+    </section>
+  )}
 
-    {p.descriptionHtml && (
-      <section class="pdp__desc" aria-labelledby="hdesc">
-        <h2 id="hdesc">Details</h2>
-        <div class="rte" set:html={p.descriptionHtml} />
-      </section>
-    )}
+  {related.length > 0 && (
+    <section class="pxr" aria-labelledby="hrel" data-in>
+      <div class="wrap">
+        <div class="eq-head">
+          <div>
+            <p class="eq-k"><span></span>Keep shopping</p>
+            <h2 id="hrel">More <em>{relTitle}.</em></h2>
+          </div>
+          {crumbCol && <a href={`/collections/${crumbCol.handle}`} class="eq-link">See all {relTitle}<Fragment set:html={ARROW} /></a>}
+        </div>
+        <ul class="pxr__grid">{related.map((r, i) => <li style={`--i:${i}`}><ProductCard p={r} /></li>)}</ul>
+      </div>
+    </section>
+  )}
 
-    {related.length > 0 && (
-      <section class="pdp__rel" aria-labelledby="hrel">
-        <h2 id="hrel">More {crumbCol?.title.toLowerCase()}</h2>
-        <div class="grid">{related.map((r) => <ProductCard p={r} />)}</div>
-      </section>
-    )}
-  </div>
+  <section class="eqc" data-in>
+    <div class="wrap eqc__in">
+      <div>
+        <p class="eq-k eq-k--light"><span></span>{p.isRental ? 'Rental quote' : 'Bulk and agency pricing'}</p>
+        <h2>{p.isRental ? <>Need it on a job? <em>We’ll deliver it.</em></> : <>Buying in bulk? <em>Let’s talk pricing.</em></>}</h2>
+      </div>
+      <div class="eqc__acts">
+        <a href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`} class="eq-pill eq-pill--red">{p.isRental ? 'Get rental pricing' : 'Get bulk pricing'}<Fragment set:html={ARROW} /></a>
+        <a href="/pages/contact" class="eq-pill eq-pill--glass">Talk to an expert</a>
+      </div>
+    </div>
+  </section>
 
   <RecentlyViewed exclude={p.handle} />
   <QuickView />
 
-  <div class="buybar" data-buybar>
+  <div class="buybar" data-buybar style={`--tint:${tint}`}>
     <div class="wrap buybar__in">
       {firstImg && <img class="buybar__img" src={img(firstImg, 160)} alt="" />}
       <div class="buybar__txt">
@@ -217,7 +320,8 @@ const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p
     const update = () => {
       const v = selected();
       root.querySelectorAll('[data-option]').forEach((fs) => { fs.querySelector('[data-opt-val]').textContent = fs.querySelector('input:checked')?.value || ''; });
-      const pr = root.querySelector('[data-price]'); if (pr) pr.textContent = fmt(v.price);
+      const pr = root.querySelector('[data-price]');
+      if (pr && pr.textContent !== fmt(v.price)) { pr.textContent = fmt(v.price); pr.classList.remove('is-flip'); void pr.offsetWidth; pr.classList.add('is-flip'); }
       const bp = document.querySelector('[data-bar-price]'); if (bp && !root.dataset.rental) bp.textContent = fmt(v.price);
       const add = root.querySelector('[data-add-cart]'); if (add) add.disabled = !v.available;
       root.querySelector('[data-unavail]').hidden = v.available;
@@ -231,13 +335,26 @@ const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p
     const qty = () => Math.max(1, parseInt(qtyEl.value, 10) || 1);
     const vtitle = (v) => (v.title === 'Default Title' ? '' : v.title);
 
+    // button feedback: label swaps to a check, then back
+    const flash = (b, label) => {
+      const t = b.querySelector('.buy__addt'); if (!t) return;
+      const orig = b.dataset.label || t.textContent; b.dataset.label = orig;
+      t.textContent = label; b.classList.add('is-done');
+      clearTimeout(b._t); b._t = setTimeout(() => { t.textContent = b.dataset.label; b.classList.remove('is-done'); }, 1800);
+    };
     root.querySelector('[data-add-cart]')?.addEventListener('click', async (e) => {
-      const b = e.currentTarget; b.disabled = true; const t = b.textContent; b.textContent = 'Adding';
-      try { await window.TSSCart.add(selected().id, qty()); } finally { b.disabled = false; b.textContent = t; }
+      const b = e.currentTarget; const t = b.querySelector('.buy__addt');
+      b.disabled = true; b.dataset.label = b.dataset.label || t.textContent; t.textContent = 'Adding'; b.classList.add('is-busy');
+      let ok = false;
+      try { await window.TSSCart.add(selected().id, qty()); ok = true; } catch {} finally {
+        b.disabled = false; b.classList.remove('is-busy'); t.textContent = b.dataset.label;
+        if (ok) flash(b, 'Added to cart');
+      }
     });
     root.querySelectorAll('[data-add-quote]').forEach((b) => b.addEventListener('click', () => {
       const v = selected();
       window.TSSQuote.add([{ title: root.dataset.title, handle: root.dataset.handle, image: root.dataset.image, variant: vtitle(v), qty: qty(), mode: b.dataset.addQuote }]);
+      if (b.classList.contains('buy__add')) flash(b, 'Added to quote');
     }));
     root.querySelector('[data-ask]')?.addEventListener('click', () => {
       const v = selected();
@@ -302,7 +419,25 @@ const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p
       if (logoData) parts.push('Logo attached');
       if (notes) parts.push(notes);
       window.TSSQuote.add([{ title: root.dataset.title + ' (custom)', handle: root.dataset.handle, image: logoData || root.dataset.image, variant: vtitle(v), qty: qty(), mode: 'buy', note: parts.join('. '), logo: logoData }]);
+      flash(root.querySelector('[data-cc-add]'), 'Added to quote');
     });
+  }
+
+  {
+    // keep the sticky buy panel just under the site header, whatever its height
+    const hdr = document.querySelector('header');
+    const setTop = () => document.documentElement.style.setProperty('--hdr-h', `${Math.round(hdr.getBoundingClientRect().height)}px`);
+    if (hdr) { setTop(); if ('ResizeObserver' in window) new ResizeObserver(setTop).observe(hdr); }
+  }
+
+  {
+    // reveal sections as they scroll in
+    const els = document.querySelectorAll('[data-in]');
+    if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) els.forEach((e) => e.classList.add('is-in'));
+    else {
+      const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { threshold: 0.12 });
+      els.forEach((e) => io.observe(e));
+    }
   }
 
   {
@@ -316,7 +451,7 @@ const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p
         const m = b.dataset.m;
         sw.dataset.on = m;
         sw.querySelectorAll('[data-m]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
-        if (btn) { btn.dataset.addQuote = m; btn.textContent = copy[m][0]; }
+        if (btn) { btn.dataset.addQuote = m; btn.dataset.label = copy[m][0]; const t = btn.querySelector('.buy__addt'); if (t) t.textContent = copy[m][0]; }
         if (bar) bar.textContent = copy[m][0];
         if (txt) txt.textContent = copy[m][1];
       }));
@@ -325,88 +460,244 @@ const sellable = p.isRental && p.collections.includes('equipment-rentals') && !p
 </script>
 
 <style>
-  .pdp { padding-top: 24px; padding-bottom: 90px; }
-  .crumbs { display: flex; gap: 8px; font-size: .92rem; color: var(--steel); margin-bottom: 20px; }
-  .crumbs a { color: inherit; text-decoration-color: var(--line-dark); }
-  .crumbs a:hover { color: var(--red); }
-  .pdp__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
-  .buy { position: sticky; top: calc(var(--header-h) + 20px); display: grid; gap: 18px; }
-  .buy__title { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.08; }
-  .buy__price { font-size: 1.5rem; margin: 0; display: flex; gap: 10px; align-items: baseline; }
-  .buy__price strong { font-variation-settings: 'wght' 740; }
-  .buy__unit { font-size: .95rem; color: var(--ink-soft); }
-  .buy__price s { color: var(--ink-soft); font-size: 1.1rem; }
-  .rental .buy__price, [data-rental='1'] .buy__price { font-size: 1.1rem; color: var(--ink-soft); }
-  .opt { border: 0; padding: 0; margin: 0; }
-  .opt legend { font-weight: 800; margin-bottom: 8px; }
-  .opt legend span { font-weight: 400; }
+  /* ---------- top band ---------- */
+  .px { position: relative; padding: clamp(18px, 2.2vw, 28px) 0 clamp(44px, 5vw, 76px); isolation: isolate; overflow: clip; }
+  .px__bg { position: absolute; inset: 0 0 auto; height: min(78%, 620px); z-index: -1; background: linear-gradient(180deg, var(--tint) 0%, color-mix(in srgb, var(--tint) 55%, #fff) 60%, #fff 100%); }
+  .px__bg::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(20, 23, 26, .07) 1px, transparent 1.2px); background-size: 22px 22px; mask-image: linear-gradient(180deg, #000 0%, transparent 85%); -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 85%); }
+  .px__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: clamp(14px, 1.8vw, 22px); font-size: .9rem; color: var(--ink-2); animation: pxUp .6s cubic-bezier(.2, .8, .2, 1) both; }
+  .px__crumbs a { color: inherit; text-decoration: none; }
+  .px__crumbs a:hover { color: var(--red); }
+  .px__crumbs svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; opacity: .5; }
+  .px__crumbs span { color: var(--steel); max-width: 40ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .px__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(22px, 3.6vw, 60px); align-items: start; }
+  .px__gal { min-width: 0; animation: pxGal 1s cubic-bezier(.2, .8, .2, 1) both; }
+  .px__gal :global(.gal__stage) { border-radius: 26px; border-color: rgba(20, 23, 26, .06); box-shadow: 0 50px 90px -60px rgba(20, 23, 26, .55), 0 2px 0 rgba(255, 255, 255, .8) inset; }
+  .px__gal :global(.gal__slide img) { transition: transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .px__gal :global(.gal__stage:hover .gal__slide img) { transform: scale(1.035); }
+  .px__gal :global(.gal__thumb) { border-radius: 14px; }
+  .px__gal :global(.gal__zoom) { border-radius: 999px; }
+
+  /* ---------- buy panel ---------- */
+  .buy { position: sticky; top: calc(var(--hdr-h, 140px) + 20px); display: grid; gap: 18px; padding: clamp(20px, 2.4vw, 32px); border-radius: 26px; background: rgba(255, 255, 255, .86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(20, 23, 26, .07); box-shadow: 0 50px 90px -64px rgba(20, 23, 26, .5); }
+  .px__in { animation: pxUp .7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.18s + var(--d, 0) * 70ms); }
+  @keyframes pxUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes pxGal { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes pxRise { from { transform: translateY(105%); } to { transform: none; } }
+
+  .buy__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: var(--haze); color: var(--ink-2); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 680; text-decoration: none; }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--steel); }
+  .chip--cat { background: var(--tint); color: var(--ink); transition: background .2s; }
+  .chip--cat i { background: var(--red); }
+  .chip--cat:hover { background: color-mix(in srgb, var(--tint) 70%, #000 6%); }
+  .chip--ok { background: #e7f3eb; color: #1c6b37; }
+  .chip--ok i { background: #23a454; box-shadow: 0 0 0 0 rgba(35, 164, 84, .5); animation: pxPulse 2.2s ease-out infinite; }
+  .chip--rent { background: var(--red); color: #fff; }
+  @keyframes pxPulse { 0% { box-shadow: 0 0 0 0 rgba(35, 164, 84, .45); } 70%, 100% { box-shadow: 0 0 0 9px rgba(35, 164, 84, 0); } }
+
+  .buy__title { margin: 0; font-size: clamp(1.9rem, 3.2vw, 3rem); line-height: 1.04; letter-spacing: -.035em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .buy__ln { display: block; overflow: hidden; padding-bottom: .06em; }
+  .buy__ln > span { display: inline-block; animation: pxRise .9s .1s cubic-bezier(.2, .8, .2, 1) both; }
+  .buy__price { margin: -4px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .buy__price strong { display: inline-block; font-size: clamp(1.8rem, 2.6vw, 2.3rem); letter-spacing: -.03em; font-variation-settings: 'wght' 780; color: var(--red); }
+  .buy__price strong.is-flip { animation: pxFlip .45s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes pxFlip { from { opacity: 0; transform: translateY(-40%); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+  .buy__unit { color: var(--steel); font-size: .95rem; }
+  .buy__price s { color: var(--steel); font-size: 1.1rem; }
+  .buy__price--q { font-size: 1.05rem; color: var(--ink-2); line-height: 1.45; padding: 12px 14px; border-radius: 14px; background: var(--haze); }
+  .buy__intro { margin: -2px 0 0; color: var(--ink-2); line-height: 1.55; font-size: 1rem; }
+
+  .opt { border: 0; padding: 0; margin: 0; min-width: 0; }
+  .opt legend { display: flex; gap: 8px; margin-bottom: 10px; padding: 0; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 700; }
+  .opt legend span { color: var(--ink); letter-spacing: .02em; text-transform: none; font-size: .95rem; font-variation-settings: 'wght' 680; }
   .swatches, .pills { display: flex; flex-wrap: wrap; gap: 8px; }
   .sw, .pill { position: relative; }
   .sw input, .pill input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
-  .sw > span { display: block; width: 38px; height: 38px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0,0,0,.14); outline: 2px solid transparent; outline-offset: 3px; transition: outline-color .15s; }
-  .sw input:checked + span { outline-color: var(--red); }
-  .sw input:focus-visible + span { outline-color: var(--ink); }
-  .pill > span { display: block; padding: 10px 15px 9px; border: 1.5px solid var(--line-dark); border-radius: var(--r-s); background: #fff; font-variation-settings: 'wght' 600; font-size: .95rem; cursor: pointer; transition: border-color .12s, background .12s; }
-  .pill > span:hover { border-color: var(--steel); }
+  .sw > span { display: block; width: 40px; height: 40px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16); transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .2s; }
+  .sw:hover > span { transform: scale(1.08); }
+  .sw input:checked + span { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16), 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
+  .sw input:focus-visible + span { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--red); }
+  .pill > span { display: block; padding: 10px 16px 9px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font-variation-settings: 'wght' 620; font-size: .95rem; cursor: pointer; transition: border-color .2s, background .2s, color .2s, transform .2s; }
+  .pill > span:hover { border-color: var(--ink); }
+  .pill input:active + span { transform: scale(.96); }
   .pill input:checked + span { border-color: var(--ink); background: var(--ink); color: #fff; }
-  .pill input:focus-visible + span { outline: 2.5px solid var(--red); outline-offset: 2px; }
-  .qty-row { display: flex; gap: 10px; }
-  .qty { display: flex; align-items: stretch; border: 1.5px solid var(--line-dark); border-radius: var(--r-s); background: #fff; overflow: hidden; }
-  .qty button { width: 44px; border: 0; background: none; font-size: 1.3rem; cursor: pointer; color: var(--steel); }
-  .qty button:hover { background: var(--haze); color: var(--ink); }
-  .qty input { width: 60px; border: 0; text-align: center; font-variation-settings: 'wght' 680; font-size: 1.05rem; -moz-appearance: textfield; }
-  .qty input::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .buy__add { flex: 1; }
-  .buy__unavail { margin: 0; color: var(--red); font-weight: 700; }
-  .alt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-  .assure { list-style: none; margin: 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; gap: 9px; color: var(--ink-2); font-size: .98rem; }
-  .assure li { padding-left: 24px; position: relative; }
-  .assure li::before { content: ''; position: absolute; left: 2px; top: 7px; width: 9px; height: 9px; border-radius: 2px; background: var(--red); transform: rotate(45deg); }
-  .custom { background: #fff; color: var(--ink); border: 1px solid var(--line); border-top: 4px solid var(--red); border-radius: var(--r-m); box-shadow: var(--shadow-s); }
-  .custom summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px 14px; cursor: pointer; }
-  .custom summary::-webkit-details-marker { display: none; }
-  .custom summary svg { width: 20px; height: 20px; fill: none; stroke: var(--steel); stroke-width: 2.2; flex: none; transition: rotate .2s; }
-  .custom[open] summary svg { rotate: 180deg; }
-  .custom summary strong { font-variation-settings: 'wght' 700; }
-  .custom__sub { color: var(--steel); font-size: .92rem; }
-  .custom__body { padding: 4px 18px 20px; display: grid; gap: 16px; }
-  .custom__color { display: flex; gap: 8px; }
-  .custom__color input[type=color] { width: 54px; min-height: 50px; padding: 4px; border-radius: var(--r-s); border: 1.5px solid var(--line-dark); background: #fff; flex: none; cursor: pointer; }
-  .custom input[type=file] { color: var(--ink-2); font-size: .95rem; }
-  .custom__preview { display: flex; align-items: center; gap: 12px; }
-  .custom__preview img { width: 72px; height: 72px; object-fit: contain; background: #fff; border: 1px solid var(--line); border-radius: var(--r-s); padding: 6px; }
-  .custom .line__rm { color: var(--steel); }
-  .pdp__3d { margin-top: clamp(48px, 7vw, 96px); }
-  .pdp__3dhead { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
-  .pdp__3dhead .lede { margin: 0; font-size: 1.05rem; }
-  .pdp__desc { margin-top: clamp(48px, 7vw, 96px); display: grid; grid-template-columns: 1fr 2fr; gap: 32px; }
-  .rte { max-width: 72ch; }
-  .rte :global(h1), .rte :global(h2), .rte :global(h3) { font-size: var(--fs-2); margin: 1.2em 0 .5em; }
-  .rte :global(img) { height: auto; border-radius: 8px; }
-  .rte :global(table) { border-collapse: collapse; width: 100%; }
-  .rte :global(td), .rte :global(th) { border: 1px solid var(--concrete-dark); padding: 8px; }
-  .pdp__rel { margin-top: clamp(48px, 7vw, 96px); }
-  .pdp__rel h2 { margin-bottom: 20px; font-size: var(--fs-4); }
-  @media (max-width: 880px) {
-    .pdp__grid, .pdp__desc { grid-template-columns: 1fr; }
-    .buy { position: static; }
-  }
+  .pill input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; }
 
-  /* sticky buy bar */
-  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: rgba(255, 255, 255, .96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--line); box-shadow: 0 -16px 40px -28px rgba(20, 23, 26, .4); translate: 0 110%; transition: translate .25s cubic-bezier(.3, .8, .3, 1); }
+  .qty-row { display: flex; gap: 10px; }
+  .qty { display: flex; align-items: stretch; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; overflow: hidden; flex: none; }
+  .qty button { width: 46px; border: 0; background: none; font-size: 1.3rem; cursor: pointer; color: var(--steel); transition: background .15s, color .15s; }
+  .qty button:hover { background: var(--haze); color: var(--ink); }
+  .qty input { width: 52px; border: 0; text-align: center; font: inherit; font-variation-settings: 'wght' 700; font-size: 1.05rem; background: none; -moz-appearance: textfield; }
+  .qty input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .buy__add { position: relative; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-size: 1.04rem; font-variation-settings: 'wght' 720; cursor: pointer; overflow: hidden; box-shadow: 0 18px 34px -18px rgba(182, 6, 6, .85); transition: background .2s, transform .15s, box-shadow .2s; }
+  .buy__add::before { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .28) 50%, transparent 70%); transform: translateX(-120%); transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .buy__add:hover { background: var(--red-press); }
+  .buy__add:hover::before { transform: translateX(120%); }
+  .buy__add:active { transform: scale(.98); }
+  .buy__add :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
+  .buy__add:hover :global(svg) { transform: translateX(3px); }
+  .buy__add[disabled] { opacity: .55; cursor: not-allowed; box-shadow: none; }
+  .buy__add.is-busy { cursor: progress; opacity: 1; }
+  .buy__add.is-done { background: #1c7a3e; box-shadow: 0 18px 34px -18px rgba(28, 122, 62, .8); }
+  .buy__add.is-done :global(svg) { opacity: 0; }
+  .buy__add.is-done .buy__addt::before { content: '✓'; display: inline-block; margin-right: 8px; animation: pxPop .4s cubic-bezier(.2, 1.4, .4, 1); }
+  @keyframes pxPop { from { transform: scale(0); } to { transform: scale(1); } }
+  .buy__add--dark { flex: none; width: 100%; background: var(--ink); box-shadow: none; }
+  .buy__add--dark:hover { background: #000; }
+  .buy__unavail { margin: 0; color: var(--red); font-variation-settings: 'wght' 680; }
+
+  .alt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .alt { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .92rem; font-variation-settings: 'wght' 640; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+  .alt:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .alt__ai { padding: 2px 6px; border-radius: 6px; background: var(--gold); color: var(--ink); font-size: .7rem; font-variation-settings: 'wght' 800; }
+
+  .assure { list-style: none; margin: 2px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .assure li { display: grid; gap: 8px; align-content: start; }
+  .assure__ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--red-tint); color: var(--red); }
+  .assure__ic svg { width: 21px; height: 21px; }
+  .assure b { display: block; font-size: .92rem; line-height: 1.25; font-variation-settings: 'wght' 720; }
+  .assure small { display: block; margin-top: 2px; color: var(--steel); font-size: .82rem; line-height: 1.35; }
+
+  .custom { border-radius: 20px; background: linear-gradient(135deg, #fff 0%, var(--haze) 100%); border: 1px solid var(--line); overflow: hidden; }
+  .custom summary { list-style: none; display: grid; grid-template-columns: 42px minmax(0, 1fr) 20px; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
+  .custom summary::-webkit-details-marker { display: none; }
+  .custom__ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: conic-gradient(from 200deg, #ff6a13, #ffcd00, #23a454, #0047bb, #c8102e, #ff6a13); }
+  .custom__ic svg { width: 22px; height: 22px; fill: #fff; stroke: none; opacity: .95; }
+  .custom__t { display: grid; gap: 2px; }
+  .custom__t strong { font-variation-settings: 'wght' 720; }
+  .custom__sub { color: var(--steel); font-size: .88rem; }
+  .custom__chev { width: 20px; height: 20px; fill: none; stroke: var(--steel); stroke-width: 2.2; transition: rotate .3s cubic-bezier(.2, .8, .2, 1); }
+  .custom[open] .custom__chev { rotate: 180deg; }
+  .custom__body { padding: 4px 16px 18px; display: grid; gap: 16px; }
+  .custom[open] .custom__body { animation: pxUp .45s cubic-bezier(.2, .8, .2, 1); }
+  .custom label { display: block; margin-bottom: 6px; font-size: .92rem; font-variation-settings: 'wght' 660; }
+  .custom__color { display: flex; gap: 8px; }
+  .custom__color input[type=color] { width: 54px; min-height: 50px; padding: 4px; border-radius: 12px; border: 1.5px solid var(--line-dark); background: #fff; flex: none; cursor: pointer; }
+  .custom input[type=text], .custom textarea { width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line-dark); font: inherit; background: #fff; }
+  .custom input[type=file] { color: var(--ink-2); font-size: .92rem; }
+  .custom .hint { margin: 6px 0 0; color: var(--steel); font-size: .85rem; }
+  .custom__preview { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+  .custom__preview img { width: 72px; height: 72px; object-fit: contain; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 6px; }
+
+  /* ---------- shared section heads ---------- */
+  .eq-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(22px, 2.8vw, 36px); }
+  .eq-k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--steel); }
+  .eq-k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .eq-k--light { color: rgba(255, 255, 255, .8); }
+  .eq-head h2, .eqc h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.6rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .eq-head h2 em, .eqc h2 em { font-style: normal; color: var(--red); }
+  .eq-link { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px 12px; border-radius: 999px; border: 1.5px solid var(--line-dark); color: var(--ink); font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+  .eq-link :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .eq-link:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .eq-link:hover :global(svg) { transform: translateX(3px); }
+  .eq-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 14px 26px 13px; border-radius: 999px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s; }
+  .eq-pill :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
+  .eq-pill:hover :global(svg) { transform: translateX(3px); }
+  .eq-pill--red { background: var(--red); color: #fff; }
+  .eq-pill--red:hover { background: #d10a0a; }
+  .eq-pill--glass { background: rgba(255, 255, 255, .08); color: #fff; border: 1.5px solid rgba(255, 255, 255, .4); }
+  .eq-pill--glass:hover { background: rgba(255, 255, 255, .16); }
+  [data-in] li { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i, 0) * 60ms); }
+  [data-in].is-in li { opacity: 1; transform: none; }
+
+  /* ---------- specs + details ---------- */
+  .pxd { padding: clamp(48px, 6vw, 90px) 0; background: var(--haze); }
+  .pxd__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: start; }
+  .spec { list-style: none; margin: 0; padding: 0; border-radius: 22px; background: #fff; border: 1px solid var(--line); overflow: hidden; }
+  .spec li { display: grid; grid-template-columns: minmax(110px, .7fr) minmax(0, 1.3fr); gap: 16px; padding: 16px 22px; border-top: 1px solid var(--line); transition: background .2s, opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); }
+  .spec li:first-child { border-top: 0; }
+  .spec li:hover { background: #fafafb; }
+  .spec span { color: var(--steel); font-size: .92rem; }
+  .spec b { font-variation-settings: 'wght' 650; font-size: .98rem; overflow-wrap: anywhere; }
+  .pxd__desc { padding: clamp(22px, 2.6vw, 34px); border-radius: 22px; background: #fff; border: 1px solid var(--line); }
+  .pxd__desc--empty { display: grid; gap: 16px; justify-items: start; }
+  .pxd__desc--empty p { margin: 0; font-size: 1.1rem; line-height: 1.55; color: var(--ink-2); }
+  .rte { max-width: 70ch; color: var(--ink-2); line-height: 1.65; }
+  .rte :global(> :first-child) { margin-top: 0; }
+  .rte :global(> :last-child) { margin-bottom: 0; }
+  .rte :global(h1), .rte :global(h2), .rte :global(h3), .rte :global(h4) { color: var(--ink); font-size: 1.2rem; letter-spacing: -.01em; margin: 1.3em 0 .5em; font-variation-settings: 'wght' 740; }
+  .rte :global(ul) { padding-left: 1.1em; }
+  .rte :global(li) { margin: .3em 0; }
+  .rte :global(li::marker) { color: var(--red); }
+  .rte :global(strong) { color: var(--ink); }
+  .rte :global(img) { height: auto; max-width: 100%; border-radius: 12px; }
+  .rte :global(table) { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  .rte :global(td), .rte :global(th) { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; }
+  .rte :global(a) { color: var(--red); }
+
+  /* ---------- 3D + planner ---------- */
+  .px3 { padding: clamp(48px, 6vw, 90px) 0; background: #fff; }
+  .px3__lede { margin: 0; max-width: 40ch; color: var(--steel); }
+  .px3__frame { border-radius: 26px; overflow: hidden; border: 1px solid var(--line); background: radial-gradient(120% 90% at 50% 10%, #fff, var(--haze) 70%); }
+
+  /* ---------- related ---------- */
+  .pxr { padding: clamp(48px, 6vw, 90px) 0; background: #fff; }
+  .pxd + .pxr, .px3 + .pxr { padding-top: clamp(24px, 3vw, 40px); }
+  .pxr__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 20px); }
+  .pxr__grid > li { display: grid; }
+
+  /* ---------- CTA ---------- */
+  .eqc { padding: clamp(56px, 7vw, 100px) 0; background: radial-gradient(120% 140% at 85% 0%, #3a0505 0%, #16181b 55%); color: #fff; }
+  .eqc__in { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 26px 40px; }
+  .eqc h2 { color: #fff; max-width: 16ch; }
+  .eqc__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .eqc .eq-k, .eqc h2 { transition: opacity .7s, transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .eqc:not(.is-in) .eq-k, .eqc:not(.is-in) h2 { opacity: 0; transform: translateY(16px); }
+
+  /* ---------- sticky buy bar ---------- */
+  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: rgba(255, 255, 255, .92); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border-top: 1px solid var(--line); box-shadow: 0 -20px 40px -30px rgba(20, 23, 26, .45); translate: 0 110%; transition: translate .4s cubic-bezier(.2, .8, .2, 1); }
   .buybar.is-on { translate: 0 0; }
-  @media (prefers-reduced-motion: reduce) { .buybar { transition: none; } }
-  .buybar__in { display: flex; align-items: center; gap: 14px; padding-block: 10px; padding-right: clamp(88px, 9vw, 116px); } /* keeps clear of the Conner launcher */
-  .buybar__img { width: 48px; height: 48px; object-fit: contain; border: 1px solid var(--haze-2); border-radius: 8px; background: #fff; flex: none; }
+  .buybar__in { display: flex; align-items: center; gap: 14px; padding-block: 10px; padding-right: clamp(88px, 9vw, 116px); }
+  .buybar__img { width: 50px; height: 50px; object-fit: contain; border-radius: 12px; background: var(--tint, #fff); padding: 4px; flex: none; }
   .buybar__txt { display: grid; line-height: 1.25; min-width: 0; margin-right: auto; }
-  .buybar__txt b { font-variation-settings: 'wght' 660; font-size: .98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .buybar__txt span { color: var(--steel); font-size: .92rem; font-variation-settings: 'wght' 620; }
-  .buybar__btn { min-height: 46px; padding: 12px 22px 11px; white-space: nowrap; }
-  @media (max-width: 560px) { .buybar__img { display: none; } .buybar__btn { padding-inline: 16px; font-size: .95rem; } }
-  .mode { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; width: 220px; padding: 5px; margin-bottom: 14px; border-radius: 999px; background: var(--haze); border: 1px solid var(--line); }
-  .mode i { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc(50% - 5px); border-radius: 999px; background: var(--red); transition: transform .45s cubic-bezier(.2,.8,.2,1), background .3s; }
+  .buybar__txt b { font-variation-settings: 'wght' 700; font-size: .98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .buybar__txt span { color: var(--red); font-size: .95rem; font-variation-settings: 'wght' 700; }
+  .buybar__btn { min-height: 48px; padding: 0 24px; border-radius: 999px; background: var(--red); color: #fff; border: 0; font: inherit; font-variation-settings: 'wght' 700; white-space: nowrap; cursor: pointer; transition: background .2s; }
+  .buybar__btn:hover { background: var(--red-press); }
+
+  /* ---------- rent / buy switch ---------- */
+  .mode { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; width: 220px; padding: 5px; border-radius: 999px; background: var(--haze); border: 1px solid var(--line); }
+  .mode i { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc(50% - 5px); border-radius: 999px; background: var(--red); transition: transform .45s cubic-bezier(.2, .8, .2, 1), background .3s; }
   .mode[data-on="buy"] i { transform: translateX(100%); background: var(--ink); }
   .mode button { all: unset; position: relative; z-index: 1; cursor: pointer; text-align: center; padding: 10px 0 9px; font-variation-settings: 'wght' 720; color: var(--steel); transition: color .3s; }
   .mode button[aria-selected="true"] { color: #fff; }
-  .mode button:focus-visible { outline: 3px solid rgba(182,6,6,.35); outline-offset: 2px; border-radius: 999px; }
+  .mode button:focus-visible { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; border-radius: 999px; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .pxr__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pxr__grid > li:nth-child(4) { display: none; }
+  }
+  @media (max-width: 900px) {
+    .px__grid, .pxd__grid { grid-template-columns: 1fr; }
+    .buy { position: static; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .pxd__desc { margin-top: 0; }
+    .px__bg { height: 520px; }
+  }
+  @media (max-width: 640px) {
+    .px { padding-top: 12px; }
+    .px__crumbs span { max-width: 22ch; }
+    .px__gal :global(.gal__stage) { border-radius: 20px; }
+    .assure { grid-template-columns: 1fr; gap: 10px; }
+    .assure li { grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 12px; }
+    .qty button { width: 40px; }
+    .qty input { width: 40px; }
+    .buy__add { padding: 0 16px; font-size: 1rem; }
+    .eq-head { justify-content: center; text-align: center; }
+    .eq-head .eq-k { justify-content: center; }
+    .spec li { grid-template-columns: 1fr; gap: 2px; padding: 14px 18px; }
+    .pxr__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pxr__grid > li:nth-child(4) { display: grid; }
+    .eqc__in { justify-content: center; text-align: center; }
+    .eqc h2 { margin-inline: auto; }
+    .eqc__acts { justify-content: center; width: 100%; }
+    .eqc__acts .eq-pill { width: 100%; }
+    .buybar__img { display: none; }
+    .buybar__btn { padding-inline: 16px; font-size: .95rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .px__crumbs, .px__gal, .px__in, .buy__ln > span, .chip--ok i, .buy__price strong.is-flip { animation: none; }
+    [data-in] li, .eqc:not(.is-in) .eq-k, .eqc:not(.is-in) h2 { opacity: 1; transform: none; transition: none; }
+    .buybar { transition: none; }
+  }
 </style>
