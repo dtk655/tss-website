@@ -4,8 +4,8 @@ const { colByHandle } = await loadCatalog();
 const megaCats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const nav = [
   { href: '/collections', label: 'Products', mega: 'products' },
-  { href: '/pages/equipment', label: 'Equipment' },
-  { href: '/pages/fleet', label: 'Fleet' },
+  { href: '/pages/equipment', label: 'Equipment', peek: 'equipment', sub: 'VMS and arrow boards, light towers, traffic lights' },
+  { href: '/pages/fleet', label: 'Fleet', peek: 'fleet', sub: 'TMA crash trucks, bucket trucks, cone trucks' },
   { href: '/pages/lane-closure', label: 'Lane Closures' },
   { href: '/watercade/', label: 'WATERCADE' },
   // desktop only; the mobile drawer lists these in its own link grid
@@ -14,6 +14,13 @@ const nav = [
   { href: '/pages/about-us', label: 'About', desk: true },
   { href: '/pages/contact', label: 'Contact', desk: true }
 ];
+// Hover previews under Equipment and Fleet: a quick look at what the tab covers (only products that exist).
+const peekDefs = {
+  equipment: { all: 'See all equipment', items: [['variable-message-sign-vms-board', 'VMS Board', '/fleet/cut/vms.png', '#ffe7d2'], ['arrow-board', 'Arrow Board', '/fleet/cut/arrow-board.png', '#fff1c9'], ['light-tower', 'Light Tower', '/fleet/cut/light-tower.png', '#e2edf8'], ['portable-traffic-light', 'Traffic Light', '/fleet/cut/traffic-light.png', '#e3f3d8']] },
+  fleet: { all: 'See the fleet', items: [['truck-mounted-attenuator-tma', 'TMA Truck', '/fleet/tma-side.png', '#ffdede'], ['bucket-van', 'Bucket Van', '/fleet/cut/bucket-van.png', '#e2edf8'], ['basket-truck', 'Cone Truck', '/fleet/cut/basket-truck.png', '#fff1c9'], ['flatbed-truck', 'Flatbed', '/fleet/cut/flatbed-truck.png', '#ebebe8']] }
+};
+const allHandles = new Set(['equipment-rentals', 'truck-rentals'].flatMap((h) => (colByHandle.get(h)?.products || []).map((p) => p.handle)));
+const peeks = Object.fromEntries(Object.entries(peekDefs).map(([k, d]) => [k, { all: d.all, items: d.items.filter(([h]) => allHandles.has(h)) }]));
 const moreLinks = [
   { href: '/pages/custom-stenciling', t: 'Custom Shop', s: 'Your colors, logo and stenciling' },
   { href: '/tools', t: 'Planning Tools', s: 'Work zone builder, closure plan, calculators' },
@@ -121,6 +128,16 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
         </div>
             )}
           </div>
+        ) : n.peek && peeks[n.peek].items.length ? (
+          <div class="nav__item nav__item--peek">
+            <a href={n.href} aria-current={current(n.href) ? 'page' : undefined}><span>{n.label}</span></a>
+            <div class="peek" role="region" aria-label={`${n.label} preview`}>
+              {peeks[n.peek].items.map(([h, t, src, tint]) => (
+                <a href={`/products/${h}`} class="peek__it" style={`--tint:${tint}`}><span class="peek__img"><img src={src} alt="" loading="lazy" /></span><b>{t}</b></a>
+              ))}
+              <a href={n.href} class="peek__all">{peeks[n.peek].all}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+          </div>
         ) : (
           <a href={n.href} aria-current={current(n.href) ? 'page' : undefined} aria-label={n.label === 'WATERCADE' ? 'WATERCADE' : undefined}>{n.label === 'WATERCADE' ? <span class="nav__wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span> : <span>{n.label}</span>}</a>
         ))}
@@ -170,7 +187,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
             <a href={n.href} class={`mdrw__link mdrw__in${current(n.href) ? ' is-cur' : ''}`} style={`--i:${i + 1}`}>
               {n.label === 'WATERCADE'
                 ? <span class="mdrw__lbl mdrw__wc" aria-label="WATERCADE"><img src="/brand/watercade-nav.png" alt="" width="540" height="72" /></span>
-                : <span class="mdrw__lbl">{n.label}</span>}
+                : <span class="mdrw__lbl">{n.label}{n.sub && <small class="mdrw__hint">{n.sub}</small>}</span>}
               <svg class="mdrw__arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           ))}
@@ -345,6 +362,20 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
 
   /* ---------- mega panel ---------- */
   .mega { position: fixed; left: 0; right: 0; top: var(--megatop, 92px); background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 32px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity .22s ease, translate .22s ease, visibility .22s; z-index: 30; }
+  /* hover preview under Equipment / Fleet */
+  .peek { position: absolute; top: calc(100% + 1px); left: -6px; z-index: 30; display: flex; align-items: stretch; gap: 8px; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 30px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -6px; visibility: hidden; transition: opacity .2s, translate .25s cubic-bezier(.2, .8, .2, 1), visibility .2s; transition-delay: .06s; }
+  .nav__item--peek:hover .peek, .nav__item--peek:focus-within .peek { opacity: 1; translate: 0 0; visibility: visible; transition-delay: .12s; }
+  .peek__it { display: grid; justify-items: center; align-content: start; gap: 6px; width: 118px; padding: 10px 8px 10px; border-radius: 13px; text-decoration: none; color: var(--ink); background: linear-gradient(185deg, var(--tint), #fff 85%) border-box; border: 1px solid transparent; transition: border-color .2s, transform .3s cubic-bezier(.2, .8, .2, 1); }
+  .peek__it:hover { border-color: var(--line-dark); transform: translateY(-2px); }
+  .peek__img { display: grid; place-items: center; width: 100%; }
+  .peek__img img { display: block; width: 100%; height: 62px; object-fit: contain; filter: drop-shadow(0 6px 6px rgba(20, 23, 26, .18)); }
+  .peek__it b { font-size: .84rem; line-height: 1.2; text-align: center; font-variation-settings: 'wght' 680; }
+  .peek__it:hover b { color: var(--red); }
+  .peek__all { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; width: 96px; padding: 10px; border-radius: 13px; background: var(--ink); color: #fff; font-size: .82rem; line-height: 1.25; text-align: center; text-decoration: none; font-variation-settings: 'wght' 700; transition: background .2s; }
+  .peek__all svg { width: 18px; height: 18px; transition: transform .2s; }
+  .peek__all:hover { background: var(--red); }
+  .peek__all:hover svg { transform: translateX(3px); }
+  .mdrw__hint { display: block; margin-top: 3px; font-size: .78rem; line-height: 1.3; color: var(--steel); letter-spacing: 0; font-variation-settings: 'wght' 500; }
   .nav__item--mega.is-open .mega { opacity: 1; translate: 0 0; visibility: visible; }
   .mega__in { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 36px; padding-block: 28px 30px; }
   .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-content: start; }
