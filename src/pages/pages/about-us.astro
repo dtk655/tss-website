@@ -1,71 +1,95 @@
 ---
+// About page, in the same visual language as the equipment, fleet and lane closure pages.
 import Layout from '../../layouts/Layout.astro';
 import { PHONE, PHONE_TEL, YEARS } from '../../lib/config.js';
 
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const HERO = CDN + 'thumbnail_Safety_Day_Team_Photo.jpg';
+const stats = [
+  { n: YEARS, label: 'Years in business', suf: '' },
+  { n: 25000, label: 'Lane closures completed', suf: '+' },
+  { n: 35000, label: 'Customers served', suf: '+' },
+  { n: 3100000, label: 'Cones sold', suf: '+', m: true }
+];
 const rows = [
   {
-    heading: 'Our history',
+    k: 'Our history', h: 'Started with cones. <em>Built on trust.</em>',
     body: [
-      "Founded in 1971, Traffic Safety Service (TSS) has been at the forefront of traffic safety solutions for over five decades. Located in South Plainfield, NJ, we began as a small, family-owned business dedicated to providing top-quality traffic control products to local municipalities and contractors. Over the years, we've grown into a full-service provider, offering a wide range of safety equipment rentals, sales, and services across New Jersey, New York, and the surrounding areas.",
-      "Our company's rich history is built on a foundation of innovation, reliability, and a commitment to safety. From humble beginnings with basic traffic cones and barricades, we've expanded our offerings to include advanced solutions such as electronic message boards, crash trucks, and work zone safety devices. As the industry has evolved, so have we, always staying ahead of the curve with the latest technologies and best practices."
+      'Traffic Safety Service was founded in 1971 in South Plainfield, NJ as a small, family-owned business supplying traffic control products to local towns and contractors.',
+      'From basic cones and barricades we grew into a full-service company: message boards, crash trucks, work zone devices, rentals and certified, experienced crews across New Jersey, New York and the surrounding region.'
     ],
-    image: CDN + 'thumbnail_IMG_1125.jpg',
-    alt: 'Traffic Safety Service equipment in the yard'
+    img: CDN + 'thumbnail_IMG_1125.jpg', alt: 'Traffic Safety Service equipment in the yard'
   },
   {
-    heading: 'Our goal',
+    k: 'Our goal', h: 'A partner, <em>not just a supplier.</em>',
     body: [
-      "At TSS, we pride ourselves on being a trusted partner to our clients. Whether you're managing a large construction project, planning a special event, or overseeing road maintenance, our expert team is here to help you create safer environments for workers, drivers, and pedestrians. We offer 24/7 service and customized solutions to meet the specific needs of each job, ensuring safety is never compromised."
+      'Whether you’re running a highway project, planning an event or keeping a town’s roads maintained, our team helps you build a safer work zone for workers, drivers and pedestrians.',
+      'Every job gets a solution sized to it, from a pallet of cones to a full closure with crews and crash trucks.'
     ],
-    image: CDN + 'thumbnail_IMG_1180.jpg',
-    alt: 'TSS equipment set up in the field'
+    img: CDN + 'thumbnail_IMG_1180.jpg', alt: 'TSS equipment set up in the field'
   },
   {
-    heading: 'Our mission',
+    k: 'Our mission', h: 'Protect everyone <em>on the road.</em>',
     body: [
-      'Our long-standing reputation for excellence, customer satisfaction, and competitive pricing has made us a go-to resource for municipalities, contractors, and private enterprises throughout the region. We continue to grow while remaining true to our core mission: to provide innovative, dependable, and cost-effective traffic safety solutions that protect the lives of everyone on the road.'
+      'Our reputation for dependable service and fair pricing has made us a go-to for municipalities, agencies and contractors throughout the region.',
+      'We keep growing, but the mission stays the same: innovative, dependable and cost-effective traffic safety that protects everyone on the road.'
     ],
-    image: CDN + 'thumbnail_IMG_1133_c2839bba-db54-470f-80d2-804e82e3fd23.jpg',
-    alt: 'TSS crew equipment on a job'
+    img: '/fleet/vms-yard.webp', alt: 'TSS message boards ready for rental'
   }
 ];
-const stats = [
-  { n: YEARS, label: 'Years in the industry' },
-  { n: 35017, label: 'Customers served' },
-  { n: 10578, label: 'Lane closures completed' },
-  { n: 3100345, label: 'Cones sold' }
+const what = [
+  ['Products', 'Cones, barricades, signs and drums', 'Shipped nationwide, with custom branding.', '/collections', CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg'],
+  ['Equipment and fleet', 'VMS boards to TMA trucks', 'Rent it delivered in NJ, NY, PA and CT, or buy it.', '/pages/equipment', '/fleet/fleet-hero.webp'],
+  ['Lane closures', '25,000+ closures', 'Certified, experienced crews in NJ, NY, PA, CT and DE.', '/pages/lane-closure', '/fleet/lc-hero.webp']
 ];
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
-<Layout
-  title="About us"
-  description={`Traffic Safety Service has been a family-run traffic control company in South Plainfield, NJ since 1971. ${YEARS} years, 35,017 customers served and 10,578 lane closures completed.`}
->
-  <section class="ab-hero">
+<Layout title="About us" description={`Traffic Safety Service has been a family-run traffic control company in South Plainfield, NJ since 1971. ${YEARS} years, 25,000+ lane closures and 35,000+ customers served.`}>
+  <!-- ================= HERO ================= -->
+  <section class="eqh" style={`--hero:url('${HERO}')`}>
+    <div class="wrap eqh__in">
+      <p class="eqh__k">About TSS</p>
+      <h1><span class="eqh__ln"><span>Family-Run Since 1971.</span></span> <span class="eqh__ln"><span>Trusted On Every Road.</span></span></h1>
+      <p class="eqh__lede">Three generations of putting work zones up right, from our yard in South Plainfield, NJ to roadways across the Northeast.</p>
+      <div class="eqh__ways">
+        <a href="/pages/request-a-quote" class="eway eway--solid">
+          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6M9 16h3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+          <span class="eway__t"><b>Request a quote</b><small>A real person replies</small></span>
+          <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
+        </a>
+        <a href="/pages/contact" class="eway eway--line">
+          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z M8 10h8 M8 13h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+          <span class="eway__t"><b>Contact us</b><small>Visit, call or email</small></span>
+          <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
+        </a>
+      </div>
+      <p class="eqh__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
+    </div>
+  </section>
+
+  <!-- ================= STATS ================= -->
+  <section class="abs" data-in aria-label="TSS by the numbers">
     <div class="wrap">
-      <h1>Family-run since 1971</h1>
-      <p class="lede">Three generations of putting work zones up right, from a yard in South Plainfield, NJ to roadways across the Northeast.</p>
+      <ul class="abs__list" data-stats>
+        {stats.map((s, i) => (
+          <li style={`--i:${i}`}>
+            <span class="abs__n" data-count={s.n} data-suf={s.suf} data-m={s.m ? '1' : undefined}>{s.m ? (s.n / 1e6).toFixed(1) + 'M' : s.n.toLocaleString('en-US')}{s.suf}</span>
+            <span class="abs__l">{s.label}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
-  <section class="stats" aria-label="Company statistics">
-    <div class="wrap stats__in" data-stats>
-      {stats.map((s) => (
-        <div class="stats__i">
-          <span class="stats__n" data-count={s.n}>{s.n.toLocaleString('en-US')}</span>
-          <span class="stats__l">{s.label}</span>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="section">
+  <!-- ================= STORY ================= -->
+  <section class="abst">
     <div class="wrap">
       {rows.map((r, i) => (
-        <article class={`abrow ${i % 2 ? 'abrow--flip' : ''}`}>
-          <div class="abrow__img"><img src={r.image} alt={r.alt} loading="lazy" /></div>
+        <article class={`abrow${i % 2 ? ' abrow--flip' : ''}`} data-in>
+          <div class="abrow__img"><img src={r.img} alt={r.alt} loading="lazy" /></div>
           <div class="abrow__copy">
-            <h2>{r.heading}</h2>
+            <p class="eq-k"><span></span>{r.k}</p>
+            <h2 set:html={r.h} />
             {r.body.map((p) => <p>{p}</p>)}
           </div>
         </article>
@@ -73,73 +97,296 @@ const stats = [
     </div>
   </section>
 
-  <section class="section section--dark">
-    <div class="wrap ab-cta">
-      <div>
-        <h2>Put {YEARS} years of work zones on your next job</h2>
-        <p class="lede">Products, rentals or a full crew. A real person replies, usually the same business day.</p>
+  <!-- ================= WHAT WE DO ================= -->
+  <section class="abw" data-in>
+    <div class="wrap">
+      <div class="eq-head eq-head--center">
+        <div>
+          <p class="eq-k"><span></span>What we do<span></span></p>
+          <h2>One company for <em>the whole work zone.</em></h2>
+        </div>
       </div>
-      <div class="ab-cta__btns">
-        <a class="btn" href="/pages/request-a-quote">Request a quote</a>
-        <a class="btn btn--ghost" href={PHONE_TEL}>Call {PHONE}</a>
+      <ul class="abw__grid">
+        {what.map(([k, b, d, h, im], i) => (
+          <li style={`--i:${i}`}>
+            <a href={h} class="abw__card">
+              <img src={im} alt="" loading="lazy" />
+              <small>{k}</small>
+              <b>{b}</b>
+              <span>{d}</span>
+              <span class="abw__go">Explore<Fragment set:html={ARROW} /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="eqc" data-in>
+    <div class="wrap eqc__in">
+      <div>
+        <p class="eq-k eq-k--light"><span></span>Work with us</p>
+        <h2>Put {YEARS} years of work zones <em>on your next job.</em></h2>
+      </div>
+      <div class="eqc__acts">
+        <a href="/pages/request-a-quote" class="eq-pill eq-pill--red">Request a quote<Fragment set:html={ARROW} /></a>
+        <a href={PHONE_TEL} class="eq-pill eq-pill--glass">Call {PHONE}</a>
       </div>
     </div>
   </section>
 </Layout>
 
 <script>
-  const wrap = document.querySelector('[data-stats]');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (wrap && !reduced && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
+  // Count the stats up when they come into view.
+  const sw = document.querySelector('[data-stats]');
+  if (sw && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((en) => {
+      if (!en.some((e) => e.isIntersecting)) return;
       io.disconnect();
-      wrap.querySelectorAll('[data-count]').forEach((el) => {
-        const target = +el.dataset.count;
-        const t0 = performance.now();
-        const dur = 1400;
-        const tick = (t) => {
-          const p = Math.min(1, (t - t0) / dur);
-          const eased = 1 - Math.pow(1 - p, 3);
-          el.textContent = Math.round(target * eased).toLocaleString('en-US');
-          if (p < 1) requestAnimationFrame(tick);
-        };
+      sw.querySelectorAll('[data-count]').forEach((el) => {
+        const target = +el.dataset.count, suf = el.dataset.suf || '', t0 = performance.now(), dur = 1500;
+        const fmt = (v) => (el.dataset.m ? (v / 1e6).toFixed(1) + 'M' : Math.round(v).toLocaleString('en-US')) + suf;
+        const tick = (t) => { const p = Math.min(1, (t - t0) / dur); el.textContent = fmt(target * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); };
         requestAnimationFrame(tick);
       });
     }, { threshold: 0.4 });
-    io.observe(wrap);
+    io.observe(sw);
+  }
+</script>
+<script>
+  // Reveal sections (and stagger their lists) as they scroll into view.
+  const els = document.querySelectorAll('[data-in]');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) els.forEach((e) => e.classList.add('is-in'));
+  else {
+    const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { threshold: 0.12 });
+    els.forEach((e) => io.observe(e));
   }
 </script>
 
 <style>
-  .ab-hero { background: var(--haze); border-bottom: 1px solid var(--line); padding: clamp(44px, 6vw, 84px) 0 clamp(84px, 9vw, 130px); }
-  .ab-hero .lede { margin-top: 14px; max-width: 46ch; }
+  /* ---------- shared section language (matches the homepage) ---------- */
+  .eq-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(24px, 3vw, 40px); }
+  .eq-head--center { justify-content: center; text-align: center; }
+  .eq-head--center .eq-k { justify-content: center; }
+  .eq-k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--steel); }
+  .eq-k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .eq-k--light { color: rgba(255, 255, 255, .8); }
+  .eq-head h2, .eqc h2 { margin: 0; font-size: clamp(2.2rem, 4.6vw, 4.2rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .eq-head h2 em, .eqc h2 em { font-style: normal; color: var(--red); }
+  .eq-link { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px 12px; border-radius: 999px; border: 1.5px solid var(--line-dark); color: var(--ink); font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+  .eq-link :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .eq-link:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .eq-link:hover :global(svg) { transform: translateX(3px); }
+  .eq-link--light { color: #fff; border-color: rgba(255, 255, 255, .35); }
+  .eq-link--light:hover { background: #fff; color: var(--ink); border-color: #fff; }
+  .eq-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 14px 26px 13px; border-radius: 999px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, transform .2s; }
+  .eq-pill :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
+  .eq-pill:hover :global(svg) { transform: translateX(3px); }
+  .eq-pill--red { background: var(--red); color: #fff; }
+  .eq-pill--red:hover { background: #d10a0a; }
+  .eq-pill--white { background: #fff; color: var(--ink); }
+  .eq-pill--white:hover { background: #f1f2f3; }
+  .eq-pill--glass { background: rgba(255, 255, 255, .08); color: #fff; border: 1.5px solid rgba(255, 255, 255, .4); }
+  .eq-pill--glass:hover { background: rgba(255, 255, 255, .16); }
+  [data-in] li { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i, 0) * 60ms); }
+  [data-in].is-in li { opacity: 1; transform: none; }
 
-  .stats { margin-top: clamp(-60px, -5vw, -44px); }
-  .stats__in { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-l); box-shadow: var(--shadow-m); padding: clamp(24px, 3vw, 36px) clamp(20px, 3vw, 40px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .stats__i { display: grid; gap: 4px; justify-items: start; padding-left: 20px; border-left: 1px solid var(--line); }
-  .stats__i:first-child { border-left: 0; padding-left: 0; }
-  .stats__n { font-size: clamp(1.9rem, 3.4vw, 2.8rem); font-variation-settings: 'wght' 740; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--red); }
-  .stats__l { color: var(--steel); font-size: .95rem; }
+  /* ---------- hero ---------- */
+  .eqh { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
+  .eqh::before { content: ''; position: absolute; inset: 0; z-index: -2; background: var(--hero) 50% 35% / cover no-repeat; transform: scale(1.06); animation: eqZoom 18s ease-out forwards; }
+  .eqh::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(12, 13, 15, .94) 0%, rgba(12, 13, 15, .82) 34%, rgba(12, 13, 15, .35) 62%, rgba(12, 13, 15, .1) 82%), linear-gradient(0deg, rgba(10, 10, 12, .5), transparent 45%); }
+  @keyframes eqZoom { to { transform: scale(1); } }
+  .eqh__in { display: grid; align-content: center; justify-items: start; min-height: clamp(440px, 46vw, 640px); padding-block: clamp(40px, 5vw, 76px); }
+  .eqh__in > * { max-width: 760px; }
+  .eqh__in > h1 { max-width: 1100px; }
+  .eqh__k { margin: 0 0 12px; color: var(--gold); font-size: clamp(.92rem, 1.05vw, 1.05rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; opacity: 0; animation: eqFade .8s .2s ease forwards; }
+  .eqh h1 { margin: 0 0 16px; font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; font-weight: 400; color: #fff; }
+  .eqh__ln { display: block; overflow: hidden; padding-bottom: .05em; }
+  .eqh__ln > span { display: inline-block; transform: translateY(105%); animation: eqRise 1s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ln + .eqh__ln > span { animation-delay: .12s; color: var(--gold); }
+  .eqh__lede { margin: 0 0 26px; max-width: 48ch; color: #e6e8ea; font-size: clamp(1.05rem, 1.35vw, 1.24rem); line-height: 1.5; text-wrap: balance; opacity: 0; transform: translateY(12px); animation: eqUp .8s .55s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ways { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 700px; }
+  .eqh__ways .eway { opacity: 0; translate: 0 16px; animation: eqUpT .8s .65s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ways .eway + .eway { animation-delay: .77s; }
+  .eqh__call { margin: 14px 0 0; color: #cfd3d7; font-size: .95rem; opacity: 0; animation: eqFade .8s .9s ease forwards; }
+  .eqh__call a { color: #fff; font-variation-settings: 'wght' 700; text-decoration: underline; text-underline-offset: 3px; }
+  @keyframes eqRise { to { transform: none; } }
+  @keyframes eqFade { to { opacity: 1; } }
+  @keyframes eqUp { to { opacity: 1; transform: none; } }
+  @keyframes eqUpT { to { opacity: 1; translate: 0 0; } }
+  .eway { display: grid; grid-template-columns: 38px 1fr 18px; align-items: center; gap: 10px; padding: 14px; border-radius: 14px; text-decoration: none; transition: transform .2s, background .15s, border-color .15s, box-shadow .2s; }
+  .eway:hover { transform: translateY(-2px); }
+  .eway--solid { background: #fff; color: var(--ink); box-shadow: 0 18px 34px -18px rgba(0, 0, 0, .6); }
+  .eway--line { border: 1.5px solid rgba(255, 255, 255, .55); color: #fff; background: rgba(255, 255, 255, .06); }
+  .eway--line:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }
+  .eway__ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: var(--red); color: #fff; }
+  .eway--line .eway__ic { background: rgba(255, 255, 255, .14); }
+  .eway__ic svg { width: 22px; height: 22px; }
+  .eway__t b { display: block; font-size: .98rem; line-height: 1.2; white-space: nowrap; font-variation-settings: 'wght' 720; }
+  .eway__t small { display: block; margin-top: 3px; font-size: .84rem; line-height: 1.3; opacity: .75; }
+  .eway--solid .eway__t b { color: var(--red); }
+  .eway :global(.eway__go) { width: 18px; height: 18px; transition: transform .2s; }
+  .eway:hover :global(.eway__go) { transform: translateX(3px); }
 
-  .abrow { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(24px, 4vw, 64px); align-items: center; padding: clamp(26px, 4vw, 48px) 0; }
-  .abrow + .abrow { border-top: 1px solid var(--concrete-dark); }
+  /* ---------- perks ---------- */
+  .eqp { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .eqp__list { list-style: none; margin: 0; padding: clamp(22px, 2.6vw, 34px) 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); }
+  .eqp__list li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .eqp__ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--red-tint); color: var(--red); }
+  .eqp__ic svg { width: 24px; height: 24px; }
+  .eqp b { display: block; font-size: 1.04rem; font-variation-settings: 'wght' 720; margin: 2px 0 3px; }
+  .eqp small { display: block; color: var(--steel); font-size: .9rem; line-height: 1.45; }
+
+  /* ---------- lineup ---------- */
+  .eql { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .eql__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqt { position: relative; display: grid; grid-template-rows: auto 1fr; height: 100%; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; text-decoration: none; color: var(--ink); background: linear-gradient(185deg, var(--tint) 0%, #fff 72%); transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s, border-color .3s; }
+  .eqt:hover { transform: translateY(-6px); border-color: var(--line-dark); box-shadow: 0 28px 50px -30px rgba(20, 23, 26, .5); }
+  .eqt__img { display: grid; place-items: center; padding: 18px 18px 6px; overflow: hidden; }
+  .eqt__img img { display: block; width: 100%; height: clamp(150px, 12.5vw, 210px); object-fit: contain; filter: drop-shadow(0 16px 14px rgba(20, 23, 26, .2)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqt__img img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .eqt:hover .eqt__img img { transform: translateY(-6px) scale(1.05); }
+  .eqt__txt { display: grid; align-content: start; gap: 6px; padding: 8px 20px 20px; }
+  .eqt__txt b { font-size: clamp(1.08rem, 1.25vw, 1.25rem); line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 750; }
+  .eqt__txt small { color: var(--steel); font-size: .9rem; line-height: 1.4; }
+  .eqt__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--red); font-size: .88rem; font-variation-settings: 'wght' 700; }
+  .eqt__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqt:hover .eqt__mode :global(svg) { transform: translateX(3px); }
+  .eqt:hover .eqt__txt b { color: var(--red); }
+
+  /* ---------- rent or buy ---------- */
+  .eqr { padding: clamp(56px, 7vw, 100px) 0; background: var(--haze); }
+  .eqr__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); }
+  .eqr__card { display: grid; align-content: start; gap: 14px; padding: clamp(24px, 3vw, 44px); border-radius: 24px; background: #fff; border: 1px solid var(--line); }
+  .eqr__card--dark { background: linear-gradient(160deg, #1d2126, #121417); color: #fff; border-color: #1d2126; }
+  .eqr__tag { justify-self: start; margin: 0; padding: 5px 14px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
+  .eqr__card--dark .eqr__tag { background: rgba(255, 255, 255, .1); color: var(--gold); }
+  .eqr h3 { margin: 0; font-size: clamp(1.5rem, 2.2vw, 2.1rem); line-height: 1.08; letter-spacing: -.03em; font-variation-settings: 'wght' 760; font-weight: 400; }
+  .eqr ul { list-style: none; margin: 4px 0 10px; padding: 0; display: grid; gap: 12px; }
+  .eqr li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; font-size: 1rem; line-height: 1.45; color: var(--ink-2); opacity: 1; transform: none; }
+  .eqr__card--dark li { color: #d6d9dc; }
+  .eqr li :global(svg) { width: 22px; height: 22px; color: var(--red); }
+  .eqr__card--dark li :global(svg) { color: var(--gold); }
+  .eqr__card .eq-pill { justify-self: start; }
+  .eqr__calc { margin: 22px 0 0; text-align: center; color: var(--steel); }
+  .eqr__calc a { color: var(--red); font-variation-settings: 'wght' 700; text-underline-offset: 3px; }
+
+  /* ---------- fleet ---------- */
+  .eqf { padding: clamp(56px, 7vw, 100px) 0; background: linear-gradient(180deg, #15181c, #1d2126); color: #fff; }
+  .eqf__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqft { display: grid; gap: 6px; height: 100%; padding: 18px 20px 20px; border-radius: 20px; text-decoration: none; color: #fff; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); transition: background .3s, border-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1); }
+  .eqft:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .25); transform: translateY(-5px); }
+  .eqft__img { display: grid; place-items: center; padding: 12px; margin-bottom: 6px; border-radius: 14px; overflow: hidden; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, .82)); }
+  .eqft__img img { display: block; width: 100%; height: clamp(110px, 9.5vw, 160px); object-fit: contain; filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .25)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqft__img img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .eqft:hover .eqft__img img { transform: translateY(-4px) scale(1.05); }
+  .eqft b { font-size: 1.1rem; line-height: 1.2; font-variation-settings: 'wght' 740; }
+  .eqft small { color: #b9bfc6; font-size: .9rem; line-height: 1.4; }
+  .eqft__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; color: var(--gold); font-size: .88rem; font-variation-settings: 'wght' 700; }
+  .eqft__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqft:hover .eqft__mode :global(svg) { transform: translateX(3px); }
+
+  /* ---------- steps ---------- */
+  .eqs { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .eqs__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); counter-reset: s; }
+  .eqs__list li { position: relative; display: grid; align-content: start; gap: 8px; padding: 26px 24px 28px; border-radius: 20px; border: 1px solid var(--line); background: #fff; }
+  .eqs__list li::after { content: ''; position: absolute; top: 44px; right: calc(-1 * clamp(12px, 1.6vw, 22px)); width: clamp(12px, 1.6vw, 22px); height: 2px; background: var(--line-dark); }
+  .eqs__list li:last-child::after { display: none; }
+  .eqs__n { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 6px; border-radius: 50%; background: var(--red); color: #fff; font-size: .9rem; letter-spacing: .04em; font-variation-settings: 'wght' 760; }
+  .eqs b { font-size: 1.15rem; font-variation-settings: 'wght' 740; }
+  .eqs small { color: var(--steel); font-size: .95rem; line-height: 1.45; }
+
+  /* ---------- final CTA ---------- */
+  .eqc { padding: clamp(56px, 7vw, 100px) 0; background: radial-gradient(120% 140% at 85% 0%, #3a0505 0%, #16181b 55%); color: #fff; }
+  .eqc__in { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 26px 40px; }
+  .eqc h2 { color: #fff; max-width: 16ch; }
+  .eqc__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .eqc__call { color: #cfd3d7; text-decoration: underline; text-underline-offset: 3px; margin-left: 4px; }
+  .eqc__call:hover { color: #fff; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .eqp__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .eqs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .eqs__list li::after { display: none; }
+    .eqh::after { background: linear-gradient(180deg, rgba(12, 13, 15, .9) 0%, rgba(12, 13, 15, .72) 45%, rgba(12, 13, 15, .4) 100%); }
+  }
+  @media (max-width: 720px) {
+    .eqr__grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .eqh__in { min-height: 0; padding-block: 34px 36px; justify-items: center; text-align: center; }
+    .eqh__k { font-size: .78rem; margin-bottom: 8px; }
+    .eqh h1 { font-size: clamp(1.9rem, 8.6vw, 2.4rem); margin-bottom: 10px; }
+    .eqh__lede { font-size: 1rem; margin: 0 auto 20px; }
+    .eqh__ways { grid-template-columns: 1fr; text-align: left; }
+    .eqp__list { grid-template-columns: 1fr; gap: 16px; }
+    .eql__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .eqt { border-radius: 16px; }
+    .eqt__img { padding: 12px 10px 4px; }
+    .eqt__img img { height: 110px; }
+    .eqt__txt { padding: 6px 12px 14px; }
+    .eqt__txt b { font-size: .98rem; }
+    .eqt__txt small { display: none; }
+    .eqf__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .eqft { padding: 12px 12px 14px; border-radius: 16px; }
+    .eqft__img img { height: 90px; }
+    .eqft b { font-size: .98rem; }
+    .eqft small { display: none; }
+    .eqs__list { grid-template-columns: 1fr; }
+    .eq-head { justify-content: center; text-align: center; }
+    .eq-head .eq-k { justify-content: center; }
+    .eqc__in { justify-content: center; text-align: center; }
+    .eqc h2 { margin-inline: auto; }
+    .eqc__acts { justify-content: center; width: 100%; }
+    .eqc__acts .eq-pill { width: 100%; }
+    .eqr__card .eq-pill { justify-self: stretch; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eqh::before, .eqh__k, .eqh__ln > span, .eqh__lede, .eqh__call, .eqh__ways .eway { animation: none; opacity: 1; transform: none; translate: none; }
+    [data-in] li { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- about page ---------- */
+  .abs { background: #fff; border-bottom: 1px solid var(--line); }
+  .abs__list { list-style: none; margin: 0; padding: clamp(28px, 3.4vw, 46px) 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); }
+  .abs__list li { display: grid; gap: 6px; padding-left: clamp(14px, 1.6vw, 24px); border-left: 3px solid var(--red); }
+  .abs__n { font-size: clamp(2.2rem, 4vw, 3.6rem); line-height: 1; letter-spacing: -.04em; font-variation-settings: 'wght' 790; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .abs__l { color: var(--steel); font-size: .98rem; }
+  .abst { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .abrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(26px, 4.5vw, 80px); align-items: center; }
+  .abrow + .abrow { margin-top: clamp(48px, 6vw, 90px); }
   .abrow--flip .abrow__img { order: 2; }
-  .abrow__img img { width: 100%; border-radius: var(--r-m); aspect-ratio: 4/3; object-fit: cover; box-shadow: var(--shadow-m); }
-  .abrow__copy h2 { margin-bottom: 14px; font-size: var(--fs-4); }
-  .abrow__copy p { margin-bottom: .8em; }
+  .abrow__img { position: relative; border-radius: 24px; overflow: hidden; aspect-ratio: 4 / 3; box-shadow: 0 40px 70px -46px rgba(20, 23, 26, .6); }
+  .abrow__img img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 1.4s cubic-bezier(.2, .8, .2, 1); }
+  .abrow.is-in .abrow__img img { transform: none; }
+  .abrow__copy h2 { margin: 0 0 18px; font-size: clamp(2rem, 3.6vw, 3.3rem); line-height: 1; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .abrow__copy h2 :global(em) { font-style: normal; color: var(--red); }
+  .abrow__copy p { margin: 0 0 1em; color: var(--ink-2); font-size: clamp(1rem, 1.1vw, 1.1rem); line-height: 1.65; max-width: 60ch; }
   .abrow__copy p:last-child { margin-bottom: 0; }
-
-  .ab-cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .ab-cta h2 { max-width: 22ch; }
-  .ab-cta .lede { margin: 10px 0 0; }
-  .ab-cta__btns { display: flex; gap: 12px; flex-wrap: wrap; }
-
+  .abrow__copy, .abrow__img { opacity: 0; transform: translateY(22px); transition: opacity .8s, transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .abrow__copy { transition-delay: .12s; }
+  .abrow.is-in .abrow__copy, .abrow.is-in .abrow__img { opacity: 1; transform: none; }
+  .abw { padding: clamp(56px, 7vw, 100px) 0; background: var(--haze); }
+  .abw__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); }
+  .abw__card { position: relative; display: grid; align-content: end; min-height: clamp(300px, 26vw, 420px); padding: clamp(22px, 2.4vw, 32px); border-radius: 24px; overflow: hidden; color: #fff; text-decoration: none; isolation: isolate; background: #111; }
+  .abw__card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2, .8, .2, 1); }
+  .abw__card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10, 11, 13, 0) 30%, rgba(10, 11, 13, .88)); }
+  .abw__card:hover img { transform: scale(1.06); }
+  .abw__card small { color: var(--gold); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 700; }
+  .abw__card b { margin: 6px 0 6px; font-size: clamp(1.5rem, 2.2vw, 2rem); line-height: 1.05; letter-spacing: -.03em; font-variation-settings: 'wght' 780; }
+  .abw__card span { color: #d6d9dc; font-size: .95rem; line-height: 1.45; }
+  .abw__go { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; color: #fff; font-variation-settings: 'wght' 700; }
+  .abw__go :global(svg) { width: 16px; height: 16px; transition: transform .2s; }
+  .abw__card:hover .abw__go :global(svg) { transform: translateX(3px); }
+  @media (max-width: 1100px) { .abs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 880px) {
     .abrow { grid-template-columns: 1fr; }
     .abrow--flip .abrow__img { order: 0; }
-    .stats__in { grid-template-columns: 1fr 1fr; gap: 24px 20px; }
-    .stats__i { border-left: 0; padding-left: 0; }
+    .abw__grid { grid-template-columns: 1fr; }
+    .abw__card { min-height: 260px; }
   }
-  @media (max-width: 420px) { .stats__in { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .abrow__copy { text-align: center; } .abrow__copy p { margin-inline: auto; } .abs__list { gap: 20px 14px; } }
+  @media (prefers-reduced-motion: reduce) { .abrow__copy, .abrow__img, .abrow__img img { opacity: 1; transform: none; transition: none; } }
 </style>
