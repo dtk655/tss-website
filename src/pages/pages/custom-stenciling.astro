@@ -1,126 +1,778 @@
 ---
+// Custom shop: in-house sign builder plus stenciled cones, branded water-filled barriers and A-frame rails.
 import Layout from '../../layouts/Layout.astro';
-import { PHONE, PHONE_TEL } from '../../lib/config.js';
-
-const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
-const offerings = [
-  {
-    title: 'Custom cones',
-    text: 'Personalize traffic cones with business or department names and logos so that your equipment stands out in all environments.',
-    image: CDN + 'thumbnail_IMG_0141_f25c7165-4733-4438-9391-0687acaa7c46.jpg',
-    alt: 'Traffic cones stenciled with a department name'
-  },
-  {
-    title: 'Custom barricades',
-    text: 'Bring visibility and dependability to your work site with custom barricades, personalized with business or department names and logos.',
-    image: CDN + 'thumbnail_IMG_2840.jpg',
-    alt: 'Custom-stenciled barricades'
-  },
-  {
-    title: 'Personalized safety gear',
-    text: 'Have your team wearing gear that represents your company in a professional way.',
-    image: CDN + 'construction-worker-holding-blueprints.jpg',
-    alt: 'Construction worker in branded safety gear'
-  },
-  {
-    title: 'Custom signage',
-    text: 'Our full-capability sign shop allows you to create the perfect sign for your next job.',
-    image: CDN + 'thumbnail_IMG_1158.jpg',
-    alt: 'Custom signs made in the TSS sign shop'
-  }
+import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../../lib/config.js';
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const perks = [
+  ['Made in our shop', 'Printed and built in South Plainfield, NJ', 'M3 21V9l9-6 9 6v12 M9 21v-7h6v7'],
+  ['Any size or legend', 'Your wording, colors and layout', 'M4 4h16v16H4z M8 9h8M8 13h5'],
+  ['Reflective sheeting', 'Engineer grade to diamond grade', 'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z'],
+  ['Ships nationwide', 'Or pick up at our yard', 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01']
 ];
+const more = [
+  { t: 'Stenciled Cones', d: 'Your department, company or initials stenciled on every cone, so your gear comes home.', img: '/custom/stenciled-cones.webp', alt: 'Orange traffic cones stenciled with department initials', pos: '50% 50%' },
+  { t: 'Branded Water-Filled Barriers', d: 'Reflective wraps with your name, logo and message on WATERCADE and other barriers.', img: '/custom/police-barrier.webp', alt: 'White water-filled barrier with a blue and white police wrap', pos: '50% 50%' },
+  { t: 'A-Frame Rails', d: 'Custom printed rails for A-frame barricades, from POLICE LINE to your company name.', img: '/custom/police-rail.webp', alt: 'White A-frame barricade with custom police rails', pos: '50% 55%' }
+];
+const steps = [
+  ['Design it or describe it', 'Build a sign below, or send us your artwork and specs.'],
+  ['We confirm and price it', 'Our team checks sizes, sheeting and quantities, then sends your quote.'],
+  ['Made in our shop', 'Printed, cut and assembled in-house in South Plainfield, NJ.'],
+  ['Pick up or ship', 'Grab it at our yard or we ship it to your job, anywhere in the U.S.']
+];
+const COLORS = [
+  ['White', '#ffffff'], ['Yellow', '#ffcd00'], ['Fluorescent Orange', '#ff6a13'], ['Red', '#c8102e'], ['Green', '#006747'],
+  ['Blue', '#0047bb'], ['Brown', '#6b4226'], ['Black', '#141414'], ['Fluorescent Yellow-Green', '#c4d600']
+];
+const SIZES = [[12, 18], [18, 24], [24, 24], [24, 30], [30, 30], [36, 36], [48, 48], [48, 24]];
+const SHAPES = [
+  ['rect', 'Rectangle', '<rect x="3" y="5" width="18" height="14" rx="2"/>'],
+  ['diamond', 'Diamond', '<path d="M12 2.5 21.5 12 12 21.5 2.5 12z"/>'],
+  ['octagon', 'Octagon', '<path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"/>'],
+  ['circle', 'Circle', '<circle cx="12" cy="12" r="9"/>']
+];
+const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '↑'], ['up-right', '↗'], ['right', '→']];
 ---
-<Layout
-  title="Custom stenciling and branding"
-  description="TSS stencils any product with your logo, colors or department name at a low per-unit cost: cones, barricades, safety gear and custom signs from our in-house sign shop."
->
-  <section class="cs-hero">
-    <div class="wrap cs-hero__in">
-      <div>
-        <h1>Customized products and services</h1>
-        <p class="lede">We offer full customization on all our products, allowing you to add your logo or business or department name with ease. Personalization comes at a low cost per unit, making it simple and affordable to represent your brand or agency.</p>
-        <div class="cs-hero__cta">
-          <a class="btn" href="/pages/request-a-quote">Request custom work</a>
-          <a class="btn btn--ghost" href="/tools/3d-showroom">Try your logo in 3D</a>
-        </div>
+<Layout title="Custom shop" description="Custom signs in any size, color and legend, made in our South Plainfield, NJ sign shop. Plus stenciled cones, branded water-filled barriers and custom A-frame rails. Design your sign online and get a quote." image="/custom/sign-shop.webp">
+  <!-- ================= HERO ================= -->
+  <section class="eqh">
+    <div class="wrap eqh__in">
+      <p class="eqh__k">Custom shop</p>
+      <h1><span class="eqh__ln"><span>Custom Signs Built Your Way.</span></span> <span class="eqh__ln"><span>Made In Our Own Shop.</span></span></h1>
+      <p class="eqh__lede">Any size, color and legend, plus stenciled cones, branded water-filled barriers and custom A-frame rails. Design your sign below and our team will price it.</p>
+      <div class="eqh__ways">
+        <a href="#builder" class="eway eway--solid">
+          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H4z M12 16v5 M8 8.5h8M8 11.5h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="eway__t"><b>Design a sign</b><small>Live preview, free quote</small></span>
+          <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
+        </a>
+        <a href="#more" class="eway eway--line">
+          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 20h14z M8.6 12h6.8M7 16h10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="eway__t"><b>Cones, barriers and rails</b><small>Stenciled and branded</small></span>
+          <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
+        </a>
       </div>
-      <svg class="cs-hero__art" viewBox="0 0 220 240" aria-hidden="true">
-        <rect x="30" y="218" width="160" height="16" rx="5" fill="#1d2024" />
-        <path d="M96 24 Q110 12 124 24 L178 220 L42 220 Z" fill="#f26a1b" />
-        <path d="M84.5 68 L135.5 68 L142 92 L78 92 Z" fill="#f7f7f2" />
-        <path d="M66 136 L154 136 L162 166 L58 166 Z" fill="#f7f7f2" />
-        <text x="110" y="156" text-anchor="middle" font-family="Archivo Variable, Archivo, sans-serif" font-weight="700" font-size="14" fill="#1d2024">YOUR LOGO</text>
-      </svg>
+      <p class="eqh__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
     </div>
   </section>
 
-  <section class="section">
+  <section class="eqp" data-in>
     <div class="wrap">
-      <div class="cs-head">
-        <h2>We can stencil any product</h2>
-        <p class="lede">Your colors, your logo, your department name. On one cone or a thousand.</p>
-      </div>
-      <div class="cs-grid">
-        {offerings.map((o) => (
-          <article class="cs-card">
-            <img src={o.image} alt={o.alt} loading="lazy" />
-            <div class="cs-card__body">
-              <h3>{o.title}</h3>
-              <p>{o.text}</p>
-            </div>
-          </article>
+      <ul class="eqp__list">
+        {perks.map(([t, d, ic], i) => (
+          <li style={`--i:${i}`}>
+            <span class="eqp__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+            <span><b>{t}</b><small>{d}</small></span>
+          </li>
         ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= SIGN BUILDER ================= -->
+  <section class="sb" id="builder">
+    <div class="wrap">
+      <div class="eq-head">
+        <div>
+          <p class="eq-k"><span></span>Sign builder</p>
+          <h2>Design your sign. <em>See it live.</em></h2>
+        </div>
+        <p class="sb__note">Pick a shape, size, colors and legend. We’ll confirm every detail before anything is made.</p>
+      </div>
+
+      <div class="sb__grid" data-sb data-webhook={FORM_WEBHOOK} data-email={EMAIL} data-phone={PHONE}>
+        <!-- preview -->
+        <div class="sb__stage">
+          <div class="sb__canvas">
+            <svg class="sb__svg" data-svg viewBox="0 0 400 300" role="img" aria-label="Preview of your custom sign"></svg>
+          </div>
+          <div class="sb__meta">
+            <span class="sb__dims" data-dims>24" × 30"</span>
+            <span class="sb__spec" data-spec>Rectangle · Blue / White · High intensity</span>
+          </div>
+          <button type="button" class="sb__dl" data-download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download preview
+          </button>
+        </div>
+
+        <!-- controls -->
+        <form class="sb__panel" data-form novalidate>
+          <fieldset class="sb__grp">
+            <legend><span>1</span>Shape and size</legend>
+            <div class="sb__shapes">
+              {SHAPES.map(([v, l, ic], i) => (
+                <label class="sb__shape"><input type="radio" name="shape" value={v} checked={i === 0} /><span><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ic} />{l}</span></label>
+              ))}
+            </div>
+            <div class="sb__sizes" data-sizes>
+              {SIZES.map(([w, h]) => <button type="button" class="sb__chip" data-size={`${w}x${h}`}>{w}" × {h}"</button>)}
+            </div>
+            <div class="sb__wh">
+              <label><span>Width (in.)</span><input class="sb__in" type="number" name="w" min="6" max="144" value="24" inputmode="numeric" /></label>
+              <span class="sb__x" aria-hidden="true">×</span>
+              <label><span>Height (in.)</span><input class="sb__in" type="number" name="h" min="6" max="144" value="30" inputmode="numeric" /></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="sb__grp">
+            <legend><span>2</span>Colors</legend>
+            <p class="sb__lab">Background <b data-bgname>Blue</b></p>
+            <div class="sb__sw" data-sw="bg">
+              {COLORS.map(([n, c]) => <button type="button" class="sb__dot" style={`--c:${c}`} data-c={c} data-n={n} aria-label={n} title={n}></button>)}
+              <label class="sb__pick" title="Custom color"><input type="color" value="#0047bb" data-custom="bg" aria-label="Custom background color" /><span>Custom</span></label>
+            </div>
+            <p class="sb__lab">Legend and border <b data-fgname>White</b></p>
+            <div class="sb__sw" data-sw="fg">
+              {COLORS.map(([n, c]) => <button type="button" class="sb__dot" style={`--c:${c}`} data-c={c} data-n={n} aria-label={n} title={n}></button>)}
+              <label class="sb__pick" title="Custom color"><input type="color" value="#ffffff" data-custom="fg" aria-label="Custom legend color" /><span>Custom</span></label>
+            </div>
+            <label class="sb__tog"><input type="checkbox" name="border" checked /><span></span>Border</label>
+          </fieldset>
+
+          <fieldset class="sb__grp">
+            <legend><span>3</span>Legend</legend>
+            <label class="sb__f"><span>Text <em>One line per row, up to 5 rows</em></span><textarea class="sb__in" name="legend" rows="3" maxlength="140">SERVICE
+AREA</textarea></label>
+            <p class="sb__lab">Arrow</p>
+            <div class="sb__arrows">
+              {ARROWS.map(([v, l], i) => <label class="sb__chip sb__chip--r"><input type="radio" name="arrow" value={v} checked={v === 'up-right'} /><span>{l}</span></label>)}
+            </div>
+            <label class="sb__tog"><input type="checkbox" name="artwork" /><span></span>I have a logo or artwork to add</label>
+          </fieldset>
+
+          <fieldset class="sb__grp">
+            <legend><span>4</span>Material and quantity</legend>
+            <div class="sb__row2">
+              <label class="sb__f"><span>Sheeting</span>
+                <select class="sb__in" name="sheeting">
+                  <option>Engineer grade</option><option selected>High intensity prismatic</option><option>Diamond grade</option><option>Not sure, recommend one</option>
+                </select>
+              </label>
+              <label class="sb__f"><span>Material</span>
+                <select class="sb__in" name="substrate">
+                  <option selected>Aluminum</option><option>Corrugated plastic</option><option>Roll-up / flexible</option><option>Not sure, recommend one</option>
+                </select>
+              </label>
+            </div>
+            <div class="sb__qty">
+              <span>Quantity</span>
+              <div class="sb__step"><button type="button" data-q="-1" aria-label="Fewer">−</button><input class="sb__in" type="number" name="qty" min="1" value="1" inputmode="numeric" aria-label="Quantity" /><button type="button" data-q="1" aria-label="More">+</button></div>
+            </div>
+          </fieldset>
+
+          <fieldset class="sb__grp">
+            <legend><span>5</span>Where should we send the quote?</legend>
+            <div class="sb__row2">
+              <label class="sb__f"><span>Your name</span><input class="sb__in" name="name" required autocomplete="name" /></label>
+              <label class="sb__f"><span>Company <em>Optional</em></span><input class="sb__in" name="company" autocomplete="organization" /></label>
+            </div>
+            <div class="sb__row2">
+              <label class="sb__f"><span>Email</span><input class="sb__in" name="email" type="email" required autocomplete="email" /></label>
+              <label class="sb__f"><span>Phone <em>Optional</em></span><input class="sb__in" name="phone" type="tel" autocomplete="tel" /></label>
+            </div>
+            <label class="sb__f"><span>Notes <em>Optional</em></span><textarea class="sb__in" name="notes" rows="2" placeholder="Deadline, mounting, reflective needs, anything else"></textarea></label>
+          </fieldset>
+
+          <button type="submit" class="sb__send" data-submit>Get a quote for this sign<Fragment set:html={ARROW} /></button>
+          <p class="sb__msg sb__msg--ok" data-ok hidden>Got it. Our team will reply with pricing within 1 business day. If you checked artwork, email it to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+          <p class="sb__msg sb__msg--err" data-err hidden>That didn’t go through. Your email app should have opened with the details instead, or call us at {PHONE}.</p>
+        </form>
       </div>
     </div>
   </section>
 
-  <section class="section section--paper">
-    <div class="wrap cs-how">
-      <h2>How custom orders work</h2>
-      <ol class="cs-steps">
-        <li><strong>Send us your artwork.</strong> A logo file, department name, or even a photo of what you want. Any common format works.</li>
-        <li><strong>Approve your proof.</strong> We send a proof of the placement and colors before anything goes to production.</li>
-        <li><strong>We produce it in-house.</strong> Stenciling and signage are done in our own shop, so bulk runs stay fast and consistent.</li>
-      </ol>
-      <div class="cs-how__cta sign sign--dark">
+  <!-- ================= MORE CUSTOM WORK ================= -->
+  <section class="cm" id="more" data-in>
+    <div class="wrap">
+      <div class="eq-head">
         <div>
-          <h3>Ready when you are</h3>
-          <p>Tell us what you need and we'll quote it, usually the same business day.</p>
+          <p class="eq-k"><span></span>Beyond signs</p>
+          <h2>Your name on <em>every piece.</em></h2>
         </div>
-        <div class="cs-how__btns">
-          <a class="btn" href="/pages/request-a-quote">Request a quote</a>
-          <a class="btn btn--ghost" href={PHONE_TEL}>Call {PHONE}</a>
+        <a href="/tools/3d-showroom" class="eq-link">Try your logo in 3D<Fragment set:html={ARROW} /></a>
+      </div>
+      <ul class="cm__grid">
+        {more.map((m, i) => (
+          <li style={`--i:${i}`}>
+            <article class="cm__card">
+              <div class="cm__img"><img src={m.img} alt={m.alt} loading="lazy" style={`object-position:${m.pos}`} /></div>
+              <div class="cm__body">
+                <h3>{m.t}</h3>
+                <p>{m.d}</p>
+                <a href="/pages/request-a-quote?type=products" class="cm__go">Get a quote<Fragment set:html={ARROW} /></a>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="eqs" data-in>
+    <div class="wrap">
+      <div class="eq-head eq-head--center">
+        <div>
+          <p class="eq-k"><span></span>How custom work goes<span></span></p>
+          <h2>From idea to <em>install.</em></h2>
         </div>
+      </div>
+      <ol class="eqs__list">
+        {steps.map(([t, d], i) => (
+          <li style={`--i:${i}`}>
+            <span class="eqs__n">{String(i + 1).padStart(2, '0')}</span>
+            <b>{t}</b>
+            <small>{d}</small>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="eqc" data-in>
+    <div class="wrap eqc__in">
+      <div>
+        <p class="eq-k eq-k--light"><span></span>Have artwork?</p>
+        <h2>Send it over. <em>We’ll make it real.</em></h2>
+      </div>
+      <div class="eqc__acts">
+        <a href="/pages/request-a-quote?type=products" class="eq-pill eq-pill--red">Request custom work<Fragment set:html={ARROW} /></a>
+        <a href={`mailto:${EMAIL}?subject=${encodeURIComponent('Custom work artwork')}`} class="eq-pill eq-pill--glass">Email your artwork</a>
+        <a href={PHONE_TEL} class="eqc__call">or call {PHONE}</a>
       </div>
     </div>
   </section>
 </Layout>
 
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-sb]');
+    if (!root) return;
+    const form = root.querySelector('[data-form]');
+    const svg = root.querySelector('[data-svg]');
+    const NS = 'http://www.w3.org/2000/svg';
+    const SHAPE_NAMES = { rect: 'Rectangle', diamond: 'Diamond', octagon: 'Octagon', circle: 'Circle' };
+    const SQUARE = new Set(['diamond', 'octagon', 'circle']);
+    const st = { bg: '#0047bb', bgName: 'Blue', fg: '#ffffff', fgName: 'White' };
+    const $ = (n) => form.elements[n];
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    const lum = (hex) => {
+      const n = parseInt(hex.slice(1), 16);
+      const c = [n >> 16, (n >> 8) & 255, n & 255].map((v) => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; });
+      return .2126 * c[0] + .7152 * c[1] + .0722 * c[2];
+    };
+    const contrast = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+    const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+
+    const read = () => {
+      const shape = form.querySelector('[name=shape]:checked').value;
+      let w = clamp(+$('w').value || 24, 6, 144);
+      let h = clamp(+$('h').value || 30, 6, 144);
+      if (SQUARE.has(shape)) h = w;
+      return {
+        shape, w, h,
+        border: $('border').checked,
+        legend: $('legend').value.split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 5),
+        arrow: form.querySelector('[name=arrow]:checked').value,
+        sheeting: $('sheeting').value, substrate: $('substrate').value,
+        qty: Math.max(1, Math.round(+$('qty').value || 1))
+      };
+    };
+
+    // Polygon points for a shape that fills the box (x, y, w, h), scaled by k about the center.
+    const outline = (shape, cx, cy, w, h, k) => {
+      if (shape === 'diamond') { const r = (w / 2) * k; return `M${cx} ${cy - r}L${cx + r} ${cy}L${cx} ${cy + r}L${cx - r} ${cy}Z`; }
+      if (shape === 'octagon') {
+        const r = (w / 2) * k, a = r * Math.tan(Math.PI / 8);
+        return `M${cx - a} ${cy - r}H${cx + a}L${cx + r} ${cy - a}V${cy + a}L${cx + a} ${cy + r}H${cx - a}L${cx - r} ${cy + a}V${cy - a}Z`;
+      }
+      return null;
+    };
+
+    const draw = () => {
+      const s = read();
+      const U = 10;
+      const sw = s.w * U, sh = s.h * U;
+      const diag = s.shape === 'diamond' ? sw * Math.SQRT2 : 0;
+      const bw = diag || sw, bh = diag || sh;
+      const pad = Math.max(bw, bh) * .05;
+      const VW = bw + pad * 2, VH = bh + pad * 2;
+      const cx = VW / 2, cy = VH / 2;
+      svg.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
+      svg.innerHTML = '';
+      const minD = Math.min(sw, sh);
+      el('defs', {}, svg).innerHTML = `<filter id="sbSh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="${minD * .02}" stdDeviation="${minD * .025}" flood-color="#000" flood-opacity=".28"/></filter>`;
+      const g = el('g', { filter: 'url(#sbSh)' }, svg);
+      const edge = { stroke: 'rgba(0,0,0,.18)', 'stroke-width': minD * .006 };
+      // sign face
+      if (s.shape === 'rect') {
+        const r = minD * .06;
+        el('rect', { x: cx - sw / 2, y: cy - sh / 2, width: sw, height: sh, rx: r, fill: st.bg, ...edge }, g);
+      } else if (s.shape === 'circle') {
+        el('circle', { cx, cy, r: sw / 2, fill: st.bg, ...edge }, g);
+      } else {
+        const span = s.shape === 'diamond' ? diag : sw;
+        el('path', { d: outline(s.shape, cx, cy, span, span, 1), fill: st.bg, 'stroke-linejoin': 'round', ...edge }, g);
+      }
+      // border
+      if (s.border) {
+        const bwid = minD * .022, inset = minD * .035;
+        const common = { fill: 'none', stroke: st.fg, 'stroke-width': bwid, 'stroke-linejoin': 'round' };
+        if (s.shape === 'rect') {
+          const r = Math.max(0, minD * .06 - inset * .6);
+          el('rect', { x: cx - sw / 2 + inset, y: cy - sh / 2 + inset, width: sw - inset * 2, height: sh - inset * 2, rx: r, ...common }, svg);
+        } else if (s.shape === 'circle') {
+          el('circle', { cx, cy, r: sw / 2 - inset, ...common }, svg);
+        } else {
+          const span = s.shape === 'diamond' ? diag : sw;
+          const k = 1 - (inset * (s.shape === 'diamond' ? Math.SQRT2 : 1.08)) / (span / 2);
+          el('path', { d: outline(s.shape, cx, cy, span, span, k), ...common }, svg);
+        }
+      }
+      // content box
+      const f = { rect: [.84, .8], diamond: [.62, .62], octagon: [.8, .62], circle: [.7, .62] }[s.shape];
+      const boxW = sw * f[0], boxH = sh * f[1];
+      const top = cy - boxH / 2;
+      const hasArrow = s.arrow !== 'none';
+      const textH = hasArrow ? (s.legend.length ? boxH * .58 : 0) : boxH;
+      const arrowH = boxH - textH;
+      // legend
+      if (s.legend.length) {
+        const n = s.legend.length;
+        const lh = 1.08;
+        let fs = Math.min(textH / (n * lh), boxW * .42);
+        const tg = el('g', { fill: st.fg, 'font-family': "'Archivo Variable', 'Arial Narrow', Arial, sans-serif", 'font-weight': 800, style: "font-variation-settings: 'wght' 800", 'text-anchor': 'middle' }, svg);
+        const nodes = s.legend.map((line) => { const t = el('text', { x: cx, 'font-size': fs }, tg); t.textContent = line; return t; });
+        const widest = Math.max(...nodes.map((t) => t.getComputedTextLength() || 1));
+        if (widest > boxW) fs *= boxW / widest;
+        const block = n * fs * lh;
+        const y0 = top + (textH - block) / 2;
+        nodes.forEach((t, i) => {
+          t.setAttribute('font-size', fs);
+          t.setAttribute('y', y0 + fs * (i * lh + .86));
+          const len = t.getComputedTextLength();
+          if (len) { t.setAttribute('textLength', len); t.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
+        });
+      }
+      // arrow
+      if (hasArrow) {
+        const size = Math.min(arrowH * .92, boxW * .7, s.legend.length ? Infinity : boxH * .9);
+        const ax = cx, ay = top + textH + arrowH / 2;
+        const rot = { up: 0, 'up-right': 45, right: 90, left: -90, 'up-left': -45 }[s.arrow];
+        const u = size / 100;
+        const d = `M0 ${-50 * u}L${38 * u} ${-8 * u}H${14 * u}V${50 * u}H${-14 * u}V${-8 * u}H${-38 * u}Z`;
+        el('path', { d, fill: st.fg, 'stroke-linejoin': 'round', transform: `translate(${ax} ${ay}) rotate(${rot})` }, svg);
+      }
+      // labels
+      root.querySelector('[data-dims]').textContent = `${s.w}" × ${s.h}"`;
+      root.querySelector('[data-spec]').textContent = `${SHAPE_NAMES[s.shape]} · ${st.bgName} / ${st.fgName} · ${s.sheeting.replace(', recommend one', '')}`;
+      root.querySelector('[data-bgname]').textContent = st.bgName;
+      root.querySelector('[data-fgname]').textContent = st.fgName;
+      root.querySelectorAll('[data-sw=bg] .sb__dot').forEach((b) => b.classList.toggle('is-on', b.dataset.c === st.bg));
+      root.querySelectorAll('[data-sw=fg] .sb__dot').forEach((b) => b.classList.toggle('is-on', b.dataset.c === st.fg));
+      const sq = SQUARE.has(s.shape);
+      $('h').disabled = sq;
+      if (sq) $('h').value = s.w;
+      root.querySelectorAll('[data-size]').forEach((b) => {
+        const [w, h] = b.dataset.size.split('x').map(Number);
+        b.hidden = sq && w !== h;
+        b.classList.toggle('is-on', w === s.w && h === s.h);
+      });
+    };
+
+    // swatches
+    root.querySelectorAll('[data-sw]').forEach((wrap) => {
+      const key = wrap.dataset.sw;
+      wrap.addEventListener('click', (e) => {
+        const b = e.target.closest('.sb__dot'); if (!b) return;
+        st[key] = b.dataset.c; st[key + 'Name'] = b.dataset.n;
+        if (key === 'bg' && contrast(st.bg, st.fg) < 2.2) {
+          const alt = contrast(st.bg, '#141414') > contrast(st.bg, '#ffffff') ? ['#141414', 'Black'] : ['#ffffff', 'White'];
+          st.fg = alt[0]; st.fgName = alt[1];
+        }
+        draw();
+      });
+      wrap.querySelector('[data-custom]').addEventListener('input', (e) => { st[key] = e.target.value; st[key + 'Name'] = 'Custom ' + e.target.value.toUpperCase(); draw(); });
+    });
+    root.querySelectorAll('[data-size]').forEach((b) => b.addEventListener('click', () => {
+      const [w, h] = b.dataset.size.split('x'); $('w').value = w; $('h').value = h; draw();
+    }));
+    root.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => {
+      $('qty').value = Math.max(1, (+$('qty').value || 1) + +b.dataset.q); draw();
+    }));
+    form.addEventListener('input', draw);
+    form.addEventListener('change', draw);
+    document.fonts?.ready.then(draw);
+    draw();
+
+    // keep the sticky preview just under the site header
+    const hdr = document.querySelector('header');
+    const setTop = () => root.style.setProperty('--hdr-h', `${Math.round(hdr.getBoundingClientRect().height)}px`);
+    if (hdr) { setTop(); if ('ResizeObserver' in window) new ResizeObserver(setTop).observe(hdr); }
+
+    // download preview as PNG
+    root.querySelector('[data-download]').addEventListener('click', () => {
+      const vb = svg.viewBox.baseVal;
+      const scale = 1400 / Math.max(vb.width, vb.height);
+      const clone = svg.cloneNode(true);
+      clone.setAttribute('xmlns', NS);
+      clone.setAttribute('width', Math.round(vb.width * scale));
+      clone.setAttribute('height', Math.round(vb.height * scale));
+      const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)], { type: 'image/svg+xml' }));
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = img.width; c.height = img.height;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#f3f4f5'; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        const a = document.createElement('a');
+        a.download = 'tss-custom-sign.png'; a.href = c.toDataURL('image/png'); a.click();
+      };
+      img.src = url;
+    });
+
+    // submit
+    const ARR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const s = read();
+      const btn = form.querySelector('[data-submit]');
+      const ok = form.querySelector('[data-ok]'), err = form.querySelector('[data-err]');
+      ok.hidden = err.hidden = true;
+      const answers = {
+        product: 'Custom sign', shape: SHAPE_NAMES[s.shape], size: `${s.w}" x ${s.h}"`,
+        background: `${st.bgName} (${st.bg})`, legendColor: `${st.fgName} (${st.fg})`, border: s.border ? 'Yes' : 'No',
+        legend: s.legend.join(' / '), arrow: s.arrow, hasArtwork: $('artwork').checked ? 'Yes' : 'No',
+        sheeting: s.sheeting, material: s.substrate, quantity: s.qty,
+        name: $('name').value, company: $('company').value, email: $('email').value, phone: $('phone').value, notes: $('notes').value
+      };
+      btn.disabled = true; btn.textContent = 'Sending';
+      try {
+        const hook = root.dataset.webhook;
+        if (!hook) throw new Error('no webhook');
+        const r = await fetch(hook, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'custom-sign', page: location.pathname, submittedAt: new Date().toISOString(), answers, previewSvg: svg.outerHTML.slice(0, 60000) })
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        ok.hidden = false;
+      } catch {
+        const body = Object.entries(answers).map(([k, v]) => `${k}: ${v}`).join('\n');
+        location.href = `mailto:${root.dataset.email}?subject=${encodeURIComponent('Custom sign quote: ' + answers.size)}&body=${encodeURIComponent(body)}`;
+        err.hidden = false;
+      } finally {
+        btn.disabled = false; btn.innerHTML = 'Get a quote for this sign' + ARR;
+      }
+    });
+  })();
+</script>
+
+
+<script>
+  // Reveal sections (and stagger their lists) as they scroll into view.
+  const els = document.querySelectorAll('[data-in]');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) els.forEach((e) => e.classList.add('is-in'));
+  else {
+    const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { threshold: 0.12 });
+    els.forEach((e) => io.observe(e));
+  }
+</script>
+
 <style>
-  .cs-hero { background: var(--haze); border-bottom: 1px solid var(--line); }
-  .cs-hero__in { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; padding-top: clamp(44px, 6vw, 84px); padding-bottom: clamp(44px, 6vw, 84px); }
-  .cs-hero h1 { max-width: 14ch; }
-  .cs-hero .lede { margin: 18px 0 26px; max-width: 54ch; }
-  .cs-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .cs-hero__art { width: min(260px, 60vw); justify-self: center; }
+  /* ---------- shared section language (matches the homepage) ---------- */
+  .eq-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(24px, 3vw, 40px); }
+  .eq-head--center { justify-content: center; text-align: center; }
+  .eq-head--center .eq-k { justify-content: center; }
+  .eq-k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--steel); }
+  .eq-k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .eq-k--light { color: rgba(255, 255, 255, .8); }
+  .eq-head h2, .eqc h2 { margin: 0; font-size: clamp(2.2rem, 4.6vw, 4.2rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .eq-head h2 em, .eqc h2 em { font-style: normal; color: var(--red); }
+  .eq-link { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px 12px; border-radius: 999px; border: 1.5px solid var(--line-dark); color: var(--ink); font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+  .eq-link :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .eq-link:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .eq-link:hover :global(svg) { transform: translateX(3px); }
+  .eq-link--light { color: #fff; border-color: rgba(255, 255, 255, .35); }
+  .eq-link--light:hover { background: #fff; color: var(--ink); border-color: #fff; }
+  .eq-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 14px 26px 13px; border-radius: 999px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, transform .2s; }
+  .eq-pill :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
+  .eq-pill:hover :global(svg) { transform: translateX(3px); }
+  .eq-pill--red { background: var(--red); color: #fff; }
+  .eq-pill--red:hover { background: #d10a0a; }
+  .eq-pill--white { background: #fff; color: var(--ink); }
+  .eq-pill--white:hover { background: #f1f2f3; }
+  .eq-pill--glass { background: rgba(255, 255, 255, .08); color: #fff; border: 1.5px solid rgba(255, 255, 255, .4); }
+  .eq-pill--glass:hover { background: rgba(255, 255, 255, .16); }
+  [data-in] li { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i, 0) * 60ms); }
+  [data-in].is-in li { opacity: 1; transform: none; }
 
-  .cs-head { margin-bottom: 30px; }
-  .cs-head .lede { margin: 10px 0 0; }
-  .cs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-  .cs-card { background: var(--paper); border-radius: var(--r-m); overflow: hidden; border: 1px solid var(--line); display: flex; flex-direction: column; transition: border-color .15s, box-shadow .15s; }
-  .cs-card:hover { border-color: var(--line-dark); box-shadow: var(--shadow-m); }
-  .cs-card img { aspect-ratio: 4/3; object-fit: cover; width: 100%; }
-  .cs-card__body { padding: 16px 18px 20px; }
-  .cs-card h3 { font-size: var(--fs-2); margin-bottom: 6px; }
-  .cs-card p { margin: 0; color: var(--ink-soft); }
+  /* ---------- hero ---------- */
+  .eqh { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
+  .eqh::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/custom/sign-shop.webp') 70% 40% / cover no-repeat; transform: scale(1.06); animation: eqZoom 18s ease-out forwards; }
+  .eqh::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(12, 13, 15, .94) 0%, rgba(12, 13, 15, .82) 34%, rgba(12, 13, 15, .35) 62%, rgba(12, 13, 15, .1) 82%), linear-gradient(0deg, rgba(10, 10, 12, .5), transparent 45%); }
+  @keyframes eqZoom { to { transform: scale(1); } }
+  .eqh__in { display: grid; align-content: center; justify-items: start; min-height: clamp(440px, 46vw, 640px); padding-block: clamp(40px, 5vw, 76px); }
+  .eqh__in > * { max-width: 760px; }
+  .eqh__in > h1 { max-width: 1100px; }
+  .eqh__k { margin: 0 0 12px; color: var(--gold); font-size: clamp(.92rem, 1.05vw, 1.05rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; opacity: 0; animation: eqFade .8s .2s ease forwards; }
+  .eqh h1 { margin: 0 0 16px; font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; font-weight: 400; color: #fff; }
+  .eqh__ln { display: block; overflow: hidden; padding-bottom: .05em; }
+  .eqh__ln > span { display: inline-block; transform: translateY(105%); animation: eqRise 1s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ln + .eqh__ln > span { animation-delay: .12s; color: var(--gold); }
+  .eqh__lede { margin: 0 0 26px; max-width: 48ch; color: #e6e8ea; font-size: clamp(1.05rem, 1.35vw, 1.24rem); line-height: 1.5; text-wrap: balance; opacity: 0; transform: translateY(12px); animation: eqUp .8s .55s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ways { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 700px; }
+  .eqh__ways .eway { opacity: 0; translate: 0 16px; animation: eqUpT .8s .65s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ways .eway + .eway { animation-delay: .77s; }
+  .eqh__call { margin: 14px 0 0; color: #cfd3d7; font-size: .95rem; opacity: 0; animation: eqFade .8s .9s ease forwards; }
+  .eqh__call a { color: #fff; font-variation-settings: 'wght' 700; text-decoration: underline; text-underline-offset: 3px; }
+  @keyframes eqRise { to { transform: none; } }
+  @keyframes eqFade { to { opacity: 1; } }
+  @keyframes eqUp { to { opacity: 1; transform: none; } }
+  @keyframes eqUpT { to { opacity: 1; translate: 0 0; } }
+  .eway { display: grid; grid-template-columns: 38px 1fr 18px; align-items: center; gap: 10px; padding: 14px; border-radius: 14px; text-decoration: none; transition: transform .2s, background .15s, border-color .15s, box-shadow .2s; }
+  .eway:hover { transform: translateY(-2px); }
+  .eway--solid { background: #fff; color: var(--ink); box-shadow: 0 18px 34px -18px rgba(0, 0, 0, .6); }
+  .eway--line { border: 1.5px solid rgba(255, 255, 255, .55); color: #fff; background: rgba(255, 255, 255, .06); }
+  .eway--line:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }
+  .eway__ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: var(--red); color: #fff; }
+  .eway--line .eway__ic { background: rgba(255, 255, 255, .14); }
+  .eway__ic svg { width: 22px; height: 22px; }
+  .eway__t b { display: block; font-size: .98rem; line-height: 1.2; white-space: nowrap; font-variation-settings: 'wght' 720; }
+  .eway__t small { display: block; margin-top: 3px; font-size: .84rem; line-height: 1.3; opacity: .75; }
+  .eway--solid .eway__t b { color: var(--red); }
+  .eway :global(.eway__go) { width: 18px; height: 18px; transition: transform .2s; }
+  .eway:hover :global(.eway__go) { transform: translateX(3px); }
 
-  .cs-how h2 { margin-bottom: 24px; }
-  .cs-steps { margin: 0 0 32px; padding: 0 0 0 1.2em; display: grid; gap: 14px; max-width: 70ch; }
-  .cs-steps li { padding-left: 6px; }
-  .cs-how__cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 28px 30px; }
-  .cs-how__cta h3 { margin-bottom: 6px; }
-  .cs-how__cta p { margin: 0; color: #c5c9cf; }
-  .cs-how__btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  /* ---------- perks ---------- */
+  .eqp { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .eqp__list { list-style: none; margin: 0; padding: clamp(22px, 2.6vw, 34px) 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); }
+  .eqp__list li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .eqp__ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--red-tint); color: var(--red); }
+  .eqp__ic svg { width: 24px; height: 24px; }
+  .eqp b { display: block; font-size: 1.04rem; font-variation-settings: 'wght' 720; margin: 2px 0 3px; }
+  .eqp small { display: block; color: var(--steel); font-size: .9rem; line-height: 1.45; }
 
-  @media (max-width: 760px) { .cs-hero__in { grid-template-columns: 1fr; } .cs-hero__art { display: none; } }
+  /* ---------- lineup ---------- */
+  .eql { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .eql__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqt { position: relative; display: grid; grid-template-rows: auto 1fr; height: 100%; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; text-decoration: none; color: var(--ink); background: linear-gradient(185deg, var(--tint) 0%, #fff 72%); transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s, border-color .3s; }
+  .eqt:hover { transform: translateY(-6px); border-color: var(--line-dark); box-shadow: 0 28px 50px -30px rgba(20, 23, 26, .5); }
+  .eqt__img { display: grid; place-items: center; padding: 18px 18px 6px; overflow: hidden; }
+  .eqt__img img { display: block; width: 100%; height: clamp(150px, 12.5vw, 210px); object-fit: contain; filter: drop-shadow(0 16px 14px rgba(20, 23, 26, .2)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqt__img img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .eqt:hover .eqt__img img { transform: translateY(-6px) scale(1.05); }
+  .eqt__txt { display: grid; align-content: start; gap: 6px; padding: 8px 20px 20px; }
+  .eqt__txt b { font-size: clamp(1.08rem, 1.25vw, 1.25rem); line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 750; }
+  .eqt__txt small { color: var(--steel); font-size: .9rem; line-height: 1.4; }
+  .eqt__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--red); font-size: .88rem; font-variation-settings: 'wght' 700; }
+  .eqt__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqt:hover .eqt__mode :global(svg) { transform: translateX(3px); }
+  .eqt:hover .eqt__txt b { color: var(--red); }
+
+  /* ---------- rent or buy ---------- */
+  .eqr { padding: clamp(56px, 7vw, 100px) 0; background: var(--haze); }
+  .eqr__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); }
+  .eqr__card { display: grid; align-content: start; gap: 14px; padding: clamp(24px, 3vw, 44px); border-radius: 24px; background: #fff; border: 1px solid var(--line); }
+  .eqr__card--dark { background: linear-gradient(160deg, #1d2126, #121417); color: #fff; border-color: #1d2126; }
+  .eqr__tag { justify-self: start; margin: 0; padding: 5px 14px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
+  .eqr__card--dark .eqr__tag { background: rgba(255, 255, 255, .1); color: var(--gold); }
+  .eqr h3 { margin: 0; font-size: clamp(1.5rem, 2.2vw, 2.1rem); line-height: 1.08; letter-spacing: -.03em; font-variation-settings: 'wght' 760; font-weight: 400; }
+  .eqr ul { list-style: none; margin: 4px 0 10px; padding: 0; display: grid; gap: 12px; }
+  .eqr li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; font-size: 1rem; line-height: 1.45; color: var(--ink-2); opacity: 1; transform: none; }
+  .eqr__card--dark li { color: #d6d9dc; }
+  .eqr li :global(svg) { width: 22px; height: 22px; color: var(--red); }
+  .eqr__card--dark li :global(svg) { color: var(--gold); }
+  .eqr__card .eq-pill { justify-self: start; }
+  .eqr__calc { margin: 22px 0 0; text-align: center; color: var(--steel); }
+  .eqr__calc a { color: var(--red); font-variation-settings: 'wght' 700; text-underline-offset: 3px; }
+
+  /* ---------- fleet ---------- */
+  .eqf { padding: clamp(56px, 7vw, 100px) 0; background: linear-gradient(180deg, #15181c, #1d2126); color: #fff; }
+  .eqf__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqft { display: grid; gap: 6px; height: 100%; padding: 18px 20px 20px; border-radius: 20px; text-decoration: none; color: #fff; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); transition: background .3s, border-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1); }
+  .eqft:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .25); transform: translateY(-5px); }
+  .eqft__img { display: grid; place-items: center; padding: 12px; margin-bottom: 6px; border-radius: 14px; overflow: hidden; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, .82)); }
+  .eqft__img img { display: block; width: 100%; height: clamp(110px, 9.5vw, 160px); object-fit: contain; filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .25)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqft__img img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .eqft:hover .eqft__img img { transform: translateY(-4px) scale(1.05); }
+  .eqft b { font-size: 1.1rem; line-height: 1.2; font-variation-settings: 'wght' 740; }
+  .eqft small { color: #b9bfc6; font-size: .9rem; line-height: 1.4; }
+  .eqft__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; color: var(--gold); font-size: .88rem; font-variation-settings: 'wght' 700; }
+  .eqft__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqft:hover .eqft__mode :global(svg) { transform: translateX(3px); }
+
+  /* ---------- steps ---------- */
+  .eqs { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .eqs__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); counter-reset: s; }
+  .eqs__list li { position: relative; display: grid; align-content: start; gap: 8px; padding: 26px 24px 28px; border-radius: 20px; border: 1px solid var(--line); background: #fff; }
+  .eqs__list li::after { content: ''; position: absolute; top: 44px; right: calc(-1 * clamp(12px, 1.6vw, 22px)); width: clamp(12px, 1.6vw, 22px); height: 2px; background: var(--line-dark); }
+  .eqs__list li:last-child::after { display: none; }
+  .eqs__n { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 6px; border-radius: 50%; background: var(--red); color: #fff; font-size: .9rem; letter-spacing: .04em; font-variation-settings: 'wght' 760; }
+  .eqs b { font-size: 1.15rem; font-variation-settings: 'wght' 740; }
+  .eqs small { color: var(--steel); font-size: .95rem; line-height: 1.45; }
+
+  /* ---------- final CTA ---------- */
+  .eqc { padding: clamp(56px, 7vw, 100px) 0; background: radial-gradient(120% 140% at 85% 0%, #3a0505 0%, #16181b 55%); color: #fff; }
+  .eqc__in { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 26px 40px; }
+  .eqc h2 { color: #fff; max-width: 16ch; }
+  .eqc__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .eqc__call { color: #cfd3d7; text-decoration: underline; text-underline-offset: 3px; margin-left: 4px; }
+  .eqc__call:hover { color: #fff; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .eqp__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .eqs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .eqs__list li::after { display: none; }
+    .eqh::after { background: linear-gradient(180deg, rgba(12, 13, 15, .9) 0%, rgba(12, 13, 15, .72) 45%, rgba(12, 13, 15, .4) 100%); }
+  }
+  @media (max-width: 720px) {
+    .eqr__grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .eqh__in { min-height: 0; padding-block: 34px 36px; justify-items: center; text-align: center; }
+    .eqh__k { font-size: .78rem; margin-bottom: 8px; }
+    .eqh h1 { font-size: clamp(1.9rem, 8.6vw, 2.4rem); margin-bottom: 10px; }
+    .eqh__lede { font-size: 1rem; margin: 0 auto 20px; }
+    .eqh__ways { grid-template-columns: 1fr; text-align: left; }
+    .eqp__list { grid-template-columns: 1fr; gap: 16px; }
+    .eql__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .eqt { border-radius: 16px; }
+    .eqt__img { padding: 12px 10px 4px; }
+    .eqt__img img { height: 110px; }
+    .eqt__txt { padding: 6px 12px 14px; }
+    .eqt__txt b { font-size: .98rem; }
+    .eqt__txt small { display: none; }
+    .eqf__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .eqft { padding: 12px 12px 14px; border-radius: 16px; }
+    .eqft__img img { height: 90px; }
+    .eqft b { font-size: .98rem; }
+    .eqft small { display: none; }
+    .eqs__list { grid-template-columns: 1fr; }
+    .eq-head { justify-content: center; text-align: center; }
+    .eq-head .eq-k { justify-content: center; }
+    .eqc__in { justify-content: center; text-align: center; }
+    .eqc h2 { margin-inline: auto; }
+    .eqc__acts { justify-content: center; width: 100%; }
+    .eqc__acts .eq-pill { width: 100%; }
+    .eqr__card .eq-pill { justify-self: stretch; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eqh::before, .eqh__k, .eqh__ln > span, .eqh__lede, .eqh__call, .eqh__ways .eway { animation: none; opacity: 1; transform: none; translate: none; }
+    [data-in] li { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- sign builder ---------- */
+  .sb { padding: clamp(48px, 6vw, 96px) 0; background: var(--haze); scroll-margin-top: 90px; }
+  .sb__note { max-width: 40ch; margin: 0; color: var(--steel); }
+  .sb__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(18px, 2.6vw, 36px); align-items: start; }
+  .sb__stage { position: sticky; top: calc(var(--hdr-h, 140px) + 16px); display: grid; gap: 14px; padding: clamp(16px, 2vw, 26px); border-radius: 24px; background: #fff; border: 1px solid var(--line); box-shadow: 0 40px 80px -60px rgba(20, 23, 26, .45); }
+  .sb__canvas { display: grid; place-items: center; aspect-ratio: 4 / 3.4; padding: clamp(12px, 2vw, 24px); border-radius: 18px; background: radial-gradient(120% 90% at 50% 15%, #fbfbfc, #e9ebee 70%), #eceef0; background-image: radial-gradient(120% 90% at 50% 15%, rgba(255,255,255,.9), rgba(233,235,238,.6) 70%), repeating-linear-gradient(0deg, rgba(20,23,26,.035) 0 1px, transparent 1px 28px), repeating-linear-gradient(90deg, rgba(20,23,26,.035) 0 1px, transparent 1px 28px); overflow: hidden; }
+  .sb__svg { width: 100%; height: 100%; max-height: 100%; }
+  .sb__meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 14px; }
+  .sb__dims { font-size: 1.3rem; letter-spacing: -.02em; font-variation-settings: 'wght' 780; }
+  .sb__spec { color: var(--steel); font-size: .92rem; }
+  .sb__dl { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .92rem; font-variation-settings: 'wght' 640; cursor: pointer; transition: border-color .2s, background .2s; }
+  .sb__dl:hover { border-color: var(--ink); }
+  .sb__dl svg { width: 17px; height: 17px; }
+
+  .sb__panel { display: grid; gap: 14px; }
+  .sb__grp { display: grid; gap: 12px; margin: 0; padding: clamp(18px, 2vw, 24px); border-radius: 20px; background: #fff; border: 1px solid var(--line); min-width: 0; }
+  .sb__grp legend { float: left; width: 100%; display: flex; align-items: center; gap: 10px; margin: 0 0 4px; padding: 0; font-size: 1.08rem; letter-spacing: -.01em; font-variation-settings: 'wght' 740; }
+  .sb__grp legend + * { clear: both; }
+  .sb__grp legend span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: #fff; font-size: .85rem; }
+  .sb__lab { margin: 2px 0 -4px; font-size: .9rem; color: var(--steel); }
+  .sb__lab b { color: var(--ink); font-variation-settings: 'wght' 660; }
+  .sb__shapes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .sb__shape input, .sb__chip--r input { position: absolute; opacity: 0; pointer-events: none; }
+  .sb__shape span { display: grid; justify-items: center; gap: 6px; padding: 12px 6px 10px; border-radius: 14px; border: 1.5px solid var(--line-dark); font-size: .84rem; font-variation-settings: 'wght' 600; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+  .sb__shape svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+  .sb__shape input:checked + span { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .sb__shape input:focus-visible + span, .sb__chip--r input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; }
+  .sb__sizes, .sb__arrows { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sb__chip { position: relative; display: inline-flex; }
+  button.sb__chip, .sb__chip span { align-items: center; justify-content: center; min-height: 40px; min-width: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .9rem; font-variation-settings: 'wght' 600; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+  .sb__chip span { display: inline-flex; font-size: 1.05rem; }
+  button.sb__chip.is-on, .sb__chip input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; }
+  button.sb__chip[hidden] { display: none; }
+  .sb__wh { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 10px; }
+  .sb__wh label, .sb__f { display: grid; gap: 7px; }
+  .sb__wh label span, .sb__f > span, .sb__qty > span { font-size: .92rem; font-variation-settings: 'wght' 640; }
+  .sb__f > span em { font-style: normal; color: var(--steel); font-size: .84rem; font-variation-settings: 'wght' 450; margin-left: 4px; }
+  .sb__x { padding-bottom: 14px; color: var(--steel); font-size: 1.2rem; }
+  .sb__in { width: 100%; min-height: 50px; padding: 12px 14px; font: inherit; font-size: 1rem; color: var(--ink); background: #fff; border: 1.5px solid var(--line-dark); border-radius: 12px; transition: border-color .2s, box-shadow .2s; }
+  .sb__in:disabled { background: var(--haze); color: var(--steel); }
+  textarea.sb__in { resize: vertical; line-height: 1.45; }
+  textarea[name=legend] { font-variation-settings: 'wght' 700; text-transform: none; letter-spacing: .02em; }
+  .sb__in:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(20, 23, 26, .07); }
+  .sb__sw { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .sb__dot { position: relative; width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); cursor: pointer; transition: transform .2s; }
+  .sb__dot:hover { transform: scale(1.08); }
+  .sb__dot.is-on { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18), 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
+  .sb__pick { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 12px 0 6px; border-radius: 999px; border: 1.5px dashed var(--line-dark); font-size: .86rem; font-variation-settings: 'wght' 600; cursor: pointer; }
+  .sb__pick input { width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; }
+  .sb__pick input::-webkit-color-swatch-wrapper { padding: 0; }
+  .sb__pick input::-webkit-color-swatch { border: 0; border-radius: 50%; }
+  .sb__tog { display: inline-flex; align-items: center; gap: 10px; font-size: .95rem; font-variation-settings: 'wght' 580; cursor: pointer; justify-self: start; }
+  .sb__tog input { position: absolute; opacity: 0; }
+  .sb__tog span { position: relative; width: 42px; height: 24px; border-radius: 999px; background: var(--line-dark); transition: background .2s; flex: none; }
+  .sb__tog span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+  .sb__tog input:checked + span { background: var(--red); }
+  .sb__tog input:checked + span::after { transform: translateX(18px); }
+  .sb__tog input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; }
+  .sb__row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sb__qty { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .sb__step { display: grid; grid-template-columns: 46px 80px 46px; border: 1.5px solid var(--line-dark); border-radius: 12px; overflow: hidden; }
+  .sb__step button { border: 0; background: var(--haze); font: inherit; font-size: 1.3rem; cursor: pointer; }
+  .sb__step button:hover { background: var(--line); }
+  .sb__step .sb__in { border: 0; border-radius: 0; text-align: center; min-height: 46px; padding: 0 4px; -moz-appearance: textfield; }
+  .sb__step .sb__in::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .sb__send { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; padding: 0 28px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-size: 1.05rem; font-variation-settings: 'wght' 720; cursor: pointer; box-shadow: 0 16px 34px -16px rgba(182, 6, 6, .8); transition: background .2s; }
+  .sb__send:hover { background: var(--red-press); }
+  .sb__send :global(svg) { width: 18px; height: 18px; }
+  .sb__send[disabled] { opacity: .7; cursor: progress; }
+  .sb__msg { margin: 0; padding: 14px 16px; border-radius: 14px; font-variation-settings: 'wght' 600; }
+  .sb__msg--ok { background: #e7f3eb; color: #1c6b37; }
+  .sb__msg--err { background: var(--red-tint); color: var(--red); }
+  .sb__msg[hidden] { display: none; }
+
+  /* ---------- more custom work ---------- */
+  .cm { padding: clamp(48px, 6vw, 96px) 0; background: #fff; scroll-margin-top: 90px; }
+  .cm__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); }
+  .cm__card { display: grid; grid-template-rows: auto 1fr; height: 100%; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: #fff; transition: transform .4s cubic-bezier(.2, .8, .2, 1), box-shadow .4s; }
+  .cm__card:hover { transform: translateY(-4px); box-shadow: 0 30px 50px -34px rgba(20, 23, 26, .55); }
+  .cm__img { aspect-ratio: 4 / 3; overflow: hidden; background: var(--haze); }
+  .cm__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .cm__card:hover .cm__img img { transform: scale(1.04); }
+  .cm__body { display: grid; align-content: start; gap: 8px; padding: 20px 22px 22px; }
+  .cm__body h3 { margin: 0; font-size: 1.25rem; letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; }
+  .cm__body p { margin: 0; color: var(--steel); line-height: 1.5; }
+  .cm__go { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; color: var(--red); text-decoration: none; font-variation-settings: 'wght' 700; }
+  .cm__go :global(svg) { width: 16px; height: 16px; transition: transform .2s; }
+  .cm__go:hover :global(svg) { transform: translateX(3px); }
+
+  @media (max-width: 1000px) {
+    .sb__grid { grid-template-columns: 1fr; }
+    .sb__stage { position: sticky; top: var(--hdr-h, 120px); z-index: 3; padding: 10px; gap: 6px; border-radius: 18px; box-shadow: 0 18px 40px -26px rgba(20, 23, 26, .6); }
+    .sb__canvas { aspect-ratio: auto; height: clamp(170px, 30vh, 280px); padding: 8px; border-radius: 12px; }
+    .sb__meta { padding: 0 4px; }
+    .sb__dims { font-size: 1.05rem; }
+    .sb__spec { font-size: .82rem; }
+    .sb__dl { display: none; }
+    .cm__grid { grid-template-columns: 1fr; }
+    .cm__card { grid-template-rows: auto; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+    .cm__img { aspect-ratio: auto; height: 100%; min-height: 200px; }
+  }
+  @media (max-width: 560px) {
+    .sb__shapes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sb__shape span { grid-auto-flow: column; justify-content: start; padding: 10px 12px; }
+    .sb__row2 { grid-template-columns: 1fr; }
+    .sb__send { width: 100%; }
+    .cm__card { grid-template-columns: 1fr; }
+    .cm__img { aspect-ratio: 16 / 10; min-height: 0; }
+  }
 </style>
+
