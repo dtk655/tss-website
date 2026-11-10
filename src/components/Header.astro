@@ -1,18 +1,18 @@
 ---
+import { cutouts } from '../lib/cutouts.js';
 import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../lib/shopify.js';
 const { colByHandle } = await loadCatalog();
 const megaCats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const fleetCol = colByHandle.get('truck-rentals');
 const equipCol = colByHandle.get('equipment-rentals');
 const fleetHandles = new Set((fleetCol?.products || []).map((p) => p.handle));
-const cutouts = { 'arrow-board': '/fleet/cut/arrow-board.png', 'variable-message-sign-vms-board': '/fleet/cut/vms.png', 'light-tower': '/fleet/cut/light-tower.png', 'portable-traffic-light': '/fleet/cut/traffic-light.png', 'bucket-van': '/fleet/cut/bucket-van.png', 'truck-mounted-attenuator-tma': '/fleet/tma-side.png', 'concrete-barrier': '/fleet/cut/concrete-barrier.png', 'concrete-barrier-lifter': '/fleet/cut/concrete-barrier-lifter.png', 'ground-mount-attenuator-gma': '/fleet/cut/gma.png', 'speed-limit-trailer': '/fleet/cut/speed-limit-trailer.png', 'sand-drum-lifter': '/fleet/cut/sand-drum-lifter.png', 'scorpion-trailer-with-arrow-board': '/fleet/cut/scorpion.png', 'basket-truck': '/fleet/cut/basket-truck.png', 'flatbed-truck': '/fleet/cut/flatbed-truck.png' };
 const itemTints = ['#fff1c9', '#ffe7d2', '#e2edf8', '#e3f3d8', '#ffdede', '#ebebe8'];
 const toItem = (p, i, rentOnly) => ({ href: `/products/${p.handle}`, title: p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim(), sub: rentOnly ? 'Rent' : 'Buy or rent', img: cutouts[p.handle] || (p.featuredImage ? img(p.featuredImage.url, 240) : ''), cut: !!cutouts[p.handle], tint: itemTints[i % itemTints.length] });
 const equipItems = (equipCol?.products || []).filter((p) => !fleetHandles.has(p.handle)).map((p, i) => toItem(p, i, false));
 const fleetItems = (fleetCol?.products || []).map((p, i) => toItem(p, i + 2, true));
 const nav = [
   { href: '/collections', label: 'Products', mega: 'products' },
-  { href: '/collections/equipment-rentals', label: 'Equipment', mega: 'equipment' },
+  { href: '/pages/equipment', label: 'Equipment', mega: 'equipment' },
   { href: '/collections/truck-rentals', label: 'Fleet', mega: 'fleet' },
   { href: '/pages/lane-closure', label: 'Lane Closures' },
   { href: '/watercade/', label: 'WATERCADE' },
@@ -205,6 +205,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
                   <a href={n.mega === 'products' ? '/collections' : megaData[n.mega].all[1]} class="mdrw__all">{n.mega === 'products' ? 'Browse all products' : megaData[n.mega].all[0]}
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </a>
+                  {n.mega !== 'products' && <a href="/pages/equipment" class="mdrw__all mdrw__all--line">Equipment &amp; Fleet Overview</a>}
                 </div>
               </div>
             </div>
@@ -541,6 +542,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .mdrw__catimg img { max-width: 46px; max-height: 50px; object-fit: contain; filter: drop-shadow(0 6px 6px rgba(20, 23, 26, .18)); }
   .mdrw__all { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 4px 10px; padding: 12px; border-radius: 12px; background: var(--ink); color: #fff; text-decoration: none; font-size: .95rem; font-variation-settings: 'wght' 700; }
   .mdrw__all svg { width: 18px; height: 18px; }
+  .mdrw__all--line { margin-top: -4px; background: #fff; color: var(--ink); border: 1.5px solid var(--line-dark); }
 
   .mdrw__quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 6px; border-top: 1px solid var(--line); margin-top: 4px; padding-top: 16px; }
   .mdrw__qa { display: grid; gap: 10px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--haze); color: var(--ink); text-decoration: none; transition: translate .15s, box-shadow .15s; }
