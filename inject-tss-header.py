@@ -6,7 +6,7 @@ import re, sys
 HEADER = '''<header class="tsshdr">
 <div class="tsshdr-main"><div class="tsshdr-wrap tsshdr-in">
 <button type="button" class="tsshdr-menu" aria-expanded="false" aria-controls="tssmnav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-<a href="/" class="tsshdr-logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo-tight.png" alt="TSS, Traffic Safety Service" width="400" height="161"></a>
+<a href="/" class="tsshdr-logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo.webp" alt="TSS, Traffic Safety Service" width="560" height="220"></a>
 <div class="tsshdr-search" data-tss-search>
 <span class="tsshdr-coney" aria-hidden="true"><svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg></span>
 <input type="search" placeholder="Ask Conner, your AI shopping assistant. Tell him what your job needs&hellip;" aria-label="Ask Conner, the AI shopping assistant, or search products" autocomplete="off" spellcheck="false">
