@@ -1,19 +1,11 @@
 ---
-import { cutouts } from '../lib/cutouts.js';
 import { loadCatalog, PRODUCT_COLLECTIONS, img } from '../lib/shopify.js';
 const { colByHandle } = await loadCatalog();
 const megaCats = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
-const fleetCol = colByHandle.get('truck-rentals');
-const equipCol = colByHandle.get('equipment-rentals');
-const fleetHandles = new Set((fleetCol?.products || []).map((p) => p.handle));
-const itemTints = ['#fff1c9', '#ffe7d2', '#e2edf8', '#e3f3d8', '#ffdede', '#ebebe8'];
-const toItem = (p, i, rentOnly) => ({ href: `/products/${p.handle}`, title: p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim(), sub: rentOnly ? 'Rent' : 'Buy or rent', img: cutouts[p.handle] || (p.featuredImage ? img(p.featuredImage.url, 240) : ''), cut: !!cutouts[p.handle], tint: itemTints[i % itemTints.length] });
-const equipItems = (equipCol?.products || []).filter((p) => !fleetHandles.has(p.handle)).map((p, i) => toItem(p, i, false));
-const fleetItems = (fleetCol?.products || []).map((p, i) => toItem(p, i + 2, true));
 const nav = [
   { href: '/collections', label: 'Products', mega: 'products' },
-  { href: '/pages/equipment', label: 'Equipment', mega: 'equipment' },
-  { href: '/pages/fleet', label: 'Fleet', mega: 'fleet' },
+  { href: '/pages/equipment', label: 'Equipment' },
+  { href: '/pages/fleet', label: 'Fleet' },
   { href: '/pages/lane-closure', label: 'Lane Closures' },
   { href: '/watercade/', label: 'WATERCADE' },
   // desktop only; the mobile drawer lists these in its own link grid
@@ -29,10 +21,6 @@ const moreLinks = [
   { href: '/pages/about-us', t: 'About TSS', s: 'Since 1971, South Plainfield, NJ' },
   { href: '/pages/contact', t: 'Contact', s: '908-561-4800' }
 ];
-const megaData = {
-  equipment: { items: equipItems, all: ['All equipment', '/collections/equipment-rentals'], promos: [['Rent or buy?', 'Most equipment can be bought or rented. Run your numbers.', '/tools/rent-vs-buy'], ['Need it set up?', 'Our certified, experienced crews can run the whole closure.', '/pages/lane-closure']] },
-  fleet: { items: fleetItems, all: ['All fleet', '/collections/truck-rentals'], promos: [['Book a TMA', 'Crash trucks with certified operators, by the day or job.', '/pages/request-a-quote?type=lane-closure'], ['Rentals in NJ, NY, PA, CT', 'Delivered and picked up from our yard.', '/collections/equipment-rentals']] }
-};
 const icons = {
   Products: 'M4.5 4.5h6v6h-6z M13.5 4.5h6v6h-6z M4.5 13.5h6v6h-6z M13.5 13.5h6v6h-6z',
   Rentals: 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01',
@@ -124,37 +112,12 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
                 <b>Custom branding</b>
                 <span>Your colors, logo and stenciling on cones, drums and barriers.</span>
               </a>
-              <a href="/collections/equipment-rentals" class="mega__promo">
+              <a href="/pages/equipment" class="mega__promo">
                 <b>Rent it instead</b>
                 <span>Everything we sell can be rented in NJ, NY, PA and CT.</span>
               </a>
             </div>
           </div>
-        </div>
-            )}
-            {(n.mega === 'equipment' || n.mega === 'fleet') && (
-        <div class="mega" role="region" aria-label={n.label}>
-          <div class="wrap mega__in">
-            <div class="mega__cats">
-              {megaData[n.mega].items.map((it) => (
-                <a href={it.href} class="mega__cat" style={`--tint:${it.tint}`}>
-                  <span class="mega__txt"><b>{it.title}</b><small><i class={`mega__mode${it.sub === 'Rent' ? ' mega__mode--rent' : ''}`}>{it.sub}</i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></small></span>
-                  {it.img && <img class:list={['mega__img', !it.cut && 'mega__img--blend']} src={it.img} alt="" loading="lazy" />}
-                </a>
-              ))}
-            </div>
-            <div class="mega__side">
-              <a href={megaData[n.mega].all[1]} class="mega__all">{megaData[n.mega].all[0]}
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </a>
-              {megaData[n.mega].promos.map(([b, s2, h]) => <a href={h} class="mega__promo"><b>{b}</b><span>{s2}</span></a>)}
-            </div>
-          </div>
-        </div>
-            )}
-            {n.mega === 'more' && (
-        <div class="more" role="region" aria-label="More">
-          {moreLinks.map((m) => <a href={m.href}><b>{m.t}</b><span>{m.s}</span></a>)}
         </div>
             )}
           </div>
@@ -190,22 +153,16 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
               <div class="mdrw__sub">
                 <div class="mdrw__subin">
                   <div class="mdrw__cats">
-                    {n.mega === 'products' ? megaCats.map((c) => (
+                    {megaCats.map((c) => (
                       <a href={`/collections/${c.handle}`} class="mdrw__cat" style={`--tint:${megaTints[c.handle] || '#ececea'}`}>
                         <span class="mdrw__cattxt"><b>{c.title}</b><small>{c.products.length} {c.products.length === 1 ? 'product' : 'products'}</small></span>
                         <span class="mdrw__catimg"><img src={c.handle === 'cones' || c.handle === 'traffic-drums' ? `/cats/${c.handle}.svg` : `/cats/${c.handle}.png`} alt="" loading="lazy" /></span>
                       </a>
-                    )) : megaData[n.mega].items.map((it) => (
-                      <a href={it.href} class="mdrw__cat" style={`--tint:${it.tint}`}>
-                        <span class="mdrw__cattxt"><b>{it.title}</b><small>{it.sub}</small></span>
-                        <span class="mdrw__catimg">{it.img && <img class:list={[!it.cut && 'mdrw__blend']} src={it.img} alt="" loading="lazy" />}</span>
-                      </a>
                     ))}
                   </div>
-                  <a href={n.mega === 'products' ? '/collections' : megaData[n.mega].all[1]} class="mdrw__all">{n.mega === 'products' ? 'Browse all products' : megaData[n.mega].all[0]}
+                  <a href="/collections" class="mdrw__all">Browse all products
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </a>
-                  {n.mega !== 'products' && <a href={n.href} class="mdrw__all mdrw__all--line">{n.mega === 'fleet' ? 'Fleet Overview' : 'Equipment Overview'}</a>}
                 </div>
               </div>
             </div>

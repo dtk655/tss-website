@@ -79,20 +79,6 @@ const steps = [
     </div>
   </section>
 
-  <!-- ================= PERKS ================= -->
-  <section class="eqp" data-in>
-    <div class="wrap">
-      <ul class="eqp__list">
-        {perks.map(([t, d, ic], i) => (
-          <li style={`--i:${i}`}>
-            <span class="eqp__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
-            <span><b>{t}</b><small>{d}</small></span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
   <!-- ================= LINEUP ================= -->
   <section class="eql" data-in id="lineup">
     <div class="wrap">
@@ -114,6 +100,20 @@ const steps = [
                 <span class="eqt__mode">Buy or rent<Fragment set:html={ARROW} /></span>
               </span>
             </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= PERKS ================= -->
+  <section class="eqp" data-in>
+    <div class="wrap">
+      <ul class="eqp__list">
+        {perks.map(([t, d, ic], i) => (
+          <li style={`--i:${i}`}>
+            <span class="eqp__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+            <span><b>{t}</b><small>{d}</small></span>
           </li>
         ))}
       </ul>
@@ -297,7 +297,7 @@ const steps = [
   .eway:hover :global(.eway__go) { transform: translateX(3px); }
 
   /* ---------- perks ---------- */
-  .eqp { background: #fff; border-bottom: 1px solid var(--line); }
+  .eqp { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .eqp__list { list-style: none; margin: 0; padding: clamp(22px, 2.6vw, 34px) 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); }
   .eqp__list li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; align-items: start; }
   .eqp__ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--red-tint); color: var(--red); }

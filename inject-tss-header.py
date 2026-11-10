@@ -29,8 +29,8 @@ HEADER = '''<header class="tsshdr">
 <div class="tsshdr-navrow"><div class="tsshdr-wrap tsshdr-navin">
 <nav class="tsshdr-nav" aria-label="Main">
 <a href="/collections"><span>Products</span></a>
-<a href="/collections/equipment-rentals"><span>Equipment</span></a>
-<a href="/collections/truck-rentals"><span>Fleet</span></a>
+<a href="/pages/equipment"><span>Equipment</span></a>
+<a href="/pages/fleet"><span>Fleet</span></a>
 <a href="/pages/lane-closure"><span>Lane Closures</span></a>
 <a href="/watercade/" aria-current="page" aria-label="WATERCADE"><span class="tsshdr-wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72"></span></a>
 <a href="/pages/custom-stenciling"><span>Custom Shop</span></a>
