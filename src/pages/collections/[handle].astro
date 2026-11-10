@@ -26,12 +26,6 @@ const desc = c.description || (rentalOnly
 const meta = CATEGORY_META[handle] || { tint: '#ececea', img: '', line: '', sub: '' };
 const isRentalCol = RENTAL_COLLECTIONS.includes(handle);
 const minPrice = buys.length ? Math.min(...buys.map((p) => p.minPrice)) : 0;
-const facts = [
-  `${c.products.length} ${c.products.length === 1 ? 'product' : 'products'}`,
-  !rentalOnly && minPrice > 0 && `From ${money(minPrice)}`,
-  !isRentalCol && 'Ships nationwide',
-  'Rent in NJ, NY, PA, CT'
-].filter(Boolean);
 const allCols = [...PRODUCT_COLLECTIONS, ...RENTAL_COLLECTIONS].map((h) => colByHandle.get(h)).filter(Boolean);
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
@@ -41,8 +35,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
       <div class="ch__copy">
         <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href={isRentalCol ? (meta.page || '/pages/equipment') : '/collections'}>{isRentalCol ? 'Rentals' : 'Products'}</a><span aria-hidden="true">/</span><span aria-current="page">{c.title}</span></nav>
         <h1><span class="ch__ln"><span>{c.title}</span></span>{meta.line && <span class="ch__ln ch__ln--sub"><span>{meta.line}</span></span>}</h1>
-        <p class="ch__lede">{meta.sub ? `${meta.sub}. ` : ''}{desc}</p>
-        <ul class="ch__facts">{facts.map((f) => <li>{f}</li>)}</ul>
+        {meta.sub && <p class="ch__lede">{meta.sub}</p>}
         <div class="ch__acts">
           <a href="#shop" class="ch__btn ch__btn--solid">{rentalOnly ? 'See the lineup' : 'Shop ' + c.title.toLowerCase()}<Fragment set:html={ARROW} /></a>
           <a href={`/pages/request-a-quote?type=${rentalOnly ? 'rental' : 'products'}`} class="ch__btn ch__btn--line">{rentalOnly ? 'Get rental pricing' : 'Get bulk pricing'}</a>
@@ -202,19 +195,18 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
 <style>
   /* ---------- category header ---------- */
   .ch { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--tint) 0%, color-mix(in srgb, var(--tint) 45%, #fff) 100%); border-bottom: 1px solid var(--line); }
-  .ch__in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); align-items: center; gap: clamp(20px, 4vw, 60px); min-height: clamp(300px, 26vw, 400px); padding-block: clamp(26px, 3vw, 44px); }
-  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: .9rem; color: var(--ink-2); margin: 0 0 18px; }
+  .ch__in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); align-items: center; gap: clamp(20px, 4vw, 60px); min-height: 0; padding-block: clamp(18px, 2vw, 28px); }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: .88rem; color: var(--ink-2); margin: 0 0 10px; }
   .crumbs a { color: inherit; text-underline-offset: 3px; }
-  .ch h1 { margin: 0 0 14px; font-size: clamp(2.6rem, 5.4vw, 5rem); line-height: .98; letter-spacing: -.045em; font-variation-settings: 'wght' 790; font-weight: 400; }
+  .ch h1 { margin: 0 0 16px; font-size: clamp(2.3rem, 4.2vw, 3.9rem); line-height: .98; letter-spacing: -.045em; font-variation-settings: 'wght' 790; font-weight: 400; }
   .ch__ln { display: block; overflow: hidden; padding-bottom: .06em; }
   .ch__ln > span { display: inline-block; animation: chRise .9s cubic-bezier(.2, .8, .2, 1) backwards; }
   .ch__ln--sub { font-size: .52em; letter-spacing: -.03em; margin-top: .12em; }
   .ch__ln--sub > span { color: var(--red); animation-delay: .1s; }
-  .ch__lede { margin: 0 0 18px; max-width: 58ch; color: var(--ink-2); font-size: clamp(1rem, 1.15vw, 1.12rem); line-height: 1.55; animation: chUp .8s .3s cubic-bezier(.2, .8, .2, 1) backwards; }
-  .ch__facts { list-style: none; margin: 0 0 22px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; animation: chUp .8s .4s cubic-bezier(.2, .8, .2, 1) backwards; }
-  .ch__facts li { padding: 7px 13px 6px; border-radius: 999px; background: rgba(255, 255, 255, .78); border: 1px solid rgba(20, 23, 26, .08); font-size: .86rem; font-variation-settings: 'wght' 640; color: var(--ink); }
+  .ch__lede { margin: -4px 0 16px; max-width: 52ch; color: var(--ink-2); font-size: clamp(.98rem, 1.1vw, 1.08rem); line-height: 1.45; animation: chUp .8s .3s cubic-bezier(.2, .8, .2, 1) backwards; }
+  @keyframes chUp { from { opacity: 0; transform: translateY(10px); } }
   .ch__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; animation: chUp .8s .5s cubic-bezier(.2, .8, .2, 1) backwards; }
-  .ch__btn { display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 24px; border-radius: 999px; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, border-color .2s, color .2s; }
+  .ch__btn { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 22px; border-radius: 999px; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, border-color .2s, color .2s; }
   .ch__btn :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
   .ch__btn:hover :global(svg) { transform: translateX(3px); }
   .ch__btn--solid { background: var(--red); color: #fff; }
@@ -222,13 +214,13 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .ch__btn--line { border: 1.5px solid rgba(20, 23, 26, .25); color: var(--ink); background: rgba(255, 255, 255, .5); }
   .ch__btn--line:hover { border-color: var(--ink); background: #fff; }
   .ch__more { color: var(--ink); font-variation-settings: 'wght' 680; text-underline-offset: 3px; }
-  .ch__art { position: relative; display: grid; place-items: center; height: 100%; min-height: 240px; }
+  .ch__art { position: relative; display: grid; place-items: center; height: 100%; }
   .ch__glow { position: absolute; width: 78%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0)); }
-  .ch__art img { position: relative; display: block; width: 100%; max-width: 380px; height: clamp(200px, 20vw, 320px); object-fit: contain; filter: drop-shadow(0 26px 22px rgba(20, 23, 26, .25)); animation: chArt 1s .15s cubic-bezier(.2, .8, .2, 1) backwards; }
+  .ch__art img { position: relative; display: block; width: 100%; max-width: 380px; height: clamp(140px, 13vw, 200px); object-fit: contain; filter: drop-shadow(0 26px 22px rgba(20, 23, 26, .25)); animation: chArt 1s .15s cubic-bezier(.2, .8, .2, 1) backwards; }
   @keyframes chRise { from { transform: translateY(105%); } }
   @keyframes chUp { from { opacity: 0; transform: translateY(12px); } }
   @keyframes chArt { from { opacity: 0; transform: translateY(24px) scale(.94); } }
-  @media (prefers-reduced-motion: reduce) { .ch__ln > span, .ch__lede, .ch__facts, .ch__acts, .ch__art img { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .ch__ln > span, .ch__acts, .ch__art img { animation: none; } }
 
   /* category chips (shown where the sidebar list is hidden) */
   .cchips { display: none; border-bottom: 1px solid var(--line); background: #fff; }
@@ -304,15 +296,19 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   }
   @media (max-width: 720px) { .grid--cols4, .grid--cols3 { grid-template-columns: repeat(2, 1fr); gap: 12px; } .side { grid-template-columns: 1fr; } .density { display: none; } }
   @media (max-width: 640px) {
-    .ch__in { grid-template-columns: 1fr; min-height: 0; gap: 0; padding-block: 18px 26px; }
-    .ch__art { order: -1; min-height: 0; margin-bottom: 4px; }
-    .ch__art img { height: 150px; }
-    .crumbs { position: absolute; top: 14px; left: var(--gutter); margin: 0; font-size: .82rem; }
-    .ch__in { padding-top: 44px; text-align: center; }
-    .ch h1 { font-size: clamp(2.2rem, 11vw, 2.8rem); }
-    .ch__lede { margin-inline: auto; font-size: .96rem; }
-    .ch__facts, .ch__acts { justify-content: center; }
-    .ch__btn { flex: 1 1 auto; justify-content: center; }
+    .ch__in { grid-template-columns: 1fr; min-height: 0; gap: 0; padding-block: 16px 18px; position: relative; }
+    .ch__copy { position: relative; z-index: 1; }
+    .ch__art { position: absolute; right: var(--gutter); top: 40px; height: auto; }
+    .ch__art img { width: 96px; height: 96px; }
+    .ch__ln { padding-right: 100px; }
+    .ch__lede { margin: -2px 0 14px; padding-right: 96px; font-size: .9rem; }
+    .ch__acts { flex-wrap: nowrap; }
+    .crumbs { margin: 0 0 8px; font-size: .82rem; }
+    .ch__in { text-align: left; }
+    .ch h1 { font-size: clamp(1.9rem, 9vw, 2.4rem); margin-bottom: 12px; }
+    .ch__acts { gap: 8px; }
+    .ch__btn { min-height: 42px; padding: 0 16px; font-size: .9rem; }
+
     .cell :global(.pcard__body) { padding: 12px 12px 14px; }
     .cell :global(.pcard__title) { font-size: .9rem; }
   }
