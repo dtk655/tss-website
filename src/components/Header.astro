@@ -16,12 +16,16 @@ const nav = [
   { href: '/collections/truck-rentals', label: 'Fleet', mega: 'fleet' },
   { href: '/pages/lane-closure', label: 'Lane Closures' },
   { href: '/watercade/', label: 'WATERCADE' },
-  { href: '#', label: 'More', mega: 'more' }
+  // desktop only; the mobile drawer lists these in its own link grid
+  { href: '/pages/custom-stenciling', label: 'Custom Shop', desk: true },
+  { href: '/tools', label: 'Planning Tools', desk: true },
+  { href: '/pages/about-us', label: 'About', desk: true },
+  { href: '/pages/contact', label: 'Contact', desk: true }
 ];
 const moreLinks = [
-  { href: '/pages/custom-stenciling', t: 'Custom shop', s: 'Your colors, logo and stenciling' },
-  { href: '/tools', t: 'Planning tools', s: 'Work zone builder, closure plan, calculators' },
-  { href: '/collections/equipment-rentals', t: 'All rentals', s: 'Everything you can rent, in one place' },
+  { href: '/pages/custom-stenciling', t: 'Custom Shop', s: 'Your colors, logo and stenciling' },
+  { href: '/tools', t: 'Planning Tools', s: 'Work zone builder, closure plan, calculators' },
+  { href: '/collections/equipment-rentals', t: 'All Rentals', s: 'Everything you can rent, in one place' },
   { href: '/pages/about-us', t: 'About TSS', s: 'Since 1971, South Plainfield, NJ' },
   { href: '/pages/contact', t: 'Contact', s: '908-561-4800' }
 ];
@@ -177,7 +181,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
           <span class="mdrw__ai">AI</span>
         </button>
         <nav class="mdrw__nav" aria-label="Mobile">
-          {nav.filter((n) => n.mega !== 'more').map((n, i) => n.mega ? (
+          {nav.filter((n) => n.mega !== 'more' && !n.desk).map((n, i) => n.mega ? (
             <div class="mdrw__grp mdrw__in" style={`--i:${i + 1}`}>
               <button type="button" class={`mdrw__link${current(n.href) ? ' is-cur' : ''}`} aria-expanded="false" data-macc>
                 <span class="mdrw__lbl">{n.label}</span>
@@ -376,10 +380,10 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .hdr__main { position: relative; z-index: 2; background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: box-shadow .25s ease; }
   .hdr.is-stuck .hdr__main { box-shadow: 0 12px 32px -20px rgba(20, 23, 26, .35); }
   .hdr__in { height: 92px; display: flex; align-items: center; gap: clamp(12px, 1.4vw, 24px); transition: height .25s ease; }
-  .hdr.is-stuck .hdr__in { height: 72px; }
+  .hdr.is-stuck .hdr__in { height: 78px; }
   .logo { flex: none; display: flex; }
-  .logo__img { height: 55px; width: auto; transition: height .25s ease; }
-  .hdr.is-stuck .logo__img { height: 54px; }
+  .logo__img { height: 70px; width: auto; transition: height .25s ease; }
+  .hdr.is-stuck .logo__img { height: 62px; }
 
   /* ---------- mega panel ---------- */
   .mega { position: fixed; left: 0; right: 0; top: var(--megatop, 92px); background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 32px 60px -28px rgba(20, 23, 26, .35); opacity: 0; translate: 0 -8px; visibility: hidden; transition: opacity .22s ease, translate .22s ease, visibility .22s; z-index: 30; }

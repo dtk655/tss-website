@@ -33,7 +33,10 @@ HEADER = '''<header class="tsshdr">
 <a href="/collections/truck-rentals"><span>Fleet</span></a>
 <a href="/pages/lane-closure"><span>Lane Closures</span></a>
 <a href="/watercade/" aria-current="page" aria-label="WATERCADE"><span class="tsshdr-wc"><img src="/brand/watercade-nav.png" alt="" width="540" height="72"></span></a>
-<div class="tsshdr-more"><a href="#" aria-haspopup="true" aria-expanded="false" data-tssmore><span>More</span><svg class="tsshdr-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><div class="tsshdr-moremenu"><a href="/pages/custom-stenciling"><b>Custom shop</b><small>Your colors, logo and stenciling</small></a><a href="/tools"><b>Planning tools</b><small>Work zone builder, closure plan, calculators</small></a><a href="/collections/equipment-rentals"><b>All rentals</b><small>Everything you can rent, in one place</small></a><a href="/pages/about"><b>About TSS</b><small>Since 1971, South Plainfield, NJ</small></a><a href="/pages/contact"><b>Contact</b><small>908-561-4800</small></a></div></div>
+<a href="/pages/custom-stenciling"><span>Custom Shop</span></a>
+<a href="/tools"><span>Planning Tools</span></a>
+<a href="/pages/about-us"><span>About</span></a>
+<a href="/pages/contact"><span>Contact</span></a>
 </nav>
 <p class="tsshdr-tag">Ships nationwide &middot; Rentals &amp; crews in NJ, NY, PA, CT</p>
 </div></div>
@@ -92,10 +95,10 @@ STYLE = '''<style id="tss-shell">
 .tsshdr-main{position:relative;z-index:2;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:box-shadow .25s ease}
 .tsshdr.is-stuck .tsshdr-main{box-shadow:0 12px 32px -20px rgba(20,23,26,.35)}
 .tsshdr-in{height:92px;display:flex;align-items:center;gap:clamp(12px,1.4vw,24px);transition:height .25s ease}
-.tsshdr.is-stuck .tsshdr-in{height:72px}
+.tsshdr.is-stuck .tsshdr-in{height:78px}
 .tsshdr-logo{flex:none;display:flex}
-.tsshdr-logo img{height:55px;width:auto;display:block;transition:height .25s ease}
-.tsshdr.is-stuck .tsshdr-logo img{height:54px}
+.tsshdr-logo img{height:70px;width:auto;display:block;transition:height .25s ease}
+.tsshdr.is-stuck .tsshdr-logo img{height:62px}
 .tsshdr-search{position:relative;flex:1;min-width:0;max-width:min(860px,46vw);margin-inline:auto;height:50px}
 .tsshdr-search input{width:100%;height:100%;padding:12px 84px 11px 52px;border:1.5px solid #cfd4d9;border-radius:999px;background:#f5f6f7;font:inherit;font-size:.98rem;color:#14171a;transition:background .15s,border-color .15s,box-shadow .15s}
 .tsshdr-search input::placeholder{color:#5b6670}
@@ -164,6 +167,7 @@ STYLE = '''<style id="tss-shell">
 .tsshdr-cta{border-radius:999px}
 .tssd__wc{display:flex;align-items:center}.tssd__wc img{width:auto;display:block}.tssd .tssd__foot{margin-top:18px}
 .tsshdr-wc{display:inline-flex;align-items:center}.tsshdr-wc img{height:20px;width:auto;display:block}
+@media(max-width:1240px){.tsshdr-nav a{padding-inline:9px;font-size:.93rem}.tsshdr-wc img{height:15px}}
 @media(min-width:1011px){.tssd{display:none!important}}
 __DRAWER_CSS__
 </style>'''
