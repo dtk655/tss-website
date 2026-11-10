@@ -13,7 +13,7 @@ const fleetItems = (fleetCol?.products || []).map((p, i) => toItem(p, i + 2, tru
 const nav = [
   { href: '/collections', label: 'Products', mega: 'products' },
   { href: '/pages/equipment', label: 'Equipment', mega: 'equipment' },
-  { href: '/collections/truck-rentals', label: 'Fleet', mega: 'fleet' },
+  { href: '/pages/fleet', label: 'Fleet', mega: 'fleet' },
   { href: '/pages/lane-closure', label: 'Lane Closures' },
   { href: '/watercade/', label: 'WATERCADE' },
   // desktop only; the mobile drawer lists these in its own link grid
@@ -205,7 +205,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
                   <a href={n.mega === 'products' ? '/collections' : megaData[n.mega].all[1]} class="mdrw__all">{n.mega === 'products' ? 'Browse all products' : megaData[n.mega].all[0]}
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13 M12.5 5.5L19 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </a>
-                  {n.mega !== 'products' && <a href="/pages/equipment" class="mdrw__all mdrw__all--line">Equipment &amp; Fleet Overview</a>}
+                  {n.mega !== 'products' && <a href={n.href} class="mdrw__all mdrw__all--line">{n.mega === 'fleet' ? 'Fleet Overview' : 'Equipment Overview'}</a>}
                 </div>
               </div>
             </div>

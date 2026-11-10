@@ -1,0 +1,393 @@
+---
+// Truck fleet landing page: what we rent, which truck fits the job, the TMA explorer, how renting works.
+import Layout from '../../layouts/Layout.astro';
+import TmaTruck from '../../components/TmaTruck.astro';
+import { loadCatalog, img } from '../../lib/shopify.js';
+import { cutouts } from '../../lib/cutouts.js';
+import { PHONE, PHONE_TEL } from '../../lib/config.js';
+
+const { colByHandle } = await loadCatalog();
+const fleetCol = colByHandle.get('truck-rentals');
+const blurbs = {
+  'truck-mounted-attenuator-tma': 'Crash truck with an arrow board that protects crews from behind. Book it with a certified operator.',
+  'scorpion-trailer-with-arrow-board': 'Trailer-mounted crash cushion with an arrow board, towed behind your own truck.',
+  'bucket-truck': 'Aerial work at 45, 60 and 85 feet for signals, signs and overhead lines.',
+  'bucket-van': 'Compact 30 ft aerial van for tight streets and quick hits.',
+  'basket-truck': 'The cone truck: crews set and pick up cones fast and safely.',
+  'flatbed-truck': 'Hauls barrier, drums and equipment to the job.'
+};
+const tints = ['#ffdede', '#fff1c9', '#e2edf8', '#ffe7d2', '#e3f3d8', '#ebebe8'];
+const fleet = (fleetCol?.products || []).map((p, i) => ({
+  handle: p.handle,
+  href: `/products/${p.handle}`,
+  title: p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim(),
+  blurb: blurbs[p.handle] || '',
+  img: cutouts[p.handle] || (p.featuredImage ? img(p.featuredImage.url, 600) : ''),
+  cut: !!cutouts[p.handle],
+  tint: tints[i % tints.length]
+}));
+const byHandle = Object.fromEntries(fleet.map((f) => [f.handle, f]));
+// "Which truck do I need?" guide; each card only shows if that truck is in the fleet collection.
+const guide = [
+  ['Protecting a crew on the highway', 'TMA crash truck', 'truck-mounted-attenuator-tma', 'Sits behind the work zone and takes the hit, so your crew doesn’t.'],
+  ['Working up high', 'Bucket truck', 'bucket-truck', 'Signals, signs, lighting and overhead work up to 85 feet.'],
+  ['Setting a lot of cones', 'Basket (cone) truck', 'basket-truck', 'Crews place and pick up cones from the basket, off the road.'],
+  ['Moving barrier and gear', 'Flatbed truck', 'flatbed-truck', 'Gets barrier, drums and equipment where the job needs them.']
+].filter((g) => byHandle[g[2]]).map(([q, t, h, d], i) => ({ q, t, d, href: byHandle[h].href, img: byHandle[h].img, tint: tints[i % tints.length] }));
+
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const perks = [
+  ['For the day or the job', 'Rent a truck for one shift or for the whole project.', 'M3.5 5h17v15.5h-17z M3.5 10h17 M8 3v4 M16 3v4'],
+  ['Certified TMA operators', 'Book a crash truck with a trained operator in the seat.', 'M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z M8.5 12l2.4 2.4L15.5 9.8'],
+  ['Pairs with our crews', 'Add flaggers or a full lane closure on the same order.', 'M9 7.5a3 3 0 1 0 0-.01 M3.5 20a5.5 5.5 0 0 1 11 0 M17 9a2.4 2.4 0 1 0 0-.01 M15.5 14.4A4.5 4.5 0 0 1 21 18.6'],
+  ['NJ, NY, PA and CT', 'Trucks out of our own yard, across the region.', 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z M12 7.6a2.4 2.4 0 1 0 0 .01']
+];
+const steps = [
+  ['Pick your truck', 'Choose from the fleet, or tell us the job and we’ll match the truck.'],
+  ['Get pricing', 'A real person prices it, usually within 1 business day.'],
+  ['We bring it out', 'On your date, with a certified operator when you need one.'],
+  ['Done when you are', 'Keep it for the shift or the season. Extend any time.']
+];
+---
+<Layout title="Truck fleet" description={`Rent TMA crash trucks, bucket trucks, cone trucks and flatbeds in NJ, NY, PA and CT. TMAs available with certified operators. Call ${PHONE}.`} image="/fleet/fleet-hero.webp">
+  <!-- ================= HERO ================= -->
+  <section class="eqh">
+    <div class="wrap eqh__in">
+      <p class="eqh__k">Truck fleet</p>
+      <h1><span class="eqh__ln"><span>A Truck For Every Job.</span></span> <span class="eqh__ln"><span>Ready When You Are.</span></span></h1>
+      <p class="eqh__lede">Crash trucks, bucket trucks, cone trucks and flatbeds from our own yard. Rent one for the day or the whole job, across NJ, NY, PA and CT.</p>
+      <div class="eqh__ways">
+        <a href="/pages/request-a-quote?type=rental" class="eway eway--solid">
+          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
+          <span class="eway__t"><b>Get fleet pricing</b><small>By the day or the job</small></span>
+          <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
+        </a>
+        <a href="/pages/request-a-quote?type=lane-closure" class="eway eway--line">
+          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z M8.5 12l2.4 2.4L15.5 9.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+          <span class="eway__t"><b>Book a TMA with a crew</b><small>Certified operators</small></span>
+          <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
+        </a>
+      </div>
+      <p class="eqh__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
+    </div>
+  </section>
+
+  <!-- ================= PERKS ================= -->
+  <section class="eqp" data-in>
+    <div class="wrap">
+      <ul class="eqp__list">
+        {perks.map(([t, d, ic], i) => (
+          <li style={`--i:${i}`}>
+            <span class="eqp__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+            <span><b>{t}</b><small>{d}</small></span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= THE FLEET ================= -->
+  <section class="eql" data-in id="fleet">
+    <div class="wrap">
+      <div class="eq-head">
+        <div>
+          <p class="eq-k"><span></span>The fleet</p>
+          <h2>Trucks and trailers, <em>ready to roll.</em></h2>
+        </div>
+        <a href="/collections/truck-rentals" class="eq-link">Shop the fleet<Fragment set:html={ARROW} /></a>
+      </div>
+      <ul class="eql__grid eql__grid--big">
+        {fleet.map((e, i) => (
+          <li style={`--i:${i}`}>
+            <a href={e.href} class="eqt" style={`--tint:${e.tint}`}>
+              <span class="eqt__img"><img src={e.img} alt="" loading="lazy" class={e.cut ? '' : 'is-blend'} /></span>
+              <span class="eqt__txt">
+                <b>{e.title}</b>
+                {e.blurb && <small>{e.blurb}</small>}
+                <span class="eqt__mode">Rent<Fragment set:html={ARROW} /></span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= WHICH TRUCK ================= -->
+  {guide.length > 0 && (
+    <section class="eqg" data-in>
+      <div class="wrap">
+        <div class="eq-head eq-head--center">
+          <div>
+            <p class="eq-k"><span></span>Which truck do I need?<span></span></p>
+            <h2>Start with <em>the job.</em></h2>
+          </div>
+        </div>
+        <ul class="eqg__grid">
+          {guide.map((g, i) => (
+            <li style={`--i:${i}`}>
+              <a href={g.href} class="eqg__card">
+                <p class="eqg__q">{g.q}</p>
+                <span class="eqg__img" style={`--tint:${g.tint}`}><img src={g.img} alt="" loading="lazy" /></span>
+                <h3>{g.t}</h3>
+                <small>{g.d}</small>
+                <span class="eqg__a">See the truck<Fragment set:html={ARROW} /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="eqr__calc">Not sure? <a href="/pages/request-a-quote?type=general">Describe the job and we’ll recommend the truck</a></p>
+      </div>
+    </section>
+  )}
+
+  <TmaTruck />
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section class="eqs" data-in>
+    <div class="wrap">
+      <div class="eq-head eq-head--center">
+        <div>
+          <p class="eq-k"><span></span>How renting works<span></span></p>
+          <h2>From quote to <em>on site.</em></h2>
+        </div>
+      </div>
+      <ol class="eqs__list">
+        {steps.map(([t, d], i) => (
+          <li style={`--i:${i}`}>
+            <span class="eqs__n">{String(i + 1).padStart(2, '0')}</span>
+            <b>{t}</b>
+            <small>{d}</small>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="eqc" data-in>
+    <div class="wrap eqc__in">
+      <div>
+        <p class="eq-k eq-k--light"><span></span>Free quote</p>
+        <h2>Tell us the job. <em>We’ll bring the truck.</em></h2>
+      </div>
+      <div class="eqc__acts">
+        <a href="/pages/request-a-quote?type=rental" class="eq-pill eq-pill--red">Get fleet pricing<Fragment set:html={ARROW} /></a>
+        <a href="/pages/equipment" class="eq-pill eq-pill--glass">See equipment</a>
+        <a href={PHONE_TEL} class="eqc__call">or call {PHONE}</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+<script>
+  // Reveal sections (and stagger their lists) as they scroll into view.
+  const els = document.querySelectorAll('[data-in]');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) els.forEach((e) => e.classList.add('is-in'));
+  else {
+    const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { threshold: 0.12 });
+    els.forEach((e) => io.observe(e));
+  }
+</script>
+
+<style>
+  /* ---------- shared section language (matches the homepage) ---------- */
+  .eq-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(24px, 3vw, 40px); }
+  .eq-head--center { justify-content: center; text-align: center; }
+  .eq-head--center .eq-k { justify-content: center; }
+  .eq-k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--steel); }
+  .eq-k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .eq-k--light { color: rgba(255, 255, 255, .8); }
+  .eq-head h2, .eqc h2 { margin: 0; font-size: clamp(2.2rem, 4.6vw, 4.2rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .eq-head h2 em, .eqc h2 em { font-style: normal; color: var(--red); }
+  .eq-link { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px 12px; border-radius: 999px; border: 1.5px solid var(--line-dark); color: var(--ink); font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
+  .eq-link :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .eq-link:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .eq-link:hover :global(svg) { transform: translateX(3px); }
+  .eq-link--light { color: #fff; border-color: rgba(255, 255, 255, .35); }
+  .eq-link--light:hover { background: #fff; color: var(--ink); border-color: #fff; }
+  .eq-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 14px 26px 13px; border-radius: 999px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, transform .2s; }
+  .eq-pill :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
+  .eq-pill:hover :global(svg) { transform: translateX(3px); }
+  .eq-pill--red { background: var(--red); color: #fff; }
+  .eq-pill--red:hover { background: #d10a0a; }
+  .eq-pill--white { background: #fff; color: var(--ink); }
+  .eq-pill--white:hover { background: #f1f2f3; }
+  .eq-pill--glass { background: rgba(255, 255, 255, .08); color: #fff; border: 1.5px solid rgba(255, 255, 255, .4); }
+  .eq-pill--glass:hover { background: rgba(255, 255, 255, .16); }
+  [data-in] li { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i, 0) * 60ms); }
+  [data-in].is-in li { opacity: 1; transform: none; }
+
+  /* ---------- hero ---------- */
+  .eqh { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
+  .eqh::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/fleet/fleet-hero.webp') 50% 40% / cover no-repeat; transform: scale(1.06); animation: eqZoom 18s ease-out forwards; }
+  .eqh::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(12, 13, 15, .94) 0%, rgba(12, 13, 15, .82) 34%, rgba(12, 13, 15, .35) 62%, rgba(12, 13, 15, .1) 82%), linear-gradient(0deg, rgba(10, 10, 12, .5), transparent 45%); }
+  @keyframes eqZoom { to { transform: scale(1); } }
+  .eqh__in { display: grid; align-content: center; justify-items: start; min-height: clamp(440px, 46vw, 640px); padding-block: clamp(40px, 5vw, 76px); }
+  .eqh__in > * { max-width: 760px; }
+  .eqh__in > h1 { max-width: 1100px; }
+  .eqh__k { margin: 0 0 12px; color: var(--gold); font-size: clamp(.92rem, 1.05vw, 1.05rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; opacity: 0; animation: eqFade .8s .2s ease forwards; }
+  .eqh h1 { margin: 0 0 16px; font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; font-weight: 400; color: #fff; }
+  .eqh__ln { display: block; overflow: hidden; padding-bottom: .05em; }
+  .eqh__ln > span { display: inline-block; transform: translateY(105%); animation: eqRise 1s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ln + .eqh__ln > span { animation-delay: .12s; color: var(--gold); }
+  .eqh__lede { margin: 0 0 26px; max-width: 48ch; color: #e6e8ea; font-size: clamp(1.05rem, 1.35vw, 1.24rem); line-height: 1.5; text-wrap: balance; opacity: 0; transform: translateY(12px); animation: eqUp .8s .55s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ways { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 700px; }
+  .eqh__ways .eway { opacity: 0; translate: 0 16px; animation: eqUpT .8s .65s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .eqh__ways .eway + .eway { animation-delay: .77s; }
+  .eqh__call { margin: 14px 0 0; color: #cfd3d7; font-size: .95rem; opacity: 0; animation: eqFade .8s .9s ease forwards; }
+  .eqh__call a { color: #fff; font-variation-settings: 'wght' 700; text-decoration: underline; text-underline-offset: 3px; }
+  @keyframes eqRise { to { transform: none; } }
+  @keyframes eqFade { to { opacity: 1; } }
+  @keyframes eqUp { to { opacity: 1; transform: none; } }
+  @keyframes eqUpT { to { opacity: 1; translate: 0 0; } }
+  .eway { display: grid; grid-template-columns: 38px 1fr 18px; align-items: center; gap: 10px; padding: 14px; border-radius: 14px; text-decoration: none; transition: transform .2s, background .15s, border-color .15s, box-shadow .2s; }
+  .eway:hover { transform: translateY(-2px); }
+  .eway--solid { background: #fff; color: var(--ink); box-shadow: 0 18px 34px -18px rgba(0, 0, 0, .6); }
+  .eway--line { border: 1.5px solid rgba(255, 255, 255, .55); color: #fff; background: rgba(255, 255, 255, .06); }
+  .eway--line:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }
+  .eway__ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: var(--red); color: #fff; }
+  .eway--line .eway__ic { background: rgba(255, 255, 255, .14); }
+  .eway__ic svg { width: 22px; height: 22px; }
+  .eway__t b { display: block; font-size: .98rem; line-height: 1.2; white-space: nowrap; font-variation-settings: 'wght' 720; }
+  .eway__t small { display: block; margin-top: 3px; font-size: .84rem; line-height: 1.3; opacity: .75; }
+  .eway--solid .eway__t b { color: var(--red); }
+  .eway :global(.eway__go) { width: 18px; height: 18px; transition: transform .2s; }
+  .eway:hover :global(.eway__go) { transform: translateX(3px); }
+
+  /* ---------- perks ---------- */
+  .eqp { background: #fff; border-bottom: 1px solid var(--line); }
+  .eqp__list { list-style: none; margin: 0; padding: clamp(22px, 2.6vw, 34px) 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); }
+  .eqp__list li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .eqp__ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--red-tint); color: var(--red); }
+  .eqp__ic svg { width: 24px; height: 24px; }
+  .eqp b { display: block; font-size: 1.04rem; font-variation-settings: 'wght' 720; margin: 2px 0 3px; }
+  .eqp small { display: block; color: var(--steel); font-size: .9rem; line-height: 1.45; }
+
+  /* ---------- lineup ---------- */
+  .eql { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .eql__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqt { position: relative; display: grid; grid-template-rows: auto 1fr; height: 100%; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; text-decoration: none; color: var(--ink); background: linear-gradient(185deg, var(--tint) 0%, #fff 72%); transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s, border-color .3s; }
+  .eqt:hover { transform: translateY(-6px); border-color: var(--line-dark); box-shadow: 0 28px 50px -30px rgba(20, 23, 26, .5); }
+  .eqt__img { display: grid; place-items: center; padding: 18px 18px 6px; overflow: hidden; }
+  .eqt__img img { display: block; width: 100%; height: clamp(150px, 12.5vw, 210px); object-fit: contain; filter: drop-shadow(0 16px 14px rgba(20, 23, 26, .2)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqt__img img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .eqt:hover .eqt__img img { transform: translateY(-6px) scale(1.05); }
+  .eqt__txt { display: grid; align-content: start; gap: 6px; padding: 8px 20px 20px; }
+  .eqt__txt b { font-size: clamp(1.08rem, 1.25vw, 1.25rem); line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 750; }
+  .eqt__txt small { color: var(--steel); font-size: .9rem; line-height: 1.4; }
+  .eqt__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--red); font-size: .88rem; font-variation-settings: 'wght' 700; }
+  .eqt__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqt:hover .eqt__mode :global(svg) { transform: translateX(3px); }
+  .eqt:hover .eqt__txt b { color: var(--red); }
+
+  /* ---------- rent or buy ---------- */
+  .eqr { padding: clamp(56px, 7vw, 100px) 0; background: var(--haze); }
+  .eqr__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); }
+  .eqr__card { display: grid; align-content: start; gap: 14px; padding: clamp(24px, 3vw, 44px); border-radius: 24px; background: #fff; border: 1px solid var(--line); }
+  .eqr__card--dark { background: linear-gradient(160deg, #1d2126, #121417); color: #fff; border-color: #1d2126; }
+  .eqr__tag { justify-self: start; margin: 0; padding: 5px 14px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
+  .eqr__card--dark .eqr__tag { background: rgba(255, 255, 255, .1); color: var(--gold); }
+  .eqr h3 { margin: 0; font-size: clamp(1.5rem, 2.2vw, 2.1rem); line-height: 1.08; letter-spacing: -.03em; font-variation-settings: 'wght' 760; font-weight: 400; }
+  .eqr ul { list-style: none; margin: 4px 0 10px; padding: 0; display: grid; gap: 12px; }
+  .eqr li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; font-size: 1rem; line-height: 1.45; color: var(--ink-2); opacity: 1; transform: none; }
+  .eqr__card--dark li { color: #d6d9dc; }
+  .eqr li :global(svg) { width: 22px; height: 22px; color: var(--red); }
+  .eqr__card--dark li :global(svg) { color: var(--gold); }
+  .eqr__card .eq-pill { justify-self: start; }
+  .eqr__calc { margin: 22px 0 0; text-align: center; color: var(--steel); }
+  .eqr__calc a { color: var(--red); font-variation-settings: 'wght' 700; text-underline-offset: 3px; }
+
+  /* ---------- fleet ---------- */
+  .eqf { padding: clamp(56px, 7vw, 100px) 0; background: linear-gradient(180deg, #15181c, #1d2126); color: #fff; }
+  .eqf__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqft { display: grid; gap: 6px; height: 100%; padding: 18px 20px 20px; border-radius: 20px; text-decoration: none; color: #fff; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); transition: background .3s, border-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1); }
+  .eqft:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .25); transform: translateY(-5px); }
+  .eqft__img { display: grid; place-items: center; padding: 12px; margin-bottom: 6px; border-radius: 14px; overflow: hidden; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, .82)); }
+  .eqft__img img { display: block; width: 100%; height: clamp(110px, 9.5vw, 160px); object-fit: contain; filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .25)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqft__img img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .eqft:hover .eqft__img img { transform: translateY(-4px) scale(1.05); }
+  .eqft b { font-size: 1.1rem; line-height: 1.2; font-variation-settings: 'wght' 740; }
+  .eqft small { color: #b9bfc6; font-size: .9rem; line-height: 1.4; }
+  .eqft__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; color: var(--gold); font-size: .88rem; font-variation-settings: 'wght' 700; }
+  .eqft__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqft:hover .eqft__mode :global(svg) { transform: translateX(3px); }
+
+  /* ---------- steps ---------- */
+  .eqs { padding: clamp(56px, 7vw, 100px) 0; background: #fff; }
+  .eqs__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 22px); counter-reset: s; }
+  .eqs__list li { position: relative; display: grid; align-content: start; gap: 8px; padding: 26px 24px 28px; border-radius: 20px; border: 1px solid var(--line); background: #fff; }
+  .eqs__list li::after { content: ''; position: absolute; top: 44px; right: calc(-1 * clamp(12px, 1.6vw, 22px)); width: clamp(12px, 1.6vw, 22px); height: 2px; background: var(--line-dark); }
+  .eqs__list li:last-child::after { display: none; }
+  .eqs__n { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 6px; border-radius: 50%; background: var(--red); color: #fff; font-size: .9rem; letter-spacing: .04em; font-variation-settings: 'wght' 760; }
+  .eqs b { font-size: 1.15rem; font-variation-settings: 'wght' 740; }
+  .eqs small { color: var(--steel); font-size: .95rem; line-height: 1.45; }
+
+  /* ---------- final CTA ---------- */
+  .eqc { padding: clamp(56px, 7vw, 100px) 0; background: radial-gradient(120% 140% at 85% 0%, #3a0505 0%, #16181b 55%); color: #fff; }
+  .eqc__in { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 26px 40px; }
+  .eqc h2 { color: #fff; max-width: 16ch; }
+  .eqc__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .eqc__call { color: #cfd3d7; text-decoration: underline; text-underline-offset: 3px; margin-left: 4px; }
+  .eqc__call:hover { color: #fff; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .eqp__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .eqs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .eqs__list li::after { display: none; }
+    .eqh::after { background: linear-gradient(180deg, rgba(12, 13, 15, .9) 0%, rgba(12, 13, 15, .72) 45%, rgba(12, 13, 15, .4) 100%); }
+  }
+  @media (max-width: 720px) {
+    .eqr__grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .eqh__in { min-height: 0; padding-block: 34px 36px; justify-items: center; text-align: center; }
+    .eqh__k { font-size: .78rem; margin-bottom: 8px; }
+    .eqh h1 { font-size: clamp(1.9rem, 8.6vw, 2.4rem); margin-bottom: 10px; }
+    .eqh__lede { font-size: 1rem; margin: 0 auto 20px; }
+    .eqh__ways { grid-template-columns: 1fr; text-align: left; }
+    .eqp__list { grid-template-columns: 1fr; gap: 16px; }
+    .eql__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .eqt { border-radius: 16px; }
+    .eqt__img { padding: 12px 10px 4px; }
+    .eqt__img img { height: 110px; }
+    .eqt__txt { padding: 6px 12px 14px; }
+    .eqt__txt b { font-size: .98rem; }
+    .eqt__txt small { display: none; }
+    .eqf__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .eqft { padding: 12px 12px 14px; border-radius: 16px; }
+    .eqft__img img { height: 90px; }
+    .eqft b { font-size: .98rem; }
+    .eqft small { display: none; }
+    .eqs__list { grid-template-columns: 1fr; }
+    .eq-head { justify-content: center; text-align: center; }
+    .eq-head .eq-k { justify-content: center; }
+    .eqc__in { justify-content: center; text-align: center; }
+    .eqc h2 { margin-inline: auto; }
+    .eqc__acts { justify-content: center; width: 100%; }
+    .eqc__acts .eq-pill { width: 100%; }
+    .eqr__card .eq-pill { justify-self: stretch; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eqh::before, .eqh__k, .eqh__ln > span, .eqh__lede, .eqh__call, .eqh__ways .eway { animation: none; opacity: 1; transform: none; translate: none; }
+    [data-in] li { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- fleet page extras ---------- */
+  .eql__grid--big { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .eqt__go { display: inline-flex; align-items: center; gap: 4px; }
+  .eqg { padding: clamp(56px, 7vw, 100px) 0; background: var(--haze); }
+  .eqg__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
+  .eqg__card { display: grid; align-content: start; gap: 10px; height: 100%; padding: 24px 22px 22px; border-radius: 20px; border: 1px solid var(--line); background: #fff; text-decoration: none; color: var(--ink); transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s, border-color .3s; }
+  .eqg__card:hover { transform: translateY(-5px); border-color: var(--line-dark); box-shadow: 0 26px 46px -30px rgba(20, 23, 26, .5); }
+  .eqg__q { margin: 0; color: var(--steel); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; }
+  .eqg__card h3 { margin: 0; font-size: clamp(1.15rem, 1.4vw, 1.35rem); line-height: 1.2; letter-spacing: -.02em; font-variation-settings: 'wght' 740; font-weight: 400; }
+  .eqg__img { display: grid; place-items: center; margin: 4px 0; padding: 10px; border-radius: 14px; background: linear-gradient(185deg, var(--tint), #fff); }
+  .eqg__img img { display: block; width: 100%; height: clamp(100px, 8vw, 140px); object-fit: contain; filter: drop-shadow(0 12px 12px rgba(20, 23, 26, .2)); }
+  .eqg__a { color: var(--red); font-variation-settings: 'wght' 720; display: inline-flex; align-items: center; gap: 4px; }
+  .eqg__a :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqg__card:hover .eqg__a :global(svg) { transform: translateX(3px); }
+  .eqg__card small { color: var(--steel); font-size: .92rem; line-height: 1.45; }
+  @media (max-width: 1100px) { .eqg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .eqg__grid { grid-template-columns: 1fr; } .eqh::before { background-image: url('/fleet/fleet-hero-m.webp'); } }
+</style>

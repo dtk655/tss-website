@@ -61,7 +61,7 @@ const steps = [
   <section class="eqh">
     <div class="wrap eqh__in">
       <p class="eqh__k">Equipment and fleet</p>
-      <h1><span class="eqh__ln"><span>Boards, lights and trucks.</span></span> <span class="eqh__ln"><span>Ready when you are.</span></span></h1>
+      <h1><span class="eqh__ln"><span>All The Equipment You Need.</span></span> <span class="eqh__ln"><span>Ready When You Are.</span></span></h1>
       <p class="eqh__lede">VMS and arrow boards, light towers, crash trucks and more from our own yard. Rent it delivered in NJ, NY, PA and CT, or buy it and own it.</p>
       <div class="eqh__ways">
         <a href="/pages/request-a-quote?type=rental" class="eway eway--solid">
@@ -165,7 +165,7 @@ const steps = [
           <p class="eq-k eq-k--light"><span></span>The fleet</p>
           <h2>Trucks and trailers, <em>ready to roll.</em></h2>
         </div>
-        <a href="/collections/truck-rentals" class="eq-link eq-link--light">See the fleet<Fragment set:html={ARROW} /></a>
+        <a href="/pages/fleet" class="eq-link eq-link--light">See the fleet<Fragment set:html={ARROW} /></a>
       </div>
       <ul class="eqf__grid">
         {fleet.map((e, i) => (
@@ -266,6 +266,7 @@ const steps = [
   @keyframes eqZoom { to { transform: scale(1); } }
   .eqh__in { display: grid; align-content: center; justify-items: start; min-height: clamp(440px, 46vw, 640px); padding-block: clamp(40px, 5vw, 76px); }
   .eqh__in > * { max-width: 760px; }
+  .eqh__in > h1 { max-width: 1100px; }
   .eqh__k { margin: 0 0 12px; color: var(--gold); font-size: clamp(.92rem, 1.05vw, 1.05rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; opacity: 0; animation: eqFade .8s .2s ease forwards; }
   .eqh h1 { margin: 0 0 16px; font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; font-weight: 400; color: #fff; }
   .eqh__ln { display: block; overflow: hidden; padding-bottom: .05em; }
