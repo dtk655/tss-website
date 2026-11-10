@@ -201,6 +201,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   @keyframes chUp { from { opacity: 0; transform: translateY(12px); } }
   @keyframes chArt { from { opacity: 0; transform: translateY(24px) scale(.94); } }
   @media (prefers-reduced-motion: reduce) { .ch__ln > span, .ch__acts, .ch__art img { animation: none; } }
+  @media (max-width: 360px) { .ch__acts { flex-wrap: wrap !important; } }
 
 
   /* even cards: every tile in a row is the same height */
@@ -293,7 +294,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   }
   @media (max-width: 720px) { .grid--cols4, .grid--cols3 { grid-template-columns: repeat(2, 1fr); gap: 12px; } .side { grid-template-columns: 1fr; } .density { display: none; } }
   @media (max-width: 640px) {
-    .ch__in { grid-template-columns: 1fr; min-height: 0; gap: 0; padding-block: 16px 18px; position: relative; }
+    .ch__in { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 0; padding-block: 16px 18px; position: relative; }
     .ch__copy { position: relative; z-index: 1; }
     .ch__art { position: absolute; right: var(--gutter); top: 40px; height: auto; }
     .ch__art img { width: 96px; height: 96px; }

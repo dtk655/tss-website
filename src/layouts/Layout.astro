@@ -50,6 +50,43 @@ const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/i
       els.forEach(function (el) { io.observe(el); });
     })();
   </script>
+  <script is:inline>
+    (() => {
+      // Keep each hero slogan line on a single line: shrink the h1 font just enough to fit.
+      const SEL = '.eqh__ln, .lch__ln, .ch__ln, .cx__h > span';
+      const fit = () => {
+        const heads = new Set([...document.querySelectorAll(SEL)].map((l) => l.closest('h1')).filter(Boolean));
+        heads.forEach((h) => {
+          const lines = [...h.querySelectorAll(SEL)];
+          h.style.fontSize = '';
+          lines.forEach((ln) => { ln.style.fontSize = ''; });
+          const need = (ln) => {
+            const cs = getComputedStyle(ln);
+            const room = ln.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+            const inner = ln.firstElementChild || ln;
+            const w = inner.offsetWidth || inner.scrollWidth;
+            return w > room && room > 0 ? room / w : 1;
+          };
+          if (h.querySelector('.ch__ln')) {
+            // Catalog headers: title and tagline have their own sizes, so fit each line on its own.
+            lines.forEach((ln) => {
+              const r = need(ln);
+              if (r < 1) ln.style.fontSize = Math.floor(parseFloat(getComputedStyle(ln).fontSize) * r * 0.98 * 10) / 10 + 'px';
+            });
+            return;
+          }
+          const base = parseFloat(getComputedStyle(h).fontSize);
+          const ratio = Math.min(1, ...lines.map(need));
+          if (ratio < 1) h.style.fontSize = Math.floor(base * ratio * 0.98 * 10) / 10 + 'px';
+        });
+      };
+      let t;
+      const run = () => { cancelAnimationFrame(t); t = requestAnimationFrame(fit); };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+      document.fonts?.ready.then(run);
+      addEventListener('resize', run);
+    })();
+  </script>
 </body>
 </html>
 <style is:global>

@@ -224,3 +224,7 @@ strong { font-variation-settings: 'wght' 680; font-weight: 400; }
   .hs-head h2, .lc h2, .fin h2 { font-size: 2rem; }
   .hs-link { padding: 11px 18px 10px; font-size: .92rem; }
 }
+
+/* Hero slogans: each sentence stays on one line; Layout's fitter shrinks the font if needed. */
+.eqh__ln, .lch__ln, .ch__ln, .cx__h > span { white-space: nowrap; }
+h1:has(> .eqh__ln, > .lch__ln, > .ch__ln), .cx__h { contain: inline-size; min-width: 0; width: 100%; }
