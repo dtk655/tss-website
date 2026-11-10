@@ -1,60 +1,116 @@
 ---
+// Site footer: contact tiles, link columns, a faint "Since 1971" wordmark and the legal row.
+import { PHONE, PHONE_TEL, EMAIL } from '../lib/config.js';
 const year = new Date().getFullYear();
+const cols = [
+  ['Shop', [['Cones', '/collections/cones'], ['Barricades', '/collections/barricades'], ['Water-filled barriers', '/collections/water-filled-barriers'], ['Traffic drums', '/collections/traffic-drums'], ['Signs', '/collections/sign-shop'], ['Safety gear', '/collections/safety-gear'], ['All products', '/collections']]],
+  ['Services', [['Equipment', '/pages/equipment'], ['Truck fleet', '/pages/fleet'], ['Lane closures', '/pages/lane-closure'], ['WATERCADE barriers', '/watercade/'], ['Custom shop', '/pages/custom-stenciling']]],
+  ['Planning tools', [['Work zone builder', '/tools/work-zone-builder'], ['Lane closure plan', '/tools/lane-closure-plan'], ['WATERCADE planner', '/tools/watercade-planner'], ['Rent or buy calculator', '/tools/rent-vs-buy'], ['3D showroom', '/tools/3d-showroom']]],
+  ['Company', [['About TSS', '/pages/about-us'], ['Contact', '/pages/contact'], ['Request a quote', '/pages/request-a-quote']]]
+];
+const tiles = [
+  ['Call us', PHONE, PHONE_TEL, 'M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z'],
+  ['Email', EMAIL, `mailto:${EMAIL}`, 'M3.5 6h17v12h-17z M3.5 6.5l8.5 6.5 8.5-6.5'],
+  ['Free quote', 'Reply within 1 business day', '/pages/request-a-quote', 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6M9 16h3'],
+  ['Visit the yard', 'South Plainfield, NJ', '/pages/contact', 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z M12 7.6a2.4 2.4 0 1 0 0 .01']
+];
 ---
 <footer class="ftr">
   <div class="lane" aria-hidden="true"></div>
-  <div class="wrap ftr__grid">
-    <div>
-      <a href="/" class="ftr__logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo.webp" alt="" width="560" height="220" loading="lazy" /></a>
-      <p class="ftr__name">Traffic Safety Service</p>
-      <p>Traffic control products, equipment rentals and lane closure crews. Family-run in New Jersey since 1971.</p>
-      <p><a href="tel:+19085614800" class="textlink">908-561-4800</a><br /><a href="mailto:info@trafficsafetyservice.com" class="textlink">info@trafficsafetyservice.com</a></p>
+  <div class="wrap">
+    <div class="ftr__tiles">
+      {tiles.map(([k, v, h, ic]) => (
+        <a href={h} class="ftr__tile">
+          <span class="ftr__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+          <span class="ftr__tt"><small>{k}</small><b>{v}</b></span>
+        </a>
+      ))}
     </div>
-    <nav aria-label="Products">
-      <h2>Products</h2>
-      <a href="/collections/cones">Cones</a>
-      <a href="/collections/barricades">Barricades</a>
-      <a href="/collections/water-filled-barriers">Water-filled barriers</a>
-      <a href="/collections/sign-shop">Signs</a>
-      <a href="/collections/safety-gear">Safety gear</a>
-      <a href="/collections">All products</a>
-    </nav>
-    <nav aria-label="Services">
-      <h2>Services</h2>
-      <a href="/pages/lane-closure">Lane closures and flaggers</a>
-      <a href="/collections/equipment-rentals">Equipment rentals</a>
-      <a href="/collections/truck-rentals">Truck fleet</a>
-      <a href="/watercade/">WATERCADE barriers</a>
-      <a href="/pages/request-a-quote">Request a quote</a>
-    </nav>
-    <nav aria-label="Planning tools">
-      <h2>Planning tools</h2>
-      <a href="/tools/work-zone-builder">Work zone builder</a>
-      <a href="/tools/watercade-planner">WATERCADE planner</a>
-      <a href="/tools/rent-vs-buy">Rent or buy calculator</a>
-      <a href="/tools/3d-showroom">3D showroom</a>
-    </nav>
-  </div>
-  <div class="wrap ftr__base">
-    <span>© {year} Traffic Safety Service, L.L.C.</span>
-    <span>Rentals and crews in NJ, NY, PA and CT. Products ship nationwide.</span>
-    <a href="https://trafficsafetyservice.com/policies/privacy-policy">Privacy</a>
-    <a href="https://trafficsafetyservice.com/policies/terms-of-service">Terms</a>
+
+    <div class="ftr__grid">
+      <div class="ftr__brand">
+        <a href="/" class="ftr__logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo.webp" alt="" width="560" height="220" loading="lazy" /></a>
+        <p>Traffic control products, equipment rentals and lane closure crews. Family-run in South Plainfield, New Jersey since 1971.</p>
+        <ul class="ftr__area" aria-label="Where we work">
+          <li>Products ship nationwide</li>
+          <li>Rentals in NJ, NY, PA, CT</li>
+          <li>Crews in NJ, NY, PA, CT, DE</li>
+        </ul>
+      </div>
+      {cols.map(([h, links]) => (
+        <nav aria-label={h}>
+          <h2><span></span>{h}</h2>
+          {links.map(([t, href]) => <a href={href}>{t}</a>)}
+        </nav>
+      ))}
+    </div>
+
+    <p class="ftr__mark" aria-hidden="true">Since 1971</p>
+
+    <div class="ftr__base">
+      <span>© {year} Traffic Safety Service, L.L.C.</span>
+      <span class="ftr__links">
+        <a href="https://trafficsafetyservice.com/policies/privacy-policy">Privacy</a>
+        <a href="https://trafficsafetyservice.com/policies/terms-of-service">Terms</a>
+        <button type="button" class="ftr__top" data-totop>Back to top<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 12l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </span>
+    </div>
   </div>
 </footer>
+<script>
+  document.querySelector('[data-totop]')?.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
 <style>
-  .ftr { background: var(--asphalt); color: #b9bfc6; padding-bottom: 28px; }
+  .ftr { position: relative; overflow: hidden; background: radial-gradient(90% 70% at 100% 0%, #2a0606 0%, transparent 60%), #121417; color: #aab1b8; }
   .lane { height: 4px; background: repeating-linear-gradient(90deg, var(--gold) 0 40px, transparent 40px 86px); opacity: .85; }
-  .ftr__logo { display: inline-block; background: #fff; border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; }
-  .ftr__logo img { display: block; width: 150px; height: auto; }
-  .ftr__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; padding-top: 56px; padding-bottom: 40px; }
-  .ftr__name { font-weight: 900; font-size: var(--fs-2); color: #fff; margin-bottom: 8px; }
-  .ftr h2 { font-size: 1rem; color: #fff; margin-bottom: 12px; font-weight: 800; letter-spacing: 0; }
-  .ftr nav { display: grid; align-content: start; gap: 8px; }
-  .ftr nav a { text-decoration: none; }
-  .ftr nav a:hover { color: #fff; text-decoration: underline; }
-  .ftr .textlink { color: #fff; }
-  .ftr__base { display: flex; flex-wrap: wrap; gap: 8px 24px; border-top: 1px solid var(--asphalt-line); padding-top: 20px; font-size: .9rem; }
-  .ftr__base a { color: inherit; }
-  @media (max-width: 860px) { .ftr__grid { grid-template-columns: 1fr 1fr; } .ftr__grid > div:first-child { grid-column: 1 / -1; } }
+
+  /* contact tiles */
+  .ftr__tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: clamp(36px, 4.5vw, 60px) 0 clamp(36px, 4vw, 54px); border-bottom: 1px solid rgba(255, 255, 255, .08); }
+  .ftr__tile { display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .08); color: #fff; text-decoration: none; transition: background .25s, border-color .25s, transform .35s cubic-bezier(.2, .8, .2, 1); }
+  .ftr__tile:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); transform: translateY(-3px); }
+  .ftr__ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; background: var(--red); color: #fff; }
+  .ftr__ic svg { width: 22px; height: 22px; }
+  .ftr__tt { display: grid; gap: 2px; min-width: 0; }
+  .ftr__tt small { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); font-variation-settings: 'wght' 700; }
+  .ftr__tt b { font-size: .95rem; font-variation-settings: 'wght' 680; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* columns */
+  .ftr__grid { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); gap: clamp(24px, 3vw, 48px); padding: clamp(40px, 5vw, 64px) 0 10px; }
+  .ftr__logo { display: inline-block; padding: 10px 14px; margin-bottom: 18px; border-radius: 14px; background: #fff; }
+  .ftr__logo img { display: block; width: 168px; height: auto; }
+  .ftr__brand p { margin: 0 0 18px; max-width: 38ch; font-size: .96rem; line-height: 1.6; }
+  .ftr__area { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .ftr__area li { display: flex; align-items: center; gap: 10px; font-size: .9rem; color: #d2d6da; }
+  .ftr__area li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex: none; }
+  .ftr nav { display: grid; align-content: start; gap: 11px; }
+  .ftr h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 6px; color: #fff; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 720; font-weight: 400; }
+  .ftr h2 span { width: 18px; height: 2px; border-radius: 2px; background: var(--red); }
+  .ftr nav a { position: relative; justify-self: start; color: #aab1b8; font-size: .97rem; text-decoration: none; transition: color .2s, translate .2s; }
+  .ftr nav a:hover { color: #fff; translate: 3px 0; }
+
+  /* wordmark */
+  .ftr__mark { margin: clamp(10px, 2vw, 24px) 0 -0.12em; font-size: clamp(3.6rem, 13.5vw, 13rem); line-height: .9; letter-spacing: -.05em; font-variation-settings: 'wght' 800; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .1); white-space: nowrap; user-select: none; }
+
+  /* legal row */
+  .ftr__base { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding: 20px 120px 28px 0; border-top: 1px solid rgba(255, 255, 255, .08); font-size: .88rem; }
+  .ftr__links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; }
+  .ftr__base a { color: #aab1b8; text-decoration: none; }
+  .ftr__base a:hover { color: #fff; }
+  .ftr__top { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .18); background: none; color: #fff; font: inherit; font-size: .86rem; font-variation-settings: 'wght' 640; cursor: pointer; transition: background .2s, border-color .2s; }
+  .ftr__top:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .35); }
+  .ftr__top svg { width: 15px; height: 15px; }
+
+  @media (max-width: 1340px) { .ftr__tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1180px) {
+    .ftr__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .ftr__brand { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 28px; align-items: start; }
+    .ftr__brand .ftr__logo { grid-row: span 2; }
+  }
+  @media (max-width: 720px) {
+    .ftr__tiles { grid-template-columns: 1fr; gap: 10px; }
+    .ftr__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 20px; }
+    .ftr__brand { display: block; }
+    .ftr__base { flex-direction: column; align-items: flex-start; padding: 20px 0 96px; }
+    .ftr__tt b { white-space: normal; overflow-wrap: anywhere; }
+  }
 </style>
