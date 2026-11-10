@@ -14,10 +14,7 @@ const { handle } = Astro.props;
 const { colByHandle, collections } = await loadCatalog();
 const c = colByHandle.get(handle);
 const rentalOnly = c.products.every((p) => p.isRental);
-const hasRentals = c.products.some((p) => p.isRental);
-const hasBuys = c.products.some((p) => !p.isRental);
 const buys = c.products.filter((p) => !p.isRental);
-const maxPrice = Math.ceil(Math.max(0, ...buys.map((p) => p.maxPrice)));
 const navCols = PRODUCT_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const rentalCols = RENTAL_COLLECTIONS.map((h) => colByHandle.get(h)).filter(Boolean);
 const desc = c.description || (rentalOnly
@@ -46,11 +43,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     </div>
   </section>
 
-  <nav class="cchips" aria-label="Categories">
-    <div class="cchips__in">
-      {allCols.map((n) => <a href={`/collections/${n.handle}`} aria-current={n.handle === handle ? 'page' : undefined}>{n.title}</a>)}
-    </div>
-  </nav>
+
 
   <div class="wrap shop" data-shop id="shop">
     <aside class="side">
@@ -60,30 +53,6 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
         <h2 class="side__h2gap">Rentals</h2>
         {rentalCols.map((n) => <a href={`/collections/${n.handle}`} aria-current={n.handle === handle ? 'page' : undefined}>{n.title}<span>{n.products.length}</span></a>)}
       </nav>
-      <details class="side__filters" open>
-        <summary><h2>Filter</h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></summary>
-        <div class="side__fbody">
-          {hasBuys && hasRentals && (
-            <fieldset class="f-group">
-              <legend>Purchase type</legend>
-              <label class="f-check"><input type="checkbox" data-f-buy checked /> <span>Buy online</span></label>
-              <label class="f-check"><input type="checkbox" data-f-rent checked /> <span>Rental, by quote</span></label>
-            </fieldset>
-          )}
-          {hasBuys && maxPrice > 0 && (
-            <fieldset class="f-group">
-              <legend>Price</legend>
-              <div class="f-price">
-                <label><span class="sr-only">Minimum price</span><input type="number" min="0" max={maxPrice} placeholder="0" data-f-min inputmode="numeric" /></label>
-                <span aria-hidden="true">to</span>
-                <label><span class="sr-only">Maximum price</span><input type="number" min="0" max={maxPrice} placeholder={String(maxPrice)} data-f-max inputmode="numeric" /></label>
-              </div>
-              <p class="hint">Up to {money(maxPrice)} in this category</p>
-            </fieldset>
-          )}
-          <button class="btn btn--ghost btn--sm" data-f-clear hidden>Clear filters</button>
-        </div>
-      </details>
       {!rentalOnly && (
         <div class="side__note">
           <p><strong>Need it for one job?</strong> Everything here can be rented in NJ, NY, PA and CT.</p>
@@ -95,6 +64,11 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     <div class="main">
       <div class="toolbar__sentinel" data-tb-sentinel aria-hidden="true"></div>
       <div class="toolbar" data-toolbar>
+        <button type="button" class="catbtn" data-catopen aria-haspopup="dialog">
+          <span class="catbtn__img" style={`--tint:${meta.tint}`}>{meta.img && <img src={meta.img} alt="" />}</span>
+          <span class="catbtn__t"><small>Category</small><b>{c.title}</b></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
         <p class="toolbar__count" aria-live="polite"><span data-count>{c.products.length}</span> {c.products.length === 1 ? 'product' : 'products'}</p>
         <div class="toolbar__right">
           <label class="sort">Sort
@@ -114,7 +88,30 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
       <div class="grid grid--cols4" data-grid>
         {c.products.map((p, i) => <div class="cell" data-i={i} style={`--d:${(i % 8) * 45}ms`}><ProductCard p={p} /></div>)}
       </div>
-      <p class="noresults" data-noresults hidden>No products match these filters. <button class="textlink" data-f-clear2>Clear the filters</button> or <a class="textlink" href="/pages/request-a-quote">ask us for a quote</a>.</p>
+    </div>
+  </div>
+  <div class="csheet" hidden data-csheet>
+    <div class="csheet__bg" data-catclose></div>
+    <div class="csheet__panel" role="dialog" aria-modal="true" aria-label="Browse categories">
+      <div class="csheet__head"><b>Browse categories</b><button type="button" class="csheet__x" data-catclose aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+      <div class="csheet__body">
+        {[['Products', navCols], ['Rentals', rentalCols]].map(([lbl, list]) => (
+          <>
+            <p class="csheet__k">{lbl}</p>
+            <div class="csheet__grid">
+              {list.map((n) => {
+                const m = CATEGORY_META[n.handle] || { tint: '#ececea', img: '' };
+                return (
+                  <a href={`/collections/${n.handle}`} class="csheet__tile" style={`--tint:${m.tint}`} aria-current={n.handle === handle ? 'page' : undefined}>
+                    <span class="csheet__img">{m.img && <img src={m.img} alt="" loading="lazy" />}</span>
+                    <b>{n.title}</b><small>{n.products.length} {n.products.length === 1 ? 'product' : 'products'}</small>
+                  </a>
+                );
+              })}
+            </div>
+          </>
+        ))}
+      </div>
     </div>
   </div>
   <RecentlyViewed />
@@ -125,44 +122,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   const root = document.querySelector('[data-shop]');
   const grid = root.querySelector('[data-grid]');
   const cells = [...grid.children];
-  const countEl = root.querySelector('[data-count]');
-  const noRes = root.querySelector('[data-noresults]');
-  const fBuy = root.querySelector('[data-f-buy]');
-  const fRent = root.querySelector('[data-f-rent]');
-  const fMin = root.querySelector('[data-f-min]');
-  const fMax = root.querySelector('[data-f-max]');
-  const clearBtns = [root.querySelector('[data-f-clear]'), root.querySelector('[data-f-clear2]')].filter(Boolean);
-
   const card = (cell) => cell.querySelector('.pcard');
-  const apply = () => {
-    const min = parseFloat(fMin?.value) || 0;
-    const max = parseFloat(fMax?.value) || Infinity;
-    let n = 0;
-    for (const cell of cells) {
-      const pc = card(cell);
-      const rental = pc.dataset.rental === '1';
-      const price = parseFloat(pc.dataset.price);
-      let ok = true;
-      if (fBuy && fRent) {
-        if (rental && !fRent.checked) ok = false;
-        if (!rental && !fBuy.checked) ok = false;
-      }
-      if (ok && !rental && (price < min || price > max)) ok = false;
-      cell.hidden = !ok;
-      if (ok) n++;
-    }
-    countEl.textContent = n;
-    noRes.hidden = n > 0;
-    const active = (fBuy && !fBuy.checked) || (fRent && !fRent.checked) || fMin?.value || fMax?.value;
-    clearBtns.forEach((b) => { if (b.dataset.fClear !== undefined || b === clearBtns[0]) b.hidden = !active; });
-  };
-  [fBuy, fRent].forEach((el) => el?.addEventListener('change', apply));
-  [fMin, fMax].forEach((el) => el?.addEventListener('input', () => { clearTimeout(el._t); el._t = setTimeout(apply, 250); }));
-  clearBtns.forEach((b) => b.addEventListener('click', () => {
-    if (fBuy) fBuy.checked = true; if (fRent) fRent.checked = true;
-    if (fMin) fMin.value = ''; if (fMax) fMax.value = '';
-    apply();
-  }));
 
   root.querySelector('[data-sort]')?.addEventListener('change', (e) => {
     const v = e.target.value;
@@ -181,8 +141,19 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     root.querySelectorAll('[data-cols]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
   }));
 
-  // phones: start with the filters collapsed so products show first
-  if (matchMedia('(max-width: 920px)').matches) root.querySelector('.side__filters')?.removeAttribute('open');
+  // phones: category sheet
+  const sheet = document.querySelector('[data-csheet]');
+  const openBtn = root.querySelector('[data-catopen]');
+  const openSheet = () => { sheet.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('is-open'))); document.documentElement.style.overflow = 'hidden'; const ch = document.getElementById('tss-chat-assistant'); if (ch) ch.style.visibility = 'hidden'; sheet.querySelector('[aria-current]')?.scrollIntoView({ block: 'center' }); sheet.querySelector('.csheet__x').focus({ preventScroll: true }); };
+  const closeSheet = () => { if (sheet.hidden) return; sheet.classList.remove('is-open'); document.documentElement.style.overflow = ''; const ch = document.getElementById('tss-chat-assistant'); if (ch) ch.style.visibility = ''; setTimeout(() => { sheet.hidden = true; }, 300); openBtn?.focus({ preventScroll: true }); };
+  openBtn?.addEventListener('click', openSheet);
+  sheet.querySelectorAll('[data-catclose]').forEach((b) => b.addEventListener('click', closeSheet));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+
+  // keep the sticky toolbar just under the site header, whatever its height
+  const hdr = document.querySelector('header');
+  const setTop = () => root.style.setProperty('--tb-top', `${Math.round(hdr.getBoundingClientRect().height)}px`);
+  if (hdr) { setTop(); if ('ResizeObserver' in window) new ResizeObserver(setTop).observe(hdr); addEventListener('resize', setTop); }
 
   // frosted sticky state for the toolbar
   const tb = root.querySelector('[data-toolbar]');
@@ -222,12 +193,6 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   @keyframes chArt { from { opacity: 0; transform: translateY(24px) scale(.94); } }
   @media (prefers-reduced-motion: reduce) { .ch__ln > span, .ch__acts, .ch__art img { animation: none; } }
 
-  /* category chips (shown where the sidebar list is hidden) */
-  .cchips { display: none; border-bottom: 1px solid var(--line); background: #fff; }
-  .cchips__in { display: flex; gap: 8px; overflow-x: auto; padding: 12px var(--gutter); scrollbar-width: none; }
-  .cchips__in::-webkit-scrollbar { display: none; }
-  .cchips a { flex: none; padding: 9px 15px 8px; border-radius: 999px; border: 1.5px solid var(--line-dark); color: var(--ink-2); font-size: .9rem; font-variation-settings: 'wght' 620; text-decoration: none; white-space: nowrap; }
-  .cchips a[aria-current] { background: var(--ink); border-color: var(--ink); color: #fff; }
 
   /* even cards: every tile in a row is the same height */
   .cell { display: grid; }
@@ -244,27 +209,40 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .side__nav a span { color: var(--steel); font-size: .85rem; }
   .side__nav a:hover { background: var(--haze); color: var(--ink); }
   .side__nav a[aria-current] { background: var(--haze); color: var(--ink); font-variation-settings: 'wght' 680; box-shadow: inset 3px 0 0 var(--red); }
-  .side__filters { border-top: 1px solid var(--line); padding-top: 16px; }
-  .side__filters summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-  .side__filters summary::-webkit-details-marker { display: none; }
-  .side__filters summary svg { width: 18px; height: 18px; transition: rotate .15s; }
-  .side__filters[open] summary svg { rotate: 180deg; }
-  .side__fbody { display: grid; gap: 18px; padding-top: 14px; }
-  .f-group { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
-  .f-group legend { font-variation-settings: 'wght' 640; font-size: .92rem; color: var(--steel); margin-bottom: 4px; }
-  .f-check { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: .97rem; }
-  .f-check input { width: 18px; height: 18px; accent-color: var(--red); }
-  .f-price { display: flex; align-items: center; gap: 8px; color: var(--steel); font-size: .9rem; }
-  .f-price input { width: 100%; min-height: 42px; padding: 8px 10px; border: 1.5px solid var(--line-dark); border-radius: 7px; }
-  .f-price input:focus { outline: none; border-color: var(--ink); }
-  .hint { font-size: .85rem; color: var(--steel); margin: 0; }
   .side__note { border-top: 1px solid var(--line); padding-top: 16px; font-size: .95rem; }
   .side__note p { margin: 0 0 6px; color: var(--steel); }
   .side__note strong { color: var(--ink); }
 
   .toolbar__sentinel { height: 1px; }
-  .toolbar { position: sticky; top: 74px; z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0 -10px 20px; padding: 10px; border-radius: var(--r-s); flex-wrap: wrap; transition: box-shadow .2s ease, background .2s ease; }
+  .toolbar { position: sticky; top: var(--tb-top, 74px); z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0 -10px 20px; padding: 10px; border-radius: var(--r-s); flex-wrap: wrap; transition: box-shadow .2s ease, background .2s ease; }
   .toolbar.is-stuck { background: rgba(255, 255, 255, .92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line), 0 14px 28px -22px rgba(20, 23, 26, .3); }
+  .catbtn { display: none; align-items: center; gap: 10px; min-width: 0; flex: 1; padding: 6px 12px 6px 6px; border: 1.5px solid var(--line-dark); border-radius: 14px; background: #fff; font: inherit; color: var(--ink); cursor: pointer; text-align: left; }
+  .catbtn__img { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(185deg, var(--tint), #fff); }
+  .catbtn__img img { width: 32px; height: 32px; object-fit: contain; }
+  .catbtn__t { display: grid; min-width: 0; line-height: 1.15; }
+  .catbtn__t small { font-size: .72rem; color: var(--steel); letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 650; }
+  .catbtn__t b { font-size: 1rem; font-variation-settings: 'wght' 720; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .catbtn svg { flex: none; width: 18px; height: 18px; margin-left: auto; }
+  .csheet { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: end stretch; }
+  .csheet[hidden] { display: none; }
+  .csheet__bg { position: absolute; inset: 0; background: rgba(12, 13, 15, .55); backdrop-filter: blur(6px); opacity: 0; transition: opacity .3s; }
+  .csheet__panel { position: relative; max-height: 86svh; display: grid; grid-template-rows: auto minmax(0, 1fr); background: #fff; border-radius: 22px 22px 0 0; transform: translateY(100%); transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
+  .csheet.is-open .csheet__bg { opacity: 1; }
+  .csheet.is-open .csheet__panel { transform: none; }
+  .csheet__head { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 20px 18px 12px; border-bottom: 1px solid var(--line); }
+  .csheet__head::before { content: ''; position: absolute; top: 7px; left: 50%; translate: -50% 0; width: 40px; height: 4px; border-radius: 4px; background: var(--line-dark); }
+  .csheet__head b { font-size: 1.15rem; font-variation-settings: 'wght' 760; }
+  .csheet__x { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+  .csheet__x svg { width: 18px; height: 18px; }
+  .csheet__body { overflow-y: auto; overscroll-behavior: contain; padding: 6px 16px calc(20px + env(safe-area-inset-bottom)); }
+  .csheet__k { margin: 14px 0 8px; font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 700; }
+  .csheet__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .csheet__tile { display: grid; gap: 2px; padding: 10px 12px 12px; border-radius: 14px; border: 1.5px solid transparent; background: linear-gradient(185deg, var(--tint), #fff 80%) border-box; text-decoration: none; color: var(--ink); }
+  .csheet__tile[aria-current] { border-color: var(--red); }
+  .csheet__img { display: grid; place-items: center; height: 70px; margin-bottom: 4px; }
+  .csheet__img img { width: 100%; height: 66px; object-fit: contain; filter: drop-shadow(0 6px 6px rgba(20, 23, 26, .16)); }
+  .csheet__tile b { font-size: .95rem; line-height: 1.2; font-variation-settings: 'wght' 700; }
+  .csheet__tile small { color: var(--steel); font-size: .8rem; }
   .toolbar__count { margin: 0; color: var(--steel); font-size: .95rem; }
   .toolbar__right { display: flex; align-items: center; gap: 14px; }
   .sort { display: flex; align-items: center; gap: 10px; font-variation-settings: 'wght' 600; font-size: .95rem; }
@@ -278,21 +256,21 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   @media (min-width: 1900px) { .grid--cols4 { grid-template-columns: repeat(5, 1fr); } }
   @media (min-width: 2400px) { .grid--cols4 { grid-template-columns: repeat(6, 1fr); } }
   .cell[hidden], .side [hidden] { display: none !important; }
-  .noresults { margin: 48px 0; color: var(--steel); }
-  .noresults button { background: none; border: 0; cursor: pointer; padding: 0; font: inherit; }
 
   @media (max-width: 1100px) { .grid--cols4 { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 920px) {
-    .cchips { display: block; }
     .ch__in { grid-template-columns: minmax(0, 1fr) minmax(0, .6fr); }
     .shop { grid-template-columns: 1fr; }
-    .side { position: static; grid-template-columns: 1fr 1fr; align-items: start; }
+    .side { display: none; }
+    .catbtn { display: flex; }
+    .toolbar { flex-wrap: nowrap; }
+    .toolbar__count { display: none; }
+    .toolbar { gap: 10px; }
+    .toolbar__right { flex: none; gap: 0; }
+    .sort { font-size: 0; gap: 0; }
+    .sort select { width: 124px; font-size: .92rem; min-height: 54px; border-radius: 14px; }
     .side__nav { display: none; }
-    .side__filters { border-top: 0; padding-top: 0; }
-    .side__filters:not([open]) { padding-bottom: 0; }
     .side__note { display: none; }
-    .side__filters { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-    .side__filters[open] { padding-bottom: 16px; }
   }
   @media (max-width: 720px) { .grid--cols4, .grid--cols3 { grid-template-columns: repeat(2, 1fr); gap: 12px; } .side { grid-template-columns: 1fr; } .density { display: none; } }
   @media (max-width: 640px) {
