@@ -87,6 +87,14 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
       </div>
       <div class="grid grid--cols4" data-grid>
         {c.products.map((p, i) => <div class="cell" data-i={i} style={`--d:${(i % 8) * 45}ms`}><ProductCard p={p} /></div>)}
+        <div class="cell cell--ask" data-ask-tile>
+          <a href="/pages/request-a-quote?type=general" class="ask">
+            <span class="ask__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.3 9.4a1.9 1.9 0 1 1 2.6 1.8c-.6.3-.9.7-.9 1.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="11" cy="14.3" r=".9" fill="currentColor"/></svg></span>
+            <b>Don’t see what you’re looking for?</b>
+            <span class="ask__d">Not everything we carry is listed online. Send us an inquiry and we’ll see if we can get it for you.</span>
+            <span class="ask__btn">Send an inquiry<Fragment set:html={ARROW} /></span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -121,7 +129,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
 <script>
   const root = document.querySelector('[data-shop]');
   const grid = root.querySelector('[data-grid]');
-  const cells = [...grid.children];
+  const cells = [...grid.children].filter((el) => !el.hasAttribute('data-ask-tile'));
   const card = (cell) => cell.querySelector('.pcard');
 
   root.querySelector('[data-sort]')?.addEventListener('change', (e) => {
@@ -133,6 +141,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
       title: (a, b) => card(a).dataset.title.localeCompare(card(b).dataset.title)
     }[v];
     [...cells].sort(key).forEach((el) => grid.appendChild(el));
+    const ask = grid.querySelector('[data-ask-tile]'); if (ask) grid.appendChild(ask);
   });
 
   root.querySelectorAll('[data-cols]').forEach((b) => b.addEventListener('click', () => {
@@ -256,6 +265,16 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   @media (min-width: 1900px) { .grid--cols4 { grid-template-columns: repeat(5, 1fr); } }
   @media (min-width: 2400px) { .grid--cols4 { grid-template-columns: repeat(6, 1fr); } }
   .cell[hidden], .side [hidden] { display: none !important; }
+  .cell--ask { position: relative; }
+  .ask { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 10px; height: 100%; min-height: 260px; padding: clamp(18px, 2vw, 26px); border: 1.5px dashed var(--line-dark); border-radius: var(--r-m); background: linear-gradient(185deg, #f6f7f8, #fff 70%); color: var(--ink); text-decoration: none; transition: border-color .2s, background .2s, transform .3s cubic-bezier(.2, .8, .2, 1); }
+  .ask:hover { border-color: var(--red); background: linear-gradient(185deg, var(--red-tint), #fff 75%); transform: translateY(-3px); }
+  .ask__ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--red-tint); color: var(--red); }
+  .ask__ic svg { width: 24px; height: 24px; }
+  .ask b { font-size: clamp(1.05rem, 1.25vw, 1.2rem); line-height: 1.2; letter-spacing: -.015em; font-variation-settings: 'wght' 750; }
+  .ask__d { color: var(--steel); font-size: .9rem; line-height: 1.45; }
+  .ask__btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; padding: 10px 16px; border-radius: 999px; background: var(--red); color: #fff; font-size: .9rem; font-variation-settings: 'wght' 700; }
+  .ask__btn :global(svg) { width: 15px; height: 15px; transition: transform .2s; }
+  .ask:hover .ask__btn :global(svg) { transform: translateX(3px); }
 
   @media (max-width: 1100px) { .grid--cols4 { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 920px) {
@@ -289,5 +308,10 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
 
     .cell :global(.pcard__body) { padding: 12px 12px 14px; }
     .cell :global(.pcard__title) { font-size: .9rem; }
+    .ask { padding: 14px 12px; gap: 8px; min-height: 0; }
+    .ask__ic { width: 40px; height: 40px; border-radius: 12px; }
+    .ask b { font-size: .98rem; }
+    .ask__d { font-size: .84rem; }
+    .ask__btn { white-space: nowrap; padding: 9px 12px; font-size: .82rem; gap: 6px; }
   }
 </style>
