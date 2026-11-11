@@ -579,6 +579,80 @@ const photos = [
   @media (prefers-reduced-motion: reduce) {
     .qs *, .qs *::before, .qs *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
   }
+
+  /* ---------- product details panel (opens from the category popups) ---------- */
+  .qs-pr__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .qs-det { flex: none; display: inline-flex; align-items: center; gap: 5px; min-height: 30px; padding: 0 11px 0 8px; border-radius: 999px; border: 1px solid var(--line-dark); background: #fff; color: var(--ink-2); font: inherit; font-size: .78rem; font-variation-settings: 'wght' 650; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+  .qs-det svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .qs-det:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .qs-det--tile { position: absolute; top: 9px; left: 9px; z-index: 2; width: 30px; height: 30px; min-height: 0; padding: 0; justify-content: center; border-color: rgba(20, 23, 26, .12); background: rgba(255, 255, 255, .9); opacity: .85; }
+  .qs-ci:hover .qs-det--tile { opacity: 1; }
+  .qd { position: fixed; inset: 0; z-index: 1100; display: flex; justify-content: flex-end; font-family: var(--font); }
+  .qd[hidden] { display: none; }
+  .qd__bg { position: absolute; inset: 0; background: rgba(12, 14, 16, .45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); opacity: 0; transition: opacity .3s; }
+  .qd__panel { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; width: min(560px, 100%); height: 100%; background: #fff; box-shadow: -30px 0 60px -30px rgba(0, 0, 0, .45); transform: translateX(104%); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+  .qd.is-open .qd__bg { opacity: 1; }
+  .qd.is-open .qd__panel { transform: none; }
+  .qd__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 14px 22px; border-bottom: 1px solid var(--line); }
+  .qd__back { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; padding: 6px 0; font: inherit; font-size: .9rem; font-variation-settings: 'wght' 680; color: var(--ink-2); cursor: pointer; }
+  .qd__back svg, .qd__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .qd__back:hover { color: var(--red); }
+  .qd__x { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+  .qd__x:hover { background: var(--haze); }
+  .qd__body { overflow-y: auto; overscroll-behavior: contain; padding: 20px 22px 26px; display: flex; flex-direction: column; gap: 18px; }
+  .qd__body > * { flex: none; }
+  .qd__stage { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: 20px; background: radial-gradient(110% 90% at 50% 20%, #fff, var(--haze) 75%); border: 1px solid var(--line); overflow: hidden; }
+  .qd__stage img { position: absolute; inset: 7%; width: 86%; height: 86%; object-fit: contain; mix-blend-mode: multiply; animation: qdIn .45s cubic-bezier(.2, .8, .2, 1); }
+  .qd__thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .qd__thumbs button { flex: none; width: 60px; height: 60px; padding: 4px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; transition: border-color .2s; }
+  .qd__thumbs button.is-on { border-color: var(--ink); }
+  .qd__thumbs img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  .qd__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .qd__chips span { padding: 5px 11px; border-radius: 999px; background: var(--haze); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; font-variation-settings: 'wght' 700; color: var(--ink-2); }
+  .qd__chips .is-rent { background: var(--red); color: #fff; }
+  .qd__title { margin: -6px 0 0; font-size: clamp(1.4rem, 2.4vw, 1.9rem); line-height: 1.08; letter-spacing: -.03em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .qd__price { margin: -6px 0 0; font-size: 1.25rem; color: var(--red); font-variation-settings: 'wght' 760; }
+  .qd__price small { color: var(--steel); font-size: .9rem; font-variation-settings: 'wght' 500; }
+  .qd__h { margin: 4px 0 -6px; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 700; }
+  .qd__spec { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .qd__spec li { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; padding: 11px 16px; border-top: 1px solid var(--line); font-size: .92rem; }
+  .qd__spec li:first-child { border-top: 0; }
+  .qd__spec span { color: var(--steel); }
+  .qd__spec b { font-variation-settings: 'wght' 640; overflow-wrap: anywhere; }
+  .qd__desc { color: var(--ink-2); line-height: 1.6; font-size: .96rem; }
+  .qd__desc > :first-child { margin-top: 0; }
+  .qd__desc > :last-child { margin-bottom: 0; }
+  .qd__desc h1, .qd__desc h2, .qd__desc h3, .qd__desc h4 { font-size: 1.02rem; color: var(--ink); margin: 1.1em 0 .4em; }
+  .qd__desc ul { padding-left: 1.1em; }
+  .qd__desc li::marker { color: var(--red); }
+  .qd__desc img { max-width: 100%; height: auto; border-radius: 10px; }
+  .qd__desc table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  .qd__desc td, .qd__desc th { padding: 8px 6px; border-bottom: 1px solid var(--line); text-align: left; }
+  .qd__foot { display: flex; gap: 10px; padding: 14px 22px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: #fff; }
+  .qd__foot .qs-btn { flex: 1; justify-content: center; }
+  .qd__full { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--line-dark); color: var(--ink); font-size: .94rem; font-variation-settings: 'wght' 660; text-decoration: none; white-space: nowrap; }
+  .qd__full:hover { border-color: var(--ink); }
+  .qd__full svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .qd__skel { display: grid; gap: 14px; }
+  .qd__skel i { display: block; height: 16px; border-radius: 8px; background: linear-gradient(90deg, var(--haze) 0%, #f7f8f9 50%, var(--haze) 100%); background-size: 200% 100%; animation: qdShim 1.2s linear infinite; }
+  .qd__skel i:first-child { height: auto; aspect-ratio: 4 / 3; border-radius: 20px; }
+  .qd__body > * { animation: qdIn .5s cubic-bezier(.2, .8, .2, 1) both; }
+  .qd__body > *:nth-child(2) { animation-delay: .04s; } .qd__body > *:nth-child(3) { animation-delay: .08s; } .qd__body > *:nth-child(4) { animation-delay: .12s; } .qd__body > *:nth-child(n+5) { animation-delay: .16s; }
+  @keyframes qdIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes qdShim { to { background-position: -200% 0; } }
+  @media (max-width: 640px) {
+    .qd { align-items: flex-end; }
+    .qd__panel { width: 100%; height: min(92vh, 100%); border-radius: 22px 22px 0 0; transform: translateY(104%); box-shadow: 0 -30px 60px -30px rgba(0, 0, 0, .45); }
+    .qd__head { padding: 10px 12px 10px 18px; }
+    .qd__head::before { content: ''; position: absolute; top: 6px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 4px; background: var(--line-dark); }
+    .qd__body { padding: 16px 16px 22px; }
+    .qd__spec li { grid-template-columns: 1fr; gap: 2px; }
+    .qd__foot { padding-inline: 16px; }
+    .qd__full { padding: 0 14px; }
+    .qs-det span { display: none; }
+    .qs-det { width: 32px; height: 32px; padding: 0; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .qd__panel, .qd__bg { transition: none; } .qd__body > *, .qd__stage img { animation: none; } }
 </style>
 
 <script>
@@ -854,6 +928,7 @@ const photos = [
       const n = multi ? lines((e) => e.h === hd).length : state.job.sel[hd + '::']?.q || 0;
       return `<div class="qs-ci${n ? ' is-on' : ''}" style="--tint:${EQ_TINTS[k % EQ_TINTS.length]}" data-qs-eq="${esc(hd)}">
         <span class="qs-ci__badge" aria-hidden="true">${n || ''}</span>
+        <button type="button" class="qs-det qs-det--tile" data-qs-det="${esc(hd)}" aria-label="See details for ${esc(p.t)}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.01"/></svg></button>
         <button type="button" class="qs-ci__pick" data-qs-pick aria-label="Add ${esc(p.t)}">${CUT[hd] ? `<img src="${CUT[hd]}" alt="" loading="lazy">` : p.i ? `<img class="is-blend" src="${p.i}" alt="" loading="lazy">` : ''}<b>${esc(short(p.t))}</b></button>
         <div class="qs-ci__ctl">${multi ? addBtn(n ? 'Edit' : 'Choose') : stepper(p.t, n)}${!multi && n && isRent() ? buyBox(state.job.sel[hd + '::']?.buy, 'data-qs-tbuy', true) : ''}</div></div>`;
     }
@@ -1240,7 +1315,7 @@ const photos = [
       const swap = lastImg[h] && lastImg[h] !== im; lastImg[h] = im;
       return `<div class="qs-pr${mine.length ? ' is-on' : ''}" data-qs-pr="${esc(h)}" data-t="${esc(p.t.toLowerCase())}">
         <span class="qs-pr__img">${im ? `<img src="${im}" alt=""${swap ? ' class="is-swap"' : ' loading="lazy"'}>` : ''}</span>
-        <div class="qs-pr__main"><b>${esc(p.t)}</b>
+        <div class="qs-pr__main"><div class="qs-pr__top"><b>${esc(p.t)}</b><button type="button" class="qs-det" data-qs-det="${esc(h)}" aria-label="See details for ${esc(p.t)}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.01"/></svg><span>Details</span></button></div>
           ${p.v.length > 1 && p.o ? optsHtml(p, cur) : ''}
           ${p.v.length > 1 && !p.o ? `<label class="qs-pr__varl"><span>${p.v.length} options</span><select class="qs-input qs-pr__var" data-qs-var aria-label="Option for ${esc(p.t)}">${p.v.map((v) => `<option${v === cur ? ' selected' : ''}>${esc(v)}</option>`).join('')}</select></label>` : ''}
           ${chips ? `<div class="qs-vchips">${chips}</div>` : ''}
@@ -1395,4 +1470,100 @@ const photos = [
 
     render();
   });
+
+  // ---------- product details panel: "Details" on any product in the quote builder ----------
+  {
+    const cache = new Map();
+    let qd = null, lastFocus = null;
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const build = () => {
+      qd = document.createElement('div');
+      qd.className = 'qd'; qd.hidden = true;
+      qd.innerHTML = `<div class="qd__bg" data-qd-close></div>
+        <div class="qd__panel" role="dialog" aria-modal="true" aria-label="Product details">
+          <header class="qd__head"><button type="button" class="qd__back" data-qd-close><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Back to list</button><button type="button" class="qd__x" data-qd-close aria-label="Close details"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+          <div class="qd__body" data-qd-body></div>
+          <footer class="qd__foot"><a class="qd__full" data-qd-full target="_blank" rel="noopener">Full page<svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg></a><button type="button" class="qs-btn" data-qd-close>Back to choosing</button></footer>
+        </div>`;
+      document.body.appendChild(qd);
+      qd.addEventListener('click', (e) => {
+        if (e.target.closest('[data-qd-close]')) close();
+        const th = e.target.closest('[data-qd-th]');
+        if (th) {
+          qd.querySelectorAll('[data-qd-th]').forEach((b) => b.classList.toggle('is-on', b === th));
+          const im = qd.querySelector('[data-qd-main]');
+          im.src = th.dataset.qdTh; im.style.animation = 'none'; void im.offsetWidth; im.style.animation = '';
+        }
+      });
+    };
+    const load = (h) => {
+      if (!cache.has(h)) {
+        cache.set(h, fetch(`/products/${encodeURIComponent(h)}`).then((r) => (r.ok ? r.text() : Promise.reject(r.status))).then((html) => {
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          const q = (sel) => doc.querySelector(sel);
+          const imgs = [...doc.querySelectorAll('.gal__slide img')].map((i) => i.getAttribute('src')).filter(Boolean);
+          const desc = q('.pxd .rte');
+          desc?.querySelectorAll('script, style, iframe, object, embed, form').forEach((n) => n.remove());
+          desc?.querySelectorAll('*').forEach((n) => [...n.attributes].forEach((a) => { if (/^on/i.test(a.name)) n.removeAttribute(a.name); }));
+          return {
+            title: q('.buy__title')?.textContent.trim() || '',
+            cat: q('.chip--cat')?.textContent.trim() || '',
+            rental: !!q('.chip--rent'),
+            custom: [...doc.querySelectorAll('.buy__chips .chip')].some((c) => /customizable/i.test(c.textContent)),
+            price: q('[data-price]')?.textContent.trim() || '',
+            intro: q('.buy__intro')?.textContent.trim() || '',
+            imgs,
+            specs: [...doc.querySelectorAll('.spec li')].map((li) => [li.querySelector('span')?.textContent.trim(), li.querySelector('b')?.textContent.trim()]).filter(([k]) => k && !/^(ordering)$/i.test(k)),
+            desc: desc ? desc.innerHTML : ''
+          };
+        }).catch((err) => { cache.delete(h); throw err; }));
+      }
+      return cache.get(h);
+    };
+    const render = (h, d) => {
+      const body = qd.querySelector('[data-qd-body]');
+      const imgs = d.imgs.length ? d.imgs : [];
+      body.innerHTML = `
+        ${imgs.length ? `<div class="qd__stage"><img data-qd-main src="${esc(imgs[0])}" alt="${esc(d.title)}"></div>` : ''}
+        ${imgs.length > 1 ? `<div class="qd__thumbs">${imgs.slice(0, 8).map((u, i) => `<button type="button" data-qd-th="${esc(u)}" class="${i ? '' : 'is-on'}" aria-label="Image ${i + 1}"><img src="${esc(u.replace(/width=\d+/, 'width=160'))}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
+        <div class="qd__chips">${d.cat ? `<span>${esc(d.cat)}</span>` : ''}${d.rental ? '<span class="is-rent">Rental</span>' : ''}${d.custom ? '<span>Customizable</span>' : ''}</div>
+        <h3 class="qd__title">${esc(d.title)}</h3>
+        ${d.rental ? '<p class="qd__price"><small>Priced per job. Your quote covers daily, weekly or monthly rates.</small></p>' : d.price ? `<p class="qd__price">${esc(d.price)} <small>each, before bulk pricing</small></p>` : ''}
+        ${d.specs.length ? `<p class="qd__h">At a glance</p><ul class="qd__spec">${d.specs.map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>` : ''}
+        ${d.desc ? `<p class="qd__h">Details</p><div class="qd__desc">${d.desc}</div>` : d.intro ? `<p class="qd__desc">${esc(d.intro)}</p>` : ''}`;
+      qd.querySelector('[data-qd-full]').href = `/products/${encodeURIComponent(h)}`;
+    };
+    const open = async (h) => {
+      if (!qd) build();
+      lastFocus = document.activeElement;
+      const body = qd.querySelector('[data-qd-body]');
+      body.innerHTML = '<div class="qd__skel"><i></i><i style="width:40%"></i><i style="width:80%"></i><i></i><i style="width:65%"></i></div>';
+      body.scrollTop = 0;
+      qd.querySelector('[data-qd-full]').href = `/products/${encodeURIComponent(h)}`;
+      qd.hidden = false;
+      const chat = document.getElementById('tss-chat-assistant'); if (chat) chat.style.visibility = 'hidden';
+      requestAnimationFrame(() => requestAnimationFrame(() => qd.classList.add('is-open')));
+      qd.querySelector('.qd__x').focus({ preventScroll: true });
+      try { render(h, await load(h)); }
+      catch { body.innerHTML = `<p class="qd__desc">We couldn’t load the details right now. <a href="/products/${encodeURIComponent(h)}" target="_blank" rel="noopener">Open the full product page</a>.</p>`; }
+    };
+    const close = () => {
+      if (!qd || qd.hidden) return;
+      qd.classList.remove('is-open');
+      setTimeout(() => { qd.hidden = true; const chat = document.getElementById('tss-chat-assistant'); if (chat) chat.style.visibility = ''; }, 380);
+      lastFocus?.focus?.({ preventScroll: true });
+    };
+    // capture phase so the row / tile click handlers never treat this as "add"
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-qs-det]');
+      if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      open(b.dataset.qsDet);
+    }, true);
+    // warm the cache on hover so the panel opens instantly
+    document.addEventListener('pointerover', (e) => { const b = e.target.closest?.('[data-qs-det]'); if (b) load(b.dataset.qsDet).catch(() => {}); });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && qd && !qd.hidden && qd.classList.contains('is-open')) { e.stopImmediatePropagation(); e.stopPropagation(); close(); }
+    }, true);
+  }
 </script>
