@@ -1510,10 +1510,9 @@ const photos = [
             cat: q('.chip--cat')?.textContent.trim() || '',
             rental: !!q('.chip--rent'),
             custom: [...doc.querySelectorAll('.buy__chips .chip')].some((c) => /customizable/i.test(c.textContent)),
-            price: q('[data-price]')?.textContent.trim() || '',
             intro: q('.buy__intro')?.textContent.trim() || '',
             imgs,
-            specs: [...doc.querySelectorAll('.spec li')].map((li) => [li.querySelector('span')?.textContent.trim(), li.querySelector('b')?.textContent.trim()]).filter(([k]) => k && !/^(ordering)$/i.test(k)),
+            specs: [...doc.querySelectorAll('.spec li')].map((li) => [li.querySelector('span')?.textContent.trim(), li.querySelector('b')?.textContent.trim()]).filter(([k]) => k && !/^(ordering|price)$/i.test(k)),
             desc: desc ? desc.innerHTML : ''
           };
         }).catch((err) => { cache.delete(h); throw err; }));
@@ -1528,7 +1527,6 @@ const photos = [
         ${imgs.length > 1 ? `<div class="qd__thumbs">${imgs.slice(0, 8).map((u, i) => `<button type="button" data-qd-th="${esc(u)}" class="${i ? '' : 'is-on'}" aria-label="Image ${i + 1}"><img src="${esc(u.replace(/width=\d+/, 'width=160'))}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
         <div class="qd__chips">${d.cat ? `<span>${esc(d.cat)}</span>` : ''}${d.rental ? '<span class="is-rent">Rental</span>' : ''}${d.custom ? '<span>Customizable</span>' : ''}</div>
         <h3 class="qd__title">${esc(d.title)}</h3>
-        ${d.rental ? '<p class="qd__price"><small>Priced per job. Your quote covers daily, weekly or monthly rates.</small></p>' : d.price ? `<p class="qd__price">${esc(d.price)} <small>each, before bulk pricing</small></p>` : ''}
         ${d.specs.length ? `<p class="qd__h">At a glance</p><ul class="qd__spec">${d.specs.map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>` : ''}
         ${d.desc ? `<p class="qd__h">Details</p><div class="qd__desc">${d.desc}</div>` : d.intro ? `<p class="qd__desc">${esc(d.intro)}</p>` : ''}`;
       qd.querySelector('[data-qd-full]').href = `/products/${encodeURIComponent(h)}`;
