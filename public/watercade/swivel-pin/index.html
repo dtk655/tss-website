@@ -189,6 +189,29 @@
   .tssd__btn--line { border: 1.5px solid var(--line-dark); color: var(--ink); }
   .tssd__foot { margin: 18px 0 0; text-align: left; font-size: .78rem; }
 
+  /* ---------- drawer fit: everything scales with screen height so the whole menu shows without scrolling ---------- */
+  .tssd__panel { height: 100vh; height: 100dvh; bottom: auto; }
+  .tssd__top { padding-block: clamp(6px, 1.4dvh, 14px); }
+  .tssd__logo img { height: clamp(28px, 5dvh, 38px); }
+  .tssd__x { width: clamp(36px, 5.6dvh, 44px); height: clamp(36px, 5.6dvh, 44px); }
+  .tssd__scroll { padding-top: clamp(2px, .8dvh, 8px); padding-bottom: calc(clamp(8px, 1.6dvh, 24px) + env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+  .tssd__ask { margin: clamp(4px, 1dvh, 10px) 0 clamp(4px, 1.2dvh, 14px); padding-block: clamp(5px, 1dvh, 10px); flex: none; }
+  .tssd__askcone { height: clamp(20px, 3.4dvh, 28px); }
+  .tssd__asktxt small { display: var(--mdrw-small, block); }
+  .tssd__nav { flex: none; }
+  .tssd__link { padding-block: clamp(4px, 1.2dvh, 18px); }
+  .tssd__lbl { font-size: clamp(.98rem, 2.7dvh, 1.5rem); }
+  .tssd__hint { margin-top: clamp(0px, .3dvh, 3px); font-size: clamp(.64rem, 1.45dvh, .78rem); line-height: 1.2; }
+  .tssd__wc { padding-block: clamp(0px, .4dvh, 4px); }
+  .tssd__wc img { height: clamp(15px, 2.7dvh, 22px); }
+  .tssd__arr, .tssd__chev { width: clamp(15px, 2.5dvh, 20px); height: clamp(15px, 2.5dvh, 20px); }
+  .tssd__quick { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: clamp(8px, 1.8dvh, 22px); flex: none; }
+  .tssd__btn { min-height: clamp(40px, 6.2dvh, 54px); font-size: clamp(.84rem, 2dvh, 1.02rem); padding-inline: 8px; white-space: nowrap; gap: 6px; }
+  .tssd__btn svg { width: 15px; height: 15px; }
+  .tssd__foot { margin-top: clamp(6px, 1.4dvh, 18px); font-size: clamp(.66rem, 1.4dvh, .78rem); line-height: 1.35; }
+  @media (max-height: 700px) { .tssd__foot { display: none; } .tssd__asktxt small { display: none; } }
+  @media (max-height: 560px) { .tssd__hint { display: none; } }
+
   /* ---------- equipment/fleet tiles + more menu ---------- */
   .nav__item { position: relative; }
   .mega__mode { font-style: normal; }
@@ -291,6 +314,7 @@ var sb=root.querySelector('[data-ask-send]');sb&&sb.addEventListener('click',ask
 document.addEventListener('click',function(e){if(!root.contains(e.target))close()});
 });
 })();</script><script src="/coney.js" defer></script>
+<script src="/coney.js" defer></script>
 <script src="/coney.js" defer></script>
 <script src="/coney.js" defer></script>
 <script src="/coney.js" defer></script>
