@@ -543,7 +543,7 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .mdrw__scroll { padding: 8px 22px calc(24px + env(safe-area-inset-bottom)); gap: 0; }
   .mdrw__ask { margin: 10px 0 14px; padding: 10px 12px 10px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--haze); gap: 10px; }
   .mdrw__askcone { width: 24px; height: 28px; margin-left: 4px; }
-  .mdrw__asktxt b { font-size: .95rem; font-variation-settings: 'wght' 680; }
+  .mdrw__asktxt b { font-size: clamp(.95rem, 2.1dvh, 1.1rem); font-variation-settings: 'wght' 680; }
   .mdrw__asktxt small { font-size: .76rem; }
   .mdrw__nav { gap: 0; border-top: 1px solid var(--line); }
   .mdrw__nav > a, .mdrw__grp { border-bottom: 1px solid var(--line); }
@@ -574,15 +574,19 @@ const megaTints = { cones: '#ffe7d2', barricades: '#e2edf8', 'water-filled-barri
   .mdrw__ask { margin: clamp(4px, 1dvh, 10px) 0 clamp(4px, 1.2dvh, 14px); padding-block: clamp(5px, 1dvh, 10px); flex: none; }
   .mdrw__askcone { height: clamp(20px, 3.4dvh, 28px); }
   .mdrw__asktxt small { display: var(--mdrw-small, block); }
-  .mdrw__nav { flex: none; }
+  .mdrw__nav { flex: 1 1 auto; display: flex; flex-direction: column; }
+  .mdrw__nav > a, .mdrw__grp { flex: 1 1 auto; }
+  .mdrw__grp { display: flex; flex-direction: column; }
+  .mdrw__grp > .mdrw__link { flex: 1 1 auto; }
+  .mdrw__grp > .mdrw__sub { flex: none; }
   .mdrw__link { padding-block: clamp(4px, 1.2dvh, 18px); }
-  .mdrw__lbl { font-size: clamp(.98rem, 2.7dvh, 1.5rem); }
-  .mdrw__hint { margin-top: clamp(0px, .3dvh, 3px); font-size: clamp(.64rem, 1.45dvh, .78rem); line-height: 1.2; }
+  .mdrw__lbl { font-size: clamp(.98rem, 3.3dvh, 2rem); }
+  .mdrw__hint { margin-top: clamp(0px, .3dvh, 3px); font-size: clamp(.64rem, 1.6dvh, .9rem); line-height: 1.2; }
   .mdrw__wc { padding-block: clamp(0px, .4dvh, 4px); }
-  .mdrw__wc img { height: clamp(15px, 2.7dvh, 22px); }
-  .mdrw__arr, .mdrw__chev { width: clamp(15px, 2.5dvh, 20px); height: clamp(15px, 2.5dvh, 20px); }
+  .mdrw__wc img { height: clamp(15px, 3.2dvh, 30px); }
+  .mdrw__arr, .mdrw__chev { width: clamp(15px, 2.7dvh, 24px); height: clamp(15px, 2.7dvh, 24px); }
   .mdrw__quick { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: clamp(8px, 1.8dvh, 22px); flex: none; }
-  .mdrw__btn { min-height: clamp(40px, 6.2dvh, 54px); font-size: clamp(.84rem, 2dvh, 1.02rem); padding-inline: 8px; white-space: nowrap; gap: 6px; }
+  .mdrw__btn { min-height: clamp(40px, 6.6dvh, 60px); font-size: clamp(.84rem, 2dvh, 1.08rem); padding-inline: 8px; white-space: nowrap; gap: 6px; }
   .mdrw__btn svg { width: 15px; height: 15px; }
   .mdrw__foot { margin-top: clamp(6px, 1.4dvh, 18px); font-size: clamp(.66rem, 1.4dvh, .78rem); line-height: 1.35; }
   @media (max-height: 700px) { .mdrw__foot { display: none; } .mdrw__asktxt small { display: none; } }
