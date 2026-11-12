@@ -119,30 +119,24 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
             </figcaption>
           </figure>
 
-          <!-- Scene 3: real water-filled barrier getting a custom wrap -->
-          <figure class="sc sc--rail" data-sc="2" aria-label="A WATERCADE water-filled barrier getting a custom printed wrap">
+          <!-- Scene 3: WATERCADE, captured from the real 3D customizer so striping and panels line up exactly -->
+          <figure class="sc sc--rail" data-sc="2" aria-label="A white WATERCADE barrier getting navy and white striping and a company name on its panels">
             <svg viewBox="0 0 440 440" aria-hidden="true">
               <defs>
-                <pattern id="stripes" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><rect width="34" height="34" fill="#f2f4f6"/><rect width="15" height="34" fill="#1f45c8"/></pattern>
+                <linearGradient id="scan" x1="0" x2="1"><stop offset="0" stop-color="#ffcd00" stop-opacity="0"/><stop offset=".5" stop-color="#ffcd00" stop-opacity=".95"/><stop offset="1" stop-color="#ffcd00" stop-opacity="0"/></linearGradient>
               </defs>
-              <ellipse cx="220" cy="350" rx="196" ry="10" fill="#000" opacity=".45"/>
-              <image href="/custom/tpl/barrier-watercade.webp" x="20" y="85" width="400" height="261" preserveAspectRatio="xMidYMid meet" />
-              <g class="rl__wrap rl__wrap--1">
-                <rect x="86" y="123" width="276" height="48" rx="3" fill="url(#stripes)"/>
-                <rect x="150" y="129" width="148" height="36" rx="3" fill="#f2f4f6"/>
-                <text x="224" y="156" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="25" font-weight="800" style="font-variation-settings:'wght' 860" fill="#1f45c8" font-style="italic">YOUR LOGO</text>
-              </g>
-              <g class="rl__wrap rl__wrap--2">
-                <rect x="128" y="268" width="184" height="21" rx="3" fill="#1f45c8"/>
-                <text x="220" y="283" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="12.5" font-weight="800" style="font-variation-settings:'wght' 800" fill="#fff" letter-spacing="1.2">YOUR MESSAGE HERE</text>
-              </g>
-              <g class="rl__roller rl__roller--1"><rect x="-8" y="115" width="16" height="64" rx="8" fill="#2a2e33"/><rect x="-3" y="99" width="6" height="20" fill="#5b636b"/></g>
-              <g class="rl__roller rl__roller--2"><rect x="-6" y="262" width="12" height="33" rx="6" fill="#2a2e33"/><rect x="-2.5" y="249" width="5" height="15" fill="#5b636b"/></g>
+              <image href="/custom/tpl/watercade-0.webp" x="-34" y="76" width="508" height="280" preserveAspectRatio="xMidYMid meet" />
+              <image class="wc__lay wc__lay--1" href="/custom/tpl/watercade-1.webp" x="-34" y="76" width="508" height="280" preserveAspectRatio="xMidYMid meet" />
+              <image class="wc__lay wc__lay--2" href="/custom/tpl/watercade-2.webp" x="-34" y="76" width="508" height="280" preserveAspectRatio="xMidYMid meet" />
+              <image class="wc__lay wc__lay--3" href="/custom/tpl/watercade-3.webp" x="-34" y="76" width="508" height="280" preserveAspectRatio="xMidYMid meet" />
+              <rect class="wc__scan wc__scan--1" x="-5" y="86" width="10" height="112" rx="5" fill="url(#scan)" />
+              <rect class="wc__scan wc__scan--2" x="-5" y="214" width="10" height="56" rx="5" fill="url(#scan)" />
+              <rect class="wc__scan wc__scan--3" x="-5" y="244" width="10" height="56" rx="5" fill="url(#scan)" />
             </svg>
             <figcaption class="sc__chips">
-              <span style="--k:0"><b>WATERCADE wraps</b></span>
-              <span style="--k:1">Your logo or message</span>
-              <span style="--k:2">Reflective printed vinyl</span>
+              <span style="--k:0"><b>WATERCADE</b></span>
+              <span style="--k:1"><i style="--c:#1f3f93"></i>Reflective striping</span>
+              <span style="--k:2">Your name on the panels</span>
             </figcaption>
           </figure>
         </div>
@@ -1007,22 +1001,22 @@ AREA</textarea></label>
   @keyframes cnCan { 0% { opacity: 0; transform: translate(140px, 280px) rotate(-8deg); } 10% { opacity: 1; } 50% { transform: translate(225px, 280px) rotate(4deg); } 88% { opacity: 1; transform: translate(305px, 280px) rotate(-4deg); } 100% { opacity: 0; transform: translate(345px, 248px) rotate(10deg); } }
   @keyframes cnMist { 0% { opacity: 0; transform: translateY(-14px) scale(.4); } 40% { opacity: .55; } 100% { opacity: 0; transform: translateY(6px) scale(1.4); } }
 
-  /* --- rail scene (6s) --- */
-  .sc--rail { --cd: 3.7s; }
-  .rl__wrap { clip-path: inset(0 100% 0 0); }
-  .rl__roller { opacity: 0; }
-  .sc--rail.is-play .rl__wrap--1 { animation: cnPaint 1.4s .4s cubic-bezier(.5, 0, .3, 1) forwards; }
-  .sc--rail.is-play .rl__roller--1 { animation: rlRoll 1.4s .4s cubic-bezier(.5, 0, .3, 1) forwards; }
-  .sc--rail.is-play .rl__wrap--2 { animation: cnPaint 1.4s 2s cubic-bezier(.5, 0, .3, 1) forwards; }
-  .sc--rail.is-play .rl__roller--2 { animation: rlRoll 1.4s 2s cubic-bezier(.5, 0, .3, 1) forwards; }
-  @keyframes rlRoll { 0% { opacity: 1; transform: translateX(var(--x0)); } 92% { opacity: 1; transform: translateX(var(--x1)); } 100% { opacity: 0; transform: translateX(var(--x1)); } }
-  .rl__roller--1 { --x0: 86px; --x1: 362px; }
-  .rl__roller--2 { --x0: 128px; --x1: 312px; }
+  /* --- WATERCADE scene (6s) --- */
+  .sc--rail { --cd: 4.6s; }
+  .wc__lay { clip-path: inset(0 100% 0 0); }
+  .wc__scan { opacity: 0; }
+  .sc--rail.is-play .wc__lay--1 { animation: cnPaint 1.3s .5s cubic-bezier(.5, 0, .3, 1) forwards; }
+  .sc--rail.is-play .wc__scan--1 { animation: wcScan 1.3s .5s cubic-bezier(.5, 0, .3, 1) forwards; }
+  .sc--rail.is-play .wc__lay--2 { animation: cnPaint 1.1s 2s cubic-bezier(.5, 0, .3, 1) forwards; }
+  .sc--rail.is-play .wc__scan--2 { animation: wcScan 1.1s 2s cubic-bezier(.5, 0, .3, 1) forwards; }
+  .sc--rail.is-play .wc__lay--3 { animation: cnPaint 1.1s 3.3s cubic-bezier(.5, 0, .3, 1) forwards; }
+  .sc--rail.is-play .wc__scan--3 { animation: wcScan 1.1s 3.3s cubic-bezier(.5, 0, .3, 1) forwards; }
+  @keyframes wcScan { 0% { opacity: 1; transform: translateX(10px); } 90% { opacity: 1; transform: translateX(430px); } 100% { opacity: 0; transform: translateX(430px); } }
 
   /* final states, used when motion is reduced */
   .csx[data-static] .sg__blank { opacity: 0; }
-  .csx[data-static] .cn__can, .csx[data-static] .cn__plate, .csx[data-static] .sg__head, .csx[data-static] .sg__squeegee, .csx[data-static] .rl__roller { display: none; }
-  .csx[data-static] .sg__photo, .csx[data-static] .cn__paint, .csx[data-static] .rl__wrap { clip-path: none; }
+  .csx[data-static] .cn__can, .csx[data-static] .cn__plate, .csx[data-static] .sg__head, .csx[data-static] .sg__squeegee, 
+  .csx[data-static] .sg__photo, .csx[data-static] .cn__paint, .csx[data-static] .wc__lay { clip-path: none; }
   .csx[data-static] .sg__border, .csx[data-static] .sg__dim { stroke-dashoffset: 0; opacity: 1; }
   .csx[data-static] .sg__tick, .csx[data-static] .sg__dimt { opacity: 1; }
   .csx[data-static] .sg__l { fill: #141414; stroke-dashoffset: 0; }
