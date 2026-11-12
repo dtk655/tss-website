@@ -53,41 +53,37 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
         <div class="csx__tabs" role="tablist" aria-label="Custom shop showcase">
           <button type="button" role="tab" class="csx__tab is-on" data-csx-tab="0" aria-selected="true"><span>Signs</span><i><b></b></i></button>
           <button type="button" role="tab" class="csx__tab" data-csx-tab="1" aria-selected="false"><span>Cones</span><i><b></b></i></button>
-          <button type="button" role="tab" class="csx__tab" data-csx-tab="2" aria-selected="false"><span>Rails</span><i><b></b></i></button>
+          <button type="button" role="tab" class="csx__tab" data-csx-tab="2" aria-selected="false"><span>Barriers</span><i><b></b></i></button>
         </div>
         <div class="csx__stage">
           <span class="csx__rule csx__rule--x" aria-hidden="true"></span>
           <span class="csx__rule csx__rule--y" aria-hidden="true"></span>
 
-          <!-- Scene 1: 48x48 road work sign -->
+          <!-- Scene 1: 48x48 road work sign (real sign blank) -->
           <figure class="sc sc--sign is-on" data-sc="0" aria-label="A 48 by 48 inch fluorescent orange ROAD WORK AHEAD sign with a black border being made">
             <svg viewBox="0 0 440 440" aria-hidden="true">
               <defs>
                 <linearGradient id="alu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8eaec"/><stop offset=".5" stop-color="#b9bec4"/><stop offset="1" stop-color="#dfe2e5"/></linearGradient>
-                <linearGradient id="glint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-                <pattern id="prism" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0h7v7H0z" fill="none" stroke="#000" stroke-opacity=".05" stroke-width="1"/></pattern>
-                <clipPath id="diaClip"><path d="M220 40 L400 220 L220 400 L40 220 Z"/></clipPath>
+                <linearGradient id="glint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+                <clipPath id="diaClip"><path d="M220 30 L408 220 L220 410 L32 220 Z"/></clipPath>
+                <filter id="ink"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.2"/></filter>
               </defs>
+              <ellipse cx="220" cy="428" rx="150" ry="8" fill="#000" opacity=".35"/>
               <g class="sg__dims">
-                <path class="sg__dim" d="M232 22 L418 208" />
-                <path class="sg__tick" d="M226 28 l12 -12 M412 214 l12 -12" />
-                <text class="sg__dimt" x="337" y="104" transform="rotate(45 337 104)">48 in</text>
-                <path class="sg__dim" d="M22 208 L208 22" />
-                <path class="sg__tick" d="M16 202 l12 12 M202 16 l12 12" />
-                <text class="sg__dimt" x="103" y="104" transform="rotate(-45 103 104)">48 in</text>
+                <path class="sg__dim" d="M232 12 L426 206" />
+                <path class="sg__tick" d="M226 18 l12 -12 M420 212 l12 -12" />
+                <text class="sg__dimt" x="341" y="96" transform="rotate(45 341 96)">48 in</text>
+                <path class="sg__dim" d="M14 206 L208 12" />
+                <path class="sg__tick" d="M8 200 l12 12 M202 6 l12 12" />
+                <text class="sg__dimt" x="99" y="96" transform="rotate(-45 99 96)">48 in</text>
               </g>
-              <g class="sg__blank"><path d="M220 40 L400 220 L220 400 L40 220 Z" fill="url(#alu)" stroke="#9aa0a6" stroke-width="10" stroke-linejoin="round"/></g>
-              <g class="sg__sheet" clip-path="url(#diaClip)">
-                <path d="M220 40 L400 220 L220 400 L40 220 Z" fill="#ff6a13"/>
-                <path d="M220 40 L400 220 L220 400 L40 220 Z" fill="url(#prism)"/>
-              </g>
-              <path class="sg__edge" d="M220 40 L400 220 L220 400 L40 220 Z" fill="none" stroke="#ff6a13" stroke-width="10" stroke-linejoin="round"/>
-              <rect class="sg__squeegee" x="40" y="34" width="360" height="12" rx="6" />
-              <path class="sg__border" d="M220 62 L378 220 L220 378 L62 220 Z" fill="none" stroke="#141414" stroke-width="9" stroke-linejoin="round" pathLength="100"/>
-              <g class="sg__legend" font-family="'Archivo Variable', Arial, sans-serif" text-anchor="middle">
-                <text class="sg__l sg__l1" x="220" y="184">ROAD</text>
-                <text class="sg__l sg__l2" x="220" y="232">WORK</text>
-                <text class="sg__l sg__l3" x="220" y="280">AHEAD</text>
+              <g class="sg__blank"><path d="M220 30 L408 220 L220 410 L32 220 Z" fill="url(#alu)" stroke="#9aa0a6" stroke-width="8" stroke-linejoin="round"/></g>
+              <image class="sg__photo" href="/custom/tpl/sign-diamond-orange.webp" x="18" y="16" width="404" height="407" preserveAspectRatio="xMidYMid meet" />
+              <rect class="sg__squeegee" x="30" y="24" width="380" height="12" rx="6" />
+              <g class="sg__legend" font-family="'Archivo Variable', Arial, sans-serif" text-anchor="middle" filter="url(#ink)">
+                <text class="sg__l sg__l1" x="220" y="180">ROAD</text>
+                <text class="sg__l sg__l2" x="220" y="228">WORK</text>
+                <text class="sg__l sg__l3" x="220" y="276">AHEAD</text>
               </g>
               <g class="sg__head"><circle r="9" fill="none" stroke="#ffcd00" stroke-width="2.5"/><path d="M-15 0h8M7 0h8M0 -15v8M0 7v8" stroke="#ffcd00" stroke-width="2.5"/></g>
               <g clip-path="url(#diaClip)"><rect class="sg__glint" x="-160" y="0" width="120" height="440" fill="url(#glint)" transform="skewX(-18)"/></g>
@@ -100,27 +96,21 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
             </figcaption>
           </figure>
 
-          <!-- Scene 2: cone being stenciled -->
-          <figure class="sc sc--cone" data-sc="1" aria-label="A traffic cone being stenciled with a company name">
+          <!-- Scene 2: real reflective cone being stenciled -->
+          <figure class="sc sc--cone" data-sc="1" aria-label="A reflective traffic cone being stenciled with a company name">
             <svg viewBox="0 0 440 440" aria-hidden="true">
               <defs>
-                <linearGradient id="coneG" x1="0" x2="1"><stop offset="0" stop-color="#ff7a26"/><stop offset=".45" stop-color="#ff5a0a"/><stop offset="1" stop-color="#d84300"/></linearGradient>
-                <linearGradient id="bandG" x1="0" x2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset=".5" stop-color="#cfd5db"/><stop offset="1" stop-color="#eef1f3"/></linearGradient>
-                <mask id="stencilHoles"><rect x="96" y="270" width="248" height="64" rx="8" fill="#fff"/><text x="220" y="316" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="34" font-weight="800" style="font-variation-settings:'wght' 820" fill="#000">YOUR CO.</text></mask>
-                <filter id="spray"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+                <mask id="stencilHoles"><rect x="138" y="262" width="164" height="54" rx="7" fill="#fff"/><text x="220" y="297" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="21" font-weight="800" style="font-variation-settings:'wght' 840" fill="#000" textLength="84" lengthAdjust="spacingAndGlyphs">YOUR CO.</text></mask>
+                <filter id="spray"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="1" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.6"/></filter>
               </defs>
-              <ellipse cx="220" cy="404" rx="150" ry="14" fill="#000" opacity=".28"/>
-              <path d="M66 372 h308 l-14 26 h-280 z" fill="#1b1d20"/>
-              <path d="M206 54 h28 l92 318 h-212 z" fill="url(#coneG)"/>
-              <path d="M188 122 h64 l14 48 h-92 z" fill="url(#bandG)"/>
-              <path d="M168 192 h104 l12 42 h-128 z" fill="url(#bandG)"/>
-              <path d="M206 54 h28 l4 14 h-36 z" fill="#ff8a40"/>
-              <text class="cn__paint" x="220" y="316" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="34" font-weight="800" style="font-variation-settings:'wght' 820" fill="#141414" filter="url(#spray)">YOUR CO.</text>
-              <g class="cn__plate"><rect x="96" y="270" width="248" height="64" rx="8" fill="#9aa3ab" mask="url(#stencilHoles)"/><rect x="96" y="270" width="248" height="64" rx="8" fill="none" stroke="#6f7881" stroke-width="2" mask="url(#stencilHoles)"/></g>
+              <ellipse cx="220" cy="426" rx="110" ry="9" fill="#000" opacity=".4"/>
+              <image href="/custom/tpl/cone-reflective.webp" x="120" y="14" width="200" height="420" preserveAspectRatio="xMidYMid meet" />
+              <text class="cn__paint" x="220" y="297" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="21" font-weight="800" style="font-variation-settings:'wght' 840; mix-blend-mode:multiply" fill="#141414" filter="url(#spray)" textLength="84" lengthAdjust="spacingAndGlyphs">YOUR CO.</text>
+              <g class="cn__plate"><rect x="138" y="262" width="164" height="54" rx="7" fill="#9aa3ab" mask="url(#stencilHoles)"/><rect x="138" y="262" width="164" height="54" rx="7" fill="none" stroke="#6f7881" stroke-width="2" mask="url(#stencilHoles)"/></g>
               <g class="cn__mist">
-                {Array.from({ length: 18 }).map((_, i) => <circle cx={110 + (i * 13) % 230} cy={282 + (i * 17) % 44} r={2 + (i % 3)} style={`--m:${i}`} />)}
+                {Array.from({ length: 16 }).map((_, i) => <circle cx={150 + (i * 11) % 140} cy={270 + (i * 13) % 38} r={1.6 + (i % 3) * .8} style={`--m:${i}`} />)}
               </g>
-              <g class="cn__can"><rect x="-16" y="-58" width="32" height="54" rx="6" fill="#141414"/><rect x="-11" y="-68" width="22" height="12" rx="3" fill="#3a3f45"/><rect x="-16" y="-44" width="32" height="12" fill="#ff6a13"/><path d="M0 -4 v10" stroke="#3a3f45" stroke-width="5"/></g>
+              <g class="cn__can"><rect x="-14" y="-50" width="28" height="46" rx="5" fill="#141414"/><rect x="-9" y="-59" width="18" height="10" rx="3" fill="#3a3f45"/><rect x="-14" y="-38" width="28" height="10" fill="#ff6a13"/><path d="M0 -4 v9" stroke="#3a3f45" stroke-width="4"/></g>
             </svg>
             <figcaption class="sc__chips">
               <span style="--k:0"><b>Stenciled cones</b></span>
@@ -129,34 +119,30 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
             </figcaption>
           </figure>
 
-          <!-- Scene 3: A-frame rail wrap -->
-          <figure class="sc sc--rail" data-sc="2" aria-label="A custom printed rail being applied to an A-frame barricade">
+          <!-- Scene 3: real water-filled barrier getting a custom wrap -->
+          <figure class="sc sc--rail" data-sc="2" aria-label="A water-filled barrier getting a custom printed wrap">
             <svg viewBox="0 0 440 440" aria-hidden="true">
               <defs>
-                <pattern id="stripes" width="44" height="44" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><rect width="44" height="44" fill="#f2f4f6"/><rect width="20" height="44" fill="#1f45c8"/></pattern>
-                <clipPath id="railClip"><rect x="40" y="128" width="360" height="74" rx="6"/></clipPath>
-                <clipPath id="railClip2"><rect x="40" y="250" width="360" height="74" rx="6"/></clipPath>
+                <pattern id="stripes" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><rect width="34" height="34" fill="#f2f4f6"/><rect width="15" height="34" fill="#1f45c8"/></pattern>
               </defs>
-              <ellipse cx="220" cy="414" rx="190" ry="12" fill="#000" opacity=".25"/>
-              <path d="M96 96 L60 410 h22 L110 120z M344 96 L380 410 h-22 L330 120z" fill="#e9ecef" stroke="#c4cad0" stroke-width="2"/>
-              <rect x="40" y="128" width="360" height="74" rx="6" fill="#fff" stroke="#c4cad0" stroke-width="2"/>
-              <rect x="40" y="250" width="360" height="74" rx="6" fill="#fff" stroke="#c4cad0" stroke-width="2"/>
-              <g clip-path="url(#railClip)"><g class="rl__wrap rl__wrap--1">
-                <rect x="40" y="128" width="360" height="74" fill="url(#stripes)"/>
-                <rect x="112" y="140" width="216" height="50" rx="4" fill="#f2f4f6"/>
-                <text x="220" y="177" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="30" font-weight="800" style="font-variation-settings:'wght' 840" fill="#1f45c8" font-style="italic">POLICE LINE</text>
-              </g></g>
-              <g clip-path="url(#railClip2)"><g class="rl__wrap rl__wrap--2">
-                <rect x="40" y="250" width="360" height="74" fill="#ff6a13"/>
-                <text x="220" y="299" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="30" font-weight="800" style="font-variation-settings:'wght' 840" fill="#141414">DO NOT CROSS</text>
-              </g></g>
-              <g class="rl__roller rl__roller--1"><rect x="-9" y="120" width="18" height="90" rx="9" fill="#2a2e33"/><rect x="-3" y="104" width="6" height="22" fill="#5b636b"/></g>
-              <g class="rl__roller rl__roller--2"><rect x="-9" y="242" width="18" height="90" rx="9" fill="#2a2e33"/><rect x="-3" y="226" width="6" height="22" fill="#5b636b"/></g>
+              <ellipse cx="220" cy="352" rx="190" ry="10" fill="#000" opacity=".4"/>
+              <image href="/custom/tpl/barrier-orange.webp" x="20" y="90" width="400" height="257" preserveAspectRatio="xMidYMid meet" />
+              <g class="rl__wrap rl__wrap--1">
+                <rect x="86" y="121" width="288" height="44" rx="3" fill="url(#stripes)"/>
+                <rect x="154" y="126" width="152" height="34" rx="3" fill="#f2f4f6"/>
+                <text x="230" y="152" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="25" font-weight="800" style="font-variation-settings:'wght' 860" fill="#1f45c8" font-style="italic">YOUR LOGO</text>
+              </g>
+              <g class="rl__wrap rl__wrap--2">
+                <rect x="104" y="268" width="250" height="24" rx="3" fill="#1f45c8"/>
+                <text x="229" y="286" text-anchor="middle" font-family="'Archivo Variable', Arial, sans-serif" font-size="15" font-weight="800" style="font-variation-settings:'wght' 800" fill="#fff" letter-spacing="1.5">YOUR MESSAGE HERE</text>
+              </g>
+              <g class="rl__roller rl__roller--1"><rect x="-8" y="112" width="16" height="62" rx="8" fill="#2a2e33"/><rect x="-3" y="96" width="6" height="20" fill="#5b636b"/></g>
+              <g class="rl__roller rl__roller--2"><rect x="-7" y="260" width="14" height="40" rx="7" fill="#2a2e33"/><rect x="-3" y="246" width="6" height="16" fill="#5b636b"/></g>
             </svg>
             <figcaption class="sc__chips">
-              <span style="--k:0"><b>A-frame rails</b></span>
-              <span style="--k:1">Barrier wraps</span>
-              <span style="--k:2">Reflective printed graphics</span>
+              <span style="--k:0"><b>Barrier wraps</b></span>
+              <span style="--k:1">Your logo or message</span>
+              <span style="--k:2">Reflective printed vinyl</span>
             </figcaption>
           </figure>
         </div>
@@ -970,38 +956,38 @@ AREA</textarea></label>
   .sc.is-play .sc__chips span { animation: csxChip .5s cubic-bezier(.2, 1.3, .4, 1) forwards; animation-delay: calc(var(--cd, 4s) + var(--k) * .14s); }
 
   /* --- sign scene (8s) --- */
-  .sc--sign { --cd: 5.1s; }
+  .sc--sign { --cd: 4.4s; }
   .sg__blank { transform-box: fill-box; transform-origin: center; opacity: 0; }
-  .sg__sheet path { clip-path: inset(0 0 100% 0); }
+  .sg__photo { clip-path: inset(0 0 100% 0); }
   .sg__edge { opacity: 0; }
   .sg__squeegee { fill: #3a3f45; stroke: #5b636b; stroke-width: 2; opacity: 0; }
   .sg__border { stroke-dasharray: 100; stroke-dashoffset: 100; }
-  .sg__l { font-size: 43px; font-variation-settings: 'wght' 830; letter-spacing: .01em; fill: transparent; stroke: #141414; stroke-width: 1.6; stroke-dasharray: 420; stroke-dashoffset: 420; }
+  .sg__l { font-size: 44px; font-variation-settings: 'wght' 830; letter-spacing: .01em; fill: transparent; stroke: #141414; stroke-width: 1.6; stroke-dasharray: 420; stroke-dashoffset: 420; }
   .sg__head { opacity: 0; }
   .sg__dim, .sg__tick { fill: none; stroke: #ffcd00; stroke-width: 1.8; opacity: 0; }
   .sg__dim { stroke-dasharray: 280; stroke-dashoffset: 280; }
   .sg__dimt { fill: #ffcd00; font: 600 15px ui-monospace, 'SFMono-Regular', Menlo, monospace; text-anchor: middle; letter-spacing: .08em; opacity: 0; }
   .sg__glint { opacity: 0; }
   .sc--sign.is-play .sg__blank { animation: sgPop .6s cubic-bezier(.2, 1.2, .4, 1) forwards; }
-  .sc--sign.is-play .sg__sheet path { animation: sgWipe 1.2s .7s cubic-bezier(.6, 0, .3, 1) forwards; }
-  .sc--sign.is-play .sg__squeegee { animation: sgSqueegee 1.2s .7s cubic-bezier(.6, 0, .3, 1) forwards; }
+  .sc--sign.is-play .sg__photo { animation: sgWipe 1.3s .7s cubic-bezier(.6, 0, .3, 1) forwards; }
+  .sc--sign.is-play .sg__squeegee { animation: sgSqueegee 1.3s .7s cubic-bezier(.6, 0, .3, 1) forwards; }
   .sc--sign.is-play .sg__edge { animation: csxFade .3s 1.8s forwards; }
   .sc--sign.is-play .sg__border { animation: sgDraw 1s 2s cubic-bezier(.5, 0, .3, 1) forwards; }
-  .sc--sign.is-play .sg__l1 { animation: sgText 1.1s 3s ease forwards; }
-  .sc--sign.is-play .sg__l2 { animation: sgText 1.1s 3.55s ease forwards; }
-  .sc--sign.is-play .sg__l3 { animation: sgText 1.1s 4.1s ease forwards; }
-  .sc--sign.is-play .sg__head { animation: sgHead 1.9s 3s linear forwards; }
-  .sc--sign.is-play .sg__dim, .sc--sign.is-play .sg__tick { animation: sgDim .8s 5.1s ease forwards; }
-  .sc--sign.is-play .sg__dimt { animation: csxFade .4s 5.6s forwards; }
-  .sc--sign.is-play .sg__glint { animation: sgGlint 1.1s 6.1s ease-in-out forwards; }
+  .sc--sign.is-play .sg__l1 { animation: sgText 1.1s 2.3s ease forwards; }
+  .sc--sign.is-play .sg__l2 { animation: sgText 1.1s 2.85s ease forwards; }
+  .sc--sign.is-play .sg__l3 { animation: sgText 1.1s 3.4s ease forwards; }
+  .sc--sign.is-play .sg__head { animation: sgHead 1.9s 2.3s linear forwards; }
+  .sc--sign.is-play .sg__dim, .sc--sign.is-play .sg__tick { animation: sgDim .8s 4.4s ease forwards; }
+  .sc--sign.is-play .sg__dimt { animation: csxFade .4s 4.9s forwards; }
+  .sc--sign.is-play .sg__glint { animation: sgGlint 1.1s 5.4s ease-in-out forwards; }
   .sc--sign svg { animation: none; }
   .sc--sign.is-play svg { animation: sgFloat 8s 6s ease-in-out infinite; }
   @keyframes sgPop { from { opacity: 0; transform: scale(.85) rotate(-6deg); } to { opacity: 1; transform: none; } }
   @keyframes sgWipe { to { clip-path: inset(0 0 0 0); } }
-  @keyframes sgSqueegee { 0% { opacity: 1; transform: translateY(0); } 92% { opacity: 1; transform: translateY(356px); } 100% { opacity: 0; transform: translateY(366px); } }
+  @keyframes sgSqueegee { 0% { opacity: 1; transform: translateY(0); } 92% { opacity: 1; transform: translateY(380px); } 100% { opacity: 0; transform: translateY(390px); } }
   @keyframes sgDraw { to { stroke-dashoffset: 0; } }
   @keyframes sgText { 0% { stroke-dashoffset: 420; fill: transparent; } 70% { stroke-dashoffset: 0; fill: transparent; } 100% { stroke-dashoffset: 0; fill: #141414; } }
-  @keyframes sgHead { 0% { opacity: 1; transform: translate(170px, 170px); } 18% { transform: translate(270px, 170px); } 30% { transform: translate(162px, 218px); } 48% { transform: translate(278px, 218px); } 60% { transform: translate(158px, 266px); } 82% { opacity: 1; transform: translate(282px, 266px); } 100% { opacity: 0; transform: translate(360px, 300px); } }
+  @keyframes sgHead { 0% { opacity: 1; transform: translate(168px, 166px); } 18% { transform: translate(272px, 166px); } 30% { transform: translate(160px, 214px); } 48% { transform: translate(280px, 214px); } 60% { transform: translate(154px, 262px); } 82% { opacity: 1; transform: translate(286px, 262px); } 100% { opacity: 0; transform: translate(360px, 300px); } }
   @keyframes sgDim { from { opacity: 0; stroke-dashoffset: 280; } to { opacity: .95; stroke-dashoffset: 0; } }
   @keyframes sgGlint { 0% { opacity: 1; transform: skewX(-18deg) translateX(0); } 100% { opacity: 1; transform: skewX(-18deg) translateX(720px); } }
   @keyframes sgFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
@@ -1018,7 +1004,7 @@ AREA</textarea></label>
   .sc--cone.is-play .cn__mist circle { animation: cnMist .7s ease-out forwards; animation-delay: calc(1s + var(--m) * .1s); }
   @keyframes cnPlate { 0% { opacity: 0; transform: translateX(-260px); } 16% { opacity: 1; transform: none; } 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(70px) rotate(4deg); } }
   @keyframes cnPaint { to { clip-path: inset(0 0 0 0); } }
-  @keyframes cnCan { 0% { opacity: 0; transform: translate(80px, 262px) rotate(-8deg); } 10% { opacity: 1; } 50% { transform: translate(260px, 262px) rotate(4deg); } 88% { opacity: 1; transform: translate(360px, 262px) rotate(-4deg); } 100% { opacity: 0; transform: translate(400px, 230px) rotate(10deg); } }
+  @keyframes cnCan { 0% { opacity: 0; transform: translate(120px, 258px) rotate(-8deg); } 10% { opacity: 1; } 50% { transform: translate(230px, 258px) rotate(4deg); } 88% { opacity: 1; transform: translate(320px, 258px) rotate(-4deg); } 100% { opacity: 0; transform: translate(360px, 226px) rotate(10deg); } }
   @keyframes cnMist { 0% { opacity: 0; transform: translateY(-14px) scale(.4); } 40% { opacity: .55; } 100% { opacity: 0; transform: translateY(6px) scale(1.4); } }
 
   /* --- rail scene (6s) --- */
@@ -1029,12 +1015,14 @@ AREA</textarea></label>
   .sc--rail.is-play .rl__roller--1 { animation: rlRoll 1.4s .4s cubic-bezier(.5, 0, .3, 1) forwards; }
   .sc--rail.is-play .rl__wrap--2 { animation: cnPaint 1.4s 2s cubic-bezier(.5, 0, .3, 1) forwards; }
   .sc--rail.is-play .rl__roller--2 { animation: rlRoll 1.4s 2s cubic-bezier(.5, 0, .3, 1) forwards; }
-  @keyframes rlRoll { 0% { opacity: 1; transform: translateX(40px); } 92% { opacity: 1; transform: translateX(400px); } 100% { opacity: 0; transform: translateX(410px); } }
+  @keyframes rlRoll { 0% { opacity: 1; transform: translateX(var(--x0)); } 92% { opacity: 1; transform: translateX(var(--x1)); } 100% { opacity: 0; transform: translateX(var(--x1)); } }
+  .rl__roller--1 { --x0: 86px; --x1: 374px; }
+  .rl__roller--2 { --x0: 104px; --x1: 354px; }
 
   /* final states, used when motion is reduced */
-  .csx[data-static] .sg__blank, .csx[data-static] .sg__edge, .csx[data-static] .cn__can { opacity: 1; }
+  .csx[data-static] .sg__blank { opacity: 0; }
   .csx[data-static] .cn__can, .csx[data-static] .cn__plate, .csx[data-static] .sg__head, .csx[data-static] .sg__squeegee, .csx[data-static] .rl__roller { display: none; }
-  .csx[data-static] .sg__sheet path, .csx[data-static] .cn__paint, .csx[data-static] .rl__wrap { clip-path: none; }
+  .csx[data-static] .sg__photo, .csx[data-static] .cn__paint, .csx[data-static] .rl__wrap { clip-path: none; }
   .csx[data-static] .sg__border, .csx[data-static] .sg__dim { stroke-dashoffset: 0; opacity: 1; }
   .csx[data-static] .sg__tick, .csx[data-static] .sg__dimt { opacity: 1; }
   .csx[data-static] .sg__l { fill: #141414; stroke-dashoffset: 0; }
