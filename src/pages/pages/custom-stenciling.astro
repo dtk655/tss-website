@@ -10,9 +10,9 @@ const perks = [
   ['Ships nationwide', 'Or pick up at our yard', 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01']
 ];
 const more = [
-  { t: 'Stenciled Cones', d: 'Your department, company or initials stenciled on every cone, so your gear comes home.', img: '/custom/stenciled-cones.webp', alt: 'Orange traffic cones stenciled with department initials', pos: '50% 50%' },
+  { go: 'cone', t: 'Stenciled Cones', d: 'Your department, company or initials stenciled on every cone, so your gear comes home.', img: '/custom/stenciled-cones.webp', alt: 'Orange traffic cones stenciled with department initials', pos: '50% 50%' },
   { t: 'Branded Water-Filled Barriers', d: 'Reflective wraps with your name, logo and message on WATERCADE and other barriers.', img: '/custom/police-barrier.webp', alt: 'White water-filled barrier with a blue and white police wrap', pos: '50% 50%' },
-  { t: 'A-Frame Rails', d: 'Custom printed rails for A-frame barricades, from POLICE LINE to your company name.', img: '/custom/police-rail.webp', alt: 'White A-frame barricade with custom police rails', pos: '50% 55%' }
+  { go: 'aframe', t: 'A-Frame Rails', d: 'Custom printed rails for A-frame barricades, from POLICE LINE to your company name.', img: '/custom/police-rail.webp', alt: 'White A-frame barricade with custom police rails', pos: '50% 55%' }
 ];
 const steps = [
   ['Design it or describe it', 'Build a sign below, or send us your artwork and specs.'],
@@ -144,9 +144,11 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
     </div>
   </section>
 
+  <div class="csx__rw">
   <div class="csx__ribbon" aria-hidden="true"><div class="csx__track">
     {Array.from({ length: 2 }).map(() => <span>48" × 48" Road Work Signs <i>◆</i> Stenciled Cones <i>◆</i> Barrier Wraps <i>◆</i> A-Frame Rails <i>◆</i> Fluorescent Orange <i>◆</i> Diamond Grade <i>◆</i> Any Legend <i>◆</i> Any Size <i>◆</i> </span>)}
   </div></div>
+  </div>
 
   <section class="eqp" data-in>
     <div class="wrap">
@@ -166,21 +168,32 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
     <div class="wrap">
       <div class="eq-head">
         <div>
-          <p class="eq-k"><span></span>Sign builder</p>
-          <h2>Design your sign. <em>See it live.</em></h2>
+          <p class="eq-k"><span></span>Custom builder</p>
+          <h2>Design your equipment. <em>See it live.</em></h2>
         </div>
-        <p class="sb__note">Pick a shape, size, colors and legend. We’ll confirm every detail before anything is made.</p>
+        <p class="sb__note">Pick what you want to customize, build it, and our team will price it. We confirm every detail before anything is made.</p>
+      </div>
+
+      <div class="sbp" role="tablist" aria-label="What do you want to customize?">
+        <p class="sbp__q">Which product do you want to customize?</p>
+        <div class="sbp__row">
+          <button type="button" role="tab" class="sbp__opt is-on" aria-selected="true" data-kind-pick="sign"><span class="sbp__img"><img src="/custom/tpl/sign-diamond-orange.webp" alt="" loading="lazy" /></span><span class="sbp__t"><b>Signs</b><small>Any size, color, legend</small></span></button>
+          <button type="button" role="tab" class="sbp__opt" aria-selected="false" data-kind-pick="cone"><span class="sbp__img"><img src="/custom/tpl/cone-reflective.webp" alt="" loading="lazy" /></span><span class="sbp__t"><b>Cones</b><small>Stenciled name or logo</small></span></button>
+          <button type="button" role="tab" class="sbp__opt" aria-selected="false" data-kind-pick="drum"><span class="sbp__img"><img src="/cats/alt-traffic-drums.png" alt="" loading="lazy" /></span><span class="sbp__t"><b>Drums</b><small>Stenciled name or logo</small></span></button>
+          <button type="button" role="tab" class="sbp__opt" aria-selected="false" data-kind-pick="aframe"><span class="sbp__img"><img src="/custom/police-rail.webp" alt="" loading="lazy" class="is-photo" /></span><span class="sbp__t"><b>A-Frame Rails</b><small>Printed rails and striping</small></span></button>
+          <a class="sbp__opt sbp__opt--link" href="/watercade/#customize"><span class="sbp__img"><img src="/custom/tpl/watercade-3.webp" alt="" loading="lazy" /></span><span class="sbp__t"><b>WATERCADE</b><small>Opens the 3D builder</small></span><svg class="sbp__ext" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
       </div>
 
       <div class="sb__grid" data-sb data-webhook={FORM_WEBHOOK} data-email={EMAIL} data-phone={PHONE}>
         <!-- preview -->
         <div class="sb__stage">
           <div class="sb__canvas">
-            <svg class="sb__svg" data-svg viewBox="0 0 400 300" role="img" aria-label="Preview of your custom sign"></svg>
+            <svg class="sb__svg" data-svg viewBox="0 0 400 300" role="img" aria-label="Live preview of your design"></svg>
           </div>
           <div class="sb__meta">
-            <span class="sb__dims" data-dims>24" × 30"</span>
-            <span class="sb__spec" data-spec>Rectangle · Blue / White · High intensity</span>
+            <span class="sb__dims" data-dims>48" × 48"</span>
+            <span class="sb__spec" data-spec>Diamond · Fluorescent Orange / Black · Diamond grade</span>
           </div>
           <button type="button" class="sb__dl" data-download>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -190,45 +203,47 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
 
         <!-- controls -->
         <form class="sb__panel" data-form novalidate>
+          <div data-kind="sign">
           <fieldset class="sb__grp">
             <legend><span>1</span>Shape and size</legend>
             <div class="sb__shapes">
               {SHAPES.map(([v, l, ic], i) => (
-                <label class="sb__shape"><input type="radio" name="shape" value={v} checked={i === 0} /><span><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ic} />{l}</span></label>
+                <label class="sb__shape"><input type="radio" name="shape" value={v} checked={v === 'diamond'} /><span><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ic} />{l}</span></label>
               ))}
             </div>
             <div class="sb__sizes" data-sizes>
               {SIZES.map(([w, h]) => <button type="button" class="sb__chip" data-size={`${w}x${h}`}>{w}" × {h}"</button>)}
             </div>
             <div class="sb__wh">
-              <label><span>Width (in.)</span><input class="sb__in" type="number" name="w" min="6" max="144" value="24" inputmode="numeric" /></label>
+              <label><span>Width (in.)</span><input class="sb__in" type="number" name="w" min="6" max="144" value="48" inputmode="numeric" /></label>
               <span class="sb__x" aria-hidden="true">×</span>
-              <label><span>Height (in.)</span><input class="sb__in" type="number" name="h" min="6" max="144" value="30" inputmode="numeric" /></label>
+              <label><span>Height (in.)</span><input class="sb__in" type="number" name="h" min="6" max="144" value="48" inputmode="numeric" /></label>
             </div>
           </fieldset>
 
           <fieldset class="sb__grp">
             <legend><span>2</span>Colors</legend>
-            <p class="sb__lab">Background <b data-bgname>Blue</b></p>
+            <p class="sb__lab">Background <b data-bgname>Fluorescent Orange</b></p>
             <div class="sb__sw" data-sw="bg">
               {COLORS.map(([n, c]) => <button type="button" class="sb__dot" style={`--c:${c}`} data-c={c} data-n={n} aria-label={n} title={n}></button>)}
-              <label class="sb__pick" title="Custom color"><input type="color" value="#0047bb" data-custom="bg" aria-label="Custom background color" /><span>Custom</span></label>
+              <label class="sb__pick" title="Custom color"><input type="color" value="#ff6a13" data-custom="bg" aria-label="Custom background color" /><span>Custom</span></label>
             </div>
-            <p class="sb__lab">Legend and border <b data-fgname>White</b></p>
+            <p class="sb__lab">Legend and border <b data-fgname>Black</b></p>
             <div class="sb__sw" data-sw="fg">
               {COLORS.map(([n, c]) => <button type="button" class="sb__dot" style={`--c:${c}`} data-c={c} data-n={n} aria-label={n} title={n}></button>)}
-              <label class="sb__pick" title="Custom color"><input type="color" value="#ffffff" data-custom="fg" aria-label="Custom legend color" /><span>Custom</span></label>
+              <label class="sb__pick" title="Custom color"><input type="color" value="#141414" data-custom="fg" aria-label="Custom legend color" /><span>Custom</span></label>
             </div>
             <label class="sb__tog"><input type="checkbox" name="border" checked /><span></span>Border</label>
           </fieldset>
 
           <fieldset class="sb__grp">
             <legend><span>3</span>Legend</legend>
-            <label class="sb__f"><span>Text <em>One line per row, up to 5 rows</em></span><textarea class="sb__in" name="legend" rows="3" maxlength="140">SERVICE
-AREA</textarea></label>
+            <label class="sb__f"><span>Text <em>One line per row, up to 5 rows</em></span><textarea class="sb__in" name="legend" rows="3" maxlength="140">ROAD
+WORK
+500 FT</textarea></label>
             <p class="sb__lab">Arrow</p>
             <div class="sb__arrows">
-              {ARROWS.map(([v, l], i) => <label class="sb__chip sb__chip--r"><input type="radio" name="arrow" value={v} checked={v === 'up-right'} /><span>{l}</span></label>)}
+              {ARROWS.map(([v, l], i) => <label class="sb__chip sb__chip--r"><input type="radio" name="arrow" value={v} checked={v === 'none'} /><span>{l}</span></label>)}
             </div>
             <label class="sb__tog"><input type="checkbox" name="artwork" /><span></span>I have a logo or artwork to add</label>
           </fieldset>
@@ -238,7 +253,7 @@ AREA</textarea></label>
             <div class="sb__row2">
               <label class="sb__f"><span>Sheeting</span>
                 <select class="sb__in" name="sheeting">
-                  <option>Engineer grade</option><option selected>High intensity prismatic</option><option>Diamond grade</option><option>Not sure, recommend one</option>
+                  <option>Engineer grade</option><option>High intensity prismatic</option><option selected>Diamond grade</option><option>Not sure, recommend one</option>
                 </select>
               </label>
               <label class="sb__f"><span>Material</span>
@@ -253,8 +268,78 @@ AREA</textarea></label>
             </div>
           </fieldset>
 
+          </div>
+
+          <div data-kind="cone" hidden>
+            <fieldset class="sb__grp">
+              <legend><span>1</span>Cone</legend>
+              <p class="sb__lab">Size</p>
+              <div class="sb__arrows">
+                {['18"', '28"', '36"'].map((v) => <label class="sb__chip sb__chip--r sb__chip--txt"><input type="radio" name="c_size" value={v} checked={v === '28"'} /><span>{v}</span></label>)}
+              </div>
+              <p class="sb__lab">Style</p>
+              <div class="sb__arrows">
+                <label class="sb__chip sb__chip--r sb__chip--txt"><input type="radio" name="c_style" value="Reflective" checked /><span>Reflective collars</span></label>
+                <label class="sb__chip sb__chip--r sb__chip--txt"><input type="radio" name="c_style" value="Plain" /><span>Plain</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="sb__grp">
+              <legend><span>2</span>Stencil</legend>
+              <label class="sb__f"><span>Stencil text <em>Line 1</em></span><input class="sb__in sb__in--sten" name="c_t1" maxlength="14" value="YOUR CO." autocomplete="off" /></label>
+            <label class="sb__f"><span>Second line <em>Optional</em></span><input class="sb__in sb__in--sten" name="c_t2" maxlength="14" autocomplete="off" /></label>
+            <p class="sb__lab">Stencil color</p>
+            <div class="sb__arrows">
+              <label class="sb__chip sb__chip--r sb__chip--txt"><input type="radio" name="c_color" value="Black" checked /><span><i style="--c:#141414"></i>Black</span></label>
+              <label class="sb__chip sb__chip--r sb__chip--txt"><input type="radio" name="c_color" value="White" /><span><i style="--c:#ffffff"></i>White</span></label>
+            </div>
+            <label class="sb__tog"><input type="checkbox" name="c_logo" /><span></span>I want my logo stenciled too</label>
+            </fieldset>
+            <fieldset class="sb__grp">
+              <legend><span>3</span>Quantity</legend>
+              <div class="sb__qty"><span>Quantity</span><div class="sb__step"><button type="button" data-q="-1" aria-label="Fewer">−</button><input class="sb__in" type="number" name="c_qty" min="1" value="1" inputmode="numeric" aria-label="Quantity" /><button type="button" data-q="1" aria-label="More">+</button></div></div>
+            </fieldset>
+          </div>
+
+          <div data-kind="drum" hidden>
+            <fieldset class="sb__grp">
+              <legend><span>1</span>Stencil</legend>
+              <label class="sb__f"><span>Stencil text <em>Line 1</em></span><input class="sb__in sb__in--sten" name="d_t1" maxlength="14" value="YOUR CO." autocomplete="off" /></label>
+            <label class="sb__f"><span>Second line <em>Optional</em></span><input class="sb__in sb__in--sten" name="d_t2" maxlength="14" autocomplete="off" /></label>
+            <p class="sb__lab">Stencil color</p>
+            <div class="sb__arrows">
+              <label class="sb__chip sb__chip--r sb__chip--txt"><input type="radio" name="d_color" value="Black" checked /><span><i style="--c:#141414"></i>Black</span></label>
+              <label class="sb__chip sb__chip--r sb__chip--txt"><input type="radio" name="d_color" value="White" /><span><i style="--c:#ffffff"></i>White</span></label>
+            </div>
+            <label class="sb__tog"><input type="checkbox" name="d_logo" /><span></span>I want my logo stenciled too</label>
+            </fieldset>
+            <fieldset class="sb__grp">
+              <legend><span>2</span>Quantity</legend>
+              <div class="sb__qty"><span>Quantity</span><div class="sb__step"><button type="button" data-q="-1" aria-label="Fewer">−</button><input class="sb__in" type="number" name="d_qty" min="1" value="1" inputmode="numeric" aria-label="Quantity" /><button type="button" data-q="1" aria-label="More">+</button></div></div>
+            </fieldset>
+          </div>
+
+          <div data-kind="aframe" hidden>
+            <fieldset class="sb__grp">
+              <legend><span>1</span>Rail colors</legend>
+              <div class="sb__sw" data-rail>
+                {[['Blue', '#1f45c8'], ['Orange', '#ff6a13'], ['Red', '#c8102e'], ['Black', '#141414'], ['Green', '#006747']].map(([n, c], i) => <button type="button" class:list={['sb__dot', i === 0 && 'is-on']} style={`--c:${c}`} data-c={c} data-n={n} aria-label={n} title={n}></button>)}
+              </div>
+              <label class="sb__tog"><input type="checkbox" name="a_stripes" checked /><span></span>Diagonal striping on the ends</label>
+            </fieldset>
+            <fieldset class="sb__grp">
+              <legend><span>2</span>Rail text</legend>
+              <label class="sb__f"><span>Top rail</span><input class="sb__in sb__in--sten" name="a_t1" maxlength="26" value="YOUR NAME HERE" autocomplete="off" /></label>
+              <label class="sb__f"><span>Bottom rail <em>Optional</em></span><input class="sb__in sb__in--sten" name="a_t2" maxlength="26" value="DO NOT CROSS" autocomplete="off" /></label>
+              <label class="sb__tog"><input type="checkbox" name="a_logo" /><span></span>I have a logo to add</label>
+            </fieldset>
+            <fieldset class="sb__grp">
+              <legend><span>3</span>Quantity</legend>
+              <div class="sb__qty"><span>Quantity</span><div class="sb__step"><button type="button" data-q="-1" aria-label="Fewer">−</button><input class="sb__in" type="number" name="a_qty" min="1" value="1" inputmode="numeric" aria-label="Quantity" /><button type="button" data-q="1" aria-label="More">+</button></div></div>
+            </fieldset>
+          </div>
+
           <fieldset class="sb__grp">
-            <legend><span>5</span>Where should we send the quote?</legend>
+            <legend><span data-contact-n>5</span>Where should we send the quote?</legend>
             <div class="sb__row2">
               <label class="sb__f"><span>Your name</span><input class="sb__in" name="name" required autocomplete="name" /></label>
               <label class="sb__f"><span>Company <em>Optional</em></span><input class="sb__in" name="company" autocomplete="organization" /></label>
@@ -266,8 +351,8 @@ AREA</textarea></label>
             <label class="sb__f"><span>Notes <em>Optional</em></span><textarea class="sb__in" name="notes" rows="2" placeholder="Deadline, mounting, reflective needs, anything else"></textarea></label>
           </fieldset>
 
-          <button type="submit" class="sb__send" data-submit>Get a quote for this sign<Fragment set:html={ARROW} /></button>
-          <p class="sb__msg sb__msg--ok" data-ok hidden>Got it. Our team will reply with pricing within 1 business day. If you checked artwork, email it to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+          <button type="submit" class="sb__send" data-submit><span data-send-label>Get a quote for this sign</span><Fragment set:html={ARROW} /></button>
+          <p class="sb__msg sb__msg--ok" data-ok hidden>Got it. Our team will reply with pricing within 1 business day. If you have a logo or artwork, email it to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
           <p class="sb__msg sb__msg--err" data-err hidden>That didn’t go through. Your email app should have opened with the details instead, or call us at {PHONE}.</p>
         </form>
       </div>
@@ -292,7 +377,7 @@ AREA</textarea></label>
               <div class="cm__body">
                 <h3>{m.t}</h3>
                 <p>{m.d}</p>
-                <a href="/pages/request-a-quote?type=products" class="cm__go">Get a quote<Fragment set:html={ARROW} /></a>
+                {m.go ? <a href="#builder" class="cm__go" data-kind-go={m.go}>Customize it<Fragment set:html={ARROW} /></a> : <a href="/watercade/#customize" class="cm__go">Open the WATERCADE builder<Fragment set:html={ARROW} /></a>}
               </div>
             </article>
           </li>
@@ -381,7 +466,20 @@ AREA</textarea></label>
     const NS = 'http://www.w3.org/2000/svg';
     const SHAPE_NAMES = { rect: 'Rectangle', diamond: 'Diamond', octagon: 'Octagon', circle: 'Circle' };
     const SQUARE = new Set(['diamond', 'octagon', 'circle']);
-    const st = { bg: '#0047bb', bgName: 'Blue', fg: '#ffffff', fgName: 'White' };
+    const st = { bg: '#ff6a13', bgName: 'Fluorescent Orange', fg: '#141414', fgName: 'Black', rail: '#1f45c8', railName: 'Blue' };
+    let kind = 'sign';
+    const KIND = {
+      sign: { n: 5, label: 'Get a quote for this sign', name: 'Custom sign' },
+      cone: { n: 4, label: 'Get a quote for these cones', name: 'Stenciled cones' },
+      drum: { n: 3, label: 'Get a quote for these drums', name: 'Stenciled drums' },
+      aframe: { n: 4, label: 'Get a quote for these rails', name: 'Custom A-frame rails' }
+    };
+    // real product photos used as templates: where the stencil goes on each
+    const TPL = {
+      'cone-Reflective': { src: '/custom/tpl/cone-reflective.webp', w: 551, h: 1162, cx: 272, cy: 800, maxW: 236, maxH: 120 },
+      'cone-Plain': { src: '/custom/tpl/cone-plain.webp', w: 805, h: 1400, cx: 402, cy: 900, maxW: 300, maxH: 190 },
+      drum: { src: '/cats/alt-traffic-drums.png', w: 293, h: 560, cx: 146, cy: 462, maxW: 178, maxH: 74 }
+    };
     const $ = (n) => form.elements[n];
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
     const lum = (hex) => {
@@ -417,7 +515,7 @@ AREA</textarea></label>
       return null;
     };
 
-    const draw = () => {
+    const drawSign = () => {
       const s = read();
       const U = 10;
       const sw = s.w * U, sh = s.h * U;
@@ -432,18 +530,23 @@ AREA</textarea></label>
       el('defs', {}, svg).innerHTML = `<filter id="sbSh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="${minD * .02}" stdDeviation="${minD * .025}" flood-color="#000" flood-opacity=".28"/></filter>`;
       const g = el('g', { filter: 'url(#sbSh)' }, svg);
       const edge = { stroke: 'rgba(0,0,0,.18)', 'stroke-width': minD * .006 };
+      // the classic work zone sign uses the real sign blank photo
+      const photo = s.shape === 'diamond' && st.bg === '#ff6a13' && st.fg === '#141414' && s.border;
       // sign face
       if (s.shape === 'rect') {
         const r = minD * .06;
         el('rect', { x: cx - sw / 2, y: cy - sh / 2, width: sw, height: sh, rx: r, fill: st.bg, ...edge }, g);
       } else if (s.shape === 'circle') {
         el('circle', { cx, cy, r: sw / 2, fill: st.bg, ...edge }, g);
+      } else if (photo) {
+        const iw = diag * (901 / 849), ih = iw * (907 / 901);
+        el('image', { href: '/custom/tpl/sign-diamond-orange.webp', x: cx - iw / 2, y: cy - ih / 2, width: iw, height: ih }, g);
       } else {
         const span = s.shape === 'diamond' ? diag : sw;
         el('path', { d: outline(s.shape, cx, cy, span, span, 1), fill: st.bg, 'stroke-linejoin': 'round', ...edge }, g);
       }
       // border
-      if (s.border) {
+      if (s.border && !photo) {
         const bwid = minD * .022, inset = minD * .035;
         const common = { fill: 'none', stroke: st.fg, 'stroke-width': bwid, 'stroke-linejoin': 'round' };
         if (s.shape === 'rect') {
@@ -508,6 +611,96 @@ AREA</textarea></label>
       });
     };
 
+
+    // ---------- cones, drums and A-frame rails ----------
+    const fitText = (g, lines, cx, cy, maxW, maxH, attrs) => {
+      const n = lines.length; if (!n) return;
+      const lh = 1.06;
+      let fs = Math.min(maxH / (n * lh), maxW * .5);
+      const nodes = lines.map((t) => { const e = el('text', { x: cx, 'font-size': fs, ...attrs }, g); e.textContent = t; return e; });
+      const widest = Math.max(...nodes.map((t) => t.getComputedTextLength() || 1));
+      if (widest > maxW) fs *= maxW / widest;
+      const y0 = cy - (n * fs * lh) / 2;
+      nodes.forEach((t, i) => {
+        t.setAttribute('font-size', fs); t.setAttribute('y', y0 + fs * (i * lh + .86));
+        const len = t.getComputedTextLength(); if (len) { t.setAttribute('textLength', len); t.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
+      });
+    };
+    const FONT = { 'font-family': "'Archivo Variable', 'Arial Narrow', Arial, sans-serif", 'font-weight': 800, style: "font-variation-settings: 'wght' 820", 'text-anchor': 'middle' };
+    const readProd = () => {
+      const pre = { cone: 'c', drum: 'd', aframe: 'a' }[kind];
+      const v = (n) => $(pre + '_' + n);
+      return {
+        lines: [v('t1').value, v('t2').value].map((t) => t.trim().toUpperCase()).filter(Boolean),
+        color: kind === 'aframe' ? st.railName : form.querySelector(`[name=${pre}_color]:checked`).value,
+        logo: v('logo').checked,
+        qty: Math.max(1, Math.round(+v('qty').value || 1)),
+        size: kind === 'cone' ? form.querySelector('[name=c_size]:checked').value : '',
+        style: kind === 'cone' ? form.querySelector('[name=c_style]:checked').value : '',
+        stripes: kind === 'aframe' ? $('a_stripes').checked : false,
+        t1: v('t1').value.trim().toUpperCase(), t2: v('t2').value.trim().toUpperCase()
+      };
+    };
+    const drawProduct = () => {
+      const d = readProd();
+      svg.innerHTML = '';
+      const dims = root.querySelector('[data-dims]'), spec = root.querySelector('[data-spec]');
+      if (kind === 'aframe') {
+        const VW = 800, VH = 560;
+        svg.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
+        el('ellipse', { cx: 400, cy: 530, rx: 330, ry: 14, fill: 'rgba(0,0,0,.14)' }, svg);
+        el('path', { d: 'M150 60 L96 525 h34 L182 96z M650 60 L704 525 h-34 L618 96z', fill: '#f4f5f6', stroke: '#c9ced3', 'stroke-width': 3, 'stroke-linejoin': 'round' }, svg);
+        const defs = el('defs', {}, svg);
+        [[0, 100, d.t1], [1, 320, d.t2]].forEach(([i, y, text]) => {
+          const cp = el('clipPath', { id: 'rail' + i }, defs); el('rect', { x: 50, y, width: 700, height: 118, rx: 8 }, cp);
+          el('rect', { x: 50, y, width: 700, height: 118, rx: 8, fill: '#ffffff', stroke: '#c9ced3', 'stroke-width': 3 }, svg);
+          const g = el('g', { 'clip-path': `url(#rail${i})` }, svg);
+          if (d.stripes) for (const side of [0, 1]) for (let k = 0; k < 2; k++) {
+            const x = side ? 800 - 78 - k * 78 : 78 + k * 78;
+            el('path', { d: `M${x - 52} ${y + 118} L${x + 6} ${y} h34 L${x - 18} ${y + 118}z`, fill: st.rail, transform: side ? `translate(${2 * x - 12} 0) scale(-1 1)` : '' }, g);
+          }
+          if (text) fitText(svg, [text], 400, y + 59, d.stripes ? 400 : 620, 66, { ...FONT, fill: st.rail });
+        });
+        dims.textContent = 'A-frame rails';
+        spec.textContent = `${st.railName} on white${d.stripes ? ' · Striped ends' : ''}${d.logo ? ' · Logo' : ''}`;
+        return;
+      }
+      const t = TPL[kind === 'cone' ? 'cone-' + d.style : 'drum'];
+      const pad = t.h * .04;
+      svg.setAttribute('viewBox', `${-pad} ${-pad} ${t.w + pad * 2} ${t.h + pad * 2}`);
+      el('ellipse', { cx: t.w / 2, cy: t.h - pad * .2, rx: t.w * .46, ry: t.h * .018, fill: 'rgba(0,0,0,.16)' }, svg);
+      el('image', { href: t.src, x: 0, y: 0, width: t.w, height: t.h }, svg);
+      const white = d.color === 'White';
+      const g = el('g', { style: white ? '' : 'mix-blend-mode: multiply', opacity: white ? .94 : .92 }, svg);
+      if (d.lines.length) fitText(g, d.lines, t.cx, t.cy, t.maxW, t.maxH, { ...FONT, fill: white ? '#ffffff' : '#141414' });
+      dims.textContent = kind === 'cone' ? `${d.size} cone` : 'Traffic drum';
+      spec.textContent = `${kind === 'cone' ? d.style + ' · ' : ''}${d.color} stencil${d.logo ? ' · Logo' : ''}`;
+    };
+    const draw = () => (kind === 'sign' ? drawSign() : drawProduct());
+
+    // product picker
+    const picks = [...document.querySelectorAll('[data-kind-pick]')];
+    const setKind = (k, scroll) => {
+      if (!KIND[k]) return;
+      kind = k;
+      picks.forEach((b) => { const on = b.dataset.kindPick === k; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); });
+      form.querySelectorAll('[data-kind]').forEach((d) => { d.hidden = d.dataset.kind !== k; });
+      form.querySelector('[data-contact-n]').textContent = KIND[k].n;
+      form.querySelector('[data-send-label]').textContent = KIND[k].label;
+      form.querySelector('[data-ok]').hidden = true;
+      const stage = root.querySelector('.sb__canvas'); stage.classList.remove('is-swap'); void stage.offsetWidth; stage.classList.add('is-swap');
+      draw();
+      if (scroll) document.getElementById('builder').scrollIntoView({ behavior: 'smooth' });
+    };
+    picks.forEach((b) => b.addEventListener('click', () => setKind(b.dataset.kindPick)));
+    document.querySelectorAll('[data-kind-go]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setKind(a.dataset.kindGo, true); }));
+    root.querySelector('[data-rail]').addEventListener('click', (e) => {
+      const b = e.target.closest('.sb__dot'); if (!b) return;
+      st.rail = b.dataset.c; st.railName = b.dataset.n;
+      root.querySelectorAll('[data-rail] .sb__dot').forEach((x) => x.classList.toggle('is-on', x === b));
+      draw();
+    });
+
     // swatches
     root.querySelectorAll('[data-sw]').forEach((wrap) => {
       const key = wrap.dataset.sw;
@@ -526,7 +719,7 @@ AREA</textarea></label>
       const [w, h] = b.dataset.size.split('x'); $('w').value = w; $('h').value = h; draw();
     }));
     root.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => {
-      $('qty').value = Math.max(1, (+$('qty').value || 1) + +b.dataset.q); draw();
+      const inp = b.parentElement.querySelector('input'); inp.value = Math.max(1, (+inp.value || 1) + +b.dataset.q); draw();
     }));
     form.addEventListener('input', draw);
     form.addEventListener('change', draw);
@@ -539,10 +732,17 @@ AREA</textarea></label>
     if (hdr) { setTop(); if ('ResizeObserver' in window) new ResizeObserver(setTop).observe(hdr); }
 
     // download preview as PNG
-    root.querySelector('[data-download]').addEventListener('click', () => {
+    root.querySelector('[data-download]').addEventListener('click', async () => {
       const vb = svg.viewBox.baseVal;
       const scale = 1400 / Math.max(vb.width, vb.height);
       const clone = svg.cloneNode(true);
+      // photos must be embedded for the saved image to include them
+      for (const im of clone.querySelectorAll('image')) {
+        try {
+          const blob = await (await fetch(im.getAttribute('href'))).blob();
+          im.setAttribute('href', await new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); }));
+        } catch {}
+      }
       clone.setAttribute('xmlns', NS);
       clone.setAttribute('width', Math.round(vb.width * scale));
       clone.setAttribute('height', Math.round(vb.height * scale));
@@ -556,7 +756,7 @@ AREA</textarea></label>
         ctx.drawImage(img, 0, 0);
         URL.revokeObjectURL(url);
         const a = document.createElement('a');
-        a.download = 'tss-custom-sign.png'; a.href = c.toDataURL('image/png'); a.click();
+        a.download = `tss-custom-${kind}.png`; a.href = c.toDataURL('image/png'); a.click();
       };
       img.src = url;
     });
@@ -567,32 +767,40 @@ AREA</textarea></label>
       e.preventDefault();
       if (!form.reportValidity()) return;
       const s = read();
+      const pd = kind === 'sign' ? null : readProd();
       const btn = form.querySelector('[data-submit]');
       const ok = form.querySelector('[data-ok]'), err = form.querySelector('[data-err]');
       ok.hidden = err.hidden = true;
-      const answers = {
+      const contact = { name: $('name').value, company: $('company').value, email: $('email').value, phone: $('phone').value, notes: $('notes').value };
+      const answers = kind === 'sign' ? {
         product: 'Custom sign', shape: SHAPE_NAMES[s.shape], size: `${s.w}" x ${s.h}"`,
         background: `${st.bgName} (${st.bg})`, legendColor: `${st.fgName} (${st.fg})`, border: s.border ? 'Yes' : 'No',
         legend: s.legend.join(' / '), arrow: s.arrow, hasArtwork: $('artwork').checked ? 'Yes' : 'No',
-        sheeting: s.sheeting, material: s.substrate, quantity: s.qty,
-        name: $('name').value, company: $('company').value, email: $('email').value, phone: $('phone').value, notes: $('notes').value
+        sheeting: s.sheeting, material: s.substrate, quantity: s.qty, ...contact
+      } : kind === 'aframe' ? {
+        product: KIND.aframe.name, railColor: `${st.railName} (${st.rail})`, stripedEnds: pd.stripes ? 'Yes' : 'No',
+        topRail: pd.t1, bottomRail: pd.t2, hasLogo: pd.logo ? 'Yes' : 'No', quantity: pd.qty, ...contact
+      } : {
+        product: KIND[kind].name, ...(kind === 'cone' ? { size: pd.size, style: pd.style } : {}),
+        stencilText: pd.lines.join(' / '), stencilColor: pd.color, hasLogo: pd.logo ? 'Yes' : 'No', quantity: pd.qty, ...contact
       };
-      btn.disabled = true; btn.textContent = 'Sending';
+      const lab = btn.querySelector('[data-send-label]');
+      btn.disabled = true; lab.textContent = 'Sending';
       try {
         const hook = root.dataset.webhook;
         if (!hook) throw new Error('no webhook');
         const r = await fetch(hook, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'custom-sign', page: location.pathname, submittedAt: new Date().toISOString(), answers, previewSvg: svg.outerHTML.slice(0, 60000) })
+          body: JSON.stringify({ type: 'custom-' + kind, page: location.pathname, submittedAt: new Date().toISOString(), answers, previewSvg: svg.outerHTML.slice(0, 60000) })
         });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         ok.hidden = false;
       } catch {
         const body = Object.entries(answers).map(([k, v]) => `${k}: ${v}`).join('\n');
-        location.href = `mailto:${root.dataset.email}?subject=${encodeURIComponent('Custom sign quote: ' + answers.size)}&body=${encodeURIComponent(body)}`;
+        location.href = `mailto:${root.dataset.email}?subject=${encodeURIComponent(answers.product + ' quote')}&body=${encodeURIComponent(body)}`;
         err.hidden = false;
       } finally {
-        btn.disabled = false; btn.innerHTML = 'Get a quote for this sign' + ARR;
+        btn.disabled = false; lab.textContent = KIND[kind].label;
       }
     });
   })();
@@ -1031,12 +1239,13 @@ AREA</textarea></label>
   @keyframes csxChip { to { opacity: 1; transform: none; } }
 
   /* ribbon */
-  .csx__ribbon { overflow: hidden; background: #ff6a13; color: #141414; border-block: 3px solid #141414; transform: rotate(-1.2deg); margin: -14px -10px 0; position: relative; z-index: 2; box-shadow: 0 16px 30px -18px rgba(0, 0, 0, .5); }
+  .csx__ribbon { overflow: hidden; background: #ff6a13; color: #141414; border-block: 3px solid #141414; transform: rotate(-1.2deg); margin: 0 -10px; position: relative; box-shadow: 0 16px 30px -18px rgba(0, 0, 0, .5); }
   .csx__track { display: flex; width: max-content; animation: csxMarq 38s linear infinite; }
   .csx__track span { display: inline-flex; align-items: center; gap: 22px; padding: 13px 11px; white-space: nowrap; font-size: clamp(.95rem, 1.3vw, 1.15rem); letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 800; }
   .csx__track i { font-style: normal; font-size: .7em; }
   @keyframes csxMarq { to { transform: translateX(-50%); } }
-  .csx__ribbon + .eqp { padding-top: clamp(30px, 3vw, 44px); }
+  .csx__rw { overflow: hidden; overflow: clip; margin-top: -22px; padding: 8px 0 22px; position: relative; z-index: 2; pointer-events: none; }
+  .csx__rw + .eqp { padding-top: clamp(14px, 2vw, 28px); }
 
   @media (max-width: 960px) {
     .csx__in { grid-template-columns: 1fr; }
@@ -1050,5 +1259,43 @@ AREA</textarea></label>
   }
   @media (prefers-reduced-motion: reduce) { .csx__track { animation: none; } }
 
+
+  /* ---------- product picker ---------- */
+  .sbp { margin-bottom: clamp(18px, 2.4vw, 30px); }
+  .sbp__q { margin: 0 0 12px; font-size: 1.05rem; font-variation-settings: 'wght' 700; }
+  .sbp__row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .sbp__opt { position: relative; display: grid; grid-template-columns: 58px minmax(0, 1fr); align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-radius: 18px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: border-color .2s, box-shadow .3s, transform .3s cubic-bezier(.2, .8, .2, 1); }
+  .sbp__opt:hover { border-color: var(--line-dark); transform: translateY(-2px); }
+  .sbp__opt.is-on { border-color: var(--red); box-shadow: 0 0 0 3px rgba(182, 6, 6, .12), 0 18px 34px -24px rgba(182, 6, 6, .6); }
+  .sbp__img { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 13px; background: var(--haze); overflow: hidden; }
+  .sbp__img img { max-width: 46px; max-height: 48px; object-fit: contain; transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
+  .sbp__img img.is-photo { max-width: none; max-height: none; width: 100%; height: 100%; object-fit: cover; }
+  .sbp__opt:hover .sbp__img img { transform: scale(1.08); }
+  .sbp__opt.is-on .sbp__img { background: var(--red-tint); }
+  .sbp__t { display: grid; gap: 1px; min-width: 0; }
+  .sbp__t b { font-size: 1rem; letter-spacing: -.01em; font-variation-settings: 'wght' 740; }
+  .sbp__t small { color: var(--steel); font-size: .8rem; line-height: 1.25; }
+  .sbp__ext { position: absolute; top: 10px; right: 10px; width: 14px; height: 14px; color: var(--steel); }
+  .sb__canvas.is-swap .sb__svg { animation: sbSwap .5s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes sbSwap { from { opacity: 0; transform: scale(.94) translateY(8px); } to { opacity: 1; transform: none; } }
+  .sb__panel > [data-kind] { display: grid; gap: 14px; }
+  .sb__panel > [data-kind][hidden] { display: none; }
+  .sb__in--sten { text-transform: uppercase; font-variation-settings: 'wght' 720; letter-spacing: .04em; }
+  .sb__chip--txt span { font-size: .92rem; gap: 8px; }
+  .sb__chip--txt i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .25); }
+  @media (max-width: 1100px) {
+    .sbp__row { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 6px; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
+    .sbp__row::-webkit-scrollbar { display: none; }
+    .sbp__opt { flex: 0 0 auto; min-width: 190px; scroll-snap-align: start; }
+  }
+  @media (max-width: 560px) {
+    .sbp__row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; gap: 8px; }
+    .sbp__opt { grid-column: span 2; grid-template-columns: 1fr; justify-items: center; text-align: center; min-width: 0; padding: 10px 6px; gap: 6px; }
+    .sbp__opt:nth-child(4) { grid-column: 2 / span 2; }
+    .sbp__t b { font-size: .88rem; }
+    .sbp__t small { display: none; }
+    .sbp__img { width: 52px; height: 52px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sb__canvas.is-swap .sb__svg { animation: none; } }
 </style>
 
