@@ -87,6 +87,15 @@ const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/i
       addEventListener('resize', run);
     })();
   </script>
+  <script is:inline>
+    (() => {
+      // Expose the header's resting height so first-screen sections can size themselves to the space under it.
+      const h = document.querySelector('header');
+      if (!h) return;
+      const set = () => { if (scrollY < 4) document.documentElement.style.setProperty('--hdr-full', Math.round(h.getBoundingClientRect().height) + 'px'); };
+      set(); addEventListener('resize', set); document.fonts?.ready.then(set);
+    })();
+  </script>
 </body>
 </html>
 <style is:global>

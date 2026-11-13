@@ -153,6 +153,31 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     .cx__dots i { width: 36px; }
 
   }
+  /* ---------- fit any desktop screen: scale with the window height so the kicker and cards are never cut off ---------- */
+  @media (min-width: 901px) {
+    .cx { min-height: max(430px, min(calc(100svh - var(--hdr-full, 144px)), 860px)); }
+    .cx__in { padding-top: clamp(18px, 3.2svh, 48px); }
+    .cx__h { font-size: clamp(2.4rem, min(7.4vw, 13svh), 7.6rem); }
+  }
+  @media (min-width: 901px) and (max-height: 860px) {
+    .cx__k { margin-bottom: 12px; }
+    .cx__row { margin-top: clamp(12px, 2.4svh, 26px); }
+    .cx__btn { min-height: 52px; padding-block: 12px; font-size: 1rem; }
+    .cx-cards ul { margin-bottom: 14px; }
+    .cx-card { padding-block: clamp(12px, 2svh, 20px); gap: 4px; }
+    .cx-card__t { font-size: clamp(1.2rem, min(2vw, 3.4svh), 1.95rem); }
+    .cx-card__go { margin-top: 6px; padding-top: 8px; font-size: .9rem; }
+    .cx__foot { padding-block: 10px 14px; }
+    .cx__in { padding-bottom: 16px; }
+  }
+  @media (min-width: 901px) and (max-height: 720px) {
+    .cx__h { font-size: clamp(2.2rem, min(7.4vw, 11.5svh), 7.6rem); }
+    .cx-card__d, .cx-card__n { display: none; }
+    .cx__lede { font-size: 1.05rem; }
+    .cx__btn { min-height: 46px; }
+    .cx__foot { padding-block: 8px 10px; }
+    .cx__in { padding-top: 14px; padding-bottom: 12px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .cx__img.is-on, .cx__h > span > span, .cx__k, .cx__row, .cx-cards li { animation: none; opacity: 1; transform: none; }
     .cx__dots i::after { animation: none !important; }
