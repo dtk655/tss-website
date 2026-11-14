@@ -5,7 +5,7 @@
       <h2 id="drawer-title" class="sr-only">Cart and quote list</h2>
       <div class="tabs" role="tablist">
         <button role="tab" data-tab="cart" aria-selected="true">Cart <span data-cart-count-inline></span></button>
-        <button role="tab" data-tab="quote" aria-selected="false">Quote list <span data-quote-count-inline></span></button>
+        <button role="tab" data-tab="quote" aria-selected="false" hidden style="display:none">Quote list <span data-quote-count-inline></span></button>
       </div>
       <button class="drawer__x" data-close-drawer aria-label="Close">
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
@@ -16,7 +16,7 @@
       <ul class="lines" data-cart-lines></ul>
       <div class="empty" data-cart-empty>
         <p><strong>Your cart is empty.</strong></p>
-        <p>Products you buy online ship nationwide. For rentals, crews or bulk pricing, use the quote list.</p>
+        <p>Products you buy online ship nationwide. For rentals, crews or bulk pricing, use the Quote Builder.</p>
         <a href="/collections" class="btn btn--sm btn--dark">Shop products</a>
       </div>
       <div class="foot" data-cart-foot hidden>

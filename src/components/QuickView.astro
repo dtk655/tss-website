@@ -25,7 +25,7 @@
         </div>
         <button type="button" class="btn qv__add" data-qv-add>Add to cart</button>
       </div>
-      <p class="qv__unavail" data-qv-unavail hidden>This combination is sold out online. Add it to your quote list instead and we'll source it.</p>
+      <p class="qv__unavail" data-qv-unavail hidden>This combination is sold out online. Request a quote and we'll source it.</p>
       <a class="qv__full textlink" data-qv-link href="#">View full details</a>
     </div>
   </div>
@@ -58,7 +58,7 @@
       cp.hidden = !(v.cp && v.cp > v.pr);
       if (!cp.hidden) cp.textContent = fmt(v.cp);
       const add = $('[data-qv-add]');
-      add.textContent = p.r ? 'Add to rental quote' : 'Add to cart';
+      add.textContent = p.r ? 'Get a Quote' : 'Add to cart';
       add.disabled = !p.r && !v.av;
       $('[data-qv-unavail]').hidden = p.r || !!v.av;
       dlg.querySelectorAll('[data-qv-opt]').forEach((fs) => {
@@ -122,8 +122,7 @@
       const qty = Math.max(1, parseInt($('[data-qv-qty]').value, 10) || 1);
       const b = $('[data-qv-add]');
       if (p.r) {
-        window.TSSQuote?.add([{ title: p.t, handle: p.h, image: p.imgs[0] || '', variant: v.ti === 'Default Title' ? '' : v.ti, qty, mode: 'rent' }]);
-        dlg.close();
+        location.href = '/pages/request-a-quote?' + new URLSearchParams({ type: 'rental', add: p.h, v: v.ti === 'Default Title' ? '' : v.ti, q: String(qty), t: p.t }).toString();
         return;
       }
       b.disabled = true; const t = b.textContent; b.textContent = 'Adding';

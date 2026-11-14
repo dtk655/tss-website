@@ -113,7 +113,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
           <h1 class="buy__title"><span class="buy__ln"><span>{p.title}</span></span></h1>
 
           {p.isRental ? (
-            <p class="buy__price buy__price--q px__in" style="--d:2" data-mode-txt>Priced per job. Request a quote for daily, weekly or monthly rates.</p>
+            <p class="buy__price buy__price--q px__in" style="--d:2" data-mode-txt>Priced per job. Get a quote for daily, weekly or monthly rates.</p>
           ) : (
             <p class="buy__price px__in" style="--d:2"><strong data-price>{money(first.price)}</strong> <span class="buy__unit">each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
           )}
@@ -141,13 +141,12 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
               <button type="button" data-q="1" aria-label="Increase quantity">+</button>
             </label>
             {!p.isRental && <button class="buy__add" data-add-cart><span class="buy__addt">Add to cart</span><Fragment set:html={ARROW} /></button>}
-            {p.isRental && <button class="buy__add" data-add-quote="rent" data-mode-btn><span class="buy__addt">Add to rental quote</span><Fragment set:html={ARROW} /></button>}
+            {p.isRental && <button class="buy__add" data-get-quote="rental" data-mode-btn><span class="buy__addt">Get a Quote</span><Fragment set:html={ARROW} /></button>}
           </div>
-          <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Add it to your quote list and we'll source it.</p>
+          <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Get a quote and we'll source it.</p>
 
           <div class="alt-actions px__in" style={`--d:${5 + options.length}`}>
-            {!p.isRental && <button class="alt" data-add-quote="rent">Rent this instead</button>}
-            {!p.isRental && <button class="alt" data-add-quote="buy">Bulk or PO quote</button>}
+            {!p.isRental && <button class="alt alt--quote" data-get-quote="products">Get a Quote<Fragment set:html={ARROW} /></button>}
             <button class="alt alt--ai" data-ask><span class="alt__ai">AI</span>Ask Conner about this</button>
           </div>
 
@@ -188,7 +187,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
                   <label for="cc-notes">Placement, text or stenciling</label>
                   <textarea id="cc-notes" rows="3" placeholder="e.g. Logo on both sides, your company name stenciled on the base, 200 units" data-cc-notes></textarea>
                 </div>
-                <button type="button" class="buy__add buy__add--dark" data-cc-add><span class="buy__addt">Add custom order to quote list</span><Fragment set:html={ARROW} /></button>
+                <button type="button" class="buy__add buy__add--dark" data-cc-add><span class="buy__addt">Get a Quote for this custom order</span><Fragment set:html={ARROW} /></button>
                 {model && <p class="hint">Preview your logo and color on the 3D model below.</p>}
               </div>
             </details>
@@ -299,7 +298,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
         <b>{p.title}</b>
         <span data-bar-price>{p.isRental ? 'Priced per job' : money(first.price)}</span>
       </div>
-      <button type="button" class="btn buybar__btn" data-bar-add>{p.isRental ? 'Add to rental quote' : 'Add to cart'}</button>
+      <button type="button" class="btn buybar__btn" data-bar-add>{p.isRental ? 'Get a Quote' : 'Add to cart'}</button>
     </div>
   </div>
 </Layout>
@@ -351,11 +350,13 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
         if (ok) flash(b, 'Added to cart');
       }
     });
-    root.querySelectorAll('[data-add-quote]').forEach((b) => b.addEventListener('click', () => {
-      const v = selected();
-      window.TSSQuote.add([{ title: root.dataset.title, handle: root.dataset.handle, image: root.dataset.image, variant: vtitle(v), qty: qty(), mode: b.dataset.addQuote }]);
-      if (b.classList.contains('buy__add')) flash(b, 'Added to quote');
-    }));
+    // Get a Quote: opens the quote builder with this item already in it (purchase or rental)
+    const toQuote = (type, note) => {
+      const q = new URLSearchParams({ type, add: root.dataset.handle, v: vtitle(selected()), q: String(qty()), t: root.dataset.title });
+      if (note) q.set('note', note);
+      location.href = '/pages/request-a-quote?' + q.toString();
+    };
+    root.querySelectorAll('[data-get-quote]').forEach((b) => b.addEventListener('click', () => toQuote(b.dataset.getQuote)));
     root.querySelector('[data-ask]')?.addEventListener('click', () => {
       const v = selected();
       window.TSSChat?.ask(`I'm looking at ${root.dataset.title}${vtitle(v) ? ' (' + vtitle(v) + ')' : ''}. Can you tell me more about it${root.dataset.rental ? ' and how renting it works' : ', including rental and bulk options'}?`);
@@ -400,7 +401,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
         document.getElementById('tss-chat-assistant')?.toggleAttribute('data-lift', on);
       }, { threshold: 0 }).observe(qtyRow);
       bar.querySelector('[data-bar-add]').addEventListener('click', () => {
-        (root.querySelector('[data-add-cart]') || root.querySelector('[data-mode-btn]') || root.querySelector('[data-add-quote="rent"]'))?.click();
+        (root.querySelector('[data-add-cart]') || root.querySelector('[data-mode-btn]'))?.click();
       });
     }
 
@@ -418,8 +419,8 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       const parts = [`Custom color: ${colorText || colorEl.value}`];
       if (logoData) parts.push('Logo attached');
       if (notes) parts.push(notes);
-      window.TSSQuote.add([{ title: root.dataset.title + ' (custom)', handle: root.dataset.handle, image: logoData || root.dataset.image, variant: vtitle(v), qty: qty(), mode: 'buy', note: parts.join('. '), logo: logoData }]);
-      flash(root.querySelector('[data-cc-add]'), 'Added to quote');
+      if (logoData) parts[parts.indexOf('Logo attached')] = 'Has a logo to add (will email it)';
+      toQuote('products', parts.join('. '));
     });
   }
 
@@ -446,12 +447,12 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       const btn = document.querySelector('[data-mode-btn]');
       const txt = document.querySelector('[data-mode-txt]');
       const bar = document.querySelector('[data-bar-add]');
-      const copy = { rent: ['Add to rental quote', 'Priced per job. Request a quote for daily, weekly or monthly rates.'], buy: ['Add to purchase quote', 'Available to buy new. Add it to your quote list for pricing and lead time.'] };
+      const copy = { rent: ['Get a Quote', 'Priced per job. Get a quote for daily, weekly or monthly rates.'], buy: ['Get a Quote', 'Available to buy new. Get a quote for pricing and lead time.'] };
       sw.querySelectorAll('[data-m]').forEach((b) => b.addEventListener('click', () => {
         const m = b.dataset.m;
         sw.dataset.on = m;
         sw.querySelectorAll('[data-m]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
-        if (btn) { btn.dataset.addQuote = m; btn.dataset.label = copy[m][0]; const t = btn.querySelector('.buy__addt'); if (t) t.textContent = copy[m][0]; }
+        if (btn) { btn.dataset.getQuote = m === 'buy' ? 'products' : 'rental'; btn.dataset.label = copy[m][0]; const t = btn.querySelector('.buy__addt'); if (t) t.textContent = copy[m][0]; }
         if (bar) bar.textContent = copy[m][0];
         if (txt) txt.textContent = copy[m][1];
       }));
@@ -700,4 +701,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
     [data-in] li, .eqc:not(.is-in) .eq-k, .eqc:not(.is-in) h2 { opacity: 1; transform: none; transition: none; }
     .buybar { transition: none; }
   }
+  .alt--quote { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .alt--quote:hover { background: var(--red); border-color: var(--red); }
+  .alt--quote :global(svg) { width: 16px; height: 16px; }
 </style>

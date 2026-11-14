@@ -848,6 +848,24 @@ const photos = [
     if (preset !== 'general' && state.step < 1) { state.type = preset; state.step = 1; }
     delete state.job.cat; state.job.sel = state.job.sel || {};
     let lastStep = state.step, seen = new Set();
+    // "Get a Quote" on a product page: /pages/request-a-quote?type=…&add=<handle>&v=<variant>&q=<qty>
+    const addH = root.dataset.fromParam ? qp.get('add') : null;
+    if (addH) catReady.then(() => {
+      const p = CAT.prods[addH], q = Math.max(1, Math.round(+qp.get('q') || 1)), vq = qp.get('v') || '';
+      if (p) {
+        const v = p.v.includes(vq) ? vq : (p.v[0] || '');
+        const c = (state.type === 'rental' ? RENT_CATS : BUY_CATS).find((k) => CAT.cats[k]?.p.includes(addH)) || 'equip';
+        const key = addH + '::' + (c === 'equip' && !p.v.includes(vq) ? '' : v);
+        state.job.sel[key] = { h: addH, v: key.split('::')[1], t: c === 'equip' ? short(p.t) : p.t, i: c === 'equip' ? CUT[addH] || p.i : varImg(addH, v), c, buy: false, q: (state.job.sel[key]?.q || 0) + q };
+      } else {
+        state.job.items = [{ desc: (qp.get('t') || addH) + (vq ? ` (${vq})` : ''), qty: q }, ...(state.job.items || []).filter((r) => r.desc)];
+      }
+      const note = qp.get('note');
+      if (note && state.type === 'products') { state.job.custom = 'Yes'; state.job.customDesc = [state.job.customDesc, note].filter(Boolean).join('\n'); }
+      state.step = 1; state.touched = true; save();
+      history.replaceState(null, '', location.pathname);
+      render();
+    });
     const topEl = root.querySelector('[data-qs-top]'), rsBtn = root.querySelector('[data-qs-restart]'), rsTxt = root.querySelector('[data-qs-restart-t]');
     let rsTimer = 0;
     function restart() {
