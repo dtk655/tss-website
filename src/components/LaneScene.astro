@@ -1,0 +1,226 @@
+---
+// Service explorer built on a real aerial photo of a TSS closure: numbered hotspots on the photo,
+// a spotlight that follows the selected one, a leader line to a glass info card, and a rail listing every service.
+const services = [
+  { t: 'Lane and road closures', s: 'Single lane to full detour', x: 60.7, y: 67.8, more: ['Single, double and full closures', 'Lane shifts and detours', 'Set to MUTCD and agency drawings'], href: '/tools/lane-closure-plan?work=right', cta: 'Plan a closure' },
+  { t: 'Flagging operations', s: 'ATSSA-certified flaggers', x: 35.8, y: 43.7, more: ['One-lane, two-way traffic', 'Intersections and driveways', 'STOP/SLOW paddles and radios'], href: '/tools/lane-closure-plan?work=flagging', cta: 'Plan a flagging job' },
+  { t: 'TMA protection', s: 'Crash trucks and certified operators', x: 43, y: 89, more: ['Truck-mounted attenuators', 'Arrow boards on every truck', 'Certified TMA operators'], href: '/pages/request-a-quote?type=lane-closure', cta: 'Book a TMA' },
+  { t: 'Night and weekend work', s: 'Off-peak closure windows', x: 36.5, y: 28.8, more: ['Light towers and lit devices', 'Overnight setup and pickup', 'Authority closure hours met'], href: '/tools/lane-closure-plan?work=right', cta: 'Plan night work' },
+  { t: 'Sign and barricade installs', s: 'Delivered, installed and maintained', x: 61.6, y: 22.9, more: ['Work zone and detour signs', 'Type III barricades and drums', 'Maintained for the life of the job'], href: '/pages/request-a-quote?type=lane-closure', cta: 'Request an install' },
+  { t: 'Traffic control plans', s: 'Permit-ready drawings', x: 76, y: 11.9, more: ['Drawn by certified traffic experts', 'Built to MUTCD and agency standards', 'Ready for your permit submission'], href: '/tools/lane-closure-plan', cta: 'Start with a free plan' },
+  { t: 'Special events', s: 'Parades, races and game days', more: ['Road closures and detours', 'Barricades and crowd control', 'Planned with towns and police'], href: '/pages/request-a-quote?type=lane-closure', cta: 'Reserve a crew' },
+  { t: 'Emergency response', s: 'For account customers', more: ['Water main breaks', 'Downed lines and incidents', 'Rapid setup, around the clock'], href: '/pages/create-c-m-account', cta: 'Open an account' }
+];
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const pad = (n) => String(n).padStart(2, '0');
+---
+<section class="ls" data-ls>
+  <div class="wrap">
+    <div class="ls__head">
+      <div>
+        <p class="ls__k"><span></span>What our crews handle</p>
+        <h2>Every kind of closure. <em>One call.</em></h2>
+      </div>
+      <p class="ls__lede">A real TSS job, from above. Tap a marker to see what our crews are doing there.</p>
+    </div>
+
+    <div class="ls__stage" data-stage style={`--x:${services[0].x}%;--y:${services[0].y}%`}>
+      <div class="ls__view">
+      <picture>
+        <source media="(max-width: 700px)" srcset="/fleet/lc-scene-m.webp" />
+        <img src="/fleet/lc-scene.webp" alt="Aerial view of an overnight bridge closure set up by Traffic Safety Service crews" width="2000" height="1119" loading="lazy" />
+      </picture>
+      <span class="ls__spot" aria-hidden="true"></span>
+      <span class="ls__scan" aria-hidden="true"></span>
+      <span class="ls__hud ls__hud--tl" aria-hidden="true"></span><span class="ls__hud ls__hud--tr" aria-hidden="true"></span><span class="ls__hud ls__hud--bl" aria-hidden="true"></span><span class="ls__hud ls__hud--br" aria-hidden="true"></span>
+      <p class="ls__tag"><i></i>Overnight bridge work, lanes closed by TSS crews</p>
+      {services.map((s, i) => s.x != null && (
+        <button type="button" class:list={['ls__pin', i === 0 && 'is-on']} style={`left:${s.x}%;top:${s.y}%;--d:${i}`} data-pin={i} aria-label={s.t}>
+          <span class="ls__ring" aria-hidden="true"></span><b>{pad(i + 1)}</b>
+        </button>
+      ))}
+      </div>
+      <svg class="ls__lead" data-lead aria-hidden="true"><path d="" /><circle r="4" /></svg>
+
+      <div class="ls__card" data-card aria-live="polite">
+        {services.map((s, i) => (
+          <article class:list={['ls__panel', i === 0 && 'is-on']} data-panel={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+            <p class="ls__cn">{pad(i + 1)} <span>/ {pad(services.length)}</span></p>
+            <h3>{s.t}</h3>
+            <p class="ls__cs">{s.s}</p>
+            <ul>{s.more.map((m, k) => <li style={`--k:${k}`}><i set:html={CHK} />{m}</li>)}</ul>
+            <a href={s.href} class="ls__cta" tabindex={i === 0 ? 0 : -1}>{s.cta}<Fragment set:html={ARROW} /></a>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <ol class="ls__rail" role="tablist" aria-label="Services">
+      {services.map((s, i) => (
+        <li>
+          <button type="button" role="tab" class:list={['ls__tab', i === 0 && 'is-on']} aria-selected={i === 0 ? 'true' : 'false'} data-tab={i}>
+            <span class="ls__tn">{pad(i + 1)}</span><span class="ls__tt">{s.t}</span><i class="ls__bar" aria-hidden="true"></i>
+          </button>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector('[data-ls]');
+  if (root) {
+    const stage = root.querySelector('[data-stage]') as HTMLElement;
+    const card = root.querySelector('[data-card]') as HTMLElement;
+    const lead = root.querySelector('[data-lead]') as SVGSVGElement;
+    const path = lead.querySelector('path')!, dot = lead.querySelector('circle')!;
+    const pins = [...root.querySelectorAll<HTMLElement>('[data-pin]')];
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-tab]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const DUR = 5200;
+    let cur = 0, timer = 0, auto = !still, seen = false;
+
+    const drawLead = () => {
+      const pin = pins.find((p) => +p.dataset.pin! === cur);
+      const overlay = getComputedStyle(card).position === 'absolute';
+      if (!pin || !overlay) { lead.style.opacity = '0'; return; }
+      const s = stage.getBoundingClientRect(), p = pin.getBoundingClientRect(), c = card.getBoundingClientRect();
+      const x1 = p.left + p.width / 2 - s.left, y1 = p.top + p.height / 2 - s.top;
+      const x2 = c.left - s.left, y2 = Math.min(Math.max(y1, c.top - s.top + 34), c.bottom - s.top - 34);
+      if (x1 > x2 - 30) { lead.style.opacity = '0'; return; }
+      const mx = x1 + (x2 - x1) * 0.55;
+      path.setAttribute('d', `M${x1} ${y1} L${mx} ${y2} L${x2} ${y2}`);
+      dot.setAttribute('cx', String(x2)); dot.setAttribute('cy', String(y2));
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = String(len); path.style.strokeDashoffset = String(len);
+      lead.style.opacity = '1';
+      requestAnimationFrame(() => { path.style.transition = still ? 'none' : 'stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1)'; path.style.strokeDashoffset = '0'; });
+    };
+    const show = (i: number, user = false) => {
+      cur = i;
+      if (user) { auto = false; root.classList.add('is-manual'); }
+      pins.forEach((p) => p.classList.toggle('is-on', +p.dataset.pin! === i));
+      tabs.forEach((t, k) => { t.classList.toggle('is-on', k === i); t.setAttribute('aria-selected', String(k === i)); const b = t.querySelector<HTMLElement>('.ls__bar')!; b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; });
+      panels.forEach((p, k) => { p.classList.toggle('is-on', k === i); p.setAttribute('aria-hidden', String(k !== i)); p.querySelector('a')!.tabIndex = k === i ? 0 : -1; });
+      const pin = pins.find((p) => +p.dataset.pin! === i);
+      stage.classList.toggle('has-spot', !!pin);
+      if (pin) { stage.style.setProperty('--x', pin.style.left); stage.style.setProperty('--y', pin.style.top); }
+      path.style.transition = 'none';
+      drawLead();
+      clearTimeout(timer);
+      if (auto && seen) timer = window.setTimeout(() => show((cur + 1) % panels.length), DUR);
+      if (user && tabs[i]) tabs[i].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    };
+    pins.forEach((p) => p.addEventListener('click', () => show(+p.dataset.pin!, true)));
+    tabs.forEach((t) => t.addEventListener('click', () => show(+t.dataset.tab!, true)));
+    addEventListener('resize', drawLead);
+    new IntersectionObserver(([en]) => {
+      if (en.isIntersecting && !seen) { seen = true; root.classList.add('is-in'); setTimeout(() => show(0), still ? 0 : 900); }
+      if (!en.isIntersecting) clearTimeout(timer); else if (seen && auto) { clearTimeout(timer); timer = window.setTimeout(() => show((cur + 1) % panels.length), DUR); }
+    }, { threshold: 0.3 }).observe(stage);
+    root.style.setProperty('--dur', DUR + 'ms');
+  }
+</script>
+
+<style>
+  .ls { padding: clamp(56px, 7vw, 104px) 0; background: radial-gradient(70% 60% at 100% 0%, rgba(182, 6, 6, .22), transparent 60%), #0e1012; color: #fff; overflow: clip; }
+  .ls__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 40px; margin-bottom: clamp(22px, 2.8vw, 36px); }
+  .ls__k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--gold); }
+  .ls__k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .ls h2 { margin: 0; font-size: clamp(2.2rem, 5vw, 4.4rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; color: #fff; }
+  .ls h2 em { font-style: normal; color: var(--gold); }
+  .ls__lede { margin: 0; max-width: 36ch; color: #b9c0c7; line-height: 1.5; }
+
+  /* stage */
+  .ls__stage { position: relative; isolation: isolate; }
+  .ls__view { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 2000 / 1119; background: #0b0c0e; border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 60px 120px -60px #000; }
+  .ls__stage picture, .ls__stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ls__stage img { transform: scale(1.06); filter: saturate(.9) brightness(.8); transition: transform 2.4s cubic-bezier(.2, .8, .2, 1), filter 1.6s; }
+  .ls.is-in .ls__stage img { transform: none; filter: none; }
+  .ls__spot { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity .8s; background: radial-gradient(circle clamp(90px, 13vw, 190px) at var(--x) var(--y), transparent 0, transparent 55%, rgba(8, 9, 11, .62) 100%); }
+  .ls.is-in .ls__stage.has-spot .ls__spot { opacity: 1; }
+  @property --x { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
+  @property --y { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
+  .ls__stage { transition: --x .9s cubic-bezier(.2, .8, .2, 1), --y .9s cubic-bezier(.2, .8, .2, 1); }
+  .ls__scan { position: absolute; z-index: 2; top: 0; bottom: 0; left: -30%; width: 30%; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(255, 205, 0, .16) 70%, rgba(255, 205, 0, .7) 99%, transparent); opacity: 0; }
+  .ls.is-in .ls__scan { animation: lsScan 1.5s .15s cubic-bezier(.4, 0, .2, 1) forwards; }
+  @keyframes lsScan { 0% { left: -30%; opacity: 1; } 100% { left: 100%; opacity: 0; } }
+  .ls__hud { position: absolute; z-index: 3; width: 26px; height: 26px; border: 2px solid rgba(255, 255, 255, .55); pointer-events: none; }
+  .ls__hud--tl { top: 16px; left: 16px; border-right: 0; border-bottom: 0; border-radius: 8px 0 0 0; }
+  .ls__hud--tr { top: 16px; right: 16px; border-left: 0; border-bottom: 0; border-radius: 0 8px 0 0; }
+  .ls__hud--bl { bottom: 16px; left: 16px; border-right: 0; border-top: 0; border-radius: 0 0 0 8px; }
+  .ls__hud--br { bottom: 16px; right: 16px; border-left: 0; border-top: 0; border-radius: 0 0 8px 0; }
+  .ls__tag { position: absolute; z-index: 3; left: 30px; bottom: 26px; display: flex; align-items: center; gap: 9px; margin: 0; padding: 8px 14px; border-radius: 999px; background: rgba(10, 11, 13, .66); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: .8rem; color: #e6e9ec; }
+  .ls__tag i { width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; box-shadow: 0 0 0 0 rgba(255, 59, 48, .7); animation: lsRec 1.8s ease-out infinite; }
+  @keyframes lsRec { 70%, 100% { box-shadow: 0 0 0 9px rgba(255, 59, 48, 0); } }
+
+  /* pins */
+  .ls__pin { position: absolute; z-index: 4; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 2px solid #fff; background: rgba(14, 16, 18, .72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: #fff; font: inherit; cursor: pointer; display: grid; place-items: center; opacity: 0; transform: scale(.4); transition: background .3s, border-color .3s, transform .5s cubic-bezier(.2, 1.4, .4, 1), opacity .4s; transition-delay: calc(1s + var(--d) * 90ms); }
+  .ls.is-in .ls__pin { opacity: 1; transform: none; }
+  .ls.is-in .ls__pin { transition-delay: 0s; animation: lsPinIn .6s cubic-bezier(.2, 1.4, .4, 1) backwards; animation-delay: calc(1s + var(--d) * 90ms); }
+  @keyframes lsPinIn { from { opacity: 0; transform: scale(.3); } }
+  .ls__pin b { font-size: .78rem; letter-spacing: .04em; font-variation-settings: 'wght' 760; }
+  .ls__pin:hover { background: rgba(255, 255, 255, .22); transform: scale(1.1); }
+  .ls__pin.is-on { background: var(--red); border-color: var(--red); transform: scale(1.14); box-shadow: 0 0 0 5px rgba(182, 6, 6, .3), 0 14px 30px -10px #000; }
+  .ls__ring { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid #fff; opacity: 0; animation: lsRing 2.6s ease-out infinite; animation-delay: calc(var(--d) * 300ms); }
+  .ls__pin.is-on .ls__ring { border-color: var(--gold); animation-duration: 1.6s; }
+  @keyframes lsRing { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.3); opacity: 0; } }
+  .ls__lead { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .3s; }
+  .ls__lead path { fill: none; stroke: var(--gold); stroke-width: 2; }
+  .ls__lead circle { fill: var(--gold); }
+
+  /* card */
+  .ls__card { position: absolute; z-index: 5; right: clamp(18px, 2.4vw, 34px); top: 50%; translate: 0 -50%; width: min(360px, 34%); display: grid; opacity: 0; transition: opacity .7s 1.2s; }
+  .ls.is-in .ls__card { opacity: 1; }
+  .ls__panel { grid-area: 1 / 1; padding: clamp(18px, 2vw, 28px); border-radius: 22px; background: rgba(14, 16, 18, .72); backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3); border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 40px 80px -40px #000; opacity: 0; visibility: hidden; transform: translateY(12px); transition: opacity .35s, transform .45s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s; }
+  .ls__panel.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity .45s .12s, transform .55s .12s cubic-bezier(.2, .8, .2, 1); }
+  .ls__cn { margin: 0 0 10px; font-size: .82rem; letter-spacing: .16em; color: var(--gold); font-variation-settings: 'wght' 760; }
+  .ls__cn span { color: rgba(255, 255, 255, .45); }
+  .ls__panel h3 { margin: 0; font-size: clamp(1.4rem, 2.1vw, 1.9rem); line-height: 1.05; letter-spacing: -.03em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .ls__cs { margin: 6px 0 14px; color: #b9c0c7; font-size: .95rem; }
+  .ls__panel ul { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 9px; }
+  .ls__panel li { display: flex; align-items: center; gap: 10px; font-size: .97rem; opacity: 0; transform: translateX(-8px); }
+  .ls__panel.is-on li { opacity: 1; transform: none; transition: opacity .4s, transform .5s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(.25s + var(--k) * 80ms); }
+  .ls__panel li i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--red); flex: none; }
+  .ls__panel li i :global(svg) { width: 12px; height: 12px; }
+  .ls__cta { display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 0 20px; border-radius: 999px; background: #fff; color: var(--ink); font-variation-settings: 'wght' 720; text-decoration: none; transition: background .2s, color .2s; }
+  .ls__cta:hover { background: var(--gold); }
+  .ls__cta :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .ls__cta:hover :global(svg) { transform: translateX(3px); }
+
+  /* rail */
+  .ls__rail { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .ls__tab { position: relative; width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .04); color: #aab2ba; font: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: background .25s, color .25s, border-color .25s; }
+  .ls__tab:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+  .ls__tab.is-on { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .28); color: #fff; }
+  .ls__tn { font-size: .76rem; letter-spacing: .1em; color: var(--gold); font-variation-settings: 'wght' 760; }
+  .ls__tt { font-size: .98rem; font-variation-settings: 'wght' 680; line-height: 1.2; }
+  .ls__bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; }
+  .ls__tab.is-on .ls__bar { animation: lsBar var(--dur, 5.2s) linear forwards; }
+  .ls.is-manual .ls__tab.is-on .ls__bar { animation: none; transform: scaleX(1); }
+  .ls:not(.is-in) .ls__tab.is-on .ls__bar { animation: none; }
+  @keyframes lsBar { to { transform: scaleX(1); } }
+
+  @media (max-width: 1000px) {
+    .ls__view { border-radius: 20px; }
+    .ls__scan, .ls__hud, .ls__lead { display: none; }
+    .ls__tag { left: 12px; bottom: auto; top: 12px; font-size: .7rem; padding: 6px 10px; }
+    .ls__card { position: relative; right: auto; top: auto; translate: none; width: auto; margin-top: 12px; }
+    .ls__panel { background: rgba(255, 255, 255, .06); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .ls__rail { display: flex; overflow-x: auto; scroll-snap-type: x proximity; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
+    .ls__rail::-webkit-scrollbar { display: none; }
+    .ls__rail li { flex: 0 0 auto; scroll-snap-align: center; }
+    .ls__tab { white-space: nowrap; padding: 12px 14px; }
+  }
+  @media (max-width: 640px) {
+    .ls__pin { width: 32px; height: 32px; margin: -16px 0 0 -16px; }
+    .ls__pin b { font-size: .68rem; }
+    .ls__head { display: block; } .ls__lede { margin-top: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ls__stage img, .ls__pin, .ls__card { transition: none; } .ls__scan, .ls__ring, .ls__tag i { animation: none; } .ls__stage { transition: none; }
+    .ls.is-in .ls__pin { animation: none; }
+  }
+</style>
