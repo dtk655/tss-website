@@ -1,0 +1,85 @@
+---
+// Store policy pages (refund, privacy, terms, shipping, contact information), styled to match the catalog pages.
+import Layout from '../../layouts/Layout.astro';
+import { loadPolicies, POLICY_NAV } from '../../lib/policies.js';
+import { PHONE, PHONE_TEL } from '../../lib/config.js';
+
+export async function getStaticPaths() {
+  const all = await loadPolicies();
+  return POLICY_NAV.map(([handle]) => ({ params: { handle }, props: { policy: all[handle] } }));
+}
+const { policy } = Astro.props;
+---
+<Layout title={policy.title} description={`${policy.title} for Traffic Safety Service, South Plainfield, NJ. Questions? Call ${PHONE}.`}>
+  <header class="pol__head">
+    <div class="wrap">
+      <nav class="pol__crumbs" aria-label="Breadcrumb"><a href="/">Home</a><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg><span>Policies</span></nav>
+      <p class="pol__k"><span></span>Store policies</p>
+      <h1>{policy.title}</h1>
+    </div>
+  </header>
+
+  <section class="pol">
+    <div class="wrap pol__grid">
+      <aside class="pol__nav" aria-label="Policies">
+        {POLICY_NAV.map(([h, t]) => <a href={`/policies/${h}`} class:list={[h === policy.handle && 'is-on']} aria-current={h === policy.handle ? 'page' : undefined}>{t}</a>)}
+        <div class="pol__help">
+          <b>Questions?</b>
+          <a href={PHONE_TEL}>Call {PHONE}</a>
+          <a href="/pages/contact">Contact us</a>
+        </div>
+      </aside>
+      <article class="pol__body" set:html={policy.html} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .pol__head { background: linear-gradient(180deg, #ffe9e6 0%, #fff5f3 100%); border-bottom: 1px solid var(--line); padding: clamp(18px, 2.4vw, 30px) 0 clamp(20px, 2.6vw, 34px); }
+  .pol__crumbs { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; font-size: .88rem; color: var(--steel); }
+  .pol__crumbs a { color: var(--ink-2); text-decoration: none; }
+  .pol__crumbs a:hover { color: var(--red); }
+  .pol__crumbs svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; opacity: .5; }
+  .pol__k { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 680; }
+  .pol__k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .pol__head h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; animation: polUp .7s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes polUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  .pol { padding: clamp(26px, 3.6vw, 52px) 0 clamp(56px, 7vw, 100px); background: var(--haze); }
+  .pol__grid { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: clamp(18px, 3vw, 44px); align-items: start; }
+  .pol__nav { position: sticky; top: calc(var(--hdr-full, 140px) * .5 + 24px); display: grid; gap: 4px; padding: 10px; border-radius: 20px; background: #fff; border: 1px solid var(--line); }
+  .pol__nav > a { padding: 11px 14px; border-radius: 12px; color: var(--ink-2); text-decoration: none; font-variation-settings: 'wght' 620; transition: background .2s, color .2s; }
+  .pol__nav > a:hover { background: var(--haze); color: var(--ink); }
+  .pol__nav > a.is-on { background: var(--ink); color: #fff; }
+  .pol__help { display: grid; gap: 4px; margin-top: 6px; padding: 14px; border-radius: 14px; background: var(--red-tint); }
+  .pol__help b { font-variation-settings: 'wght' 740; }
+  .pol__help a { color: var(--red); font-variation-settings: 'wght' 680; text-decoration: none; }
+  .pol__help a:hover { text-decoration: underline; }
+
+  .pol__body { min-width: 0; padding: clamp(22px, 3.4vw, 52px); border-radius: 24px; background: #fff; border: 1px solid var(--line); color: var(--ink-2); line-height: 1.7; font-size: 1.02rem; overflow-wrap: anywhere; }
+  .pol__body :global(> :first-child) { margin-top: 0; }
+  .pol__body :global(> :last-child) { margin-bottom: 0; }
+  .pol__body :global(p) { margin: 0 0 1.05em; max-width: 78ch; }
+  .pol__body :global(h2), .pol__body :global(h3), .pol__body :global(h4) { color: var(--ink); letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; line-height: 1.15; margin: 1.7em 0 .6em; }
+  .pol__body :global(h2) { font-size: clamp(1.35rem, 2vw, 1.7rem); padding-top: 1.2em; border-top: 1px solid var(--line); }
+  .pol__body :global(h3) { font-size: 1.15rem; }
+  .pol__body :global(strong) { color: var(--ink); }
+  .pol__body :global(ul), .pol__body :global(ol) { margin: 0 0 1.1em; padding-left: 1.2em; max-width: 78ch; }
+  .pol__body :global(li) { margin: .4em 0; }
+  .pol__body :global(li::marker) { color: var(--red); }
+  .pol__body :global(li p) { margin: 0; }
+  .pol__body :global(a) { color: var(--red); }
+  .pol__body :global(table) { width: 100%; border-collapse: collapse; margin: 0 0 1.2em; font-size: .95rem; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .pol__body :global(th) { background: var(--haze); color: var(--ink); text-align: left; padding: 12px 14px; font-variation-settings: 'wght' 720; }
+  .pol__body :global(td) { vertical-align: top; padding: 12px 14px; border-top: 1px solid var(--line); }
+
+  @media (max-width: 860px) {
+    .pol__grid { grid-template-columns: 1fr; }
+    .pol__nav { position: static; display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 8px; border-radius: 16px; scrollbar-width: none; }
+    .pol__nav::-webkit-scrollbar { display: none; }
+    .pol__nav > a { flex: none; white-space: nowrap; padding: 9px 14px; }
+    .pol__help { display: none; }
+    .pol__body :global(table), .pol__body :global(tbody), .pol__body :global(tr), .pol__body :global(th), .pol__body :global(td) { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pol__head h1 { animation: none; } }
+</style>

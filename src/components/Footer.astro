@@ -1,40 +1,26 @@
 ---
-// Site footer: contact tiles, link columns, a faint "Since 1971" wordmark and the legal row.
+// Site footer: one compact band (brand and contact, four link columns) and a slim legal row with the store policies.
 import { PHONE, PHONE_TEL, EMAIL } from '../lib/config.js';
 const year = new Date().getFullYear();
+const MAPS = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Traffic Safety Service, 601 Hadley Road, South Plainfield, NJ 07080');
 const cols = [
-  ['Shop', [['Cones', '/collections/cones'], ['Barricades', '/collections/barricades'], ['Water-filled barriers', '/collections/water-filled-barriers'], ['Traffic drums', '/collections/traffic-drums'], ['Signs', '/collections/sign-shop'], ['Safety gear', '/collections/safety-gear'], ['All products', '/collections']]],
-  ['Services', [['Equipment', '/pages/equipment'], ['Truck fleet', '/pages/fleet'], ['Lane closures', '/pages/lane-closure'], ['WATERCADE barriers', '/watercade/'], ['Custom shop', '/pages/custom-stenciling']]],
-  ['Planning tools', [['Work zone builder', '/tools/work-zone-builder'], ['Lane closure plan', '/tools/lane-closure-plan'], ['WATERCADE planner', '/tools/watercade-planner'], ['Rent or buy calculator', '/tools/rent-vs-buy'], ['3D showroom', '/tools/3d-showroom']]],
-  ['Company', [['About TSS', '/pages/about-us'], ['Contact', '/pages/contact'], ['Open an account', '/pages/create-c-m-account'], ['Request a quote', '/pages/request-a-quote']]]
+  ['Shop', [['All products', '/collections'], ['Cones', '/collections/cones'], ['Barricades', '/collections/barricades'], ['Traffic drums', '/collections/traffic-drums'], ['Signs', '/collections/sign-shop']]],
+  ['Services', [['Equipment', '/pages/equipment'], ['Truck fleet', '/pages/fleet'], ['Lane closures', '/pages/lane-closure'], ['WATERCADE', '/watercade/'], ['Custom shop', '/pages/custom-stenciling']]],
+  ['Company', [['About TSS', '/pages/about-us'], ['Contact', '/pages/contact'], ['Quote Builder', '/pages/request-a-quote'], ['Open an account', '/pages/create-c-m-account'], ['Planning tools', '/tools']]]
 ];
-const tiles = [
-  ['Call us', PHONE, PHONE_TEL, 'M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z'],
-  ['Email', EMAIL, `mailto:${EMAIL}`, 'M3.5 6h17v12h-17z M3.5 6.5l8.5 6.5 8.5-6.5'],
-  ['Free quote', 'Reply within 1 business day', '/pages/request-a-quote', 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6M9 16h3'],
-  ['Visit the yard', '601 Hadley Rd, South Plainfield, NJ', 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Traffic Safety Service, 601 Hadley Road, South Plainfield, NJ 07080'), 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z M12 7.6a2.4 2.4 0 1 0 0 .01']
-];
+const policies = [['Refund policy', '/policies/refund-policy'], ['Privacy policy', '/policies/privacy-policy'], ['Terms of service', '/policies/terms-of-service'], ['Shipping policy', '/policies/shipping-policy'], ['Contact information', '/policies/contact-information']];
+const I = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 ---
 <footer class="ftr">
   <div class="lane" aria-hidden="true"></div>
   <div class="wrap">
-    <div class="ftr__tiles">
-      {tiles.map(([k, v, h, ic]) => (
-        <a href={h} class="ftr__tile" {...(h.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>
-          <span class="ftr__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
-          <span class="ftr__tt"><small>{k}</small><b>{v}</b></span>
-        </a>
-      ))}
-    </div>
-
     <div class="ftr__grid">
       <div class="ftr__brand">
         <a href="/" class="ftr__logo" aria-label="Traffic Safety Service home"><img src="/brand/tss-logo.webp" alt="" width="560" height="220" loading="lazy" /></a>
-        <p>Traffic control products, equipment rentals and lane closure crews. Family-run in South Plainfield, New Jersey since 1971.</p>
-        <ul class="ftr__area" aria-label="Where we work">
-          <li>Products ship nationwide</li>
-          <li>Rentals in NJ, NY, PA, CT</li>
-          <li>Crews in NJ, NY, PA, CT, DE</li>
+        <ul class="ftr__contact">
+          <li><a href={PHONE_TEL}><Fragment set:html={I('M5 4h4l2 5-2.6 1.6a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 3 6.2 2 2 0 0 1 5 4z')} />{PHONE}</a></li>
+          <li><a href={`mailto:${EMAIL}`}><Fragment set:html={I('M3.5 6h17v12h-17z M3.5 6.5l8.5 6.5 8.5-6.5')} />{EMAIL}</a></li>
+          <li><a href={MAPS} target="_blank" rel="noopener"><Fragment set:html={I('M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z M12 7.6a2.4 2.4 0 1 0 0 .01')} />601 Hadley Rd, South Plainfield, NJ</a></li>
         </ul>
       </div>
       {cols.map(([h, links]) => (
@@ -43,17 +29,19 @@ const tiles = [
           {links.map(([t, href]) => <a href={href}>{t}</a>)}
         </nav>
       ))}
+      <a href="/pages/request-a-quote" class="ftr__cta">
+        <small>Free quote</small>
+        <b>Build your quote</b>
+        <span>Reply within 1 business day<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
     </div>
 
-    <p class="ftr__mark" aria-hidden="true">Since 1971</p>
-
     <div class="ftr__base">
-      <span>© {year} Traffic Safety Service, L.L.C.</span>
-      <span class="ftr__links">
-        <a href="https://trafficsafetyservice.com/policies/privacy-policy">Privacy</a>
-        <a href="https://trafficsafetyservice.com/policies/terms-of-service">Terms</a>
-        <button type="button" class="ftr__top" data-totop>Back to top<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 12l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      </span>
+      <span class="ftr__copy">© {year} Traffic Safety Service, L.L.C. <i>·</i> Family-run since 1971</span>
+      <nav class="ftr__links" aria-label="Store policies">
+        {policies.map(([t, h]) => <a href={h}>{t}</a>)}
+      </nav>
+      <button type="button" class="ftr__top" data-totop aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 12l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
   </div>
 </footer>
@@ -61,56 +49,56 @@ const tiles = [
   document.querySelector('[data-totop]')?.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
 </script>
 <style>
-  .ftr { position: relative; overflow: hidden; background: radial-gradient(90% 70% at 100% 0%, #2a0606 0%, transparent 60%), #121417; color: #aab1b8; }
+  .ftr { position: relative; overflow: hidden; background: radial-gradient(70% 120% at 100% 0%, #2a0606 0%, transparent 60%), #121417; color: #aab1b8; }
   .lane { height: 4px; background: repeating-linear-gradient(90deg, var(--gold) 0 40px, transparent 40px 86px); opacity: .85; }
 
-  /* contact tiles */
-  .ftr__tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: clamp(36px, 4.5vw, 60px) 0 clamp(36px, 4vw, 54px); border-bottom: 1px solid rgba(255, 255, 255, .08); }
-  .ftr__tile { display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .08); color: #fff; text-decoration: none; transition: background .25s, border-color .25s, transform .35s cubic-bezier(.2, .8, .2, 1); }
-  .ftr__tile:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); transform: translateY(-3px); }
-  .ftr__ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; background: var(--red); color: #fff; }
-  .ftr__ic svg { width: 22px; height: 22px; }
-  .ftr__tt { display: grid; gap: 2px; min-width: 0; }
-  .ftr__tt small { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); font-variation-settings: 'wght' 700; }
-  .ftr__tt b { font-size: .95rem; font-variation-settings: 'wght' 680; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  /* columns */
-  .ftr__grid { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); gap: clamp(24px, 3vw, 48px); padding: clamp(40px, 5vw, 64px) 0 10px; }
-  .ftr__logo { display: inline-block; padding: 10px 14px; margin-bottom: 18px; border-radius: 14px; background: #fff; }
-  .ftr__logo img { display: block; width: 168px; height: auto; }
-  .ftr__brand p { margin: 0 0 18px; max-width: 38ch; font-size: .96rem; line-height: 1.6; }
-  .ftr__area { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .ftr__area li { display: flex; align-items: center; gap: 10px; font-size: .9rem; color: #d2d6da; }
-  .ftr__area li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex: none; }
-  .ftr nav { display: grid; align-content: start; gap: 11px; }
-  .ftr h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 6px; color: #fff; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 720; font-weight: 400; }
-  .ftr h2 span { width: 18px; height: 2px; border-radius: 2px; background: var(--red); }
-  .ftr nav a { position: relative; justify-self: start; color: #aab1b8; font-size: .97rem; text-decoration: none; transition: color .2s, translate .2s; }
-  .ftr nav a:hover { color: #fff; translate: 3px 0; }
-
-  /* wordmark */
-  .ftr__mark { margin: clamp(10px, 2vw, 24px) 0 -0.12em; font-size: clamp(3.6rem, 13.5vw, 13rem); line-height: .9; letter-spacing: -.05em; font-variation-settings: 'wght' 800; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .1); white-space: nowrap; user-select: none; }
+  .ftr__grid { display: grid; grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, .8fr)) minmax(0, 1.1fr); gap: clamp(20px, 3vw, 48px); align-items: start; padding: clamp(26px, 3vw, 40px) 0 clamp(22px, 2.6vw, 32px); }
+  .ftr__logo { display: inline-block; padding: 7px 10px; margin-bottom: 14px; border-radius: 12px; background: #fff; }
+  .ftr__logo img { display: block; width: 132px; height: auto; }
+  .ftr__contact { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .ftr__contact a { display: inline-flex; align-items: center; gap: 9px; color: #d2d6da; font-size: .92rem; text-decoration: none; transition: color .2s; }
+  .ftr__contact a:hover { color: #fff; }
+  .ftr__contact :global(svg) { width: 16px; height: 16px; color: var(--gold); flex: none; }
+  .ftr nav { display: grid; align-content: start; gap: 7px; }
+  .ftr h2 { display: flex; align-items: center; gap: 9px; margin: 0 0 5px; color: #fff; font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 720; font-weight: 400; }
+  .ftr h2 span { width: 16px; height: 2px; border-radius: 2px; background: var(--red); }
+  .ftr__grid nav a { justify-self: start; color: #aab1b8; font-size: .92rem; text-decoration: none; transition: color .2s, translate .2s; }
+  .ftr__grid nav a:hover { color: #fff; translate: 3px 0; }
+  .ftr__cta { display: grid; gap: 3px; padding: 16px 18px; border-radius: 18px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); color: #fff; text-decoration: none; transition: background .25s, border-color .25s, transform .35s cubic-bezier(.2, .8, .2, 1); }
+  .ftr__cta:hover { background: var(--red); border-color: var(--red); transform: translateY(-3px); }
+  .ftr__cta small { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); font-variation-settings: 'wght' 700; }
+  .ftr__cta:hover small { color: #fff; }
+  .ftr__cta b { font-size: 1.15rem; letter-spacing: -.02em; font-variation-settings: 'wght' 760; }
+  .ftr__cta span { display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; color: #c3c9cf; font-size: .86rem; }
+  .ftr__cta:hover span { color: #fff; }
+  .ftr__cta svg { width: 16px; height: 16px; transition: transform .2s; }
+  .ftr__cta:hover svg { transform: translateX(3px); }
 
   /* legal row */
-  .ftr__base { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding: 20px 120px 28px 0; border-top: 1px solid rgba(255, 255, 255, .08); font-size: .88rem; }
-  .ftr__links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; }
-  .ftr__base a { color: #aab1b8; text-decoration: none; }
-  .ftr__base a:hover { color: #fff; }
-  .ftr__top { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .18); background: none; color: #fff; font: inherit; font-size: .86rem; font-variation-settings: 'wght' 640; cursor: pointer; transition: background .2s, border-color .2s; }
-  .ftr__top:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .35); }
+  .ftr__base { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; padding: 12px 104px 14px 0; border-top: 1px solid rgba(255, 255, 255, .08); font-size: .82rem; }
+  .ftr__copy i { font-style: normal; margin: 0 6px; opacity: .5; }
+  .ftr .ftr__links { display: flex; flex-wrap: wrap; gap: 4px 0; margin-left: auto; }
+  .ftr__links a { padding: 0 12px; color: #aab1b8; text-decoration: none; border-left: 1px solid rgba(255, 255, 255, .14); line-height: 1.2; transition: color .2s; }
+  .ftr__links a:first-child { border-left: 0; padding-left: 0; }
+  .ftr__links a:hover { color: #fff; }
+  .ftr__top { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .18); background: none; color: #fff; cursor: pointer; transition: background .2s, border-color .2s; }
+  .ftr__top:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .4); }
   .ftr__top svg { width: 15px; height: 15px; }
 
-  @media (max-width: 1340px) { .ftr__tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 1180px) {
-    .ftr__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .ftr__brand { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 28px; align-items: start; }
-    .ftr__brand .ftr__logo { grid-row: span 2; }
+  @media (max-width: 1100px) {
+    .ftr__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .ftr__brand { grid-column: 1 / 3; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; }
+    .ftr__logo { margin-bottom: 0; }
+    .ftr__cta { grid-column: 3; grid-row: 1; }
   }
   @media (max-width: 720px) {
-    .ftr__tiles { grid-template-columns: 1fr; gap: 10px; }
-    .ftr__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 20px; }
-    .ftr__brand { display: block; }
-    .ftr__base { flex-direction: column; align-items: flex-start; padding: 20px 0 96px; }
-    .ftr__tt b { white-space: normal; overflow-wrap: anywhere; }
+    .ftr__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 14px; }
+    .ftr__brand { grid-column: 1 / -1; display: block; }
+    .ftr__logo { margin-bottom: 12px; }
+    .ftr__cta { grid-column: 1 / -1; grid-row: auto; }
+    .ftr__grid nav a { font-size: .88rem; }
+    .ftr__base { padding: 12px 0 92px; }
+    .ftr .ftr__links { margin-left: 0; row-gap: 8px; }
+    .ftr__top { display: none; }
   }
 </style>
