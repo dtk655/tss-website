@@ -11,6 +11,11 @@ interface Props { title: string; description?: string; image?: string; dark?: bo
 const { title, description = 'Traffic control products, equipment rentals and lane closure crews from Traffic Safety Service. Serving NJ, NY, PA and CT since 1971. Products ship nationwide.', image, dark = false } = Astro.props;
 const fullTitle = title.includes('Traffic Safety Service') ? title : `${title} | Traffic Safety Service`;
 const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/'), 'https://trafficsafetyservice.com');
+// Link previews (texts, Slack, social): the TSS logo card everywhere; product pages keep their product photo.
+const origin = (process.env.URL || 'https://trafficsafetyservice.com').replace(/\/$/, '');
+const isProduct = Astro.url.pathname.startsWith('/products/');
+const abs = (u) => (/^https?:/.test(u) ? u : origin + u);
+const ogImage = isProduct && image ? abs(image) : origin + '/og-share.png';
 ---
 <!doctype html>
 <html lang="en">
@@ -22,7 +27,15 @@ const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/i
   <link rel="canonical" href={canonical} />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
-  {image && <meta property="og:image" content={image} />}
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Traffic Safety Service" />
+  <meta property="og:url" content={origin + Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/')} />
+  <meta property="og:image" content={ogImage} />
+  {!(isProduct && image) && <><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="Traffic Safety Service. Rentals - Sales - Service. Since 1971." /></>}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
   <meta name="theme-color" content="#2a2e33" />
   <link rel="icon" href="/favicon.ico" sizes="48x48" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
