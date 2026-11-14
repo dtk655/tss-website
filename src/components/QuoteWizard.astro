@@ -1099,6 +1099,7 @@ const photos = [
     const navHtml = (next = 'Continue', back = true) => `<div class="qs-nav">${back ? `<button type="button" class="qs-back" data-qs-back>${ICON.back}<span class="qs-t">Back</span></button>` : '<span class="qs-skip">Takes about 2 minutes</span>'}${back ? qBtn() : ''}<button type="button" class="qs-btn" data-qs-next>${esc(next)}${ICON.arrow}</button></div>`;
 
     function render() {
+      root.dataset.step = String(state.step);
       renderSteps(); renderTicket();
       topEl.hidden = state.step === 0 && !state.touched;
       const dir = state.step < lastStep ? ' is-back' : '';

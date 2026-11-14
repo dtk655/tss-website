@@ -20,11 +20,19 @@ import { PHONE, YEARS } from '../../lib/config.js';
     </div>
   </section>
 </Layout>
+<script>
+  // Fold the page headline into the top of the quote card; it shows on the first step only.
+  const head = document.querySelector('.rq__head');
+  const main = document.querySelector('.rq .qs__main');
+  if (head && main) main.prepend(head);
+</script>
 <style>
-  .rq { position: relative; padding: clamp(36px, 5vw, 72px) 0 clamp(64px, 8vw, 120px); background: linear-gradient(180deg, #f3f4f5 0%, #f7f7f8 420px, #fff 100%); overflow: clip; }
+  .rq { position: relative; padding: clamp(20px, 2.6vw, 36px) 0 clamp(64px, 8vw, 120px); background: linear-gradient(180deg, #f3f4f5 0%, #f7f7f8 420px, #fff 100%); overflow: clip; }
   .rq__glow { position: absolute; top: -260px; right: -200px; width: 720px; height: 720px; border-radius: 50%; background: radial-gradient(circle, rgba(182, 6, 6, .1), transparent 65%); pointer-events: none; }
   .rq .wrap { position: relative; }
   .rq__head { display: grid; gap: 10px; margin-bottom: clamp(18px, 2.4vw, 28px); }
+  :global(.qs__main) > .rq__head { margin: 0 0 clamp(18px, 2.2vw, 26px); padding-bottom: clamp(16px, 2vw, 22px); border-bottom: 1px solid var(--line); }
+  :global(.qs[data-step]:not([data-step="0"])) .rq__head { display: none; }
   .rq__k { display: inline-flex; align-items: center; gap: 12px; margin: 0; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 700; }
   .rq__k span { width: 26px; height: 2px; background: currentColor; }
   .rq h1 { margin: 0; font-size: clamp(1.5rem, 2.4vw, 2.1rem); line-height: 1.1; letter-spacing: -.045em; font-variation-settings: 'wght' 790; font-weight: 400; animation: rqUp .8s cubic-bezier(.2, .8, .2, 1) both; }
