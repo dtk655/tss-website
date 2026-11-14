@@ -16,6 +16,7 @@ const photos = [
 <section class="qs" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
   <div class="qs__main">
     <ol class="qs__steps" data-qs-steps aria-label="Progress"></ol>
+    <div class="qs-mrs" data-qs-mrs hidden><button type="button" class="qs-restart" data-qs-mrestart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span>Restart quote</span></button></div>
     <div class="qs__stage" data-qw-body aria-live="polite">
       <noscript>
         <p><strong>This form needs JavaScript.</strong> You can also call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> with what you need, where, and when.</p>
@@ -58,10 +59,11 @@ const photos = [
   /* ---------- restart ---------- */
   .qs-tk__rs { display: flex; justify-content: center; padding: 2px 20px 14px; }
   .qs-tk__rs[hidden] { display: none; }
-  .qs-tk__rs .qs-restart, .qs-qsheet .qs-restart { width: 100%; justify-content: center; min-height: 40px; }
+  .qs-tk__rs .qs-restart, .qs-qsheet .qs-restart { width: 100%; justify-content: center; min-height: 44px; }
   .qs-qsheet__rs { padding: 2px 20px 16px; }
-  .qs-restart { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 14px 0 11px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font: inherit; font-size: .86rem; color: var(--steel); font-variation-settings: 'wght' 620; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
-  .qs-restart:hover { color: var(--ink); border-color: var(--line-dark); }
+  .qs-restart { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 18px 0 14px; border: 1.5px solid rgba(182, 6, 6, .45); border-radius: 999px; background: rgba(182, 6, 6, .06); font: inherit; font-size: .95rem; color: var(--red); font-variation-settings: 'wght' 700; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
+  .qs-restart:hover { color: #fff; background: var(--red); border-color: var(--red); }
+  .qs-mrs { display: none; }
   .qs-restart svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
   .qs-restart:hover svg { transform: rotate(-200deg); }
   .qs-restart.is-confirm { color: #fff; background: var(--red); border-color: var(--red); animation: qsPop .3s cubic-bezier(.3, 1.6, .5, 1); }
@@ -454,6 +456,8 @@ const photos = [
   @media (max-width: 980px) {
     .qs { grid-template-columns: 1fr; }
     .qs__side { display: none; }
+    .qs-mrs:not([hidden]) { display: flex; justify-content: center; margin: -4px 0 16px; }
+    .qs-mrs .qs-restart { min-height: 40px; font-size: .9rem; }
   }
   @media (max-width: 720px) {
     .qs-pics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -905,6 +909,13 @@ const photos = [
       render(); toTop();
       body.querySelector('.qs-svc input')?.focus({ preventScroll: true });
     }
+    { const mb = root.querySelector('[data-qs-mrestart]'); let mt = 0;
+      mb.addEventListener('click', () => {
+        const sp = mb.querySelector('span'); clearTimeout(mt);
+        if (mb.classList.contains('is-confirm')) { mb.classList.remove('is-confirm'); sp.textContent = 'Restart quote'; return restart(); }
+        mb.classList.add('is-confirm'); sp.textContent = 'Tap again to clear';
+        mt = setTimeout(() => { mb.classList.remove('is-confirm'); sp.textContent = 'Restart quote'; }, 3500);
+      }); }
     rsBtn.addEventListener('click', () => {
       if (rsBtn.classList.contains('is-confirm') || body.querySelector('.qs-done')) return restart();
       rsBtn.classList.add('is-confirm'); rsTxt.textContent = 'Tap again to clear';
@@ -1083,6 +1094,7 @@ const photos = [
       root.querySelectorAll('[data-ph]').forEach((im) => im.classList.toggle('is-on', im.dataset.ph === state.type));
       root.querySelector('[data-qs-tktitle]').textContent = state.step > 0 || state.touched ? svc.b : 'Start with what you need';
       topEl.hidden = !allItems().length;
+      { const m = root.querySelector('[data-qs-mrs]'); if (m) m.hidden = !allItems().length || !!body.querySelector('.qs-done'); }
       const L = ticketLines();
       const ghosts = ['What you need', 'Where', 'When', 'Your details'].slice(Math.min(L.length, 4));
       linesEl.innerHTML = L.map(([k, t, v]) => `<li class="${seen.has(k) ? '' : 'is-new'}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')
