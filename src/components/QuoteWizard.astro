@@ -63,7 +63,11 @@ const photos = [
   .qs-qsheet__rs { padding: 2px 20px 16px; }
   .qs-restart { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 18px 0 14px; border: 1.5px solid rgba(182, 6, 6, .45); border-radius: 999px; background: rgba(182, 6, 6, .06); font: inherit; font-size: .95rem; color: var(--red); font-variation-settings: 'wght' 700; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
   .qs-restart:hover { color: #fff; background: var(--red); border-color: var(--red); }
-  .qs-mrs { display: none; }
+  .qs-mrs { position: relative; height: 0; z-index: 2; }
+  .qs-mrs[hidden] { display: none; }
+  .qs-mrs .qs-restart { position: absolute; right: 0; top: 2px; }
+  .qs-tk__rs { display: none !important; }
+  @media (min-width: 641px) { .qs-mrs:not([hidden]) ~ * .qs-head h2 { padding-right: 176px; } }
   .qs-restart svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
   .qs-restart:hover svg { transform: rotate(-200deg); }
   .qs-restart.is-confirm { color: #fff; background: var(--red); border-color: var(--red); animation: qsPop .3s cubic-bezier(.3, 1.6, .5, 1); }
@@ -456,8 +460,7 @@ const photos = [
   @media (max-width: 980px) {
     .qs { grid-template-columns: 1fr; }
     .qs__side { display: none; }
-    .qs-mrs:not([hidden]) { display: flex; justify-content: center; margin: -4px 0 16px; }
-    .qs-mrs .qs-restart { min-height: 40px; font-size: .9rem; }
+
   }
   @media (max-width: 720px) {
     .qs-pics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -675,6 +678,10 @@ const photos = [
 
   /* ---------- phone layout: centered and tile-based ---------- */
   @media (max-width: 640px) {
+    .qs-mrs:not([hidden]) { height: auto; display: flex; justify-content: flex-end; margin: -10px 0 6px; }
+    .qs-mrs .qs-restart { position: static; min-height: 30px; padding: 0 2px; gap: 5px; border: 0; background: none; color: var(--steel); font-size: .8rem; font-variation-settings: 'wght' 560; }
+    .qs-mrs .qs-restart svg { width: 13px; height: 13px; }
+    .qs-mrs .qs-restart.is-confirm { padding: 0 10px; background: var(--red); color: #fff; }
     .qs-head { text-align: center; justify-items: center; }
     .qs-head .qs-k { justify-content: center; }
     .qs-head .qs-k::before { display: none; }
