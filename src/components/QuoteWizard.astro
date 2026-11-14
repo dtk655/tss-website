@@ -15,9 +15,6 @@ const photos = [
 ---
 <section class="qs" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
   <div class="qs__main">
-    <div class="qs__top" data-qs-top hidden>
-      <button type="button" class="qs-restart" data-qs-restart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span data-qs-restart-t>Restart quote</span></button>
-    </div>
     <ol class="qs__steps" data-qs-steps aria-label="Progress"></ol>
     <div class="qs__stage" data-qw-body aria-live="polite">
       <noscript>
@@ -36,6 +33,9 @@ const photos = [
       </div>
       <div class="qs-tk__body">
         <ul class="qs-tk__lines" data-qs-lines></ul>
+        <div class="qs-tk__rs" data-qs-top hidden>
+          <button type="button" class="qs-restart" data-qs-restart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span data-qs-restart-t>Restart quote</span></button>
+        </div>
         <div class="qs-tk__perf" aria-hidden="true"></div>
         <ul class="qs-tk__promise">
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg>Priced by a real person, usually within 1 business day</li>
@@ -52,12 +52,14 @@ const photos = [
 
 <style is:global>
   .qs { --qs-r: 22px; display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 25vw, 560px); gap: clamp(22px, 3vw, 40px); align-items: start; }
-  .qs__main { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--qs-r); padding: clamp(20px, 3.4vw, 44px); box-shadow: 0 40px 80px -60px rgba(20, 23, 26, .45); }
+  .qs__main { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--qs-r); padding: clamp(16px, 2vw, 26px) clamp(20px, 3.4vw, 44px) clamp(20px, 3.4vw, 44px); box-shadow: 0 40px 80px -60px rgba(20, 23, 26, .45); }
   .qs__side { position: sticky; top: calc(var(--header-h, 72px) + 76px); display: grid; gap: 14px; }
 
   /* ---------- restart ---------- */
-  .qs__top { display: flex; justify-content: flex-end; margin: -6px 0 12px; }
-  .qs__top[hidden] { display: none; }
+  .qs-tk__rs { display: flex; justify-content: center; padding: 2px 20px 14px; }
+  .qs-tk__rs[hidden] { display: none; }
+  .qs-tk__rs .qs-restart, .qs-qsheet .qs-restart { width: 100%; justify-content: center; min-height: 40px; }
+  .qs-qsheet__rs { padding: 2px 20px 16px; }
   .qs-restart { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 14px 0 11px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font: inherit; font-size: .86rem; color: var(--steel); font-variation-settings: 'wght' 620; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
   .qs-restart:hover { color: var(--ink); border-color: var(--line-dark); }
   .qs-restart svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
@@ -65,7 +67,7 @@ const photos = [
   .qs-restart.is-confirm { color: #fff; background: var(--red); border-color: var(--red); animation: qsPop .3s cubic-bezier(.3, 1.6, .5, 1); }
 
   /* ---------- stepper ---------- */
-  .qs__steps { list-style: none; margin: 0 0 clamp(26px, 3.4vw, 38px); padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .qs__steps { list-style: none; margin: 0 0 clamp(16px, 2vw, 24px); padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
   .qs__steps li { position: relative; display: grid; gap: 9px; }
   .qs__steps .qs-bar { height: 4px; border-radius: 4px; background: var(--haze-2); overflow: hidden; }
   .qs__steps .qs-bar i { display: block; height: 100%; width: 0; background: var(--red); border-radius: 4px; transition: width .6s cubic-bezier(.2, .8, .2, 1); }
@@ -1055,6 +1057,7 @@ const photos = [
       const svc = SVC.find((s) => s.id === state.type);
       root.querySelectorAll('[data-ph]').forEach((im) => im.classList.toggle('is-on', im.dataset.ph === state.type));
       root.querySelector('[data-qs-tktitle]').textContent = state.step > 0 || state.touched ? svc.b : 'Start with what you need';
+      topEl.hidden = !allItems().length;
       const L = ticketLines();
       const ghosts = ['What you need', 'Where', 'When', 'Your details'].slice(Math.min(L.length, 4));
       linesEl.innerHTML = L.map(([k, t, v]) => `<li class="${seen.has(k) ? '' : 'is-new'}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')
@@ -1088,7 +1091,8 @@ const photos = [
       const L = ticketLines();
       sheet.querySelector('[data-qs-sbody]').innerHTML = `<div class="qs-tk__ph">${[...ph.querySelectorAll('img')].map((im) => im.outerHTML.replace('loading="lazy"', '')).join('')}<div class="qs-tk__cap"><span class="qs-tk__k">Your quote</span><b>${esc(svc.b)}</b></div><button type="button" class="qs-modal__x qs-qsheet__x" data-qs-sclose aria-label="Close">${ICON.x}</button></div>
         <ul class="qs-tk__lines">${L.map(([k, t, v], i) => `<li class="qs-in" style="--i:${i}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')}</ul>
-        ${L.length < 2 ? '<p class="qs-qsheet__empty">Your answers show up here as you go.</p>' : ''}`;
+        ${L.length < 2 ? '<p class="qs-qsheet__empty">Your answers show up here as you go.</p>' : ''}
+        ${allItems().length ? '<div class="qs-qsheet__rs"><button type="button" class="qs-restart" data-qs-srestart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span>Restart quote</span></button></div>' : ''}`;
     }
     function openSheetUI() {
       sheet.hidden = false;
@@ -1097,6 +1101,12 @@ const photos = [
       { const c = document.getElementById('tss-chat-assistant'); if (c) c.style.visibility = 'hidden'; }
       setTimeout(() => sheet.querySelector('.qs-qsheet__x')?.focus({ preventScroll: true }), 80);
     }
+    sheet.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-qs-srestart]'); if (!b) return;
+      if (b.classList.contains('is-confirm')) { closeSheet(); restart(); return; }
+      b.classList.add('is-confirm'); b.querySelector('span').textContent = 'Tap again to clear';
+      setTimeout(() => { if (b.isConnected) { b.classList.remove('is-confirm'); b.querySelector('span').textContent = 'Restart quote'; } }, 3500);
+    });
     function closeSheet() {
       if (sheet.hidden) return;
       sheet.classList.remove('is-open');
@@ -1119,7 +1129,6 @@ const photos = [
     function render() {
       root.dataset.step = String(state.step);
       renderSteps(); renderTicket();
-      topEl.hidden = state.step === 0 && !state.touched;
       const dir = state.step < lastStep ? ' is-back' : '';
       lastStep = state.step;
       if (state.step === 0) stepService(dir);
