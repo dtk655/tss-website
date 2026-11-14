@@ -675,16 +675,16 @@ const photos = [
     .qs-head .qs-k { justify-content: center; }
     .qs-head .qs-k::before { display: none; }
     .qs-head h2 { text-wrap: balance; }
-    .qs-head > p:not(.qs-k) { max-width: 34ch; margin-inline: auto; }
+    .qs-head > p:not(.qs-k) { max-width: 34ch; margin-inline: auto; text-wrap: balance; }
     .qs__steps { justify-content: center; }
     /* service picker: 2 x 2 photo tiles */
     .qs-svc { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .qs-svc__card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; border-radius: 16px; }
     .qs-svc__art { min-height: 0; aspect-ratio: 16 / 10; }
-    .qs-svc__txt { padding: 12px 10px 14px; text-align: center; justify-items: center; align-content: start; gap: 5px; }
+    .qs-svc__txt { padding: 12px 6px 14px; text-align: center; justify-items: center; align-content: start; gap: 5px; }
     .qs-svc__txt b { font-size: 1rem; line-height: 1.15; text-wrap: balance; }
-    .qs-svc__txt small { font-size: .78rem; line-height: 1.35; }
-    .qs-svc .qs-tick { top: 8px; right: 8px; bottom: auto; width: 24px; height: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
+    .qs-svc__txt small { font-size: .78rem; line-height: 1.35; padding-inline: 4px; }
+    .qs-svc .qs-tick { top: 8px; right: 8px; bottom: auto; margin-top: 0; width: 24px; height: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
     /* choice bars and fields */
     .qs-seg span { font-size: .86rem; padding: 8px 4px; text-align: center; line-height: 1.15; min-height: 48px; }
     .qs-seg.is-2 span { font-size: .92rem; }
@@ -1163,7 +1163,29 @@ const photos = [
       body.querySelector('[data-qs-back]')?.addEventListener('click', () => go(state.step - 1));
       body.querySelector('[data-qs-qbtn]')?.addEventListener('click', openSheet);
       lastBadge = -1; qBadge();
+      fitHeads();
     }
+    /* phones: a heading that spills a word or two onto a second line shrinks to stay on one */
+    function fitHeads() {
+      root.querySelectorAll('.qs-head h2, .qs-head > p:not(.qs-k), .qs-svc__txt b').forEach((el) => {
+        el.style.fontSize = ''; el.style.whiteSpace = ''; el.style.maxWidth = '';
+        if (!matchMedia('(max-width: 640px)').matches || !el.offsetParent) return;
+        const cs = getComputedStyle(el), base = parseFloat(cs.fontSize);
+        if (el.getBoundingClientRect().height < parseFloat(cs.lineHeight) * 1.5) return;
+        const pcs = getComputedStyle(el.parentElement);
+        const room = el.parentElement.clientWidth - parseFloat(pcs.paddingLeft) - parseFloat(pcs.paddingRight);
+        el.style.whiteSpace = 'nowrap'; el.style.maxWidth = 'none';
+        const min = base * (el.tagName === 'P' ? .8 : .7);
+        let f = base;
+        while (el.scrollWidth > room && f > min) { f -= .5; el.style.fontSize = f + 'px'; }
+        if (el.scrollWidth > room) { el.style.fontSize = ''; el.style.whiteSpace = ''; el.style.maxWidth = ''; }
+      });
+      /* service tile names share one size so the grid stays even */
+      const names = [...root.querySelectorAll('.qs-svc__txt b')];
+      if (names.some((n) => n.style.fontSize)) { const m = Math.min(...names.map((n) => parseFloat(getComputedStyle(n).fontSize))); names.forEach((n) => { n.style.fontSize = m + 'px'; }); }
+    }
+    let fitT; addEventListener('resize', () => { clearTimeout(fitT); fitT = setTimeout(fitHeads, 120); });
+    document.fonts?.ready.then(fitHeads);
 
     function stepService(dir) {
       body.innerHTML = `<div class="qs-step${dir}">${head('Get started', 'What can we quote for you?', 'Pick the closest fit. You can change it any time.')}
