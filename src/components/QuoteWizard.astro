@@ -1021,11 +1021,12 @@ const photos = [
         if (it.length) L.push(['items:' + it.map((x) => x.desc + x.qty + (x.buy ? 'b' : '')).join('|'), `${it.length} item${it.length > 1 ? 's' : ''}`, `<span class="qs-tk__thumbs">${it.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}${x.qty} &times; ${esc(x.desc)}${x.buy ? BUYTAG : ''}${rmBtn(x)}</span>`).join('')}</span>`]);
         if (j.setup) L.push(['setup', 'Setup', esc(j.setup)]);
         if (j.custom === 'Yes') L.push(['custom', 'Custom', 'Colors, stenciling or logo']);
+        if (j.fulfill || state.step >= 2) { const v = `${isPickup() ? 'Pick Up' : 'Delivery'} \u00b7 ${j.timing === 'Rush/Emergency' ? 'Rush' : 'Standard'}`; L.push(['ship:' + v, 'Shipping', v]); }
       }
       if (state.type === 'general' && j.what) L.push(['what', 'The job', esc(j.what.length > 90 ? j.what.slice(0, 90) + '…' : j.what)]);
       const cityLine = j.town ? `${j.town}${j.state ? ', ' + j.state : ''}${j.zip && !j.zipManual ? ' ' + j.zip : ''}` : '';
       const place = [j.location || j.address, cityLine, !j.town && j.shipTo, j.where].filter(Boolean).join(', ');
-      if (place) L.push(['place', state.type === 'products' ? 'Ships to' : 'Where', esc(place)]);
+      if (place && !((state.type === 'rental' || state.type === 'products') && isPickup())) L.push(['place', state.type === 'products' ? 'Ships to' : 'Where', esc(place)]);
       const d1 = j.startDate || j.deliverDate || j.needBy, d2 = j.endDate || j.pickupDate;
       if (d1) L.push(['dates', state.type === 'products' ? 'Needed by' : 'Dates', esc(fmtDate(d1) + (d2 ? ` → ${fmtDate(d2)}` : '')) + (j.shift ? ` &middot; ${esc(j.shift)}` : '')]);
       else if (j.when) L.push(['when', 'When', esc(j.when)]);
