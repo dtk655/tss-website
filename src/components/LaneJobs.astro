@@ -1,0 +1,224 @@
+---
+// "What's your job?" matcher: pick a job type and the eight services light up to show what that job typically uses.
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const P = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const services = [
+  { id: 'closure', t: 'Lane and road closures', s: 'Single lane to full detour', ic: P('M12 3 5.5 20h13z M9.3 10h5.4 M7.6 15h8.8') },
+  { id: 'flag', t: 'Flagging operations', s: 'ATSSA-certified flaggers', ic: P('M6 21V4 M6 4h11l-2.5 4L17 12H6') },
+  { id: 'tma', t: 'TMA protection', s: 'Crash trucks, certified operators', ic: P('M2.5 8h10v8h-10z M12.5 11h4.5l3.5 3v2h-8z M6 18.6a1.6 1.6 0 1 0 0-.01 M16.5 18.6a1.6 1.6 0 1 0 0-.01') },
+  { id: 'night', t: 'Night and weekend work', s: 'Off-peak closure windows', ic: P('M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z') },
+  { id: 'install', t: 'Sign and barricade installs', s: 'Delivered, set and maintained', ic: P('M12 3l7 7-7 7-7-7z M12 17v4 M9 21h6') },
+  { id: 'plan', t: 'Traffic control plans', s: 'Permit-ready drawings', ic: P('M6 3h9l4 4v14H6z M15 3v4h4 M9 12h7 M9 16h5') },
+  { id: 'event', t: 'Special events', s: 'Parades, races and game days', ic: P('M5 21V4 M5 5h13l-3 4 3 4H5') },
+  { id: 'emergency', t: 'Emergency response', s: 'For account customers', ic: P('M13 2 5 13h6l-1 9 8-11h-6z') }
+];
+const jobs = [
+  { t: 'Highway Paving Or Milling', s: 'Moving operations on multi-lane roads', img: '/fleet/tma-dusk.jpg', pos: '50% 60%', uses: ['closure', 'tma', 'night', 'install', 'plan'],
+    line: 'Lanes closed ahead of the paving train, crash trucks behind it, usually in overnight windows.' },
+  { t: 'Bridge Or Overhead Work', s: 'Full or partial closures under structures', img: '/fleet/lc-scene.webp', pos: '50% 50%', uses: ['closure', 'tma', 'night', 'install', 'plan'],
+    line: 'Full or partial closures with detours, crash trucks blocking the work area and plans drawn for the authority.' },
+  { t: 'Utility Work On A Local Street', s: 'Water, gas, electric and telecom', img: CDN + 'thumbnail_IMG_0308.jpg', pos: '50% 62%', uses: ['closure', 'flag', 'install', 'plan'],
+    line: 'One lane shut around the work, flaggers alternating traffic and signs set at every approach.' },
+  { t: 'Shoulder Or Roadside Work', s: 'Guide rail, tree, sign and drainage work', img: CDN + 'TMA_192_Rear.jpg', pos: '50% 45%', uses: ['closure', 'tma', 'install'],
+    line: 'A shoulder or right-lane closure with a crash truck protecting the crew.' },
+  { t: 'Parade, Race Or Event', s: 'Street closures and crowd routes', img: CDN + 'Water-Filled-Barricades-In-Use-3-1.png', pos: '50% 50%', uses: ['event', 'closure', 'flag', 'install', 'plan'],
+    line: 'Roads closed and detoured, barricades along the route, planned with the town and police.' }
+];
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const C = 2 * Math.PI * 52;
+---
+<section class="lj" data-lj data-jobs={JSON.stringify(jobs.map((j) => ({ uses: j.uses, line: j.line, t: j.t })))}>
+  <div class="wrap">
+    <div class="lj__head">
+      <div>
+        <p class="lj__k"><span></span>What our crews handle</p>
+        <h2>Every kind of closure. <em>One call.</em></h2>
+      </div>
+      <p class="lj__lede">Pick the job that looks like yours. We’ll show you what our crews would bring.</p>
+    </div>
+
+    <div class="lj__jobs" role="tablist" aria-label="What kind of job is it?">
+      {jobs.map((j, i) => (
+        <button type="button" role="tab" class:list={['lj__job', i === 0 && 'is-on']} aria-selected={i === 0 ? 'true' : 'false'} data-job={i} style={`--d:${i}`}>
+          <img src={j.img} alt="" loading="lazy" style={`object-position:${j.pos}`} />
+          <span class="lj__jshade" aria-hidden="true"></span>
+          <span class="lj__jn">{String(i + 1).padStart(2, '0')}</span>
+          <span class="lj__jt"><b>{j.t}</b><small>{j.s}</small></span>
+          <i class="lj__jbar" aria-hidden="true"></i>
+        </button>
+      ))}
+    </div>
+
+    <div class="lj__sheet">
+      {jobs.map((j, i) => <img class:list={['lj__bg', i === 0 && 'is-on']} src={j.img} alt="" loading="lazy" data-bg={i} style={`object-position:${j.pos}`} />)}
+      <span class="lj__veil" aria-hidden="true"></span>
+      <span class="lj__sweep" aria-hidden="true" data-sweep></span>
+
+      <div class="lj__sum">
+        <div class="lj__ring">
+          <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" /><circle class="lj__arc" cx="60" cy="60" r="52" stroke-dasharray={C} stroke-dashoffset={C} data-arc data-c={C} /></svg>
+          <p><b data-count>0</b><span>of {services.length} services</span></p>
+        </div>
+        <div class="lj__stext">
+          <p class="lj__sk">Your closure</p>
+          <h3 data-title>{jobs[0].t}</h3>
+          <p class="lj__line" data-line>{jobs[0].line}</p>
+          <div class="lj__acts">
+            <a href="/pages/request-a-quote?type=lane-closure" class="lj__cta lj__cta--red">Get a quote for this job<Fragment set:html={ARROW} /></a>
+            <a href="/tools/lane-closure-plan" class="lj__cta">Start a free plan</a>
+          </div>
+        </div>
+      </div>
+
+      <ul class="lj__svcs" aria-live="polite">
+        {services.map((s, i) => (
+          <li class="lj__svc" data-svc={s.id} style={`--i:${i}`}>
+            <span class="lj__ic" set:html={s.ic} />
+            <span class="lj__st"><b>{s.t}</b><small>{s.s}</small></span>
+            <span class="lj__tick" set:html={CHK} />
+          </li>
+        ))}
+      </ul>
+      <p class="lj__note">Typical setups. Every job gets its own plan, sized by our team.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-lj]');
+  if (root) {
+    const jobs = JSON.parse(root.dataset.jobs!);
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-job]')];
+    const bgs = [...root.querySelectorAll<HTMLElement>('[data-bg]')];
+    const svcs = [...root.querySelectorAll<HTMLElement>('[data-svc]')];
+    const arc = root.querySelector<SVGCircleElement>('[data-arc]')!, C = +arc.dataset.c!;
+    const count = root.querySelector('[data-count]')!, title = root.querySelector('[data-title]')!, line = root.querySelector('[data-line]')!;
+    const sweep = root.querySelector<HTMLElement>('[data-sweep]')!;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const DUR = 6000;
+    let cur = -1, timer = 0, auto = !still, seen = false, raf = 0;
+    const tween = (to: number) => {
+      cancelAnimationFrame(raf);
+      const from = +count.textContent! || 0, t0 = performance.now();
+      const step = (now: number) => { const k = Math.min(1, (now - t0) / 500); count.textContent = String(Math.round(from + (to - from) * k)); if (k < 1) raf = requestAnimationFrame(step); };
+      still ? (count.textContent = String(to)) : (raf = requestAnimationFrame(step));
+    };
+    const show = (i: number, user = false) => {
+      if (user) { auto = false; root.classList.add('is-manual'); }
+      if (i === cur && !user) return;
+      cur = i;
+      const j = jobs[i];
+      tabs.forEach((t, k) => { t.classList.toggle('is-on', k === i); t.setAttribute('aria-selected', String(k === i)); const b = t.querySelector<HTMLElement>('.lj__jbar')!; b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; });
+      bgs.forEach((b, k) => b.classList.toggle('is-on', k === i));
+      let n = 0;
+      svcs.forEach((s) => { const on = j.uses.includes(s.dataset.svc); s.classList.remove('is-on'); if (on) { s.style.setProperty('--n', String(n++)); void s.offsetWidth; s.classList.add('is-on'); } });
+      arc.style.strokeDashoffset = String(C * (1 - j.uses.length / svcs.length));
+      tween(j.uses.length);
+      [title, line].forEach((e) => { e.classList.remove('is-swap'); void (e as HTMLElement).offsetWidth; e.classList.add('is-swap'); });
+      title.textContent = j.t; line.textContent = j.line;
+      sweep.classList.remove('is-go'); void sweep.offsetWidth; sweep.classList.add('is-go');
+      clearTimeout(timer);
+      if (auto && seen) timer = window.setTimeout(() => show((cur + 1) % jobs.length), DUR);
+      if (user) tabs[i].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    };
+    tabs.forEach((t) => t.addEventListener('click', () => show(+t.dataset.job!, true)));
+    root.style.setProperty('--dur', DUR + 'ms');
+    new IntersectionObserver(([en]) => {
+      if (en.isIntersecting && !seen) { seen = true; root.classList.add('is-in'); show(0); }
+      else if (!en.isIntersecting) clearTimeout(timer);
+      else if (auto) { clearTimeout(timer); timer = window.setTimeout(() => show((cur + 1) % jobs.length), DUR); }
+    }, { threshold: 0.25 }).observe(root.querySelector('.lj__sheet')!);
+  }
+</script>
+
+<style>
+  .lj { padding: clamp(56px, 7vw, 104px) 0; background: radial-gradient(70% 60% at 100% 0%, rgba(182, 6, 6, .22), transparent 60%), #0e1012; color: #fff; overflow: clip; }
+  .lj__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 40px; margin-bottom: clamp(22px, 2.8vw, 36px); }
+  .lj__k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--gold); }
+  .lj__k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
+  .lj h2 { margin: 0; font-size: clamp(2.2rem, 5vw, 4.4rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; color: #fff; }
+  .lj h2 em { font-style: normal; color: var(--gold); }
+  .lj__lede { margin: 0; max-width: 36ch; color: #b9c0c7; line-height: 1.5; }
+
+  /* job cards */
+  .lj__jobs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .lj__job { position: relative; display: block; aspect-ratio: 4 / 3.3; border: 0; padding: 0; border-radius: 18px; overflow: hidden; background: #1a1d21; color: #fff; font: inherit; text-align: left; cursor: pointer; isolation: isolate; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1); opacity: 0; translate: 0 22px; }
+  .lj.is-in .lj__job { opacity: 1; translate: 0 0; transition: outline-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1), opacity .6s calc(var(--d) * 70ms), translate .8s calc(var(--d) * 70ms) cubic-bezier(.2, .8, .2, 1); }
+  .lj__job img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; filter: saturate(.75) brightness(.7); transform: scale(1.04); transition: transform 1.2s cubic-bezier(.2, .8, .2, 1), filter .5s; }
+  .lj__job:hover img { transform: scale(1.1); filter: saturate(.95) brightness(.85); }
+  .lj__job.is-on img { transform: scale(1.1); filter: none; }
+  .lj__jshade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10, 11, 13, .15) 20%, rgba(10, 11, 13, .92) 100%); }
+  .lj__job.is-on { outline-color: var(--gold); transform: translateY(-4px); }
+  .lj__jn { position: absolute; top: 12px; left: 14px; font-size: .76rem; letter-spacing: .14em; color: var(--gold); font-variation-settings: 'wght' 760; }
+  .lj__jt { position: absolute; left: 14px; right: 14px; bottom: 16px; display: grid; gap: 3px; }
+  .lj__jt b { font-size: clamp(.98rem, 1.25vw, 1.2rem); line-height: 1.12; letter-spacing: -.02em; font-variation-settings: 'wght' 760; }
+  .lj__jt small { color: #c5ccd3; font-size: .8rem; line-height: 1.3; }
+  .lj__jbar { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
+  .lj.is-in .lj__job.is-on .lj__jbar { animation: ljBar var(--dur, 6s) linear forwards; }
+  .lj.is-manual .lj__job.is-on .lj__jbar { animation: none; transform: scaleX(1); }
+  @keyframes ljBar { to { transform: scaleX(1); } }
+
+  /* build sheet */
+  .lj__sheet { position: relative; margin-top: 12px; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: clamp(20px, 3vw, 48px); align-items: center; padding: clamp(22px, 3vw, 44px); border-radius: 26px; overflow: hidden; isolation: isolate; border: 1px solid rgba(255, 255, 255, .1); background: #121416; box-shadow: 0 60px 120px -60px #000; }
+  .lj__bg { position: absolute; inset: -30px; width: calc(100% + 60px); height: calc(100% + 60px); object-fit: cover; z-index: -3; opacity: 0; filter: blur(22px) saturate(1.1); transform: scale(1.08); transition: opacity 1.1s; }
+  .lj__bg.is-on { opacity: .5; }
+  .lj__veil { position: absolute; inset: 0; z-index: -2; background: linear-gradient(100deg, rgba(12, 13, 15, .82) 0%, rgba(12, 13, 15, .7) 45%, rgba(12, 13, 15, .86) 100%); }
+  .lj__sweep { position: absolute; z-index: -1; top: 0; bottom: 0; left: -25%; width: 25%; background: linear-gradient(90deg, transparent, rgba(255, 205, 0, .1) 60%, rgba(255, 205, 0, .5) 99%, transparent); opacity: 0; pointer-events: none; }
+  .lj__sweep.is-go { animation: ljSweep .9s cubic-bezier(.4, 0, .2, 1); }
+  @keyframes ljSweep { 0% { left: -25%; opacity: 1; } 100% { left: 100%; opacity: 0; } }
+
+  .lj__sum { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(16px, 2vw, 28px); align-items: center; }
+  .lj__ring { position: relative; width: clamp(110px, 11vw, 150px); aspect-ratio: 1; }
+  .lj__ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .lj__ring circle { fill: none; stroke: rgba(255, 255, 255, .12); stroke-width: 8; }
+  .lj__ring .lj__arc { stroke: var(--gold); stroke-linecap: round; transition: stroke-dashoffset .9s cubic-bezier(.2, .8, .2, 1); filter: drop-shadow(0 0 8px rgba(255, 205, 0, .5)); }
+  .lj__ring p { position: absolute; inset: 0; margin: 0; display: grid; place-content: center; text-align: center; }
+  .lj__ring b { font-size: clamp(2.2rem, 3.6vw, 3.2rem); line-height: 1; letter-spacing: -.04em; font-variation-settings: 'wght' 800; font-variant-numeric: tabular-nums; }
+  .lj__ring span { margin-top: 2px; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: #b9c0c7; font-variation-settings: 'wght' 650; }
+  .lj__sk { margin: 0 0 8px; font-size: .76rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); font-variation-settings: 'wght' 720; }
+  .lj__stext h3 { margin: 0; font-size: clamp(1.5rem, 2.4vw, 2.2rem); line-height: 1.04; letter-spacing: -.035em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .lj__line { margin: 10px 0 0; color: #c8ced4; line-height: 1.55; }
+  .lj__stext .is-swap { animation: ljSwap .5s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes ljSwap { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .lj__acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .lj__cta { display: inline-flex; align-items: center; gap: 9px; min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1.5px solid rgba(255, 255, 255, .35); color: #fff; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, border-color .2s; }
+  .lj__cta:hover { background: rgba(255, 255, 255, .1); border-color: #fff; }
+  .lj__cta--red { background: var(--red); border-color: var(--red); box-shadow: 0 16px 34px -16px rgba(182, 6, 6, .9); }
+  .lj__cta--red:hover { background: #d10a0a; border-color: #d10a0a; }
+  .lj__cta :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .lj__cta:hover :global(svg) { transform: translateX(3px); }
+
+  .lj__svcs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .lj__svc { position: relative; display: grid; grid-template-columns: 42px minmax(0, 1fr) 24px; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .08); background: rgba(255, 255, 255, .03); color: #7d868e; transition: background .5s, border-color .5s, color .5s, transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .lj__ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: rgba(255, 255, 255, .06); transition: background .5s, color .5s; }
+  .lj__ic :global(svg) { width: 22px; height: 22px; }
+  .lj__st { display: grid; gap: 1px; min-width: 0; }
+  .lj__st b { font-size: .98rem; line-height: 1.2; font-variation-settings: 'wght' 700; }
+  .lj__st small { font-size: .8rem; opacity: .8; }
+  .lj__tick { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .16); color: transparent; transition: background .4s, border-color .4s, color .4s, transform .5s cubic-bezier(.2, 1.5, .4, 1); }
+  .lj__tick :global(svg) { width: 13px; height: 13px; }
+  .lj__svc.is-on { background: rgba(255, 255, 255, .11); border-color: rgba(255, 205, 0, .55); color: #fff; transform: translateX(4px); transition-delay: calc(var(--n, 0) * 90ms); }
+  .lj__svc.is-on .lj__ic { background: var(--red); color: #fff; transition-delay: calc(var(--n, 0) * 90ms); }
+  .lj__svc.is-on .lj__tick { background: var(--gold); border-color: var(--gold); color: #14171a; transform: scale(1.12); transition-delay: calc(.1s + var(--n, 0) * 90ms); }
+  .lj__note { grid-column: 1 / -1; margin: 0; color: #8d969e; font-size: .84rem; }
+
+  @media (max-width: 1100px) {
+    .lj__jobs { display: flex; overflow-x: auto; scroll-snap-type: x proximity; margin-inline: -16px; padding: 6px 16px; scrollbar-width: none; }
+    .lj__jobs::-webkit-scrollbar { display: none; }
+    .lj__job { flex: 0 0 min(64vw, 250px); scroll-snap-align: center; }
+    .lj__sheet { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .lj__head { display: block; } .lj__lede { margin-top: 10px; }
+    .lj__sum { grid-template-columns: 1fr; justify-items: start; }
+    .lj__ring { width: 104px; }
+    .lj__svcs { grid-template-columns: 1fr; }
+    .lj__cta { flex: 1 1 auto; justify-content: center; }
+    .lj__sheet { border-radius: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lj__job, .lj.is-in .lj__job { opacity: 1; translate: 0 0; transition: none; } .lj__jbar, .lj__sweep, .lj__stext .is-swap { animation: none !important; }
+    .lj__svc, .lj__ic, .lj__tick, .lj__ring .lj__arc, .lj__bg { transition: none; }
+  }
+</style>
