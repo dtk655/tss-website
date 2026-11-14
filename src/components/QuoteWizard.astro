@@ -774,8 +774,11 @@ const photos = [
         { id: 'pickupInfo', type: 'info', showIf: { fulfill: 'Customer Pick Up' }, places: [['Equipment and fleet', YARD_EQUIP], ['Cones, drums and barricades', YARD_PRODUCTS]] },
         { id: 'address', label: 'Delivery address', type: 'text', req: true, ph: 'Street address or jobsite', hideIf: { fulfill: 'Customer Pick Up' } },
         { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT'], areaMsg: 'Rentals deliver in NJ, NY, PA and CT. Send it anyway and we\u2019ll let you know.', hideIf: { fulfill: 'Customer Pick Up' } },
-        { id: 'deliverDate', label: 'Delivery date', alt: 'Pick up date', type: 'date', req: true, w: 'half', pair: 1 },
-        { id: 'pickupDate', label: 'Pickup date', alt: 'Return date', type: 'date', w: 'half', pair: 1, hint: 'A guess is fine.' },
+        { id: 'timing', label: 'Delivery timing', alt: 'Pick up timing', type: 'seg', req: true, opts: ['Standard', 'Rush/Emergency'], def: 'Standard', cls: 'is-2', hint: 'We\u2019ll contact you to confirm timing. Nothing is scheduled until we do.' },
+        { id: 'rushSoon', label: 'How soon do you need it?', type: 'seg', req: true, opts: ['Today', 'Tomorrow', 'Within 2 to 3 days'], showIf: { timing: 'Rush/Emergency' } },
+        { id: 'rushWhy', label: 'What\u2019s the situation?', type: 'text', ph: 'e.g. crew starts Monday at 6am', showIf: { timing: 'Rush/Emergency' } },
+        { id: 'deliverDate', label: 'Rental start', type: 'date', req: true, w: 'half', pair: 1 },
+        { id: 'pickupDate', label: 'Rental end', type: 'date', w: 'half', pair: 1, hint: 'A guess is fine. We\u2019ll confirm the exact time with you.' },
         { id: 'days', type: 'days' },
         { id: 'contact', label: 'On-site contact, name and phone', type: 'text', ph: 'Who meets the truck?', hideIf: { fulfill: 'Customer Pick Up' } },
         { id: 'notes', label: 'Anything else about the job?', type: 'textarea', ph: 'Access, gate codes, placement, timing…' }
@@ -791,7 +794,9 @@ const photos = [
         { id: 'fulfill', label: 'How do you want to get it?', type: 'seg', req: true, opts: ['Ship It', 'Customer Pick Up'], def: 'Ship It', cls: 'is-2' },
         { id: 'pickupInfo', type: 'info', showIf: { fulfill: 'Customer Pick Up' }, places: [['Products', YARD_PRODUCTS]] },
         { id: 'zip', label: 'Ship-to ZIP code', type: 'zip', req: true, hideIf: { fulfill: 'Customer Pick Up' } },
-        { id: 'needBy', label: 'Needed by', alt: 'Pick up date', type: 'date', w: 'half' },
+        { id: 'timing', label: 'Delivery timing', alt: 'Pick up timing', type: 'seg', req: true, opts: ['Standard', 'Rush/Emergency'], def: 'Standard', cls: 'is-2', hint: 'We\u2019ll contact you to confirm timing. Nothing is scheduled until we do.' },
+        { id: 'rushSoon', label: 'How soon do you need it?', type: 'seg', req: true, opts: ['Today', 'Tomorrow', 'Within 2 to 3 days'], showIf: { timing: 'Rush/Emergency' } },
+        { id: 'rushWhy', label: 'What\u2019s the situation?', type: 'text', ph: 'e.g. crew starts Monday at 6am', showIf: { timing: 'Rush/Emergency' } },
         { id: 'po', label: 'How are you buying?', type: 'chips', opts: ['Credit card', 'Purchase order', 'Net terms account', 'Not sure'] },
         { id: 'notes', label: 'Anything else?', type: 'textarea', ph: 'Sizes, colors, delivery details…' }
       ] }
@@ -1199,14 +1204,15 @@ const photos = [
       const svc = SVC.find((s) => s.id === state.type);
       const { job, about } = pairs();
       const items = allItems();
-      return [`Quote request: ${svc.b}`, '', ...(items.length ? ['ITEMS', ...items.map((x) => `${x.qty} x ${x.desc}${x.buy ? ' [ALSO QUOTE PURCHASE PRICE]' : ''}`), ''] : []), 'THE JOB', ...job.map(([k, v]) => `${k}: ${v}`), '', 'CONTACT', ...about.map(([k, v]) => `${k}: ${v}`)].join('\n');
+      const rush = state.job.timing === 'Rush/Emergency' ? [`[RUSH/EMERGENCY ${isPickup() ? 'PICK UP' : 'DELIVERY'}: ${state.job.rushSoon || 'timing not given'}]`, ''] : [];
+      return [`Quote request: ${svc.b}`, '', ...rush, ...(items.length ? ['ITEMS', ...items.map((x) => `${x.qty} x ${x.desc}${x.buy ? ' [ALSO QUOTE PURCHASE PRICE]' : ''}`), ''] : []), 'THE JOB', ...job.map(([k, v]) => `${k}: ${v}`), '', 'CONTACT', ...about.map(([k, v]) => `${k}: ${v}`)].join('\n');
     }
     async function submit() {
       const btn = body.querySelector('[data-qs-send]');
       btn.disabled = true; btn.classList.add('is-sending'); btn.innerHTML = `Sending<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg>`;
       const items = allItems().map(({ desc, qty, buy }) => (buy ? { desc, qty, alsoQuotePurchase: true } : { desc, qty }));
       const { sel, ...rest } = state.job;
-      const payload = { type: state.type, answers: { job: { ...rest, items }, about: state.about }, summary: summaryText(), quoteList: window.TSSQuote?.items?.() || [], page: location.pathname, submittedAt: new Date().toISOString() };
+      const payload = { type: state.type, answers: { job: { ...rest, items }, about: state.about }, summary: summaryText(), rush: state.job.timing === 'Rush/Emergency', quoteList: window.TSSQuote?.items?.() || [], page: location.pathname, submittedAt: new Date().toISOString() };
       try {
         if (!HOOK) throw new Error('no webhook');
         const r = await fetch(HOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
