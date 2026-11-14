@@ -15,7 +15,7 @@ const canonical = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/i
 const origin = (process.env.URL || 'https://trafficsafetyservice.com').replace(/\/$/, '');
 const isProduct = Astro.url.pathname.startsWith('/products/');
 const abs = (u) => (/^https?:/.test(u) ? u : origin + u);
-const ogImage = isProduct && image ? abs(image) : origin + '/og-share.png';
+const ogImage = isProduct && image ? abs(image) : origin + '/og-share.png?v=2';
 ---
 <!doctype html>
 <html lang="en">
