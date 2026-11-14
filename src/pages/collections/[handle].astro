@@ -40,11 +40,12 @@ const lineup = [];
     }
   }
 }
-const hasLineup = lineup.length >= 3;
+const hasLineup = !meta.scene && lineup.length >= 3;
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <Layout title={c.title} description={`${c.title} from Traffic Safety Service. ${desc}`}>
-  <section class={`ch${hasLineup ? ' ch--lu' : ''}`} style={`--tint:${meta.tint}`}>
+  <section class={`ch${hasLineup ? ' ch--lu' : ''}${meta.scene ? ' ch--scene' : ''}`} style={`--tint:${meta.tint}`}>
+    {meta.scene && <img class="ch__scene" src={meta.scene} alt="TSS bucket truck, TMA crash truck and bucket van lined up" width="3000" height="760" />}
     <div class="wrap ch__in">
       <div class="ch__copy">
         <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href={isRentalCol ? (meta.page || '/pages/equipment') : '/collections'}>{isRentalCol ? 'Rentals' : 'Products'}</a><span aria-hidden="true">/</span><span aria-current="page">{c.title}</span></nav>
@@ -224,6 +225,22 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .ch__art { position: relative; display: grid; place-items: center; height: 100%; }
   .ch__glow { position: absolute; width: 78%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0)); }
   .ch__art img { position: relative; display: block; width: 100%; max-width: 380px; height: clamp(140px, 13vw, 200px); object-fit: contain; filter: drop-shadow(0 26px 22px rgba(20, 23, 26, .25)); animation: chArt 1s .15s cubic-bezier(.2, .8, .2, 1) backwards; }
+  /* desktop showroom scene (truck fleet) */
+  .ch__scene { display: none; }
+  @media (min-width: 1200px) {
+    .ch--scene { background: #121416; border-bottom-color: #121416; }
+    .ch--scene .ch__scene { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 100% 60%; animation: chScene 1.2s cubic-bezier(.2, .8, .2, 1) backwards; }
+    .ch--scene .ch__in { position: relative; grid-template-columns: minmax(0, 1fr); min-height: clamp(300px, 25.3vw, 520px); align-content: center; }
+    .ch--scene .ch__copy { max-width: 40%; }
+    .ch--scene .ch__art { display: none; }
+    .ch--scene h1, .ch--scene .ch__more { color: #fff; }
+    .ch--scene .ch__lede { color: rgba(255, 255, 255, .78); }
+    .ch--scene :global(.crumbs), .ch--scene :global(.crumbs a), .ch--scene :global(.crumbs span) { color: rgba(255, 255, 255, .72); }
+    .ch--scene .ch__ln--sub > span { color: #ff5a4f; }
+    .ch--scene .ch__btn--line { border-color: rgba(255, 255, 255, .4); color: #fff; background: rgba(255, 255, 255, .06); }
+    .ch--scene .ch__btn--line:hover { border-color: #fff; background: rgba(255, 255, 255, .14); }
+  }
+  @keyframes chScene { from { opacity: 0; transform: scale(1.03); } }
   /* desktop product lineup */
   .ch__lu { display: none; }
   @media (min-width: 921px) {
@@ -247,7 +264,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   @keyframes chRise { from { transform: translateY(105%); } }
   @keyframes chUp { from { opacity: 0; transform: translateY(12px); } }
   @keyframes chArt { from { opacity: 0; transform: translateY(24px) scale(.94); } }
-  @media (prefers-reduced-motion: reduce) { .ch__ln > span, .ch__acts, .ch__art img, .ch__lu-img img, .ch__lu-n { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .ch__ln > span, .ch__acts, .ch__art img, .ch__lu-img img, .ch__lu-n, .ch__scene { animation: none; } }
   @media (max-width: 360px) { .ch__acts { flex-wrap: wrap !important; } }
 
 

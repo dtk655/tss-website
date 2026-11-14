@@ -12,5 +12,5 @@ export const CATEGORY_META = {
   'sign-stands': { tint: '#ebebe8', img: '/cats/sign-stands.png', line: 'Keep signs standing.', sub: 'K-stands and tripods.' },
   deliniators: { tint: '#ffe7d2', img: '/cats/deliniators.png', line: 'Guide the lane.', sub: 'Ring-top and knob-top delineators and bases.' },
   'equipment-rentals': { tint: '#fff1c9', img: '/fleet/cut/vms.png', line: 'Boards, lights and more.', sub: 'VMS and arrow boards, light towers and traffic lights.', page: '/pages/equipment' },
-  'truck-rentals': { tint: '#ffdede', img: '/fleet/tma-side.png', line: 'A truck for every job.', sub: 'TMA crash trucks, bucket trucks, cone trucks and flatbeds.', page: '/pages/fleet' }
+  'truck-rentals': { tint: '#ffdede', img: '/fleet/tma-side.png', line: 'A truck for every job.', sub: 'TMA crash trucks, bucket trucks, cone trucks and flatbeds.', page: '/pages/fleet', scene: '/fleet/showroom-trucks.webp' }
 };
