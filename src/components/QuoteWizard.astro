@@ -653,6 +653,19 @@ const photos = [
     .qs-det { width: 32px; height: 32px; padding: 0; justify-content: center; }
   }
   @media (prefers-reduced-motion: reduce) { .qd__panel, .qd__bg { transition: none; } .qd__body > *, .qd__stage img { animation: none; } }
+
+  /* ---------- customer pick up ---------- */
+  .qs-pu { display: grid; gap: 8px; padding: 16px; border-radius: 16px; background: var(--haze); border: 1px solid var(--line); animation: qsPu .4s cubic-bezier(.2, .8, .2, 1); }
+  .qs-pu__k { display: flex; align-items: center; gap: 8px; margin: 0 0 2px; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 720; }
+  .qs-pu__k svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+  .qs-pu__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 12px; background: #fff; border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color .2s; }
+  .qs-pu__row:hover { border-color: var(--ink); }
+  .qs-pu__row span { display: grid; gap: 2px; min-width: 0; }
+  .qs-pu__row small { color: var(--steel); font-size: .8rem; }
+  .qs-pu__row b { font-variation-settings: 'wght' 700; }
+  .qs-pu__row i { font-style: normal; flex: none; padding: 5px 12px; border-radius: 999px; background: var(--red-tint); color: var(--red); font-size: .82rem; font-variation-settings: 'wght' 700; }
+  .qs-pu__n { margin: 2px 0 0; color: var(--steel); font-size: .88rem; }
+  @keyframes qsPu { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 </style>
 
 <script>
@@ -715,6 +728,8 @@ const photos = [
     return s + '</svg>';
   }
 
+    const YARD_PRODUCTS = '601 Hadley Road, South Plainfield, NJ 07080';
+    const YARD_EQUIP = '448 Hollywood Avenue, South Plainfield, NJ 07080';
   const SVC = [
     { id: 'products', b: 'Purchase Pricing', s: 'Ships nationwide. Bulk orders, POs and custom branding', photo: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/TRAILER13.jpg?width=800', pos: '50% 50%' },
     { id: 'rental', b: 'Rental Pricing', s: 'VMS boards, arrow boards, crash trucks and more, delivered and picked up in NJ, NY, PA and CT', photo: '/fleet/vms-yard.webp', pos: '30% 45%' },
@@ -754,13 +769,15 @@ const photos = [
         { id: 'cat', label: '', type: 'catalog', req: true, shop: { equip: true, cats: RENT_CATS } },
         { id: 'setup', label: 'Should our crew set it up?', type: 'seg', opts: ['Deliver and set up', 'Just deliver', 'Not sure yet'] }
       ] },
-      { name: 'Delivery', k: 'Delivery and dates', title: 'Where and when should it arrive?', lead: 'We deliver and pick up in NJ, NY, PA and CT.', fields: [
-        { id: 'address', label: 'Delivery address', type: 'text', req: true, ph: 'Street address or jobsite' },
-        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT'], areaMsg: 'Rentals deliver in NJ, NY, PA and CT. Send it anyway and we\u2019ll let you know.' },
-        { id: 'deliverDate', label: 'Delivery date', type: 'date', req: true, w: 'half', pair: 1 },
-        { id: 'pickupDate', label: 'Pickup date', type: 'date', w: 'half', pair: 1, hint: 'A guess is fine.' },
+      { name: 'Delivery', k: 'Delivery and dates', title: 'Where and when do you need it?', lead: 'We deliver and pick up in NJ, NY, PA and CT, or you can pick it up at our yard.', fields: [
+        { id: 'fulfill', label: 'How do you want to get it?', type: 'seg', req: true, opts: ['Deliver It', 'Customer Pick Up'], def: 'Deliver It', cls: 'is-2' },
+        { id: 'pickupInfo', type: 'info', showIf: { fulfill: 'Customer Pick Up' }, places: [['Equipment and fleet', YARD_EQUIP], ['Cones, drums and barricades', YARD_PRODUCTS]] },
+        { id: 'address', label: 'Delivery address', type: 'text', req: true, ph: 'Street address or jobsite', hideIf: { fulfill: 'Customer Pick Up' } },
+        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT'], areaMsg: 'Rentals deliver in NJ, NY, PA and CT. Send it anyway and we\u2019ll let you know.', hideIf: { fulfill: 'Customer Pick Up' } },
+        { id: 'deliverDate', label: 'Delivery date', alt: 'Pick up date', type: 'date', req: true, w: 'half', pair: 1 },
+        { id: 'pickupDate', label: 'Pickup date', alt: 'Return date', type: 'date', w: 'half', pair: 1, hint: 'A guess is fine.' },
         { id: 'days', type: 'days' },
-        { id: 'contact', label: 'On-site contact, name and phone', type: 'text', ph: 'Who meets the truck?' },
+        { id: 'contact', label: 'On-site contact, name and phone', type: 'text', ph: 'Who meets the truck?', hideIf: { fulfill: 'Customer Pick Up' } },
         { id: 'notes', label: 'Anything else about the job?', type: 'textarea', ph: 'Access, gate codes, placement, timing…' }
       ] }
     ],
@@ -770,9 +787,11 @@ const photos = [
         { id: 'custom', label: 'Custom colors, stenciling or your logo?', type: 'seg', opts: ['No', 'Yes'], cls: 'is-2' },
         { id: 'customDesc', label: 'Describe the customization', type: 'textarea', ph: 'e.g. 200 orange cones stenciled "CITY OF NEWARK DPW", logo on both sides', showIf: { custom: 'Yes' } }
       ] },
-      { name: 'Shipping', k: 'Shipping', title: 'Where should it ship?', lead: 'Products ship anywhere in the U.S.', fields: [
-        { id: 'zip', label: 'Ship-to ZIP code', type: 'zip', req: true },
-        { id: 'needBy', label: 'Needed by', type: 'date', w: 'half' },
+      { name: 'Shipping', k: 'Shipping or pick up', title: 'Ship it or pick it up?', lead: 'Products ship anywhere in the U.S., or pick up your order at our shop in South Plainfield, NJ.', fields: [
+        { id: 'fulfill', label: 'How do you want to get it?', type: 'seg', req: true, opts: ['Ship It', 'Customer Pick Up'], def: 'Ship It', cls: 'is-2' },
+        { id: 'pickupInfo', type: 'info', showIf: { fulfill: 'Customer Pick Up' }, places: [['Products', YARD_PRODUCTS]] },
+        { id: 'zip', label: 'Ship-to ZIP code', type: 'zip', req: true, hideIf: { fulfill: 'Customer Pick Up' } },
+        { id: 'needBy', label: 'Needed by', alt: 'Pick up date', type: 'date', w: 'half' },
         { id: 'po', label: 'How are you buying?', type: 'chips', opts: ['Credit card', 'Purchase order', 'Net terms account', 'Not sure'] },
         { id: 'notes', label: 'Anything else?', type: 'textarea', ph: 'Sizes, colors, delivery details…' }
       ] }
@@ -847,10 +866,13 @@ const photos = [
     const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
     const flow = () => FLOW[state.type];
     const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
-    const visible = (f) => !f.showIf || Object.entries(f.showIf).every(([k, v]) => state.job[k] === v);
+    const visible = (f) => (!f.showIf || Object.entries(f.showIf).every(([k, v]) => state.job[k] === v)) && !(f.hideIf && Object.entries(f.hideIf).every(([k, v]) => state.job[k] === v));
+    const isPickup = () => state.job.fulfill === 'Customer Pick Up';
+    const labelOf = (f) => (f.alt && isPickup() ? f.alt : f.label);
+    const mapsUrl = (a) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Traffic Safety Service, ' + a);
 
     /* ---------------- field html ---------------- */
-    const lbl = (f, forId) => f.label ? `<${forId ? `label for="${forId}"` : 'span'} class="qs-lbl" id="${ns}-${f.id}-l">${esc(f.label)}${f.req ? '' : '<em>Optional</em>'}</${forId ? 'label' : 'span'}>` : '';
+    const lbl = (f, forId) => f.label ? `<${forId ? `label for="${forId}"` : 'span'} class="qs-lbl" id="${ns}-${f.id}-l">${esc(labelOf(f))}${f.req ? '' : '<em>Optional</em>'}</${forId ? 'label' : 'span'}>` : '';
     function field(f, scope, i) {
       const v = state[scope][f.id];
       const id = `${ns}-${f.id}`;
@@ -871,7 +893,10 @@ const photos = [
           return wrap(`<div class="qs-chips" role="group" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-chip"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${esc(o)}" data-qs-f="${f.id}"${multi ? ' data-qs-multi="1"' : ''}${(multi ? vals.includes(o) : vals === o) ? ' checked' : ''}><span>${multi ? ICON.check.replace('<svg', '<svg aria-hidden="true"') : ''}${esc(o)}</span></label>`).join('')}</div>`);
         }
         case 'seg':
-          return wrap(`<div class="qs-seg ${f.cls || ''}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => { const [t, ic] = Array.isArray(o) ? o : [o, '']; return `<label><input type="radio" name="${name}" value="${esc(t)}" data-qs-f="${f.id}"${v === t ? ' checked' : ''}><span>${ic}${esc(t)}</span></label>`; }).join('')}</div>`);
+          if (!v && f.def) state[scope][f.id] = f.def;
+          return wrap(`<div class="qs-seg ${f.cls || ''}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => { const [t, ic] = Array.isArray(o) ? o : [o, '']; return `<label><input type="radio" name="${name}" value="${esc(t)}" data-qs-f="${f.id}"${v === t || (!v && f.def === t) ? ' checked' : ''}><span>${ic}${esc(t)}</span></label>`; }).join('')}</div>`);
+        case 'info':
+          return wrap(`<div class="qs-pu"><p class="qs-pu__k">${PIN}Customer Pick Up</p>${f.places.map(([k, a]) => `<a class="qs-pu__row" href="${mapsUrl(a)}" target="_blank" rel="noopener"><span><small>${esc(k)}</small><b>${esc(a)}</b></span><i>Map</i></a>`).join('')}<p class="qs-pu__n">We\u2019ll confirm when your order is ready before you come.</p></div>`);
         case 'pics':
           return wrap(`<div class="qs-pics" style="--n:${f.n || 4}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="radio" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${v === o.v ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
         case 'equip': {
@@ -1143,7 +1168,8 @@ const photos = [
       flow().forEach((s) => s.fields.forEach((f) => {
         if (!visible(f) || f.type === 'catalog' || f.type === 'days') return;
         const v = f.type === 'zip' ? zipText() : state.job[f.id];
-        if (v && String(fmtVal(v)).trim()) job.push([f.label, f.type === 'date' ? fmtDate(v) : fmtVal(v), f.type === 'textarea' || f.id === 'location' || f.type === 'equip' || f.type === 'multi']);
+        if (f.type === 'info') { if (isPickup()) f.places.forEach(([k, a]) => job.push([`Pick up at (${k})`, a])); return; }
+        if (v && String(fmtVal(v)).trim()) job.push([labelOf(f), f.type === 'date' ? fmtDate(v) : fmtVal(v), f.type === 'textarea' || f.id === 'location' || f.type === 'equip' || f.type === 'multi']);
       }));
       const n = dayCount(state.job.deliverDate, state.job.pickupDate);
       if (state.type === 'rental' && n) job.push(['Rental length', `${n} day${n > 1 ? 's' : ''}`]);
@@ -1430,7 +1456,7 @@ const photos = [
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
     function sync(id) {
-      flow().forEach((s) => s.fields.forEach((f) => { if (f.showIf) { const el = body.querySelector(`[data-qs-field="${f.id}"]`); if (el) el.hidden = !visible(f); } }));
+      flow().forEach((s) => s.fields.forEach((f) => { if (f.showIf || f.hideIf) { const el = body.querySelector(`[data-qs-field="${f.id}"]`); if (el) el.hidden = !visible(f); } if (f.alt) { const l = body.querySelector(`#${ns}-${f.id}-l`); if (l && l.firstChild) l.firstChild.nodeValue = labelOf(f); } }));
       if (id === 'deliverDate' || id === 'startDate') { const end = body.querySelector(`[data-qs-f="${id === 'deliverDate' ? 'pickupDate' : 'endDate'}"]`); if (end) end.min = state.job[id] || today(); }
       const days = body.querySelector('[data-qs-days]');
       if (days) { const n = dayCount(state.job.deliverDate, state.job.pickupDate); days.innerHTML = n ? daysPill(n) : ''; }
