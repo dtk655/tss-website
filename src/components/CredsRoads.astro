@@ -51,13 +51,11 @@ const roads = [
           <li style={`--i:${i}`}>
             <span class="cr__rlogo"><img src={r.src} alt="" width="64" height="64" loading="lazy" /></span>
             <b>{r.n}</b>
-            <small>{r.a}</small>
           </li>
         ))}
         <li class="cr__more" style={`--i:${roads.length}`}>
           <span class="cr__rlogo cr__rlogo--plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span>
           <b>And every road in between</b>
-          <small>Local streets, county routes, state highways and interstates in NJ, NY, PA, CT and DE.</small>
         </li>
       </ul>
     </div>
@@ -126,6 +124,19 @@ const roads = [
   @media (prefers-reduced-motion: reduce) {
     .cr__cert, .cr__ok, .cr__rlist li { opacity: 1; transform: none; transition: none; }
     .cr__cert::after { display: none; }
+  }
+
+  /* thin road chips: icon + name only */
+  .cr__rlist { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cr__rlist li { display: flex; align-items: center; gap: 10px; padding: 7px 18px 7px 7px; border-radius: 999px; }
+  .cr__rlist .cr__rlogo { width: 38px; height: 38px; margin: 0; border-radius: 50%; flex: none; }
+  .cr__rlogo--plus svg { width: 20px; height: 20px; }
+  .cr__rlist b { font-size: .98rem; white-space: nowrap; }
+  @media (max-width: 640px) {
+    .cr__rlist { gap: 8px; }
+    .cr__rlist li { display: flex; padding: 5px 14px 5px 5px; border-radius: 999px; }
+    .cr__rlist .cr__rlogo { width: 32px; height: 32px; border-radius: 50%; }
+    .cr__rlist b { font-size: .9rem; }
   }
 </style>
 
