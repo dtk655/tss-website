@@ -45,10 +45,10 @@ const perks = [
 ];
 // experience strip under the showroom (desktop)
 const xp = [
-  ['Flexible', 'Daily, weekly and monthly rentals', 'Keep it for one shift or the whole job.'],
-  ['2 Ways', 'Pickup and delivery options', 'Customer Pick Up at our yard, or we deliver to the job.'],
-  ['MUTCD', 'Compliant', 'Trucks equipped to MUTCD standards.'],
-  ['1971', 'Serving the tri-state since', 'Over five decades on the region’s roads.']
+  ['Daily, Weekly And Monthly Rentals', 'Keep a truck for one shift or the whole job.'],
+  ['Pickup And Delivery Options', 'Customer Pick Up at our yard, or we deliver to the job.'],
+  ['MUTCD Compliant', 'Every truck is equipped to MUTCD standards.'],
+  ['Serving The Tri\u2011State Since 1971', 'Over five decades on the region’s roads.']
 ];
 const steps = [
   ['Pick your truck', 'Choose from the fleet, or tell us the job and we’ll match the truck.'],
@@ -65,14 +65,14 @@ const steps = [
       <Showroom animate tall band class="eqh__sr" />
       <p class="eqh__lede">Crash trucks, bucket trucks, cone trucks and flatbeds, rented by the day or the job across NJ, NY, PA and CT.</p>
       <div class="eqh__ways">
-        <a href="/pages/request-a-quote?type=rental" class="eway eway--solid">
+        <a href="/collections/truck-rentals" class="eway eway--solid">
           <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
-          <span class="eway__t"><b>Get fleet pricing</b><small>By the day or the job</small></span>
+          <span class="eway__t"><b>See Our Fleet Options</b><small>Browse every truck we rent</small></span>
           <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
         </a>
-        <a href="/pages/request-a-quote?type=lane-closure" class="eway eway--line">
-          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z M8.5 12l2.4 2.4L15.5 9.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
-          <span class="eway__t"><b>Book a TMA with a crew</b><small>Certified operators</small></span>
+        <a href="/pages/request-a-quote?type=rental" class="eway eway--line">
+          <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3.5 3.5v13.5H6z M9.5 11h6 M9.5 14.5h6 M9.5 7.5h3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+          <span class="eway__t"><b>Get fleet pricing</b><small>By the day or the job</small></span>
           <Fragment set:html={ARROW.replace('<svg', '<svg class="eway__go"')} />
         </a>
       </div>
@@ -80,8 +80,8 @@ const steps = [
     </div>
     <div class="eqh__xp" aria-label="Our experience">
       <ul class="wrap">
-        {xp.map(([big, label, sub], i) => (
-          <li style={`--i:${i}`}><b>{big}</b><span>{label}</span><small>{sub}</small></li>
+        {xp.map(([label, sub], i) => (
+          <li style={`--i:${i}`}><b>{label}</b><small>{sub}</small></li>
         ))}
       </ul>
     </div>
@@ -94,7 +94,7 @@ const steps = [
       <div class="eq-head">
         <div>
           <p class="eq-k"><span></span>The fleet</p>
-          <h2>See Our <em>Fleet Options.</em></h2>
+          <h2>See Our <em>Fleet Lineup.</em></h2>
         </div>
         <a href="/collections/truck-rentals" class="eq-link">Shop the fleet<Fragment set:html={ARROW} /></a>
       </div>
@@ -244,11 +244,10 @@ const steps = [
     .eqh { display: flex; flex-direction: column; min-height: min(calc(100svh - var(--hdr-full, 140px)), calc(100vw * 760 / 3000 + 340px)); }
     .eqh__xp { flex: 1; display: grid; align-content: center; padding: clamp(18px, 2vw, 34px) 0 clamp(22px, 2.4vw, 40px); background: linear-gradient(180deg, #121416, #0c0d0f); }
     .eqh__xp ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-block: 0; padding-block: 0; list-style: none; }
-    .eqh__xp li { display: grid; align-content: start; gap: 4px; padding: 4px clamp(16px, 2vw, 34px); border-left: 1px solid rgba(255, 255, 255, .12); opacity: 0; transform: translateY(14px); animation: eqUp .8s calc(.9s + var(--i) * .14s) cubic-bezier(.2, .8, .2, 1) forwards; }
+    .eqh__xp li { display: grid; align-content: start; gap: 10px; padding: 6px clamp(18px, 2.2vw, 38px); border-left: 1px solid rgba(255, 255, 255, .14); opacity: 0; transform: translateY(14px); animation: eqUp .8s calc(.9s + var(--i) * .14s) cubic-bezier(.2, .8, .2, 1) forwards; }
     .eqh__xp li:first-child { padding-left: 0; border-left: 0; }
-    .eqh__xp b { font-size: clamp(2rem, 3.3vw, 3.5rem); line-height: 1; letter-spacing: -.035em; font-variation-settings: 'wght' 790; font-weight: 400; color: var(--gold); white-space: nowrap; }
-    .eqh__xp span { margin-top: 6px; font-size: clamp(.95rem, 1.1vw, 1.12rem); font-variation-settings: 'wght' 700; color: #fff; }
-    .eqh__xp small { font-size: clamp(.82rem, .92vw, .95rem); line-height: 1.4; color: rgba(255, 255, 255, .66); text-wrap: balance; }
+    .eqh__xp b { font-size: clamp(1.25rem, 1.75vw, 1.9rem); line-height: 1.14; letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; color: #ff4d42; text-wrap: balance; }
+    .eqh__xp small { font-size: clamp(.92rem, 1.02vw, 1.08rem); line-height: 1.45; color: rgba(255, 255, 255, .78); text-wrap: balance; }
   }
   /* Wide screens: a short hero like the catalog one. Compact text on the left, trucks along the right. */
   @media (min-width: 1200px) {
@@ -275,10 +274,19 @@ const steps = [
     .eqh .eqh__lede { grid-row: 3; } .eqh .eqh__in > .eqh__ways { grid-row: 4; } .eqh .eqh__call { grid-row: 5; }
   }
   @media (min-width: 900px) {
-    .eql .eq-head { display: none; }
-    section.eql { padding-top: clamp(32px, 3.4vw, 52px); }
+    .eql .eq-head h2 { font-size: clamp(2rem, 3.4vw, 3.4rem); }
+    section.eql { padding-top: clamp(40px, 4.4vw, 68px); }
   }
   @media (max-width: 899px) { .eql .eq-head h2 { font-size: clamp(1.7rem, 7.4vw, 2.4rem); white-space: nowrap; } section.eql { padding-top: 36px; } }
+  /* short phone screens: slimmer buttons so the whole hero fits the first screen */
+  @media (max-width: 640px) and (max-height: 760px) {
+    section.eqh .eqh__in { row-gap: 8px; padding-block: 16px 14px !important; --pt: 16px; }
+    section.eqh .eqh__in .eway { padding: 7px 12px; grid-template-columns: 32px 1fr 18px; }
+    section.eqh .eqh__in .eway__ic { width: 32px; height: 32px; border-radius: 9px; }
+    section.eqh .eqh__in .eway__t small { display: none; }
+    section.eqh .eqh__in > .eqh__lede { font-size: .93rem; line-height: 1.4; }
+    section.eqh .eqh__in > h1 { margin-top: 4px; }
+  }
   .eqy { padding: clamp(40px, 5vw, 72px) 0 clamp(8px, 1vw, 16px); }
   .eqy__head { margin-bottom: clamp(18px, 2.4vw, 30px); }
   .eqy__head h2 { margin: 6px 0 0; font-size: clamp(1.6rem, 2.8vw, 2.4rem); letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; }
@@ -407,7 +415,14 @@ const steps = [
     .eqr__grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
-    .eqh .eqh__in { --pt: 34px; }
+    .eqh .eqh__in { --pt: 24px; min-height: calc(100svh - var(--hdr-full, 150px)); align-content: space-between; row-gap: 10px; padding-block: 24px 20px !important; }
+    .eqh .eqh__in > .eqh__ways { gap: 10px; }
+    .eqh .eqh__in .eway { padding: 10px 14px; }
+    .eqh .eqh__in > .eqh__lede { font-size: .97rem; line-height: 1.45; }
+    .eqh .eqh__in > h1 { font-size: clamp(1.7rem, 7.7vw, 2.15rem); line-height: 1.2; margin: clamp(12px, 3.4svh, 34px) 0 2px; }
+    .eqh .eqh__in > :global(.eqh__sr) { margin-bottom: 0; }
+    .eqh .eqh__in > .eqh__lede { margin-bottom: 0; }
+    .eqh .eqh__in > .eqh__call { margin-top: 0; }
     .eqh__in { min-height: 0; padding-block: 34px 36px; justify-items: center; text-align: center; }
     .eqh__k { font-size: .78rem; margin-bottom: 8px; }
     .eqh h1 { font-size: clamp(1.9rem, 8.6vw, 2.4rem); margin-bottom: 10px; }
