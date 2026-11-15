@@ -54,7 +54,6 @@ const steps = [
   <!-- ================= HERO ================= -->
   <section class="eqh">
     <div class="wrap eqh__in">
-      <p class="eqh__k">Truck fleet</p>
       <h1><span class="eqh__ln"><span>A Truck For Every Job.</span></span> <span class="eqh__ln"><span>No Matter The Scope.</span></span></h1>
       <Showroom animate tall band class="eqh__sr" />
       <p class="eqh__lede">Crash trucks, bucket trucks, cone trucks and flatbeds, rented by the day or the job across NJ, NY, PA and CT.</p>
@@ -256,7 +255,17 @@ const steps = [
   /* Narrower screens: headline, then the trucks as a full width strip, then the description and buttons. */
   @media (max-width: 1199px) {
     .eqh .eqh__in { min-height: 0; padding-block: 30px 30px; }
-    .eqh .eqh__in > :global(.eqh__sr) { max-width: none; width: 100vw; margin: 6px 0 18px calc(50% - 50vw); justify-self: start; }
+    /* the showroom wall runs from the top of the section, behind the headline, down to the trucks */
+    .eqh .eqh__in { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto calc(100vw * 700 / 1870); --pt: 30px; }
+    .eqh .eqh__in > * { grid-column: 1; }
+    .eqh .eqh__in > h1 { grid-row: 1; position: relative; z-index: 1; }
+    .eqh .eqh__in > :global(.eqh__sr) { grid-row: 1 / 3; grid-column: 1; max-width: none; width: 100vw; height: auto; aspect-ratio: auto; align-self: stretch; justify-self: start; margin: calc(var(--pt) * -1) 0 18px calc(50% - 50vw); }
+    .eqh .eqh__lede { grid-row: 3; } .eqh .eqh__in > .eqh__ways { grid-row: 4; } .eqh .eqh__call { grid-row: 5; }
+  }
+  @media (min-width: 900px) {
+    .eqy { display: none; }
+    .eql .eq-head { display: none; }
+    section.eql { padding-top: clamp(32px, 3.4vw, 52px); }
   }
   .eqy { padding: clamp(40px, 5vw, 72px) 0 clamp(8px, 1vw, 16px); }
   .eqy__head { margin-bottom: clamp(18px, 2.4vw, 30px); }
@@ -386,6 +395,7 @@ const steps = [
     .eqr__grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
+    .eqh .eqh__in { --pt: 34px; }
     .eqh__in { min-height: 0; padding-block: 34px 36px; justify-items: center; text-align: center; }
     .eqh__k { font-size: .78rem; margin-bottom: 8px; }
     .eqh h1 { font-size: clamp(1.9rem, 8.6vw, 2.4rem); margin-bottom: 10px; }

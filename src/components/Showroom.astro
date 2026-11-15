@@ -84,8 +84,9 @@ const V = '?v=4';
   @media (max-width: 1199px) {
     .sr--auto { width: 100%; aspect-ratio: 1870 / 700; }
     .sr--auto .sr__cv { width: calc(3000 / 1870 * 100%); left: calc(-1130 / 1870 * 100%); aspect-ratio: 3000 / 760; }
-    .sr--auto.sr--tall .sr__bg { display: none; }
-    .sr--auto.sr--tall .sr__bg--m { display: block; }
+    /* tall wall keeps its own shape and rises above the strip, so a parent can stretch the scene upward behind a headline */
+    .sr--auto.sr--tall .sr__bg { inset: auto 0 0 0; height: auto; aspect-ratio: 3000 / 1250; }
+    .sr--auto.sr--tall .sr__bg--m { display: none; }
   }
 
   @keyframes srDrive { to { transform: translateX(var(--park, 0%)); } }
