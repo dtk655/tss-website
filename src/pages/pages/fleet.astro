@@ -106,14 +106,17 @@ const steps = [
       <ul class="eql__grid eql__grid--big">
         {fleet.map((e, i) => (
           <li style={`--i:${i}`}>
-            <a href={e.href} class="eqt" style={`--tint:${e.tint}`}>
-              <span class="eqt__img"><img src={e.img} alt="" loading="lazy" class={e.cut ? '' : 'is-blend'} /></span>
-              <span class="eqt__txt">
-                <b>{e.title}</b>
+            <div class="eqt" style={`--tint:${e.tint}`}>
+              <a href={e.href} class="eqt__img" tabindex="-1" aria-hidden="true"><img src={e.img} alt="" loading="lazy" class={e.cut ? '' : 'is-blend'} /></a>
+              <div class="eqt__txt">
+                <b><a href={e.href}>{e.title}</a></b>
                 {e.blurb && <small>{e.blurb}</small>}
-                <span class="eqt__mode">Rent<Fragment set:html={ARROW} /></span>
-              </span>
-            </a>
+                <div class="eqt__acts">
+                  <a href={`/pages/request-a-quote?type=rental&add=${e.handle}&q=1`} class="eqt__btn eqt__btn--solid">Get a Quote</a>
+                  <a href={e.href} class="eqt__btn eqt__btn--line">Learn More<Fragment set:html={ARROW} /></a>
+                </div>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
@@ -360,6 +363,17 @@ const steps = [
   .eqt__txt { display: grid; align-content: start; gap: 6px; padding: 8px 20px 20px; }
   .eqt__txt b { font-size: clamp(1.08rem, 1.25vw, 1.25rem); line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 750; }
   .eqt__txt small { color: var(--steel); font-size: .9rem; line-height: 1.4; }
+  .eqt__txt b a { color: inherit; text-decoration: none; }
+  .eqt__txt { grid-template-rows: auto 1fr auto; }
+  .eqt__txt small { align-self: start; }
+  .eqt__acts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; align-self: end; }
+  .eqt__btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 999px; font-size: .92rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s, transform .2s; }
+  .eqt__btn--solid { background: var(--red); color: #fff; box-shadow: 0 12px 22px -14px rgba(182, 6, 6, .9); }
+  .eqt__btn--solid:hover { background: #8f0404; transform: translateY(-1px); }
+  .eqt__btn--line { border: 1.5px solid rgba(20, 23, 26, .2); color: var(--ink); background: rgba(255, 255, 255, .7); }
+  .eqt__btn--line:hover { border-color: var(--ink); background: #fff; }
+  .eqt__btn :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqt__btn--line:hover :global(svg) { transform: translateX(3px); }
   .eqt__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; color: var(--red); font-size: .88rem; font-variation-settings: 'wght' 700; }
   .eqt__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
   .eqt:hover .eqt__mode :global(svg) { transform: translateX(3px); }
@@ -446,6 +460,8 @@ const steps = [
     .eqt__txt { padding: 6px 12px 14px; }
     .eqt__txt b { font-size: .98rem; }
     .eqt__txt small { display: none; }
+    .eqt__acts { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .eqt__btn { min-height: 42px; padding: 0 8px; font-size: .9rem; }
     .eqf__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .eqft { padding: 12px 12px 14px; border-radius: 16px; }
     .eqft__img img { height: 90px; }
