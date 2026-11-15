@@ -43,6 +43,13 @@ const perks = [
   ['Pairs with our crews', 'Add flaggers or a full lane closure on the same order.', 'M9 7.5a3 3 0 1 0 0-.01 M3.5 20a5.5 5.5 0 0 1 11 0 M17 9a2.4 2.4 0 1 0 0-.01 M15.5 14.4A4.5 4.5 0 0 1 21 18.6'],
   ['NJ, NY, PA and CT', 'Trucks out of our own yard, across the region.', 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z M12 7.6a2.4 2.4 0 1 0 0 .01']
 ];
+// experience strip under the showroom (desktop)
+const xp = [
+  ['1971', 'In traffic control since', 'Over five decades on the region’s roads.'],
+  ['25,000+', 'Lane closures set', 'By our own certified and experienced crews.'],
+  ['Certified', 'TMA operators', 'Book a crash truck with a trained operator in the seat.'],
+  ['4 States', 'NJ, NY, PA and CT', 'Every truck comes out of our own yard.']
+];
 const steps = [
   ['Pick your truck', 'Choose from the fleet, or tell us the job and we’ll match the truck.'],
   ['Get pricing', 'A real person prices it, usually within 1 business day.'],
@@ -70,6 +77,13 @@ const steps = [
         </a>
       </div>
       <p class="eqh__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
+    </div>
+    <div class="eqh__xp" aria-label="Our experience">
+      <ul class="wrap">
+        {xp.map(([big, label, sub], i) => (
+          <li style={`--i:${i}`}><b>{big}</b><span>{label}</span><small>{sub}</small></li>
+        ))}
+      </ul>
     </div>
   </section>
 
@@ -238,10 +252,22 @@ const steps = [
   .eqh { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
   .eqh::before { content: none; }
   .eqh { background: #121416; }
+  .eqh__xp { display: none; }
+  @media (min-width: 1200px) {
+    /* the hero fills the screen: showroom on top at its own size, experience strip in the space under it */
+    .eqh { display: flex; flex-direction: column; min-height: min(calc(100svh - var(--hdr-full, 140px)), calc(100vw * 760 / 3000 + 340px)); }
+    .eqh__xp { flex: 1; display: grid; align-content: center; padding: clamp(18px, 2vw, 34px) 0 clamp(22px, 2.4vw, 40px); background: linear-gradient(180deg, #121416, #0c0d0f); }
+    .eqh__xp ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-block: 0; padding-block: 0; list-style: none; }
+    .eqh__xp li { display: grid; align-content: start; gap: 4px; padding: 4px clamp(16px, 2vw, 34px); border-left: 1px solid rgba(255, 255, 255, .12); opacity: 0; transform: translateY(14px); animation: eqUp .8s calc(.9s + var(--i) * .14s) cubic-bezier(.2, .8, .2, 1) forwards; }
+    .eqh__xp li:first-child { padding-left: 0; border-left: 0; }
+    .eqh__xp b { font-size: clamp(2rem, 3.3vw, 3.5rem); line-height: 1; letter-spacing: -.035em; font-variation-settings: 'wght' 790; font-weight: 400; color: var(--gold); white-space: nowrap; }
+    .eqh__xp span { margin-top: 6px; font-size: clamp(.95rem, 1.1vw, 1.12rem); font-variation-settings: 'wght' 700; color: #fff; }
+    .eqh__xp small { font-size: clamp(.82rem, .92vw, .95rem); line-height: 1.4; color: rgba(255, 255, 255, .66); text-wrap: balance; }
+  }
   /* Wide screens: a short hero like the catalog one. Compact text on the left, trucks along the right. */
   @media (min-width: 1200px) {
-    .eqh :global(.eqh__sr) { position: absolute; inset: 0; z-index: -1; }
-    .eqh .eqh__in { min-height: calc(100vw * 760 / 3000); padding-block: clamp(22px, 2.2vw, 40px); }
+    .eqh :global(.eqh__sr) { position: absolute; inset: 0 0 auto 0; height: calc(100vw * 760 / 3000); z-index: -1; }
+    .eqh .eqh__in { width: 100%; height: calc(100vw * 760 / 3000); min-height: 0; flex: none; padding-block: clamp(22px, 2.2vw, 40px); }
     .eqh .eqh__in > * { max-width: 36%; }
     .eqh .eqh__in > h1 { max-width: 36%; font-size: clamp(1.9rem, 3vw, 3.4rem); margin-bottom: clamp(8px, .9vw, 14px); }
     .eqh .eqh__k { margin-bottom: 8px; font-size: clamp(.78rem, .9vw, .95rem); }
@@ -424,6 +450,7 @@ const steps = [
     .eqr__card .eq-pill { justify-self: stretch; }
   }
   @media (prefers-reduced-motion: reduce) {
+    .eqh__xp li { animation: none; opacity: 1; transform: none; }
     .eqh__k, .eqh__ln > span, .eqh__lede, .eqh__call, .eqh__ways .eway { animation: none; opacity: 1; transform: none; translate: none; }
     [data-in] li { opacity: 1; transform: none; transition: none; }
   }
