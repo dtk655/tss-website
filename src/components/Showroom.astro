@@ -80,11 +80,10 @@ const V = '?v=4';
   .sr__beam { position: absolute; width: 17%; aspect-ratio: 5.2; transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; background: radial-gradient(closest-side, rgba(255, 244, 210, .34), rgba(255, 244, 210, .12) 55%, rgba(255, 244, 210, 0)); }
   .sr__beacon { position: absolute; width: 2.6%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; background: radial-gradient(closest-side, rgba(255, 190, 60, 1), rgba(255, 150, 20, .6) 35%, rgba(255, 140, 0, 0)); animation: srBeacon 1.1s steps(1) infinite; }
 
-  /* Band mode (phones, tablets, small laptops): the scene is its own strip, cropped tight to the trucks, which park closer together. */
+  /* Band mode (phones, tablets, small laptops): the scene is its own strip, cropped to the trucks. */
   @media (max-width: 1199px) {
-    .sr--auto { width: 100%; aspect-ratio: 1620 / 690; }
-    .sr--auto .sr__cv { width: calc(3000 / 1620 * 100%); left: calc(-1130 / 1620 * 100%); aspect-ratio: 3000 / 760; }
-    .sr--auto .sr__t { --park: var(--mx); }
+    .sr--auto { width: 100%; aspect-ratio: 1870 / 700; }
+    .sr--auto .sr__cv { width: calc(3000 / 1870 * 100%); left: calc(-1130 / 1870 * 100%); aspect-ratio: 3000 / 760; }
     .sr--auto.sr--tall .sr__bg { display: none; }
     .sr--auto.sr--tall .sr__bg--m { display: block; }
   }

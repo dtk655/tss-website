@@ -56,7 +56,8 @@ const steps = [
     <div class="wrap eqh__in">
       <p class="eqh__k">Truck fleet</p>
       <h1><span class="eqh__ln"><span>A Truck For Every Job.</span></span> <span class="eqh__ln"><span>No Matter The Scope.</span></span></h1>
-      <p class="eqh__lede">Crash trucks, bucket trucks, cone trucks and flatbeds from our own yard. Rent one for the day or the whole job, across NJ, NY, PA and CT.</p>
+      <Showroom animate tall band class="eqh__sr" />
+      <p class="eqh__lede">Crash trucks, bucket trucks, cone trucks and flatbeds, rented by the day or the job across NJ, NY, PA and CT.</p>
       <div class="eqh__ways">
         <a href="/pages/request-a-quote?type=rental" class="eway eway--solid">
           <span class="eway__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
@@ -71,7 +72,6 @@ const steps = [
       </div>
       <p class="eqh__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
     </div>
-    <Showroom animate tall band class="eqh__sr" />
   </section>
 
   <!-- ================= THE YARD ================= -->
@@ -239,15 +239,25 @@ const steps = [
   .eqh { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
   .eqh::before { content: none; }
   .eqh { background: #121416; }
-  .eqh :global(.eqh__sr) { margin-top: 4px; }
+  /* Wide screens: a short hero like the catalog one. Compact text on the left, trucks along the right. */
   @media (min-width: 1200px) {
-    .eqh :global(.eqh__sr) { position: absolute; inset: 0; z-index: -1; margin: 0; }
-    .eqh .eqh__in { min-height: min(41.67vw, 700px); }
-    .eqh .eqh__in > * { max-width: min(40%, 560px); }
-    .eqh .eqh__in > h1 { max-width: 40%; }
-    .eqh .eqh__in > .eqh__ways { grid-template-columns: 1fr; max-width: min(34%, 480px); }
+    .eqh :global(.eqh__sr) { position: absolute; inset: 0; z-index: -1; }
+    .eqh .eqh__in { min-height: calc(100vw * 760 / 3000); padding-block: clamp(22px, 2.2vw, 40px); }
+    .eqh .eqh__in > * { max-width: 36%; }
+    .eqh .eqh__in > h1 { max-width: 36%; font-size: clamp(1.9rem, 3vw, 3.4rem); margin-bottom: clamp(8px, .9vw, 14px); }
+    .eqh .eqh__k { margin-bottom: 8px; font-size: clamp(.78rem, .9vw, .95rem); }
+    .eqh .eqh__lede { margin-bottom: clamp(12px, 1.3vw, 20px); font-size: clamp(.95rem, 1.08vw, 1.12rem); line-height: 1.45; }
+    .eqh .eqh__in > .eqh__ways { display: flex; flex-wrap: wrap; gap: 10px; width: auto; }
+    .eqh .eway { display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; min-height: 44px; border-radius: 999px; }
+    .eqh .eway__ic, .eqh .eway__t small { display: none; }
+    .eqh .eway__t b { font-size: clamp(.86rem, 1vw, .98rem); }
+    .eqh .eqh__call { margin-top: 10px; font-size: .88rem; }
   }
-  @media (max-width: 1199px) { .eqh .eqh__in { min-height: 0; padding-bottom: 18px; } }
+  /* Narrower screens: headline, then the trucks as a full width strip, then the description and buttons. */
+  @media (max-width: 1199px) {
+    .eqh .eqh__in { min-height: 0; padding-block: 30px 30px; }
+    .eqh .eqh__in > :global(.eqh__sr) { max-width: none; width: 100vw; margin: 6px 0 18px calc(50% - 50vw); justify-self: start; }
+  }
   .eqy { padding: clamp(40px, 5vw, 72px) 0 clamp(8px, 1vw, 16px); }
   .eqy__head { margin-bottom: clamp(18px, 2.4vw, 30px); }
   .eqy__head h2 { margin: 6px 0 0; font-size: clamp(1.6rem, 2.8vw, 2.4rem); letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; }
