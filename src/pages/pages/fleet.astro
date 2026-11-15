@@ -1,6 +1,7 @@
 ---
 // Truck fleet landing page: what we rent, which truck fits the job, the TMA explorer, how renting works.
 import Layout from '../../layouts/Layout.astro';
+import Showroom from '../../components/Showroom.astro';
 import TmaTruck from '../../components/TmaTruck.astro';
 import { loadCatalog, img } from '../../lib/shopify.js';
 import { cutouts } from '../../lib/cutouts.js';
@@ -52,15 +53,6 @@ const steps = [
 <Layout title="Truck fleet" description={`Rent TMA crash trucks, bucket trucks, cone trucks and flatbeds in NJ, NY, PA and CT. TMAs available with certified operators. Call ${PHONE}.`} image="/fleet/fleet-sunset.webp">
   <!-- ================= HERO ================= -->
   <section class="eqh">
-    <div class="eqh__slides" aria-hidden="true" data-slides>
-      {[['fleet-sunset', '50% 45%'], ['fleet-buckets', '50% 40%'], ['fleet-hero', '50% 40%']].map(([n, pos], i) => (
-        <picture class:list={['eqh__slide', i === 0 && 'is-on']}>
-          <source media="(max-width: 640px)" srcset={`/fleet/${n}-m.webp`} />
-          <img src={`/fleet/${n}.webp`} alt="" style={`object-position:${pos}`} loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
-        </picture>
-      ))}
-    </div>
-    <div class="eqh__dots" data-dots aria-hidden="true"><span class="is-on"></span><span></span><span></span></div>
     <div class="wrap eqh__in">
       <p class="eqh__k">Truck fleet</p>
       <h1><span class="eqh__ln"><span>A Truck For Every Job.</span></span> <span class="eqh__ln"><span>No Matter The Scope.</span></span></h1>
@@ -78,6 +70,22 @@ const steps = [
         </a>
       </div>
       <p class="eqh__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
+    </div>
+    <Showroom animate tall band class="eqh__sr" />
+  </section>
+
+  <!-- ================= THE YARD ================= -->
+  <section class="eqy" data-in aria-label="Our yard">
+    <div class="wrap">
+      <div class="eqy__head"><p class="eq-k">From our own yard</p><h2>Every truck here is ours.</h2></div>
+      <div class="eqy__grid">
+        {[['fleet-sunset', '50% 45%'], ['fleet-buckets', '50% 40%'], ['fleet-hero', '50% 40%']].map(([n, pos]) => (
+          <picture class="eqy__ph">
+            <source media="(max-width: 640px)" srcset={`/fleet/${n}-m.webp`} />
+            <img src={`/fleet/${n}.webp`} alt="TSS trucks in the yard" style={`object-position:${pos}`} loading="lazy" />
+          </picture>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -190,20 +198,6 @@ const steps = [
 </Layout>
 
 <script>
-  {
-    const slides = [...document.querySelectorAll('[data-slides] .eqh__slide')];
-    const dots = [...document.querySelectorAll('[data-dots] span')];
-    let i = 0;
-    if (slides.length > 1) setInterval(() => {
-      if (document.hidden) return;
-      slides[i].classList.remove('is-on'); dots[i]?.classList.remove('is-on');
-      i = (i + 1) % slides.length;
-      slides[i].classList.add('is-on'); dots[i]?.classList.add('is-on');
-    }, 3000);
-    slides.slice(1).forEach((s) => { const im = s.querySelector('img'); if (im) im.loading = 'eager'; });
-  }
-</script>
-<script>
   // Reveal sections (and stagger their lists) as they scroll into view.
   const els = document.querySelectorAll('[data-in]');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) els.forEach((e) => e.classList.add('is-in'));
@@ -244,16 +238,26 @@ const steps = [
   /* ---------- hero ---------- */
   .eqh { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
   .eqh::before { content: none; }
-  .eqh__slides { position: absolute; inset: 0; z-index: -2; }
-  .eqh__slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.1s ease; }
-  .eqh__slide img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.08); transition: transform 4.2s ease-out; }
-  .eqh__slide.is-on { opacity: 1; }
-  .eqh__slide.is-on img { transform: scale(1.01); }
-  .eqh__dots { position: absolute; right: clamp(16px, 3vw, 40px); bottom: clamp(16px, 2.4vw, 30px); z-index: 2; display: flex; gap: 8px; }
-  .eqh__dots span { width: 8px; height: 8px; border-radius: 999px; background: rgba(255, 255, 255, .45); transition: width .4s, background .4s; }
-  .eqh__dots span.is-on { width: 26px; background: var(--gold); }
-  .eqh::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(12, 13, 15, .94) 0%, rgba(12, 13, 15, .82) 34%, rgba(12, 13, 15, .35) 62%, rgba(12, 13, 15, .1) 82%), linear-gradient(0deg, rgba(10, 10, 12, .5), transparent 45%); }
-  @keyframes eqZoom { to { transform: scale(1); } }
+  .eqh { background: #121416; }
+  .eqh :global(.eqh__sr) { margin-top: 4px; }
+  @media (min-width: 1200px) {
+    .eqh :global(.eqh__sr) { position: absolute; inset: 0; z-index: -1; margin: 0; }
+    .eqh .eqh__in { min-height: min(41.67vw, 700px); }
+    .eqh .eqh__in > * { max-width: min(40%, 560px); }
+    .eqh .eqh__in > h1 { max-width: 40%; }
+    .eqh .eqh__in > .eqh__ways { grid-template-columns: 1fr; max-width: min(34%, 480px); }
+  }
+  @media (max-width: 1199px) { .eqh .eqh__in { min-height: 0; padding-bottom: 18px; } }
+  .eqy { padding: clamp(40px, 5vw, 72px) 0 clamp(8px, 1vw, 16px); }
+  .eqy__head { margin-bottom: clamp(18px, 2.4vw, 30px); }
+  .eqy__head h2 { margin: 6px 0 0; font-size: clamp(1.6rem, 2.8vw, 2.4rem); letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; }
+  .eqy__grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: clamp(10px, 1.2vw, 18px); }
+  .eqy__ph { display: block; aspect-ratio: 16 / 10; border-radius: 18px; overflow: hidden; background: #e9eaec; opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .eqy__ph:nth-child(2) { transition-delay: .1s; } .eqy__ph:nth-child(3) { transition-delay: .2s; }
+  .eqy.is-in .eqy__ph { opacity: 1; transform: none; }
+  .eqy__ph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .eqy__ph:hover img { transform: scale(1.04); }
+  @media (max-width: 760px) { .eqy__grid { grid-template-columns: 1fr 1fr; } .eqy__ph:first-child { grid-column: 1 / -1; } }
   .eqh__in { display: grid; align-content: center; justify-items: start; min-height: clamp(440px, 46vw, 640px); padding-block: clamp(40px, 5vw, 76px); }
   .eqh__in > * { max-width: 760px; }
   .eqh__in > h1 { max-width: 1100px; }
@@ -367,7 +371,6 @@ const steps = [
     .eqp__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .eqs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .eqs__list li::after { display: none; }
-    .eqh::after { background: linear-gradient(180deg, rgba(12, 13, 15, .9) 0%, rgba(12, 13, 15, .72) 45%, rgba(12, 13, 15, .4) 100%); }
   }
   @media (max-width: 720px) {
     .eqr__grid { grid-template-columns: 1fr; }
@@ -401,7 +404,7 @@ const steps = [
     .eqr__card .eq-pill { justify-self: stretch; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .eqh__slide img, .eqh__k, .eqh__ln > span, .eqh__lede, .eqh__call, .eqh__ways .eway { animation: none; opacity: 1; transform: none; translate: none; }
+    .eqh__k, .eqh__ln > span, .eqh__lede, .eqh__call, .eqh__ways .eway { animation: none; opacity: 1; transform: none; translate: none; }
     [data-in] li { opacity: 1; transform: none; transition: none; }
   }
 

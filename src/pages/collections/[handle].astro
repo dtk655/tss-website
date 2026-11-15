@@ -1,4 +1,5 @@
 ---
+import Showroom from '../../components/Showroom.astro';
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import QuickView from '../../components/QuickView.astro';
@@ -41,45 +42,11 @@ const lineup = [];
   }
 }
 const hasLineup = !meta.scene && lineup.length >= 3;
-// Truck Fleet showroom: trucks drive in on load. Coordinates are in the 3000 x 760 scene.
-const SCENE_W = 3000, SCENE_H = 760;
-const TRUCKS = [
-  { k: 'van', d: 1.5, wheels: [[2614, 650, 25, 35], [2900, 566, 11, 22]], lamps: [[2500, 558, 62], [2500, 648, 26]], beam: [2330, 668], beacon: [2705, 330] },
-  { k: 'tma', d: 0.8, wheels: [[2095, 626, 36, 42], [2388, 561, 9, 25]], lamps: [[2030, 556, 70]], beam: [1850, 676] },
-  { k: 'bucket', d: 0.1, wheels: [[1533, 626, 33, 42], [1851, 560, 12, 26]], lamps: [[1430, 545, 66], [1408, 612, 24]], beam: [1210, 672] }
-];
-const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
-const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <Layout title={c.title} description={`${c.title} from Traffic Safety Service. ${desc}`}>
   <section class={`ch${hasLineup ? ' ch--lu' : ''}${meta.scene ? ' ch--scene' : ''}`} style={`--tint:${meta.tint}`}>
-    {meta.scene && (
-      <div class="sr" data-sr role="img" aria-label="TSS bucket truck, TMA crash truck and bucket van lined up in a showroom">
-        <img class="sr__bg" src="/fleet/showroom-bg.webp" alt="" width="3000" height="760" />
-        {TRUCKS.map((t) => (
-          <div class="sr__t" style={`--d:${t.d}s`}>
-            <img class="sr__img" src={`/fleet/showroom-${t.k}-sh.webp`} alt="" width="3000" height="760" />
-            <div class="sr__beam" style={`left:${px(t.beam[0])};top:${py(t.beam[1])}`}></div>
-          </div>
-        ))}
-        {TRUCKS.map((t) => (
-          <div class="sr__t" style={`--d:${t.d}s`}>
-            <div class="sr__body">
-              <img class="sr__img" src={`/fleet/showroom-${t.k}.webp?v=3`} alt="" width="3000" height="760" />
-              {t.wheels.map(([cx, cy, rx, ry], n) => (
-                <span class="sr__wh" style={`left:${px(cx)};top:${py(cy)};width:${px(ry * 2)};--sq:${(rx / ry).toFixed(3)};--turn:${Math.round(2250 / (2 * Math.PI * t.wheels[0][3]) * 360)}deg`}>
-                  <img class="sr__rim" src={`/fleet/wh-${t.k}-${n}.webp?v=3`} alt="" />
-                  <img class="sr__blur" src={`/fleet/wh-${t.k}-${n}-b.webp?v=3`} alt="" />
-                </span>
-              ))}
-              {t.lamps.map(([cx, cy, w]) => <span class="sr__lamp" style={`left:${px(cx)};top:${py(cy)};width:${px(w * 3.2)}`}></span>)}
-              {t.beacon && <span class="sr__beacon" style={`left:${px(t.beacon[0])};top:${py(t.beacon[1])}`}></span>}
-            </div>
-          </div>
-        ))}
-      </div>
-    )}
+    {meta.scene && <Showroom class="ch__sr" />}
     <div class="wrap ch__in">
       <div class="ch__copy">
         <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href={isRentalCol ? (meta.page || '/pages/equipment') : '/collections'}>{isRentalCol ? 'Rentals' : 'Products'}</a><span aria-hidden="true">/</span><span aria-current="page">{c.title}</span></nav>
@@ -186,15 +153,6 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   </div>
   <RecentlyViewed />
   <QuickView />
-  <script is:inline>
-    (() => {
-      const sr = document.querySelector('[data-sr]'); if (!sr) return;
-      const go = () => sr.classList.add('is-go');
-      const imgs = [...sr.querySelectorAll('.sr__bg, .sr__img')];
-      Promise.all(imgs.map((i) => (i.complete ? Promise.resolve() : new Promise((r) => { i.onload = i.onerror = r; })))).then(() => requestAnimationFrame(go));
-      setTimeout(go, 3000);
-    })();
-  </script>
 </Layout>
 
 <script>
@@ -268,26 +226,11 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .ch__art { position: relative; display: grid; place-items: center; height: 100%; }
   .ch__glow { position: absolute; width: 78%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0)); }
   .ch__art img { position: relative; display: block; width: 100%; max-width: 380px; height: clamp(140px, 13vw, 200px); object-fit: contain; filter: drop-shadow(0 26px 22px rgba(20, 23, 26, .25)); animation: chArt 1s .15s cubic-bezier(.2, .8, .2, 1) backwards; }
-  /* desktop showroom scene (truck fleet): trucks drive in, wheels turning, lights on */
-  .sr { display: none; }
+  /* desktop showroom scene (truck fleet): the trucks parked, lights on */
+  .ch :global(.ch__sr) { display: none; }
   @media (min-width: 1200px) {
     .ch--scene { background: #121416; border-bottom-color: #121416; }
-    .sr { display: block; position: absolute; left: 0; top: 50%; width: 100%; aspect-ratio: 3000 / 760; transform: translateY(-50%); overflow: hidden; pointer-events: none; }
-    .sr__bg, .sr__img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-    .sr__t { position: absolute; inset: 0; transform: translateX(78%); }
-    .sr.is-go .sr__t { animation: srDrive 4.2s var(--d) cubic-bezier(.14, .7, .22, 1) forwards; }
-    .sr__body { position: absolute; inset: 0; transform-origin: 60% 85%; }
-    .sr.is-go .sr__body { animation: srBrake 1.1s calc(var(--d) + 3.2s) cubic-bezier(.3, .6, .3, 1) both; }
-    .sr__wh { position: absolute; aspect-ratio: 1; transform: translate(-50%, -50%) scaleX(var(--sq)); }
-    .sr__wh img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-    .sr__rim { transform: rotate(var(--turn)); }
-    .sr.is-go .sr__rim { animation: srSpin 4.2s var(--d) cubic-bezier(.14, .7, .22, 1) forwards; }
-    .sr__blur { opacity: 1; }
-    .sr.is-go .sr__blur { animation: srBlur 4.2s var(--d) linear forwards; }
-    .sr__lamp { position: absolute; aspect-ratio: 2.1; transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; background: radial-gradient(closest-side, rgba(255, 252, 240, 1) 0%, rgba(255, 246, 214, .85) 16%, rgba(255, 236, 180, .32) 42%, rgba(255, 230, 170, 0) 100%); animation: srLamp 3.6s 3s ease-in-out infinite; }
-    .sr__lamp::after { content: ''; position: absolute; left: -45%; right: -45%; top: 46%; height: 8%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 250, 230, .8), rgba(255, 250, 230, 0)); }
-    .sr__beam { position: absolute; width: 17%; aspect-ratio: 5.2; transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; background: radial-gradient(closest-side, rgba(255, 244, 210, .34), rgba(255, 244, 210, .12) 55%, rgba(255, 244, 210, 0)); }
-    .sr__beacon { position: absolute; width: 2.6%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; background: radial-gradient(closest-side, rgba(255, 190, 60, 1), rgba(255, 150, 20, .6) 35%, rgba(255, 140, 0, 0)); animation: srBeacon 1.1s steps(1) infinite; }
+    .ch :global(.ch__sr) { display: block; position: absolute; left: 0; top: 50%; width: 100%; aspect-ratio: 3000 / 760; transform: translateY(-50%); }
     .ch--scene .ch__in { position: relative; grid-template-columns: minmax(0, 1fr); min-height: calc(100vw * 760 / 3000); align-content: center; }
     .ch--scene .ch__copy { max-width: 40%; }
     .ch--scene .ch__art { display: none; }
@@ -297,18 +240,6 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     .ch--scene .ch__ln--sub > span { color: #ff5a4f; }
     .ch--scene .ch__btn--line { border-color: rgba(255, 255, 255, .4); color: #fff; background: rgba(255, 255, 255, .06); }
     .ch--scene .ch__btn--line:hover { border-color: #fff; background: rgba(255, 255, 255, .14); }
-  }
-  @keyframes srDrive { to { transform: translateX(0); } }
-  @keyframes srSpin { to { transform: rotate(0deg); } }
-  @keyframes srBlur { 0%, 45% { opacity: 1; } 78%, 100% { opacity: 0; } }
-  @keyframes srBrake { 0% { transform: rotate(0); } 35% { transform: rotate(-.55deg); } 70% { transform: rotate(.15deg); } 100% { transform: rotate(0); } }
-  @keyframes srLamp { 0%, 100% { opacity: 1; } 50% { opacity: .88; } }
-  @keyframes srBeacon { 0%, 100% { opacity: 1; } 50% { opacity: .08; } }
-  @media (prefers-reduced-motion: reduce) {
-    .sr .sr__t { transform: none !important; animation: none !important; }
-    .sr .sr__rim { transform: none !important; animation: none !important; }
-    .sr .sr__blur { opacity: 0 !important; animation: none !important; }
-    .sr .sr__body, .sr .sr__lamp, .sr .sr__beacon { animation: none !important; }
   }
   /* desktop product lineup */
   .ch__lu { display: none; }
