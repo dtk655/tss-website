@@ -45,10 +45,10 @@ const perks = [
 ];
 // experience strip under the showroom (desktop)
 const xp = [
-  ['Daily, Weekly And Monthly Rentals', 'Keep a truck for one shift or the whole job.'],
-  ['Pickup And Delivery Options', 'Customer Pick Up at our yard, or we deliver to the job.'],
-  ['MUTCD Compliant', 'Every truck is equipped to MUTCD standards.'],
-  ['Serving The Tri\u2011State Since 1971', 'Over five decades on the region’s roads.']
+  ['Daily, Weekly and Monthly Rentals', 'Keep a truck for one shift or the whole job.', 'M4 6h16v14H4z M4 10.5h16 M8.5 3.5v4 M15.5 3.5v4 M8 14.5h2.5 M13.5 14.5H16'],
+  ['Pickup and Delivery Options', 'Customer Pick Up at our yard, or we deliver to the job.', 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01'],
+  ['MUTCD Compliant', 'Every truck is equipped to MUTCD standards.', 'M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z M8.5 12l2.4 2.4L15.5 9.8'],
+  ['Serving the Tri\u2011State Since 1971', 'Over five decades on the region’s roads.', 'M12 14.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11z M8.6 13.6L7 21l5-2.6 5 2.6-1.6-7.4 M12 6.6v2.6l1.6 1']
 ];
 const steps = [
   ['Pick your truck', 'Choose from the fleet, or tell us the job and we’ll match the truck.'],
@@ -78,12 +78,17 @@ const steps = [
       </div>
       <p class="eqh__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
     </div>
-    <div class="eqh__xp" aria-label="Our experience">
-      <ul class="wrap">
-        {xp.map(([label, sub], i) => (
-          <li style={`--i:${i}`}><b>{label}</b><small>{sub}</small></li>
-        ))}
-      </ul>
+    <div class="eqh__xp" aria-label="Why rent from us">
+      <div class="wrap">
+        <ul>
+          {xp.map(([label, sub, d], i) => (
+            <li style={`--i:${i}`}>
+              <span class="eqh__xi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="eqh__xt"><b>{label}</b><small>{sub}</small></span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -242,12 +247,17 @@ const steps = [
   @media (min-width: 1200px) {
     /* the hero fills the screen: showroom on top at its own size, experience strip in the space under it */
     .eqh { display: flex; flex-direction: column; min-height: min(calc(100svh - var(--hdr-full, 140px)), calc(100vw * 760 / 3000 + 340px)); }
-    .eqh__xp { flex: 1; display: grid; align-content: center; padding: clamp(18px, 2vw, 34px) 0 clamp(22px, 2.4vw, 40px); background: linear-gradient(180deg, #121416, #0c0d0f); }
-    .eqh__xp ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-block: 0; padding-block: 0; list-style: none; }
-    .eqh__xp li { display: grid; align-content: start; gap: 10px; padding: 6px clamp(18px, 2.2vw, 38px); border-left: 1px solid rgba(255, 255, 255, .14); opacity: 0; transform: translateY(14px); animation: eqUp .8s calc(.9s + var(--i) * .14s) cubic-bezier(.2, .8, .2, 1) forwards; }
-    .eqh__xp li:first-child { padding-left: 0; border-left: 0; }
-    .eqh__xp b { font-size: clamp(1.25rem, 1.75vw, 1.9rem); line-height: 1.14; letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; color: #ff4d42; text-wrap: balance; }
-    .eqh__xp small { font-size: clamp(.92rem, 1.02vw, 1.08rem); line-height: 1.45; color: rgba(255, 255, 255, .78); text-wrap: balance; }
+    .eqh__xp { flex: 1; display: grid; align-content: center; padding: clamp(14px, 1.6vw, 28px) 0 clamp(22px, 2.4vw, 40px); background: linear-gradient(180deg, #121416, #0c0d0f); }
+    .eqh__xp ul { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border: 1px solid rgba(255, 255, 255, .1); border-radius: 20px; background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .02)); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .8), inset 0 1px 0 rgba(255, 255, 255, .08); overflow: hidden; opacity: 0; transform: translateY(16px); animation: eqUp .9s .8s cubic-bezier(.2, .8, .2, 1) forwards; }
+    .eqh__xp ul::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, #e0201c 20%, #e0201c 80%, transparent); opacity: .85; }
+    .eqh__xp li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: clamp(12px, 1.1vw, 18px); padding: clamp(18px, 1.9vw, 30px) clamp(16px, 1.7vw, 28px); border-left: 1px solid rgba(255, 255, 255, .08); transition: background .3s; }
+    .eqh__xp li:first-child { border-left: 0; }
+    .eqh__xp li:hover { background: rgba(255, 255, 255, .04); }
+    .eqh__xi { display: grid; place-items: center; width: clamp(40px, 3.3vw, 50px); aspect-ratio: 1; border-radius: 13px; color: #ff6a5f; background: rgba(224, 32, 28, .14); border: 1px solid rgba(255, 90, 80, .28); }
+    .eqh__xi svg { width: 56%; height: 56%; }
+    .eqh__xt { display: grid; gap: 6px; }
+    .eqh__xp b { font-size: clamp(1rem, 1.18vw, 1.26rem); line-height: 1.22; letter-spacing: -.012em; font-variation-settings: 'wght' 700; font-weight: 400; color: #fff; text-wrap: balance; }
+    .eqh__xp small { font-size: clamp(.84rem, .92vw, .98rem); line-height: 1.45; color: rgba(255, 255, 255, .62); text-wrap: pretty; }
   }
   /* Wide screens: a short hero like the catalog one. Compact text on the left, trucks along the right. */
   @media (min-width: 1200px) {
@@ -451,7 +461,7 @@ const steps = [
     .eqr__card .eq-pill { justify-self: stretch; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .eqh__xp li { animation: none; opacity: 1; transform: none; }
+    .eqh__xp ul { animation: none; opacity: 1; transform: none; }
     .eqh__k, .eqh__ln > span, .eqh__lede, .eqh__call, .eqh__ways .eway { animation: none; opacity: 1; transform: none; translate: none; }
     [data-in] li { opacity: 1; transform: none; transition: none; }
   }
