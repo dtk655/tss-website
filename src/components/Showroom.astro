@@ -1,8 +1,9 @@
 ---
 // Truck showroom scene: bucket truck, TMA and bucket van on a dark showroom floor, lights on.
 // animate: trucks drive in on load with wheels turning. Without it they are already parked.
+// duo: on phones only the TMA and the bucket van show, cropped tight so they are as large as the screen allows.
 // tall: taller back wall for full page heroes. band: below 1200px wide it becomes its own strip cropped to the trucks. Coordinates are in the 3000 x 760 scene.
-const { animate = false, tall = false, band = false, class: cls = '' } = Astro.props;
+const { animate = false, tall = false, band = false, duo = false, class: cls = '' } = Astro.props;
 const SCENE_W = 3000, SCENE_H = 760;
 const TRUCKS = [
   { k: 'van', d: 1.5, mx: -8, wheels: [[2614, 650, 25, 35], [2900, 566, 11, 22]], lamps: [[2500, 558, 62], [2500, 648, 26]], beam: [2330, 668], beacon: [2705, 330] },
@@ -13,19 +14,19 @@ const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
 const V = '?v=4';
 ---
-<div class:list={['sr', animate ? 'sr--drive' : 'sr--parked', tall && 'sr--tall', band && 'sr--auto', cls]} data-sr role="img" aria-label="TSS bucket truck, TMA crash truck and bucket van lined up in a showroom">
+<div class:list={['sr', animate ? 'sr--drive' : 'sr--parked', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label="TSS bucket truck, TMA crash truck and bucket van lined up in a showroom">
   <div class="sr__cv">
     <img class="sr__bg" src={`/fleet/${tall ? 'showroom-bg-tall' : 'showroom-bg'}.webp${V}`} alt="" />
     {tall && <img class="sr__bg sr__bg--m" src="/fleet/showroom-bg.webp" alt="" loading="lazy" />}
     <div class="sr__stage">
       {TRUCKS.map((t) => (
-        <div class="sr__t" style={`--d:${t.d}s;--mx:${t.mx}%`}>
+        <div class={`sr__t sr__t--${t.k}`} style={`--d:${t.d}s;--mx:${t.mx}%`}>
           <img class="sr__img" src={`/fleet/showroom-${t.k}-sh.webp${V}`} alt="" />
           <div class="sr__beam" style={`left:${px(t.beam[0])};top:${py(t.beam[1])}`}></div>
         </div>
       ))}
       {TRUCKS.map((t) => (
-        <div class="sr__t" style={`--d:${t.d}s;--mx:${t.mx}%`}>
+        <div class={`sr__t sr__t--${t.k}`} style={`--d:${t.d}s;--mx:${t.mx}%`}>
           <div class="sr__body">
             <img class="sr__img" src={`/fleet/showroom-${t.k}.webp${V}`} alt="" />
             {t.wheels.map(([cx, cy, rx, ry], n) => (
@@ -87,6 +88,19 @@ const V = '?v=4';
     /* tall wall keeps its own shape and rises above the strip, so a parent can stretch the scene upward behind a headline */
     .sr--auto.sr--tall .sr__bg { inset: auto 0 0 0; height: auto; aspect-ratio: 3000 / 1250; }
     .sr--auto.sr--tall .sr__bg--m { display: none; }
+  }
+
+  /* Phones, duo mode: TMA and van only. Scene x 1780 to 3000 fills the screen (about 17px clear each side at 390 wide);
+     the strip is 495 scene units tall, which leaves a small gap above the van's boom. */
+  @media (max-width: 640px) {
+    .sr--duo.sr--auto { aspect-ratio: 1220 / 495; }
+    .sr--duo.sr--auto .sr__cv { width: calc(3000 / 1220 * 100%); left: calc(-1780 / 1220 * 100%); }
+    .sr--duo .sr__t { --park: -.47%; }
+    /* even vignette on both screen edges (the wall image only fades on its right) */
+    .sr--duo.sr--auto::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(18, 20, 22, .85), rgba(18, 20, 22, 0) 6%, rgba(18, 20, 22, 0) 95%, rgba(18, 20, 22, .35)); }
+    .sr--duo .sr__t--bucket { display: none; }
+    .sr--duo .sr__t--tma { --d: .1s !important; }
+    .sr--duo .sr__t--van { --d: .8s !important; }
   }
 
   @keyframes srDrive { to { transform: translateX(var(--park, 0%)); } }
