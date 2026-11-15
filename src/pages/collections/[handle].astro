@@ -59,13 +59,18 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
         <img class="sr__bg" src="/fleet/showroom-bg.webp" alt="" width="3000" height="760" />
         {TRUCKS.map((t) => (
           <div class="sr__t" style={`--d:${t.d}s`}>
+            <img class="sr__img" src={`/fleet/showroom-${t.k}-sh.webp`} alt="" width="3000" height="760" />
             <div class="sr__beam" style={`left:${px(t.beam[0])};top:${py(t.beam[1])}`}></div>
+          </div>
+        ))}
+        {TRUCKS.map((t) => (
+          <div class="sr__t" style={`--d:${t.d}s`}>
             <div class="sr__body">
-              <img class="sr__img" src={`/fleet/showroom-${t.k}.webp`} alt="" width="3000" height="760" />
+              <img class="sr__img" src={`/fleet/showroom-${t.k}.webp?v=3`} alt="" width="3000" height="760" />
               {t.wheels.map(([cx, cy, rx, ry], n) => (
                 <span class="sr__wh" style={`left:${px(cx)};top:${py(cy)};width:${px(ry * 2)};--sq:${(rx / ry).toFixed(3)};--turn:${Math.round(2250 / (2 * Math.PI * t.wheels[0][3]) * 360)}deg`}>
-                  <img class="sr__rim" src={`/fleet/wh-${t.k}-${n}.webp`} alt="" />
-                  <img class="sr__blur" src={`/fleet/wh-${t.k}-${n}-b.webp`} alt="" />
+                  <img class="sr__rim" src={`/fleet/wh-${t.k}-${n}.webp?v=3`} alt="" />
+                  <img class="sr__blur" src={`/fleet/wh-${t.k}-${n}-b.webp?v=3`} alt="" />
                 </span>
               ))}
               {t.lamps.map(([cx, cy, w]) => <span class="sr__lamp" style={`left:${px(cx)};top:${py(cy)};width:${px(w * 3.2)}`}></span>)}
