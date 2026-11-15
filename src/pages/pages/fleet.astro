@@ -87,20 +87,6 @@ const steps = [
     </div>
   </section>
 
-  <!-- ================= THE YARD ================= -->
-  <section class="eqy" data-in aria-label="Our yard">
-    <div class="wrap">
-      <div class="eqy__head"><p class="eq-k">From our own yard</p><h2>Every truck here is ours.</h2></div>
-      <div class="eqy__grid">
-        {[['fleet-sunset', '50% 45%'], ['fleet-buckets', '50% 40%'], ['fleet-hero', '50% 40%']].map(([n, pos]) => (
-          <picture class="eqy__ph">
-            <source media="(max-width: 640px)" srcset={`/fleet/${n}-m.webp`} />
-            <img src={`/fleet/${n}.webp`} alt="TSS trucks in the yard" style={`object-position:${pos}`} loading="lazy" />
-          </picture>
-        ))}
-      </div>
-    </div>
-  </section>
 
   <!-- ================= THE FLEET ================= -->
   <section class="eql" data-in id="fleet">
@@ -108,7 +94,7 @@ const steps = [
       <div class="eq-head">
         <div>
           <p class="eq-k"><span></span>The fleet</p>
-          <h2>Trucks and trailers, <em>ready to roll.</em></h2>
+          <h2>See Our <em>Fleet Options.</em></h2>
         </div>
         <a href="/collections/truck-rentals" class="eq-link">Shop the fleet<Fragment set:html={ARROW} /></a>
       </div>
@@ -289,10 +275,10 @@ const steps = [
     .eqh .eqh__lede { grid-row: 3; } .eqh .eqh__in > .eqh__ways { grid-row: 4; } .eqh .eqh__call { grid-row: 5; }
   }
   @media (min-width: 900px) {
-    .eqy { display: none; }
     .eql .eq-head { display: none; }
     section.eql { padding-top: clamp(32px, 3.4vw, 52px); }
   }
+  @media (max-width: 899px) { .eql .eq-head h2 { font-size: clamp(1.7rem, 7.4vw, 2.4rem); white-space: nowrap; } section.eql { padding-top: 36px; } }
   .eqy { padding: clamp(40px, 5vw, 72px) 0 clamp(8px, 1vw, 16px); }
   .eqy__head { margin-bottom: clamp(18px, 2.4vw, 30px); }
   .eqy__head h2 { margin: 6px 0 0; font-size: clamp(1.6rem, 2.8vw, 2.4rem); letter-spacing: -.02em; font-variation-settings: 'wght' 760; font-weight: 400; }
