@@ -126,20 +126,6 @@ const steps = [
     </div>
   </section>
 
-  <!-- ================= PERKS ================= -->
-  <section class="eqp" data-in>
-    <div class="wrap">
-      <ul class="eqp__list">
-        {perks.map(([t, d, ic], i) => (
-          <li style={`--i:${i}`}>
-            <span class="eqp__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
-            <span><b>{t}</b><small>{d}</small></span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
   <!-- ================= ASK CONNER: RIGHT TRUCK ================= -->
   <section class="eqa" data-in>
     <div class="wrap">
@@ -185,6 +171,20 @@ const steps = [
         </form>
       </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ================= PERKS ================= -->
+  <section class="eqp" data-in>
+    <div class="wrap">
+      <ul class="eqp__list">
+        {perks.map(([t, d, ic], i) => (
+          <li style={`--i:${i}`}>
+            <span class="eqp__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+            <span><b>{t}</b><small>{d}</small></span>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
