@@ -7,7 +7,7 @@ const { animate = false, tall = false, band = false, duo = false, set = 'trucks'
 const EQ = set === 'equipment';
 // equipment set: VMS board, arrow board and light tower (layers in /public/equip, built by the same scene script)
 const ITEMS = [
-  { k: 'vms', d: 0.1, on: ['vms-on'] },
+  { k: 'vms', d: 0.1, on: ['vms-on', 'vms-on2'] },
   { k: 'arrow', d: 0.35, on: ['arrow-0', 'arrow-1', 'arrow-2'] },
   { k: 'tower', d: 0.6, on: ['tower-on'], pool: true }
 ];
@@ -20,7 +20,7 @@ const TRUCKS = [
 ];
 const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
-const V = '?v=7';
+const V = '?v=9';
 ---
 <div class:list={['sr', EQ ? 'sr--equip' : animate ? 'sr--drive' : 'sr--parked', EQ && animate && 'sr--rise', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label={EQ ? "TSS VMS message board, arrow board and light tower in a showroom" : "TSS bucket truck, TMA crash truck and bucket van lined up in a showroom"}>
   <div class="sr__cv">
@@ -134,16 +134,20 @@ const V = '?v=7';
   @keyframes srRise { to { opacity: 1; transform: none; } }
   .sr--equip .sr__on { opacity: 0; }
   .sr--equip.is-go .sr__on--tower, .sr--equip.is-go .sr__pool { animation: srPower 1.2s 1.5s steps(1) forwards; }
-  .sr--equip.is-go .sr__on--vms { animation: srPower 1.2s 2.1s steps(1) forwards, srMsg 4.6s 3.4s ease-in-out infinite; }
+  /* VMS: powers on with RIGHT LANE CLOSED, then the whole board switches to CONSTRUCTION AHEAD and back, like a two-phase message */
+  .sr--equip.is-go .sr__on--vms { animation: srPower 1.2s 2.1s steps(1) forwards, srPhaseA 6s 3.3s steps(1) infinite; }
+  .sr--equip.is-go .sr__on--vms[style*='--n:1'] { animation: srPhaseB 6s 3.3s steps(1) infinite; }
   .sr--equip.is-go .sr__on--arrow { animation: srChev0 1.6s 2.6s steps(1) infinite; }
   .sr--equip.is-go .sr__on--arrow[style*='--n:1'] { animation-name: srChev1; }
   .sr--equip.is-go .sr__on--arrow[style*='--n:2'] { animation-name: srChev2; }
   @keyframes srPower { 0% { opacity: 0; } 15% { opacity: 1; } 25% { opacity: .2; } 35% { opacity: 1; } 45% { opacity: .5; } 55%, 100% { opacity: 1; } }
-  @keyframes srMsg { 0%, 86%, 100% { opacity: 1; } 90%, 96% { opacity: .08; } }
+  @keyframes srPhaseA { 0% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes srPhaseB { 0% { opacity: 0; } 50% { opacity: 1; } }
   @keyframes srChev0 { 0% { opacity: 1; } 75% { opacity: 0; } }
   @keyframes srChev1 { 0% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 0; } }
   @keyframes srChev2 { 0% { opacity: 0; } 50% { opacity: 1; } 75% { opacity: 0; } }
   .sr--parked.sr--equip .sr__on { opacity: 1; }
+  .sr--parked.sr--equip .sr__on--vms[style*='--n:1'] { opacity: 0; }
   /* phones, duo: VMS and arrow board only */
   @media (max-width: 640px) {
     .sr--equip.sr--duo.sr--auto { aspect-ratio: 1130 / 655; }
@@ -164,5 +168,6 @@ const V = '?v=7';
     .sr .sr__body, .sr .sr__lamp, .sr .sr__beacon { animation: none !important; }
     .sr--equip .sr__t { opacity: 1 !important; transform: none !important; animation: none !important; }
     .sr--equip .sr__on { opacity: 1 !important; animation: none !important; }
+    .sr--equip .sr__on--vms[style*='--n:1'] { opacity: 0 !important; }
   }
 </style>
