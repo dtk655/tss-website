@@ -36,9 +36,8 @@ const guide = [
   ['Moving barrier and gear', 'Flatbed truck', 'flatbed-truck', 'Gets barrier, drums and equipment where the job needs them.']
 ].filter((g) => byHandle[g[2]]).map(([q, t, h, d], i) => ({ q, t, d, href: byHandle[h].href, img: byHandle[h].img, tint: tints[i % tints.length] }));
 
-// vehicles Conner checks a project against (shown in the AI truck finder)
+// vehicles the AI Lane Closure Expert checks a project against
 const roster = ['TMA crash trucks', 'Bucket trucks', 'Bucket vans', 'Cone trucks', 'Flatbeds', 'Arrow boards', 'Message boards'];
-const CONE_SVG = '<svg viewBox="0 0 100 116"><rect x="9" y="97" width="82" height="13" rx="4" fill="#1a1d21"/><path d="M44 9 Q50 3 56 9 L84 98 L16 98 Z" fill="#f26a1b"/><path d="M39.7 21 L60.3 21 L63 30 L37 30 Z" fill="#f4f6f8"/><path d="M22.7 80 L77.3 80 L80.3 90 L19.7 90 Z" fill="#f4f6f8"/><circle cx="40" cy="51" r="7" fill="#fff"/><circle cx="41" cy="52" r="3.8" fill="#1f2933"/><circle cx="60" cy="51" r="7" fill="#fff"/><circle cx="61" cy="52" r="3.8" fill="#1f2933"/><path d="M40.5 62 Q50 75 59.5 62 Z" fill="#5b1d06"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const perks = [
   ['For the day or the job', 'Rent a truck for one shift or for the whole project.', 'M3.5 5h17v15.5h-17z M3.5 10h17 M8 3v4 M16 3v4'],
@@ -126,7 +125,7 @@ const steps = [
     </div>
   </section>
 
-  <!-- ================= ASK CONNER: RIGHT TRUCK ================= -->
+  <!-- ================= AI LANE CLOSURE EXPERT: RIGHT TRUCK ================= -->
   <section class="eqa" data-in>
     <div class="wrap">
       <div class="eqa__shell">
@@ -136,19 +135,19 @@ const steps = [
         <span class="eqa__glow eqa__glow--b" aria-hidden="true"></span>
         <div class="eqa__copy">
           <div class="eqa__who">
-            <span class="eqa__av" aria-hidden="true"><i></i><i></i><Fragment set:html={CONE_SVG} /></span>
-            <span class="eqa__name"><b>Conner</b><span class="eqa__ai">AI</span><small><span class="eqa__dot"></span>Online · trained on our fleet</small></span>
+            <span class="eqa__av" aria-hidden="true"><i></i><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9zM19 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z" fill="currentColor"/></svg></span>
+            <span class="eqa__name"><b>Lane Closure Expert</b><small><span class="eqa__dot"></span>Online · trained on our fleet</small></span>
           </div>
           <h2>Find Out If We Have The <em>Right Vehicle For Your Job.</em></h2>
-          <p class="eqa__lede">Describe the work in your own words. Conner reads your project, checks it against every vehicle in our yard and tells you what fits, or if nothing does.</p>
+          <p class="eqa__lede">Describe the work in your own words. Our AI Lane Closure Expert reads your project, checks it against every vehicle in our yard and tells you what fits, or if nothing does.</p>
           <ol class="eqa__how">
             <li><span>1</span>Describe the job</li>
-            <li><span>2</span>Conner checks our fleet</li>
+            <li><span>2</span>We check our fleet</li>
             <li><span>3</span>Get a recommendation</li>
           </ol>
         </div>
         <form class="eqa__form" data-eqa>
-          <label class="eqa__lab" for="eqa-q"><span class="eqa__spark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9zM19 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z" fill="currentColor"/></svg></span>Tell us about the project</label>
+          <label class="eqa__lab" for="eqa-q">Tell us about the project</label>
           <div class="eqa__box">
             <div class="eqa__field">
               <textarea id="eqa-q" rows="3" data-eqa-q aria-describedby="eqa-note"></textarea>
@@ -167,7 +166,7 @@ const steps = [
             <span class="eqa__try">Try:</span>
             {['Overnight paving on a highway', 'Sign work 35 feet up', 'Setting cones for a long closure', 'Hauling barrier to a job site'].map((t) => <button type="button" data-eqa-chip>{t}</button>)}
           </div>
-          <p class="eqa__note" id="eqa-note">Conner is an AI assistant and can make mistakes. For a firm answer and pricing, <a href="/pages/request-a-quote?type=rental">get fleet pricing</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
+          <p class="eqa__note" id="eqa-note">The Lane Closure Expert is an AI assistant and can make mistakes. For a firm answer and pricing, <a href="/pages/request-a-quote?type=rental">get fleet pricing</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
         </form>
       </div>
       </div>
@@ -228,7 +227,7 @@ const steps = [
 </Layout>
 
 <script>
-  // Ask Conner which truck fits: typed example placeholder, a short "checking the fleet" state, then the chat assistant answers.
+  // AI Lane Closure Expert: which truck fits: typed example placeholder, a short "checking the fleet" state, then the chat assistant answers.
   {
     const f = document.querySelector('[data-eqa]');
     if (f) {
@@ -594,12 +593,12 @@ const steps = [
   @keyframes eqaDrift { to { transform: translate(18%, 14%) scale(1.15); } }
 
   .eqa__who { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-  .eqa__av { position: relative; flex: none; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 18px; background: linear-gradient(160deg, #23272d, #15181b); border: 1px solid rgba(255, 255, 255, .14); }
-  .eqa__av :global(svg) { width: 30px; height: 34px; }
+  .eqa__av { position: relative; flex: none; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 18px; background: linear-gradient(135deg, #e0201c, #f5b800); color: #fff; box-shadow: 0 12px 28px -12px rgba(224, 32, 28, .9); }
+  .eqa__av :global(svg) { width: 30px; height: 30px; }
   .eqa__av i { position: absolute; inset: -1px; border-radius: 18px; border: 1.5px solid rgba(245, 184, 0, .7); animation: eqaRing 2.6s ease-out infinite; }
   .eqa__av i + i { animation-delay: 1.3s; }
   @keyframes eqaRing { from { transform: scale(1); opacity: .8; } to { transform: scale(1.5); opacity: 0; } }
-  .eqa__name { display: grid; grid-template-columns: max-content max-content; justify-content: start; align-items: center; column-gap: 8px; row-gap: 2px; }
+  .eqa__name { display: grid; grid-template-columns: max-content; justify-content: start; align-items: center; column-gap: 8px; row-gap: 2px; }
   .eqa__name b { font-size: 1.15rem; font-variation-settings: 'wght' 760; font-weight: 400; }
   .eqa__ai { justify-self: start; padding: 2px 7px; border-radius: 6px; background: linear-gradient(135deg, #e0201c, #f5b800); font-size: .7rem; letter-spacing: .08em; font-variation-settings: 'wght' 800; }
   .eqa__name small { grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 7px; font-size: .84rem; color: rgba(255, 255, 255, .62); }
@@ -639,7 +638,7 @@ const steps = [
   .eqa__send:hover { transform: translateY(-1px); box-shadow: 0 16px 36px -12px rgba(224, 32, 28, 1), inset 0 1px 0 rgba(255, 255, 255, .25); }
   .eqa__send :global(svg) { width: 17px; height: 17px; }
   .eqa__beam { position: absolute; left: 0; right: 0; top: 0; height: 40%; opacity: 0; pointer-events: none; background: linear-gradient(180deg, transparent, rgba(245, 184, 0, .18) 70%, rgba(245, 184, 0, .7) 100%); }
-  /* thinking state while Conner "checks the fleet" */
+  /* thinking state while the AI "checks the fleet" */
   .is-think .eqa__beam { animation: eqaBeam 1s ease-in-out infinite; }
   @keyframes eqaBeam { 0% { opacity: 1; transform: translateY(-100%); } 100% { opacity: 1; transform: translateY(260%); } }
   .is-think .eqa__track { animation-duration: 4s; }
@@ -659,8 +658,34 @@ const steps = [
     .eqa__lab { justify-content: center; } .eqa__chips { justify-content: center; } .eqa__note { text-align: center; }
   }
   @media (max-width: 640px) {
-    .eqa__bar { flex-direction: column; align-items: stretch; } .eqa__send { justify-content: center; } .eqa__scan { justify-content: center; } .eqa__scan-l { display: none; }
-    .eqa__how { display: none; } .eqa__try { display: none; }
+    .eqa { padding: 28px 0 36px; }
+    .eqa__shell { border-radius: 22px; }
+    .eqa__card { gap: 22px; padding: 26px 18px 22px; border-radius: 20.5px; }
+    .eqa__who { gap: 10px; margin-bottom: 14px; }
+    .eqa__av { width: 42px; height: 42px; border-radius: 13px; }
+    .eqa__av i { border-radius: 13px; }
+    .eqa__av :global(svg) { width: 22px; height: 22px; }
+    .eqa__name { text-align: left; }
+    .eqa__name b { font-size: 1rem; }
+    .eqa__name small { font-size: .78rem; }
+    .eqa h2 { font-size: clamp(1.5rem, 7vw, 1.9rem); }
+    .eqa__lede { margin-top: 12px; font-size: .95rem; line-height: 1.5; }
+    .eqa__how { display: none; }
+    .eqa__form { gap: 12px; }
+    .eqa__lab { font-size: 1rem; }
+    .eqa__box { padding: 10px; border-radius: 16px; gap: 8px; }
+    .eqa__box textarea, .eqa__type { font-size: 1rem; }
+    .eqa__box textarea { min-height: 76px; }
+    .eqa__bar { flex-direction: column; align-items: stretch; gap: 10px; padding-top: 8px; }
+    .eqa__scan-l { display: none; }
+    .eqa__scan { font-size: .74rem; }
+    .eqa__send { justify-content: center; min-height: 48px; width: 100%; }
+    /* examples become one swipeable row */
+    .eqa__chips { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; margin: 0 -18px; padding: 2px 18px 4px; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent); mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent); }
+    .eqa__chips::-webkit-scrollbar { display: none; }
+    .eqa__chips button { flex: none; min-height: 34px; padding: 0 12px; font-size: .84rem; }
+    .eqa__try { flex: none; display: inline; font-size: .8rem; }
+    .eqa__note { font-size: .76rem; }
   }
   @media (prefers-reduced-motion: reduce) {
     .eqa__shell { opacity: 1; transform: none; transition: none; animation: none; }
