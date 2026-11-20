@@ -135,7 +135,7 @@ const steps = [
         <span class="eqa__glow eqa__glow--b" aria-hidden="true"></span>
         <div class="eqa__copy">
           <div class="eqa__who">
-            <span class="eqa__av" aria-hidden="true"><i></i><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9zM19 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z" fill="currentColor"/></svg></span>
+            <span class="eqa__av" aria-hidden="true"><i></i><i></i><b class="eqa__avt">AI</b></span>
             <span class="eqa__name"><b>Lane Closure Expert</b><small><span class="eqa__dot"></span>Online · trained on our fleet</small></span>
           </div>
           <h2>Find Out If We Have The <em>Right Vehicle For Your Job.</em></h2>
@@ -596,7 +596,7 @@ const steps = [
 
   .eqa__who { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
   .eqa__av { position: relative; flex: none; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 18px; background: linear-gradient(135deg, #e0201c, #f5b800); color: #fff; box-shadow: 0 12px 28px -12px rgba(224, 32, 28, .9); }
-  .eqa__av :global(svg) { width: 30px; height: 30px; }
+  .eqa__avt { font-size: 1.25rem; letter-spacing: .02em; font-variation-settings: 'wght' 820; font-weight: 400; color: #fff; }
   .eqa__av i { position: absolute; inset: -1px; border-radius: 18px; border: 1.5px solid rgba(245, 184, 0, .7); animation: eqaRing 2.6s ease-out infinite; }
   .eqa__av i + i { animation-delay: 1.3s; }
   @keyframes eqaRing { from { transform: scale(1); opacity: .8; } to { transform: scale(1.5); opacity: 0; } }
@@ -670,11 +670,11 @@ const steps = [
     .eqa__who { display: inline-flex; gap: 8px; margin: 0 0 14px; padding: 5px 12px 5px 5px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); }
     .eqa__av { width: 28px; height: 28px; border-radius: 50%; box-shadow: none; }
     .eqa__av i { display: none; }
-    .eqa__av :global(svg) { width: 16px; height: 16px; }
+    .eqa__avt { font-size: .7rem; }
     .eqa__name { display: flex; align-items: center; gap: 8px; }
     .eqa__name b { font-size: .88rem; }
     .eqa__name small { font-size: 0; gap: 0; }
-    .eqa h2 { font-size: clamp(1.55rem, 7.2vw, 1.9rem); line-height: 1.1; }
+    .eqa h2 { font-size: clamp(1.7rem, 8.6vw, 2.3rem); line-height: 1.08; text-wrap: balance; }
     .eqa__lede { margin: 10px auto 0; font-size: 1rem; line-height: 1.45; color: rgba(255, 255, 255, .78); }
     .eqa__form { gap: 12px; }
     .eqa__box { padding: 8px; border-radius: 16px; gap: 8px; }
@@ -688,7 +688,7 @@ const steps = [
     .eqa__try { flex: none; display: inline; font-size: .8rem; }
     .eqa__note { margin: 0; font-size: .78rem; text-align: center; }
     .eqa__note a { white-space: nowrap; }
-    .eqa__lede--short { max-width: 26ch; text-wrap: balance; }
+    .eqa__lede--short { max-width: none; font-size: clamp(1rem, 4.6vw, 1.15rem); text-wrap: pretty; }
   }
   @media (prefers-reduced-motion: reduce) {
     .eqa__shell { opacity: 1; transform: none; transition: none; animation: none; }
