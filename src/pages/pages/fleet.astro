@@ -2,7 +2,6 @@
 // Truck fleet landing page: what we rent, which truck fits the job, the TMA explorer, how renting works.
 import Layout from '../../layouts/Layout.astro';
 import Showroom from '../../components/Showroom.astro';
-import TmaTruck from '../../components/TmaTruck.astro';
 import { loadCatalog, img } from '../../lib/shopify.js';
 import { cutouts } from '../../lib/cutouts.js';
 import { PHONE, PHONE_TEL } from '../../lib/config.js';
@@ -188,8 +187,6 @@ const steps = [
       </ul>
     </div>
   </section>
-
-  <TmaTruck />
 
   <!-- ================= HOW IT WORKS ================= -->
   <section class="eqs" data-in>

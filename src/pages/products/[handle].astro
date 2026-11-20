@@ -1,4 +1,5 @@
 ---
+import TmaTruck from '../../components/TmaTruck.astro';
 import Layout from '../../layouts/Layout.astro';
 import ProductGallery from '../../components/ProductGallery.astro';
 import ProductCard from '../../components/ProductCard.astro';
@@ -196,6 +197,8 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       </div>
     </div>
   </section>
+
+  {/^truck-mounted-attenuator/.test(p.handle) && <TmaTruck />}
 
   <!-- ================= SPECS + DETAILS ================= -->
   <section class="pxd" data-in>
