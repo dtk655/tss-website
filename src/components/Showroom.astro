@@ -20,7 +20,7 @@ const TRUCKS = [
 ];
 const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
-const V = '?v=9';
+const V = '?v=10';
 ---
 <div class:list={['sr', EQ ? 'sr--equip' : animate ? 'sr--drive' : 'sr--parked', EQ && animate && 'sr--rise', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label={EQ ? "TSS VMS message board, arrow board and light tower in a showroom" : "TSS bucket truck, TMA crash truck and bucket van lined up in a showroom"}>
   <div class="sr__cv">
@@ -150,8 +150,8 @@ const V = '?v=9';
   .sr--parked.sr--equip .sr__on--vms[style*='--n:1'] { opacity: 0; }
   /* phones, duo: VMS and arrow board only */
   @media (max-width: 640px) {
-    .sr--equip.sr--duo.sr--auto { aspect-ratio: 1130 / 655; }
-    .sr--equip.sr--duo.sr--auto .sr__cv { width: calc(3000 / 1130 * 100%); left: calc(-1230 / 1130 * 100%); }
+    .sr--equip.sr--duo.sr--auto { aspect-ratio: 1220 / 660; }
+    .sr--equip.sr--duo.sr--auto .sr__cv { width: calc(3000 / 1220 * 100%); left: calc(-1225 / 1220 * 100%); }
     .sr--equip.sr--duo .sr__t--tower { display: none; }
     .sr--equip.sr--duo .sr__t { --park: 0%; }
   }
