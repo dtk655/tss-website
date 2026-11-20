@@ -1,0 +1,409 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ServiceScene from '../../components/ServiceScene.astro';
+import ClosureDiagram from '../../components/ClosureDiagram.astro';
+import CredsRoads from '../../components/CredsRoads.astro';
+import { SERVICES, SERVICE_QUOTE } from '../../lib/services.js';
+import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../../lib/config.js';
+
+export function getStaticPaths() { return SERVICES.map((s) => ({ params: { slug: s.slug }, props: { s } })); }
+const { s } = Astro.props;
+const others = SERVICES.filter((o) => o.slug !== s.slug);
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// where each service connects to the rest of the site
+const RELATED = {
+  'lane-and-road-closures': [['Free Closure Plan', 'Get a starting plan for your job in minutes.', '/tools/lane-closure-plan'], ['Truck Fleet', 'Crash trucks, cone trucks and more from our yard.', '/pages/fleet'], ['Equipment', 'Arrow boards, message boards and light towers.', '/pages/equipment']],
+  'tma-protection': [['Truck Fleet', 'See every truck we run and rent.', '/pages/fleet'], ['Rent A TMA', 'Daily, weekly and monthly truck rentals.', '/collections/truck-rentals'], ['Lane And Road Closures', 'Add a full closure crew to the truck.', '/services/lane-and-road-closures']],
+  'flagging-operations': [['Lane And Road Closures', 'Flaggers as part of a full closure.', '/services/lane-and-road-closures'], ['Free Closure Plan', 'See what your job needs before you book.', '/tools/lane-closure-plan'], ['Safety Products', 'Paddles, vests and gear for your own crew.', '/collections/safety-products']],
+  'sign-and-barricade-installs': [['Sign Shop', 'Stock and custom signs made in house.', '/collections/sign-shop'], ['Custom Shop', 'Design a sign of any size, color and legend.', '/pages/custom-stenciling'], ['Barricades', 'Type III, A-frame and plastic barricades.', '/collections/barricades']],
+  'special-events': [['WATERCADE Barriers', 'Water-filled barrier for crowds and closures.', '/watercade/'], ['Barricades', 'Buy or rent barricades for event day.', '/collections/barricades'], ['Flagging Operations', 'Certified flaggers for crossings and parking.', '/services/flagging-operations']],
+  'night-and-weekend-work': [['TMA Protection', 'Crash trucks for overnight closures.', '/services/tma-protection'], ['Equipment', 'Arrow boards, message boards and light towers.', '/pages/equipment'], ['Lane And Road Closures', 'Every type of closure we set.', '/services/lane-and-road-closures']],
+  'traffic-control-plans': [['Free Closure Plan', 'Build a starting plan for your job now.', '/tools/lane-closure-plan'], ['Work Zone Builder', 'Lay out a work zone and see what it needs.', '/tools/work-zone-builder'], ['Lane And Road Closures', 'Have our crews build the plan.', '/services/lane-and-road-closures']]
+};
+const related = RELATED[s.slug] || [];
+const cta2 = s.cta2 || ['Get A Free Closure Plan', '/tools/lane-closure-plan'];
+const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: s.faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) };
+---
+<Layout title={`${s.title}: Lane Closure Services`} description={s.lede} image={s.img.startsWith('/') ? s.img : undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <!-- ================= HERO ================= -->
+  <section class="sv">
+    <div class="wrap sv__in">
+      <div class="sv__copy">
+        <nav class="sv__crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/pages/lane-closure">Lane Closures</a><span>/</span><b>{s.title}</b></nav>
+        <h1><span class="sv__ln lch__ln"><span>{s.h1[0]}</span></span> <span class="sv__ln lch__ln"><span>{s.h1[1]}</span></span></h1>
+        <p class="sv__lede">{s.lede}</p>
+        <div class="sv__acts">
+          <a href="#quote" class="sv__btn sv__btn--solid">Get A Quote<Fragment set:html={ARROW} /></a>
+          <a href={cta2[1]} class="sv__btn sv__btn--line">{cta2[0]}</a>
+        </div>
+        <p class="sv__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
+      </div>
+      <div class="sv__scene"><ServiceScene slug={s.slug} /></div>
+    </div>
+    <div class="wrap">
+      <ul class="sv__stats">
+        {s.stats.map(([big, label], i) => <li style={`--i:${i}`}><b>{big}</b><span>{label}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= TYPES ================= -->
+  <section class="svt" data-rv>
+    <div class="wrap">
+      <div class="sv-head">
+        <p class="sv-k"><span></span>{s.typesK}</p>
+        <h2>{s.typesH[0]} <em>{s.typesH[1]}</em></h2>
+      </div>
+      <ul class:list={['svt__grid', s.diagrams && 'svt__grid--d']}>
+        {s.types.map(([kind, t, d], i) => (
+          <li class="svt__c" style={`--i:${i}`}>
+            {s.diagrams ? <ClosureDiagram kind={kind} /> : <span class="svt__n">{String(i + 1).padStart(2, '0')}</span>}
+            <b>{t}</b>
+            <p>{d}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= INCLUDED ================= -->
+  <section class="svi" data-rv>
+    <div class="wrap svi__in">
+      <div class="svi__ph"><img src={s.img} alt={s.title} loading="lazy" style={`object-position:${s.pos}`} /><span class="svi__tag">Certified and experienced crews</span></div>
+      <div class="svi__copy">
+        <p class="sv-k"><span></span>What you get</p>
+        <h2>{s.inclH}</h2>
+        <ul class="svi__list">
+          {s.incl.map((t, i) => <li style={`--i:${i}`}><span class="svi__chk" set:html={CHK}></span>{t}</li>)}
+        </ul>
+        <a href="#quote" class="sv__btn sv__btn--red">Get A Quote<Fragment set:html={ARROW} /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS ================= -->
+  <section class="svp" data-rv>
+    <div class="wrap">
+      <div class="sv-head sv-head--dark">
+        <p class="sv-k"><span></span>How it works</p>
+        <h2>Four Steps. <em>One Point Of Contact.</em></h2>
+      </div>
+      <ol class="svp__steps">
+        {s.steps.map(([t, d], i) => (
+          <li style={`--i:${i}`}><span class="svp__n">{i + 1}</span><b>{t}</b><p>{d}</p></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <CredsRoads />
+
+  <!-- ================= RELATED ================= -->
+  {related.length > 0 && (
+    <section class="svr" data-rv>
+      <div class="wrap">
+        <div class="sv-head"><p class="sv-k"><span></span>Goes well with</p><h2>Everything Else <em>From One Yard.</em></h2></div>
+        <ul class="svr__grid">
+          {related.map(([t, d, href], i) => (
+            <li style={`--i:${i}`}><a href={href} class="svr__c"><b>{t}</b><p>{d}</p><span class="svr__go" set:html={ARROW}></span></a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- ================= FAQ ================= -->
+  <section class="svf" data-rv>
+    <div class="wrap svf__in">
+      <div class="sv-head"><p class="sv-k"><span></span>Good to know</p><h2>Questions, <em>Answered.</em></h2></div>
+      <div class="svf__list">
+        {s.faqs.map(([q, a], i) => (
+          <details class="svf__q" style={`--i:${i}`} open={i === 0}>
+            <summary>{q}<span aria-hidden="true"></span></summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= QUOTE FORM ================= -->
+  <section class="svq" id="quote" data-rv>
+    <div class="wrap svq__in">
+      <div class="svq__copy">
+        <p class="sv-k sv-k--gold"><span></span>Free quote</p>
+        <h2>Tell Us About The Job. <em>We’ll Price It Fast.</em></h2>
+        <p class="svq__lede">Send a few details and our lane closure team will get back to you with a quote for {s.title.toLowerCase()}.</p>
+        <ul class="svq__pts">
+          <li><span set:html={CHK}></span>No obligation, no cost</li>
+          <li><span set:html={CHK}></span>Priced by the shift or by the job</li>
+          <li><span set:html={CHK}></span>NJ, NY, PA, CT and DE</li>
+        </ul>
+        <p class="svq__alt">Need products or rentals too? <a href={SERVICE_QUOTE}>Use the full Quote Builder</a></p>
+        <p class="svq__alt">Or call our office at <a href={PHONE_TEL}>{PHONE}</a></p>
+      </div>
+      <form class="svq__form" data-sv-form data-service={s.title} novalidate={false}>
+        <input type="hidden" name="topic" value={`Lane closure quote: ${s.title}`} />
+        <div class="svq__row">
+          <label>Name<input name="name" required autocomplete="name" /></label>
+          <label>Company<input name="company" autocomplete="organization" /></label>
+        </div>
+        <div class="svq__row">
+          <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+          <label>Phone<input name="phone" type="tel" required autocomplete="tel" /></label>
+        </div>
+        <div class="svq__row">
+          <label>Job location<input name="location" required placeholder="Road, town and state" /></label>
+          <label>When is the work?<input name="timing" placeholder="Dates or rough timing" /></label>
+        </div>
+        <label>Service
+          <select name="service">
+            {SERVICES.map((o) => <option selected={o.slug === s.slug}>{o.title}</option>)}
+          </select>
+        </label>
+        <label>About the job<textarea name="message" rows="4" required placeholder="What work is being done, which lanes, how long"></textarea></label>
+        <button type="submit" class="sv__btn sv__btn--red svq__send" data-submit>Request My Quote<Fragment set:html={ARROW} /></button>
+        <p class="svq__ok" data-ok hidden>Thanks. Your request is in, and our lane closure team will be in touch.</p>
+        <p class="svq__err" data-err hidden>We couldn’t send that automatically, so we opened an email for you instead. You can also call {PHONE}.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= OTHER SERVICES ================= -->
+  <section class="svo" data-rv>
+    <div class="wrap">
+      <div class="sv-head"><p class="sv-k"><span></span>More services</p><h2>Every Kind Of Closure. <em>One Call.</em></h2></div>
+      <ul class="svo__grid">
+        {others.map((o, i) => (
+          <li style={`--i:${i}`}><a href={`/services/${o.slug}`} class="svo__c"><img src={o.img} alt="" loading="lazy" style={`object-position:${o.pos}`} /><span class="svo__shade"></span><b>{o.title}</b></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline define:vars={{ FORM_WEBHOOK, EMAIL }}>
+  // reveal sections as they scroll in
+  (() => {
+    const els = document.querySelectorAll('[data-rv]');
+    if (!('IntersectionObserver' in window)) return els.forEach((e) => e.classList.add('is-in'));
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { threshold: .12 });
+    els.forEach((e) => io.observe(e));
+  })();
+  // quote form: same webhook and shape as the contact form
+  (() => {
+    const form = document.querySelector('[data-sv-form]'); if (!form) return;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const btn = form.querySelector('[data-submit]'), ok = form.querySelector('[data-ok]'), err = form.querySelector('[data-err]');
+      ok.hidden = true; err.hidden = true;
+      const answers = Object.fromEntries(new FormData(form).entries());
+      const keep = btn.innerHTML; btn.disabled = true; btn.textContent = 'Sending';
+      try {
+        if (!FORM_WEBHOOK) throw new Error('no webhook');
+        const r = await fetch(FORM_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'contact', page: location.pathname, submittedAt: new Date().toISOString(), answers }) });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        ok.hidden = false; form.reset(); btn.hidden = true;
+      } catch {
+        const body = encodeURIComponent(`Service: ${answers.service}\nName: ${answers.name}\nCompany: ${answers.company || ''}\nEmail: ${answers.email}\nPhone: ${answers.phone}\nJob location: ${answers.location}\nTiming: ${answers.timing || ''}\n\n${answers.message}`);
+        location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(answers.topic)}&body=${body}`;
+        err.hidden = false;
+      } finally { btn.disabled = false; btn.innerHTML = keep; }
+    });
+  })();
+</script>
+
+<style>
+  /* shared bits */
+  .sv-head { margin-bottom: clamp(24px, 3vw, 44px); }
+  .sv-k { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: .82rem; letter-spacing: .16em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 720; }
+  .sv-k span { width: 26px; height: 2px; background: currentColor; }
+  .sv-k--gold, .sv-head--dark .sv-k { color: var(--gold); }
+  h2 { margin: 0; font-size: clamp(1.8rem, 3.5vw, 3.1rem); line-height: 1.06; letter-spacing: -.028em; font-variation-settings: 'wght' 780; font-weight: 400; color: var(--ink); text-wrap: balance; }
+  h2 em { font-style: normal; color: var(--red); }
+  .sv-head--dark h2, .svq h2 { color: #fff; }
+  .sv-head--dark h2 em, .svq h2 em { color: var(--gold); }
+  .sv__btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 0 26px; border-radius: 999px; border: 0; font: inherit; font-size: 1rem; font-variation-settings: 'wght' 720; text-decoration: none; cursor: pointer; transition: transform .2s, background .2s, border-color .2s, color .2s; }
+  .sv__btn :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
+  .sv__btn:hover :global(svg) { transform: translateX(3px); }
+  .sv__btn--solid { background: #fff; color: var(--red); }
+  .sv__btn--solid:hover { transform: translateY(-2px); }
+  .sv__btn--line { border: 1.5px solid rgba(255, 255, 255, .34); color: #fff; background: rgba(255, 255, 255, .05); }
+  .sv__btn--line:hover { border-color: #fff; background: rgba(255, 255, 255, .12); }
+  .sv__btn--red { background: var(--red); color: #fff; box-shadow: 0 16px 30px -18px rgba(182, 6, 6, .9); }
+  .sv__btn--red:hover { background: var(--red-press); transform: translateY(-2px); }
+  [data-rv] [style*="--i"] { opacity: 0; transform: translateY(22px); transition: opacity .7s calc(var(--i) * 70ms + .1s) ease, transform .8s calc(var(--i) * 70ms + .1s) cubic-bezier(.2, .8, .2, 1); }
+  [data-rv].is-in [style*="--i"] { opacity: 1; transform: none; }
+  [data-rv] .sv-head { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .8s cubic-bezier(.2, .8, .2, 1); }
+  [data-rv].is-in .sv-head { opacity: 1; transform: none; }
+
+  /* hero */
+  .sv { position: relative; overflow: hidden; background: radial-gradient(90% 120% at 85% 10%, #23282e 0%, #121416 55%); color: #fff; padding: clamp(22px, 2.6vw, 44px) 0 clamp(28px, 3vw, 52px); }
+  .sv__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr); align-items: center; gap: clamp(24px, 3.6vw, 64px); }
+  .sv__crumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: clamp(14px, 1.6vw, 24px); font-size: .86rem; color: rgba(255, 255, 255, .55); }
+  .sv__crumbs a { color: rgba(255, 255, 255, .72); text-decoration: none; }
+  .sv__crumbs a:hover { color: #fff; }
+  .sv__crumbs b { color: var(--gold); font-variation-settings: 'wght' 640; font-weight: 400; }
+  .sv h1 { margin: 0 0 clamp(14px, 1.5vw, 22px); font-size: clamp(2rem, 3.5vw, 3.7rem); line-height: 1.05; letter-spacing: -.032em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .sv__ln { display: block; overflow: hidden; padding-bottom: .06em; white-space: nowrap; }
+  .sv__ln > span { display: inline-block; transform: translateY(105%); animation: svRise 1s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .sv__ln + .sv__ln > span { animation-delay: .12s; color: var(--gold); }
+  .sv__lede { max-width: 54ch; margin: 0 0 clamp(18px, 2vw, 30px); font-size: clamp(1rem, 1.16vw, 1.2rem); line-height: 1.55; color: rgba(255, 255, 255, .82); opacity: 0; animation: svUp .8s .35s ease forwards; }
+  .sv__acts { display: flex; flex-wrap: wrap; gap: 12px; opacity: 0; animation: svUp .8s .5s ease forwards; }
+  .sv__call { margin: 16px 0 0; font-size: .95rem; color: rgba(255, 255, 255, .7); opacity: 0; animation: svUp .8s .6s ease forwards; }
+  .sv__call a { color: #fff; font-variation-settings: 'wght' 700; }
+  .sv__scene { opacity: 0; transform: translateY(20px) scale(.98); animation: svScene 1s .2s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .sv__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: clamp(24px, 3vw, 48px) 0 0; padding: 0; list-style: none; border: 1px solid rgba(255, 255, 255, .1); border-radius: 20px; background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .02)); overflow: hidden; position: relative; opacity: 0; animation: svUp .9s .7s ease forwards; }
+  .sv__stats::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 2px; background: linear-gradient(90deg, transparent, #e0201c 20%, #e0201c 80%, transparent); }
+  .sv__stats li { display: grid; gap: 4px; padding: clamp(16px, 1.8vw, 28px) clamp(16px, 2vw, 34px); border-left: 1px solid rgba(255, 255, 255, .08); }
+  .sv__stats li:first-child { border-left: 0; }
+  .sv__stats b { font-size: clamp(1.3rem, 2.2vw, 2.2rem); line-height: 1.05; letter-spacing: -.025em; font-variation-settings: 'wght' 780; font-weight: 400; color: #fff; }
+  .sv__stats span { font-size: clamp(.84rem, .95vw, 1rem); color: rgba(255, 255, 255, .66); }
+  @keyframes svRise { to { transform: none; } }
+  @keyframes svUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes svScene { to { opacity: 1; transform: none; } }
+
+  /* types */
+  .svt { padding: clamp(52px, 6.4vw, 100px) 0; background: #fff; }
+  .svt__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.3vw, 20px); margin: 0; padding: 0; list-style: none; }
+  .svt__grid--d { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .svt__c { display: grid; align-content: start; gap: 8px; padding: clamp(18px, 1.7vw, 26px); border: 1px solid var(--line); border-radius: 18px; background: #fff; transition: border-color .25s, box-shadow .3s, transform .3s; }
+  .svt__grid--d .svt__c { padding: 12px 12px clamp(16px, 1.5vw, 22px); }
+  .svt__grid--d .svt__c b, .svt__grid--d .svt__c p { padding-inline: 8px; }
+  .svt__grid--d .svt__c b { margin-top: 8px; }
+  .svt__c:hover { border-color: var(--line-dark); box-shadow: 0 24px 40px -28px rgba(20, 23, 26, .35); }
+  .svt.is-in .svt__c:hover { transform: translateY(-4px); }
+  .svt__n { font-size: .86rem; letter-spacing: .1em; color: var(--red); font-variation-settings: 'wght' 760; }
+  .svt__n::after { content: ''; display: block; width: 28px; height: 3px; margin-top: 10px; border-radius: 2px; background: var(--red); transition: width .35s cubic-bezier(.2, .8, .2, 1); }
+  .svt__c:hover .svt__n::after { width: 54px; }
+  .svt__c b { font-size: clamp(1.08rem, 1.3vw, 1.3rem); line-height: 1.18; letter-spacing: -.012em; font-variation-settings: 'wght' 740; font-weight: 400; color: var(--ink); }
+  .svt__c p { margin: 0; font-size: .96rem; line-height: 1.5; color: var(--steel); }
+
+  /* included */
+  .svi { padding: clamp(52px, 6.4vw, 100px) 0; background: var(--haze); }
+  .svi__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(26px, 4vw, 72px); }
+  .svi__ph { position: relative; aspect-ratio: 5 / 4; border-radius: 22px; overflow: hidden; background: #16181b; opacity: 0; transform: translateX(-24px); transition: opacity .8s ease, transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .svi.is-in .svi__ph { opacity: 1; transform: none; }
+  .svi__ph img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.08); transition: transform 1.6s cubic-bezier(.2, .8, .2, 1); }
+  .svi.is-in .svi__ph img { transform: none; }
+  .svi__tag { position: absolute; left: 16px; bottom: 16px; padding: 9px 14px; border-radius: 999px; background: rgba(18, 20, 22, .82); backdrop-filter: blur(8px); color: #fff; font-size: .84rem; font-variation-settings: 'wght' 640; }
+  .svi__list { display: grid; gap: 12px; margin: clamp(18px, 2vw, 28px) 0 clamp(22px, 2.4vw, 34px); padding: 0; list-style: none; }
+  .svi__list li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; font-size: clamp(1rem, 1.1vw, 1.12rem); line-height: 1.45; color: var(--ink-2); }
+  .svi__chk { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: #fff; }
+  .svi__chk :global(svg) { width: 15px; height: 15px; }
+
+  /* process */
+  .svp { padding: clamp(52px, 6.4vw, 100px) 0; background: #121416; color: #fff; }
+  .svp__steps { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 34px); margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .svp__steps::before { content: ''; position: absolute; left: 24px; right: 24px; top: 23px; height: 2px; background: linear-gradient(90deg, var(--red), var(--gold)); transform: scaleX(0); transform-origin: 0 50%; transition: transform 1.6s .3s cubic-bezier(.4, 0, .2, 1); }
+  .svp.is-in .svp__steps::before { transform: scaleX(1); }
+  .svp__steps li { position: relative; display: grid; align-content: start; gap: 8px; }
+  .svp__n { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 10px; border-radius: 50%; background: #121416; border: 2px solid var(--gold); color: var(--gold); font-size: 1.1rem; font-variation-settings: 'wght' 780; }
+  .svp__steps b { font-size: clamp(1.08rem, 1.3vw, 1.32rem); line-height: 1.2; font-variation-settings: 'wght' 740; font-weight: 400; }
+  .svp__steps p { margin: 0; font-size: .98rem; line-height: 1.5; color: rgba(255, 255, 255, .7); }
+
+  /* related */
+  .svr { padding: clamp(48px, 5.6vw, 88px) 0; background: var(--haze); }
+  .svr__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.3vw, 20px); margin: 0; padding: 0; list-style: none; }
+  .svr__c { position: relative; display: grid; gap: 6px; height: 100%; padding: clamp(20px, 1.9vw, 30px); padding-right: 64px; border-radius: 18px; background: #fff; border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color .25s, box-shadow .3s, transform .3s; }
+  .svr__c:hover { border-color: var(--red); box-shadow: 0 24px 40px -28px rgba(182, 6, 6, .45); transform: translateY(-3px); }
+  .svr__c b { font-size: clamp(1.1rem, 1.35vw, 1.34rem); font-variation-settings: 'wght' 740; font-weight: 400; }
+  .svr__c p { margin: 0; font-size: .96rem; line-height: 1.45; color: var(--steel); }
+  .svr__go { position: absolute; right: 20px; top: 50%; display: grid; place-items: center; width: 36px; height: 36px; margin-top: -18px; border-radius: 50%; background: var(--red-tint); color: var(--red); transition: background .25s, color .25s, transform .25s; }
+  .svr__go :global(svg) { width: 16px; height: 16px; }
+  .svr__c:hover .svr__go { background: var(--red); color: #fff; transform: translateX(3px); }
+
+  /* faq */
+  .svf { padding: clamp(52px, 6.4vw, 100px) 0; background: #fff; }
+  .svf__in { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(24px, 4vw, 72px); align-items: start; }
+  .svf__list { display: grid; gap: 10px; }
+  .svf__q { border: 1px solid var(--line); border-radius: 16px; background: #fff; transition: border-color .25s, box-shadow .3s; }
+  .svf__q[open] { border-color: var(--line-dark); box-shadow: 0 20px 36px -28px rgba(20, 23, 26, .4); }
+  .svf__q summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; cursor: pointer; list-style: none; font-size: clamp(1.02rem, 1.16vw, 1.16rem); font-variation-settings: 'wght' 700; color: var(--ink); }
+  .svf__q summary::-webkit-details-marker { display: none; }
+  .svf__q summary span { position: relative; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--red-tint); }
+  .svf__q summary span::before, .svf__q summary span::after { content: ''; position: absolute; left: 8px; right: 8px; top: 13px; height: 2px; border-radius: 1px; background: var(--red); transition: transform .25s; }
+  .svf__q summary span::after { transform: rotate(90deg); }
+  .svf__q[open] summary span::after { transform: rotate(0); }
+  .svf__q p { margin: 0; padding: 0 20px 20px; max-width: 62ch; font-size: 1rem; line-height: 1.55; color: var(--steel); }
+
+  /* quote form */
+  .svq { padding: clamp(52px, 6.4vw, 100px) 0; background: radial-gradient(90% 120% at 10% 0%, #23282e 0%, #121416 55%); color: #fff; scroll-margin-top: 90px; }
+  .svq__in { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(26px, 4vw, 72px); align-items: start; }
+  .svq__lede { margin: 16px 0 20px; max-width: 46ch; font-size: clamp(1rem, 1.14vw, 1.16rem); line-height: 1.55; color: rgba(255, 255, 255, .8); }
+  .svq__pts { display: grid; gap: 10px; margin: 0 0 24px; padding: 0; list-style: none; }
+  .svq__pts li { display: flex; align-items: center; gap: 10px; font-size: 1rem; color: rgba(255, 255, 255, .9); }
+  .svq__pts span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(245, 184, 0, .16); color: var(--gold); }
+  .svq__pts :global(svg) { width: 13px; height: 13px; }
+  .svq__alt { margin: 6px 0 0; font-size: .95rem; color: rgba(255, 255, 255, .66); }
+  .svq__alt a { color: #fff; font-variation-settings: 'wght' 700; }
+  .svq__form { display: grid; gap: 14px; padding: clamp(20px, 2.4vw, 36px); border-radius: 22px; background: #fff; color: var(--ink); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .9); opacity: 0; transform: translateY(22px); transition: opacity .8s .15s ease, transform .9s .15s cubic-bezier(.2, .8, .2, 1); }
+  .svq.is-in .svq__form { opacity: 1; transform: none; }
+  .svq__row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .svq__form label { display: grid; gap: 6px; font-size: .86rem; font-variation-settings: 'wght' 680; color: var(--ink-2); }
+  .svq__form input, .svq__form select, .svq__form textarea { width: 100%; min-height: 48px; padding: 11px 14px; border: 1.5px solid var(--line-dark); border-radius: 12px; background: #fff; font: inherit; font-size: 1rem; font-variation-settings: 'wght' 440; color: var(--ink); transition: border-color .2s, box-shadow .2s; }
+  .svq__form textarea { resize: vertical; min-height: 110px; }
+  .svq__form input:focus, .svq__form select:focus, .svq__form textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 4px rgba(182, 6, 6, .12); }
+  .svq__send { width: 100%; margin-top: 4px; }
+  .svq__ok, .svq__err { margin: 0; padding: 14px 16px; border-radius: 12px; font-size: .98rem; line-height: 1.45; }
+  .svq__ok { background: #e9f6ed; color: #17602d; font-variation-settings: 'wght' 640; }
+  .svq__err { background: var(--red-tint); color: var(--red-press); }
+
+  /* other services */
+  .svo { padding: clamp(48px, 5.6vw, 88px) 0; background: #fff; }
+  .svo__grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: clamp(8px, 1vw, 14px); margin: 0; padding: 0; list-style: none; }
+  .svo__c { container-type: inline-size; position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1.05; padding: 12px; border-radius: 16px; overflow: hidden; background: #16181b; color: #fff; text-align: center; text-decoration: none; isolation: isolate; }
+  .svo__c img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; filter: saturate(.85); transition: transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .svo__shade { position: absolute; inset: 0; z-index: -1; background: rgba(10, 11, 13, .58); transition: background .4s; }
+  .svo__c:hover img { transform: scale(1.07); }
+  .svo__c:hover .svo__shade { background: rgba(10, 11, 13, .38); }
+  .svo__c b { font-size: clamp(.95rem, 10cqi, 1.5rem); line-height: 1.12; letter-spacing: -.015em; font-variation-settings: 'wght' 760; font-weight: 400; text-wrap: balance; text-shadow: 0 2px 16px rgba(0, 0, 0, .55); }
+  .svo__c b::after { content: ''; display: block; width: 28px; height: 3px; margin: 10px auto 0; border-radius: 2px; background: #e0201c; transition: width .35s cubic-bezier(.2, .8, .2, 1); }
+  .svo__c:hover b::after { width: 52px; }
+
+  @media (max-width: 1100px) {
+    .svt__grid--d { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .svo__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 900px) {
+    .sv__in, .svi__in, .svf__in, .svq__in { grid-template-columns: minmax(0, 1fr); }
+    .sv__copy { text-align: center; }
+    .sv__crumbs, .sv__acts { justify-content: center; }
+    .sv__lede { margin-inline: auto; }
+    .svt__grid, .svr__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .svp__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+    .svp__steps::before { display: none; }
+  }
+  @media (max-width: 640px) {
+    .sv h1 { font-size: clamp(1.6rem, 7.4vw, 2.2rem); }
+    .sv__acts { display: grid; }
+    .sv__stats li { padding: 14px 10px; text-align: center; }
+    .sv__stats b { font-size: 1.12rem; }
+    .sv__stats span { font-size: .76rem; }
+    .sv-head, .svi__copy { text-align: center; }
+    .sv-k { justify-content: center; }
+    .svi__list { text-align: left; }
+    .svt__grid, .svr__grid { grid-template-columns: minmax(0, 1fr); }
+    .svt__grid--d { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .svt__grid--d .svt__c { padding: 8px 8px 14px; }
+    .svt__grid--d .svt__c b { font-size: .98rem; }
+    .svt__grid--d .svt__c p { font-size: .86rem; }
+    .svp__steps { grid-template-columns: minmax(0, 1fr); }
+    .svp__steps li { grid-template-columns: 48px 1fr; column-gap: 14px; }
+    .svp__n { grid-row: span 2; margin: 0; }
+    .svq__row { grid-template-columns: minmax(0, 1fr); }
+    .svq__copy { text-align: center; }
+    .svq__pts { justify-items: center; }
+    .svq__lede { margin-inline: auto; }
+    .svo__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sv__ln > span, .sv__lede, .sv__acts, .sv__call, .sv__scene, .sv__stats { animation: none; opacity: 1; transform: none; }
+    [data-rv] [style*="--i"], [data-rv] .sv-head, .svi__ph, .svi__ph img, .svq__form { opacity: 1; transform: none; transition: none; }
+    .svp__steps::before { transform: none; transition: none; }
+  }
+</style>
