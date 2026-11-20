@@ -273,11 +273,11 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
   .svt { padding: clamp(52px, 6.4vw, 100px) 0; background: #fff; }
   .svt__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.3vw, 20px); margin: 0; padding: 0; list-style: none; }
   .svt__grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .svt__c:hover { border-color: var(--line-dark); box-shadow: 0 24px 40px -28px rgba(20, 23, 26, .35); }
+  .svt__c:hover { border-color: rgba(182, 6, 6, .45); box-shadow: 0 24px 40px -28px rgba(20, 23, 26, .35); }
   .svt.is-in .svt__c:hover { transform: translateY(-4px); }
-  .svt__n { font-size: .86rem; letter-spacing: .1em; color: var(--red); font-variation-settings: 'wght' 760; }
-  .svt__n::after { content: ''; display: block; width: 28px; height: 3px; margin-top: 10px; border-radius: 2px; background: var(--red); transition: width .35s cubic-bezier(.2, .8, .2, 1); }
-  .svt__c:hover .svt__n::after { width: 54px; }
+  .svt__c { display: grid; align-content: start; gap: 10px; padding: clamp(20px, 1.9vw, 30px); border: 1px solid var(--line); border-radius: 18px; background: #fff; transition: border-color .25s, box-shadow .3s, transform .3s; }
+  .svt__n { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 8px; border-radius: 12px; background: var(--red-tint); color: var(--red); font-size: .95rem; letter-spacing: .04em; font-variation-settings: 'wght' 780; transition: background .25s, color .25s; }
+  .svt__c:hover .svt__n { background: var(--red); color: #fff; }
   .svt__c b { font-size: clamp(1.08rem, 1.3vw, 1.3rem); line-height: 1.18; letter-spacing: -.012em; font-variation-settings: 'wght' 740; font-weight: 400; color: var(--ink); }
   .svt__c p { margin: 0; font-size: .96rem; line-height: 1.5; color: var(--steel); }
 
