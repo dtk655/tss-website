@@ -5,10 +5,11 @@
 // tall: taller back wall for full page heroes. band: below 1200px wide it becomes its own strip cropped to the trucks. Coordinates are in the 3000 x 760 scene.
 const { animate = false, tall = false, band = false, duo = false, class: cls = '' } = Astro.props;
 const SCENE_W = 3000, SCENE_H = 760;
+// drawn in this order, so each truck sits in front of the one before it (TMA over the bucket truck's rear, van over the TMA's rear)
 const TRUCKS = [
-  { k: 'van', d: 1.5, mx: -8, wheels: [[2614, 650, 25, 35], [2900, 566, 11, 22]], lamps: [[2500, 558, 62], [2500, 648, 26]], beam: [2330, 668], beacon: [2705, 330] },
+  { k: 'bucket', d: 0.1, mx: 0, wheels: [[1533, 626, 33, 42], [1851, 560, 12, 26]], lamps: [[1430, 545, 66], [1408, 612, 24]], beam: [1210, 672] },
   { k: 'tma', d: 0.8, mx: -4, wheels: [[2095, 626, 36, 42], [2388, 561, 9, 25]], lamps: [[2030, 556, 70]], beam: [1850, 676] },
-  { k: 'bucket', d: 0.1, mx: 0, wheels: [[1533, 626, 33, 42], [1851, 560, 12, 26]], lamps: [[1430, 545, 66], [1408, 612, 24]], beam: [1210, 672] }
+  { k: 'van', d: 1.5, mx: -8, wheels: [[2614, 650, 25, 35], [2900, 566, 11, 22]], lamps: [[2500, 558, 62], [2500, 648, 26]], beam: [2330, 668], beacon: [2705, 330] }
 ];
 const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
