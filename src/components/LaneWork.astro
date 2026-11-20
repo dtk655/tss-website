@@ -5,7 +5,7 @@ const work = [
   { t: 'Lane And Road Closures', s: 'Single lane, multi-lane and full road closures with detours.', img: '/fleet/lc-scene.webp', m: '/fleet/lc-scene-m.webp', pos: '50% 50%', size: 'xl' },
   { t: 'TMA Protection', s: 'Crash trucks with certified operators.', img: '/fleet/tma-rear-2.jpg', pos: '60% 40%' },
   { t: 'Flagging Operations', s: 'ATSSA-certified flaggers.', img: '/fleet/team-photo.webp', m: '/fleet/team-photo-m.webp', pos: '50% 62%' },
-  { t: 'Sign And Barricade Installs', s: 'Delivered, set and maintained.', img: CDN + 'thumbnail_IMG_0081_1209517d-0120-4e7d-b1dd-18ee0f120532.jpg', pos: '50% 45%' },
+  { t: 'Sign And Barricade Installs', s: 'Delivered, set and maintained.', img: CDN + 'thumbnail_IMG_0081_1209517d-0120-4e7d-b1dd-18ee0f120532.jpg', pos: '50% 45%', soft: true },
   { t: 'Special Events', s: 'Parades, races and game days.', img: CDN + 'Water-Filled-Barricades-In-Use-3-1.png', pos: '50% 60%' },
   { t: 'Night And Weekend Work', s: 'Off-peak closure windows, set up and taken down on schedule.', img: '/fleet/tma-dusk.jpg', pos: '50% 62%', size: 'wide' },
   { t: 'Traffic Control Plans', s: 'Permit-ready drawings for your town, county or state.', img: CDN + 'thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg', pos: '50% 50%', size: 'wide' }
@@ -19,7 +19,7 @@ const work = [
     </div>
     <ul class="lw__grid">
       {work.map((w, i) => (
-        <li class:list={['lw__c', w.size && `lw__c--${w.size}`]} style={`--i:${i}`}>
+        <li class:list={['lw__c', w.size && `lw__c--${w.size}`, w.soft && 'lw__c--soft']} style={`--i:${i}`}>
           <picture>
             {w.m && <source media="(max-width: 640px)" srcset={w.m} />}
             <img src={w.img} alt="" loading="lazy" style={`object-position:${w.pos}`} />
@@ -56,17 +56,23 @@ const work = [
   .lw__c--xl { grid-column: span 2; grid-row: span 2; }
   .lw__c--wide { grid-column: span 2; }
   .lw__c picture, .lw__c img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .lw__c img { object-fit: cover; transition: transform 1s cubic-bezier(.2, .8, .2, 1); }
-  .lw__c:hover img { transform: scale(1.06); }
-  .lw__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 11, 13, 0) 30%, rgba(10, 11, 13, .55) 62%, rgba(10, 11, 13, .9) 100%); }
-  .lw__t { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 4px; padding: clamp(14px, 1.5vw, 22px); color: #fff; }
-  .lw__t::before { content: ''; width: 28px; height: 3px; margin-bottom: 6px; border-radius: 2px; background: var(--red); transition: width .4s cubic-bezier(.2, .8, .2, 1); }
-  .lw__c:hover .lw__t::before { width: 56px; }
-  .lw__t b { font-size: clamp(1.02rem, 1.3vw, 1.3rem); line-height: 1.15; letter-spacing: -.012em; font-variation-settings: 'wght' 740; font-weight: 400; }
-  .lw__t small { font-size: clamp(.84rem, .92vw, .96rem); line-height: 1.35; color: rgba(255, 255, 255, .82); }
-  .lw__c--xl .lw__t { padding: clamp(18px, 2.2vw, 32px); }
-  .lw__c--xl .lw__t b { font-size: clamp(1.4rem, 2.3vw, 2.2rem); }
-  .lw__c--xl .lw__t small { font-size: clamp(.95rem, 1.1vw, 1.12rem); max-width: 34ch; }
+  .lw__c img { object-fit: cover; filter: saturate(.75); transition: transform 1s cubic-bezier(.2, .8, .2, 1), filter .5s; }
+  .lw__c:hover img { transform: scale(1.06); filter: saturate(1); }
+  /* a photo with its own lettering is blurred so it doesn't fight the title */
+  .lw__c--soft img { filter: saturate(.7) blur(3px); transform: scale(1.06); }
+  .lw__c--soft:hover img { filter: saturate(1) blur(3px); transform: scale(1.1); }
+  /* dark, even wash so the words lead and the photo is texture */
+  .lw__shade { position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 50%, rgba(10, 11, 13, .78), rgba(10, 11, 13, .64)); transition: background .5s; }
+  .lw__c:hover .lw__shade { background: radial-gradient(120% 90% at 50% 50%, rgba(10, 11, 13, .62), rgba(10, 11, 13, .44)); }
+  .lw__t { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 8px; padding: clamp(14px, 1.6vw, 24px); color: #fff; text-align: center; }
+  .lw__t::after { content: ''; order: 2; width: 34px; height: 3px; margin-top: 6px; border-radius: 2px; background: var(--red); transition: width .4s cubic-bezier(.2, .8, .2, 1); }
+  .lw__c:hover .lw__t::after { width: 64px; }
+  .lw__t b { font-size: clamp(1.3rem, 1.9vw, 1.95rem); line-height: 1.1; letter-spacing: -.02em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; text-shadow: 0 2px 18px rgba(0, 0, 0, .5); }
+  .lw__t small { font-size: clamp(.9rem, 1vw, 1.04rem); line-height: 1.4; color: rgba(255, 255, 255, .85); max-width: 30ch; text-wrap: balance; }
+  .lw__c--wide .lw__t b { font-size: clamp(1.5rem, 2.3vw, 2.35rem); }
+  .lw__c--xl .lw__t { gap: 12px; }
+  .lw__c--xl .lw__t b { font-size: clamp(2rem, 3.5vw, 3.5rem); }
+  .lw__c--xl .lw__t small { font-size: clamp(1rem, 1.2vw, 1.22rem); max-width: 32ch; }
 
   .lw__foot { margin: clamp(18px, 2vw, 28px) 0 0; font-size: 1rem; color: var(--steel); }
   .lw__foot a { display: inline-flex; align-items: center; gap: 6px; margin-left: 4px; color: var(--red); font-variation-settings: 'wght' 700; text-decoration: none; }
@@ -84,8 +90,10 @@ const work = [
     .lw__c { border-radius: 14px; }
     .lw__t small { display: none; }
     .lw__c--xl .lw__t small { display: block; }
-    .lw__t b { font-size: .98rem; }
-    .lw__c--xl .lw__t b { font-size: 1.35rem; }
+    .lw__t b { font-size: 1.14rem; }
+    .lw__c--xl .lw__t b { font-size: 1.7rem; }
+    .lw__c--wide .lw__t b { font-size: 1.14rem; }
+    .lw__t::after { width: 26px; margin-top: 2px; }
   }
   @media (prefers-reduced-motion: reduce) { .lw__c { opacity: 1; transform: none; transition: none; } .lw__c img { transition: none; } }
 </style>
