@@ -89,7 +89,7 @@ import Showroom from '../../components/Showroom.astro';
       <form class="eqv" data-eqv autocomplete="off">
         <label for="eqv-in"><span class="eqv__dot"></span>Program the board</label>
         <div class="eqv__row">
-          <input id="eqv-in" maxlength="36" placeholder="Program the board: type a message" data-eqv-in />
+          <input id="eqv-in" maxlength="36" placeholder="Type a message for the board" data-eqv-in />
           <button type="button" class="eqv__clr" data-eqv-clr aria-label="Clear message" hidden>×</button>
         </div>
       </form>
@@ -790,5 +790,16 @@ import Showroom from '../../components/Showroom.astro';
     .eqv__row::before { content: ''; position: absolute; left: 15px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: #ffb000; box-shadow: 0 0 10px #ffb000; animation: eqvBlink 1.4s steps(1) infinite; }
     .eqv__clr { position: absolute; right: 6px; top: 50%; width: 28px; height: 28px; margin-top: -14px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .12); color: #fff; font-size: 1rem; cursor: pointer; }
     @keyframes eqvBlink { 50% { opacity: .25; } }
+  }
+
+  /* desktop: Program the board sits on the road right under the VMS board */
+  @media (min-width: 1200px) {
+    .eqh .eqh__in { grid-template-rows: auto auto auto; align-content: center; row-gap: 0; }
+    .eqh .eqh__in > .eqh__ways { margin-top: clamp(18px, 1.8vw, 30px); }
+    .eqh .eqh__in > .eqv { position: absolute; z-index: 4; left: calc(100vw * 1620 / 3000); top: calc(100vw * 760 / 3000 + 10px); transform: translateX(-50%); width: calc(100vw * 640 / 3000); min-width: 330px; max-width: none; margin: 0; }
+    .eqh__xp { padding-top: calc(clamp(14px, 1.6vw, 28px) + 62px) !important; }
+    .eqv input { min-height: 46px; text-align: center; padding: 0 40px 0 40px; border-radius: 999px; font-size: .95rem; }
+    .eqv input::placeholder { font-size: .92rem; letter-spacing: .01em; }
+    .eqv__row::before { left: 18px; }
   }
 </style>
