@@ -69,7 +69,7 @@ import Showroom from '../../components/Showroom.astro';
   <!-- ================= HERO ================= -->
   <section class="eqh">
     <div class="wrap eqh__in">
-      <h1><span class="eqh__ln"><span>Warn Every Driver.</span></span> <span class="eqh__ln"><span>Light Every Shift.</span></span></h1>
+      <h1><span class="eqh__ln"><span>All The Equipment You Need.</span></span> <span class="eqh__ln"><span>Ready When You Are.</span></span></h1>
       <Showroom set="equipment" animate tall band duo class="eqh__sr" />
       <p class="eqh__lede">VMS boards, arrow boards and light towers, rented by the day or the job across NJ, NY, PA and CT.</p>
       <div class="eqh__ways">
@@ -721,4 +721,11 @@ import Showroom from '../../components/Showroom.astro';
     .eqa__shell { opacity: 1; transform: none; transition: none; animation: none; }
     .eqa__dot, .eqa__av i, .eqa__glow, .eqa__track, .eqa__track > span, .eqa__send::before, .eqa__type::after { animation: none; }
   }
+
+  /* hero headline: crisp white over a lit amber line, tighter and heavier */
+  .eqh h1 { letter-spacing: -.035em; }
+  .eqh .eqh__ln:first-child > span { color: #fff; font-variation-settings: 'wght' 720; }
+  .eqh .eqh__ln + .eqh__ln > span { font-variation-settings: 'wght' 860; color: #ffb800; background: linear-gradient(92deg, #ffd23f 0%, #ffb000 45%, #ff7a2f 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-right: .04em; filter: drop-shadow(0 6px 24px rgba(255, 140, 30, .28)); }
+  .eqh h1::after { content: ''; display: block; width: 56px; height: 4px; margin-top: clamp(12px, 1.2vw, 18px); border-radius: 2px; background: linear-gradient(90deg, #ffb000, #ff5a2f); }
+  @media (max-width: 1199px) { .eqh h1::after { margin-inline: auto; } }
 </style>
