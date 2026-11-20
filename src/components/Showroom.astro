@@ -20,7 +20,7 @@ const TRUCKS = [
 ];
 const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
-const V = '?v=12';
+const V = '?v=13';
 ---
 <div class:list={['sr', night && 'sr--night', EQ ? 'sr--equip' : animate ? 'sr--drive' : 'sr--parked', EQ && animate && 'sr--rise', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label={EQ ? "TSS VMS message board, arrow board and light tower in a showroom" : "TSS bucket truck, TMA crash truck and bucket van lined up in a showroom"}>
   <div class="sr__cv">
@@ -39,6 +39,7 @@ const V = '?v=12';
       {ITEMS.map((t) => (
         <div class={`sr__t sr__t--${t.k}`} style={`--d:${t.d}s`}>
           <img class="sr__img sr__base" src={`/equip/${t.k}.webp${V}`} alt="" />
+          {night && <img class="sr__img" src={`/equip/${t.k}-spill.webp${V}`} alt="" />}
           {t.on.map((o, n) => <img class:list={['sr__img sr__on', `sr__on--${t.k}`]} style={`--n:${n}`} src={`/equip/${o}.webp${V}`} alt="" />)}
         </div>
       ))}
@@ -209,7 +210,7 @@ const V = '?v=12';
   }
   /* night road: unit bodies dimmed to night light, lights stay full strength */
   .sr--night .sr__base { filter: brightness(.6) saturate(.85) hue-rotate(-4deg); }
-  .sr--night .sr__t--tower .sr__base { filter: brightness(.82) saturate(.9); }
+  .sr--night .sr__t--tower .sr__base { filter: brightness(.5) saturate(.95) sepia(.18); }
   .sr__glow { mix-blend-mode: screen; }
   .sr__vmsc { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; opacity: 0; transition: opacity .25s; }
   .sr.is-custom .sr__vmsc { opacity: 1; }

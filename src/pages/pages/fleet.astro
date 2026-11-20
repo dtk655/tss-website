@@ -64,6 +64,7 @@ const steps = [
     <div class="wrap eqh__in">
       <h1><span class="eqh__ln"><span>A Truck For Every Job.</span></span> <span class="eqh__ln"><span>No Matter The Scope.</span></span></h1>
       <Showroom animate tall band duo class="eqh__sr" />
+      <p class="eqh__sub">Rented by the day or the job across NJ, NY, PA and CT.</p>
       <p class="eqh__lede">Crash trucks, bucket trucks, cone trucks and flatbeds, rented by the day or the job across NJ, NY, PA and CT.</p>
       <div class="eqh__ways">
         <a href="/collections/truck-rentals" class="eway eway--solid">
@@ -346,7 +347,7 @@ const steps = [
     .eqh .eqh__in { width: 100%; height: calc(100vw * 760 / 3000); min-height: 0; flex: none; padding-block: clamp(22px, 2.2vw, 40px); }
     .eqh .eqh__in > * { max-width: 36%; }
     /* headline on top; two stacked buttons as wide as the headline, centered in the space down to the panel */
-    .eqh .eqh__in { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; align-content: stretch; padding-block: clamp(26px, 2.9vw, 56px) 0; }
+    .eqh .eqh__in { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto 1fr; align-content: stretch; padding-block: clamp(26px, 2.9vw, 56px) 0; }
     .eqh .eqh__in > h1 { max-width: 38%; font-size: clamp(2rem, 3.1vw, 3.6rem); line-height: 1.04; margin-bottom: 0; }
     .eqh .eqh__lede, .eqh .eqh__call { display: none; }
     .eqh .eqh__in > .eqh__ways { display: grid; grid-template-columns: 1fr; gap: clamp(10px, .9vw, 14px); width: var(--hw, 34%); max-width: 38%; align-self: center; }
@@ -694,4 +695,12 @@ const steps = [
 
   /* second headline line: same lit amber gradient as the Equipment page */
   .eqh .eqh__ln + .eqh__ln > span { color: #ffb800; background: linear-gradient(92deg, #ffd23f 0%, #ffb000 45%, #ff7a2f 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-right: .04em; text-shadow: none; }
+
+  /* desktop: one short line under the headline */
+  .eqh__sub { display: none; }
+  @media (min-width: 1200px) {
+    .eqh .eqh__in > .eqh__sub { display: block; max-width: none; margin: clamp(8px, .8vw, 14px) 0 0; font-size: clamp(.92rem, 1.02vw, 1.08rem); line-height: 1.45; color: rgba(255, 255, 255, .74); white-space: nowrap; opacity: 0; animation: eqFade .8s .4s ease forwards; }
+  }
+  /* the floor stripe and wall fade out behind the headline */
+  @media (min-width: 1200px) { .eqh :global(.eqh__sr .sr__cv)::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(90deg, #121416 0%, #121416 16%, rgba(18, 20, 22, .7) 26%, rgba(18, 20, 22, 0) 36%); } }
 </style>
