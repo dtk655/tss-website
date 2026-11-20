@@ -3,7 +3,14 @@
 // animate: trucks drive in on load with wheels turning. Without it they are already parked.
 // duo: on phones only the TMA and the bucket van show, cropped tight so they are as large as the screen allows.
 // tall: taller back wall for full page heroes. band: below 1200px wide it becomes its own strip cropped to the trucks. Coordinates are in the 3000 x 760 scene.
-const { animate = false, tall = false, band = false, duo = false, class: cls = '' } = Astro.props;
+const { animate = false, tall = false, band = false, duo = false, set = 'trucks', class: cls = '' } = Astro.props;
+const EQ = set === 'equipment';
+// equipment set: VMS board, arrow board and light tower (layers in /public/equip, built by the same scene script)
+const ITEMS = [
+  { k: 'vms', d: 0.1, on: ['vms-on'] },
+  { k: 'arrow', d: 0.35, on: ['arrow-0', 'arrow-1', 'arrow-2'] },
+  { k: 'tower', d: 0.6, on: ['tower-on'], pool: true }
+];
 const SCENE_W = 3000, SCENE_H = 760;
 // drawn in this order, so each truck sits in front of the one before it (TMA over the bucket truck's rear, van over the TMA's rear)
 const TRUCKS = [
@@ -13,12 +20,28 @@ const TRUCKS = [
 ];
 const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
-const V = '?v=6';
+const V = '?v=7';
 ---
-<div class:list={['sr', animate ? 'sr--drive' : 'sr--parked', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label="TSS bucket truck, TMA crash truck and bucket van lined up in a showroom">
+<div class:list={['sr', EQ ? 'sr--equip' : animate ? 'sr--drive' : 'sr--parked', EQ && animate && 'sr--rise', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label={EQ ? "TSS VMS message board, arrow board and light tower in a showroom" : "TSS bucket truck, TMA crash truck and bucket van lined up in a showroom"}>
   <div class="sr__cv">
     <img class="sr__bg" src={`/fleet/${tall ? 'showroom-bg-tall' : 'showroom-bg'}.webp${V}`} alt="" />
     {tall && <img class="sr__bg sr__bg--m" src="/fleet/showroom-bg.webp" alt="" loading="lazy" />}
+    {EQ ? (
+    <div class="sr__stage">
+      {ITEMS.map((t) => (
+        <div class={`sr__t sr__t--${t.k}`} style={`--d:${t.d}s`}>
+          <img class="sr__img" src={`/equip/${t.k}-sh.webp${V}`} alt="" />
+          {t.pool && <img class="sr__img sr__on sr__pool" src={`/equip/tower-pool.webp${V}`} alt="" />}
+        </div>
+      ))}
+      {ITEMS.map((t) => (
+        <div class={`sr__t sr__t--${t.k}`} style={`--d:${t.d}s`}>
+          <img class="sr__img" src={`/equip/${t.k}.webp${V}`} alt="" />
+          {t.on.map((o, n) => <img class:list={['sr__img sr__on', `sr__on--${t.k}`]} style={`--n:${n}`} src={`/equip/${o}.webp${V}`} alt="" />)}
+        </div>
+      ))}
+    </div>
+    ) : (
     <div class="sr__stage">
       {TRUCKS.map((t) => (
         <div class={`sr__t sr__t--${t.k}`} style={`--d:${t.d}s;--mx:${t.mx}%`}>
@@ -42,6 +65,7 @@ const V = '?v=6';
         </div>
       ))}
     </div>
+    )}
   </div>
 </div>
 
@@ -104,6 +128,29 @@ const V = '?v=6';
     .sr--duo .sr__t--van { --d: .8s !important; }
   }
 
+  /* Equipment set: units rise into place, then power on (light tower, VMS message, sequential arrow board). */
+  .sr--rise .sr__t { opacity: 0; transform: translateY(5%); }
+  .sr--rise.is-go .sr__t { animation: srRise 1.1s var(--d) cubic-bezier(.2, .8, .2, 1) forwards; }
+  @keyframes srRise { to { opacity: 1; transform: none; } }
+  .sr--equip .sr__on { opacity: 0; }
+  .sr--equip.is-go .sr__on--tower, .sr--equip.is-go .sr__pool { animation: srPower 1.2s 1.5s steps(1) forwards; }
+  .sr--equip.is-go .sr__on--vms { animation: srPower 1.2s 2.1s steps(1) forwards, srMsg 4.6s 3.4s ease-in-out infinite; }
+  .sr--equip.is-go .sr__on--arrow { animation: srChev0 1.6s 2.6s steps(1) infinite; }
+  .sr--equip.is-go .sr__on--arrow[style*='--n:1'] { animation-name: srChev1; }
+  .sr--equip.is-go .sr__on--arrow[style*='--n:2'] { animation-name: srChev2; }
+  @keyframes srPower { 0% { opacity: 0; } 15% { opacity: 1; } 25% { opacity: .2; } 35% { opacity: 1; } 45% { opacity: .5; } 55%, 100% { opacity: 1; } }
+  @keyframes srMsg { 0%, 86%, 100% { opacity: 1; } 90%, 96% { opacity: .08; } }
+  @keyframes srChev0 { 0% { opacity: 1; } 75% { opacity: 0; } }
+  @keyframes srChev1 { 0% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 0; } }
+  @keyframes srChev2 { 0% { opacity: 0; } 50% { opacity: 1; } 75% { opacity: 0; } }
+  .sr--parked.sr--equip .sr__on { opacity: 1; }
+  /* phones, duo: VMS and arrow board only */
+  @media (max-width: 640px) {
+    .sr--equip.sr--duo.sr--auto { aspect-ratio: 1130 / 655; }
+    .sr--equip.sr--duo.sr--auto .sr__cv { width: calc(3000 / 1130 * 100%); left: calc(-1230 / 1130 * 100%); }
+    .sr--equip.sr--duo .sr__t--tower { display: none; }
+    .sr--equip.sr--duo .sr__t { --park: 0%; }
+  }
   @keyframes srDrive { to { transform: translateX(var(--park, 0%)); } }
   @keyframes srSpin { to { transform: rotate(0deg); } }
   @keyframes srBlur { 0%, 45% { opacity: 1; } 78%, 100% { opacity: 0; } }
@@ -115,5 +162,7 @@ const V = '?v=6';
     .sr .sr__rim { transform: none !important; animation: none !important; }
     .sr .sr__blur { opacity: 0 !important; animation: none !important; }
     .sr .sr__body, .sr .sr__lamp, .sr .sr__beacon { animation: none !important; }
+    .sr--equip .sr__t { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .sr--equip .sr__on { opacity: 1 !important; animation: none !important; }
   }
 </style>
