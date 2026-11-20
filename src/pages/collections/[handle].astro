@@ -45,30 +45,21 @@ const hasLineup = !meta.scene && lineup.length >= 3;
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <Layout title={c.title} description={`${c.title} from Traffic Safety Service. ${desc}`}>
-  <section class={`ch${hasLineup ? ' ch--lu' : ''}${meta.scene ? ' ch--scene' : ''}`} style={`--tint:${meta.tint}`}>
-    {meta.scene && <Showroom class="ch__sr" />}
+  <section class="ch ch--thin">
     <div class="wrap ch__in">
       <div class="ch__copy">
         <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href={isRentalCol ? (meta.page || '/pages/equipment') : '/collections'}>{isRentalCol ? 'Rentals' : 'Products'}</a><span aria-hidden="true">/</span><span aria-current="page">{c.title}</span></nav>
-        <h1><span class="ch__ln"><span>{c.title}</span></span>{meta.line && <span class="ch__ln ch__ln--sub"><span>{meta.line}</span></span>}</h1>
+        <div class="ch__row">
+          <h1 class="ch__h">{c.title}</h1>
+          {meta.line && <p class="ch__tag">{meta.line}</p>}
+        </div>
         {meta.sub && <p class="ch__lede">{meta.sub}</p>}
-        <div class="ch__acts">
-          <a href="#shop" class="ch__btn ch__btn--solid">{rentalOnly ? 'See the lineup' : 'Shop ' + c.title.toLowerCase()}<Fragment set:html={ARROW} /></a>
-          <a href={`/pages/request-a-quote?type=${rentalOnly ? 'rental' : 'products'}`} class="ch__btn ch__btn--line">{rentalOnly ? 'Get rental pricing' : 'Get bulk pricing'}</a>
-          {meta.page && <a href={meta.page} class="ch__more">Learn more</a>}
-        </div>
       </div>
-      {meta.img && <div class="ch__art" aria-hidden="true"><span class="ch__glow"></span><img src={meta.img} alt="" /></div>}
-      {hasLineup && (
-        <div class="ch__lu" style={`--n:${lineup.length}`}>
-          {lineup.map((p, i) => (
-            <a class="ch__lu-i" href={`/products/${p.handle}`} style={`--i:${i}`}>
-              <span class="ch__lu-img"><img src={img(p.images[0].url, 420)} alt="" loading="eager" /></span>
-              <span class="ch__lu-n">{p.title.split(/\s[-–]\s/)[0].replace(/\s*\(.*$/, '').replace(/™/g, '').trim()}</span>
-            </a>
-          ))}
-        </div>
-      )}
+      <div class="ch__acts">
+        <a href="#shop" class="ch__btn ch__btn--solid">{rentalOnly ? 'See the lineup' : 'Shop ' + c.title.toLowerCase()}<Fragment set:html={ARROW} /></a>
+        <a href={`/pages/request-a-quote?type=${rentalOnly ? 'rental' : 'products'}`} class="ch__btn ch__btn--line">{rentalOnly ? 'Get rental pricing' : 'Get bulk pricing'}</a>
+        {meta.page && <a href={meta.page} class="ch__more">Learn more</a>}
+      </div>
     </div>
   </section>
 
@@ -380,4 +371,25 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
     .ask__btn { white-space: nowrap; padding: 9px 12px; font-size: .82rem; gap: 6px; }
   }
   @media (min-width: 1200px) { .ch :global(.ch__sr .sr__cv)::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(90deg, #121416 0%, #121416 16%, rgba(18, 20, 22, .7) 26%, rgba(18, 20, 22, 0) 36%); } }
+
+  /* thin header: no artwork, everything on one compact band */
+  .ch--thin { background: linear-gradient(180deg, #fff 0%, #f6f7f8 100%); border-bottom: 1px solid var(--line); }
+  .ch--thin .ch__in { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px 40px; min-height: 0; padding-block: clamp(16px, 1.8vw, 26px) clamp(18px, 2vw, 28px); }
+  .ch--thin .ch__copy { flex: 1 1 auto; min-width: 0; }
+  .ch--thin .crumbs { margin-bottom: 8px; }
+  .ch__row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+  .ch--thin .ch__h { animation: chUp .7s cubic-bezier(.2, .8, .2, 1) backwards; }
+  .ch--thin h1 { flex: 0 0 auto; width: auto; max-width: none; margin: 0; font-size: clamp(1.9rem, 3vw, 2.8rem); line-height: 1.02; letter-spacing: -.035em; }
+  .ch__tag { margin: 0; padding-left: 16px; border-left: 2px solid var(--red); color: var(--red); font-size: clamp(1rem, 1.3vw, 1.25rem); line-height: 1.2; font-variation-settings: 'wght' 720; animation: chUp .8s .15s cubic-bezier(.2, .8, .2, 1) backwards; }
+  .ch--thin .ch__lede { margin: 8px 0 0; max-width: 64ch; color: var(--steel); font-size: clamp(.95rem, 1vw, 1.04rem); }
+  .ch--thin .ch__acts { flex: none; }
+  .ch--thin .ch__btn { min-height: 44px; padding: 0 20px; font-size: .96rem; }
+  @media (max-width: 900px) {
+    .ch--thin .ch__in { display: grid; gap: 14px; }
+    .ch--thin h1 { font-size: clamp(1.7rem, 7vw, 2.2rem); }
+    .ch__tag { padding-left: 12px; font-size: 1rem; }
+    .ch--thin .ch__acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ch--thin .ch__btn { justify-content: center; padding: 0 12px; font-size: .9rem; }
+    .ch--thin .ch__more { grid-column: 1 / -1; justify-self: center; }
+  }
 </style>
