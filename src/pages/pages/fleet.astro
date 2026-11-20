@@ -35,7 +35,7 @@ const guide = [
   ['Moving barrier and gear', 'Flatbed truck', 'flatbed-truck', 'Gets barrier, drums and equipment where the job needs them.']
 ].filter((g) => byHandle[g[2]]).map(([q, t, h, d], i) => ({ q, t, d, href: byHandle[h].href, img: byHandle[h].img, tint: tints[i % tints.length] }));
 
-// vehicles the AI Lane Closure Expert checks a project against
+// vehicles the AI Fleet Expert checks a project against
 const roster = ['TMA crash trucks', 'Bucket trucks', 'Bucket vans', 'Cone trucks', 'Flatbeds', 'Arrow boards', 'Message boards'];
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const perks = [
@@ -124,7 +124,7 @@ const steps = [
     </div>
   </section>
 
-  <!-- ================= AI LANE CLOSURE EXPERT: RIGHT TRUCK ================= -->
+  <!-- ================= AI FLEET EXPERT: RIGHT TRUCK ================= -->
   <section class="eqa" data-in>
     <div class="wrap">
       <div class="eqa__shell">
@@ -135,11 +135,11 @@ const steps = [
         <div class="eqa__copy">
           <div class="eqa__who">
             <span class="eqa__av" aria-hidden="true"><i></i><i></i><b class="eqa__avt">AI</b></span>
-            <span class="eqa__name"><b>Lane Closure Expert</b><small><span class="eqa__dot"></span>Online · trained on our fleet</small></span>
+            <span class="eqa__name"><b>Fleet Expert</b><small><span class="eqa__dot"></span>Online · trained on our fleet</small></span>
           </div>
           <h2>Find Out If We Have The <em>Right Vehicle For Your Job.</em></h2>
           <p class="eqa__lede eqa__lede--short">Describe the job. We’ll tell you which truck fits.</p>
-          <p class="eqa__lede eqa__lede--long">Describe the work in your own words. Our AI Lane Closure Expert reads your project, checks it against every vehicle in our yard and tells you what fits, or if nothing does.</p>
+          <p class="eqa__lede eqa__lede--long">Describe the work in your own words. Our AI Fleet Expert reads your project, checks it against every vehicle in our yard and tells you what fits, or if nothing does.</p>
           <ol class="eqa__how">
             <li><span>1</span>Describe the job</li>
             <li><span>2</span>We check our fleet</li>
@@ -167,7 +167,7 @@ const steps = [
             {['Overnight paving on a highway', 'Sign work 35 feet up', 'Setting cones for a long closure', 'Hauling barrier to a job site'].map((t) => <button type="button" data-eqa-chip>{t}</button>)}
           </div>
           <p class="eqa__note eqa__note--short">AI can make mistakes. For a firm answer call <a href={PHONE_TEL}>{PHONE}</a>.</p>
-          <p class="eqa__note eqa__note--long" id="eqa-note">The Lane Closure Expert is an AI assistant and can make mistakes. For a firm answer and pricing, <a href="/pages/request-a-quote?type=rental">get fleet pricing</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
+          <p class="eqa__note eqa__note--long" id="eqa-note">The Fleet Expert is an AI assistant and can make mistakes. For a firm answer and pricing, <a href="/pages/request-a-quote?type=rental">get fleet pricing</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
         </form>
       </div>
       </div>
@@ -226,7 +226,7 @@ const steps = [
 </Layout>
 
 <script>
-  // AI Lane Closure Expert: which truck fits: typed example placeholder, a short "checking the fleet" state, then the chat assistant answers.
+  // AI Fleet Expert: which truck fits: typed example placeholder, a short "checking the fleet" state, then the chat assistant answers.
   {
     const f = document.querySelector('[data-eqa]');
     if (f) {

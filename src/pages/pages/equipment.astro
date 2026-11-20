@@ -47,7 +47,7 @@ const xp = [
   ['MUTCD Compliant and Certified', 'Boards and lighting that meet work zone standards.', 'M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z M8.5 12l2.4 2.4L15.5 9.8'],
   ['Serving the Tri\u2011State Since 1971', 'Over five decades on the region’s roads.', 'M12 14.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11z M8.6 13.6L7 21l5-2.6 5 2.6-1.6-7.4 M12 6.6v2.6l1.6 1']
 ];
-// equipment the AI Lane Closure Expert checks a project against
+// equipment the AI Equipment Expert checks a project against
 const roster = ['VMS message boards', 'Arrow boards', 'Light towers', 'Speed trailers', 'Portable traffic lights', 'Water-filled barrier', 'Barricades and drums'];
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -127,7 +127,7 @@ import Showroom from '../../components/Showroom.astro';
     </div>
   </section>
 
-  <!-- ================= AI LANE CLOSURE EXPERT: RIGHT EQUIPMENT ================= -->
+  <!-- ================= AI EQUIPMENT EXPERT: RIGHT EQUIPMENT ================= -->
   <section class="eqa" data-in>
     <div class="wrap">
       <div class="eqa__shell">
@@ -138,11 +138,11 @@ import Showroom from '../../components/Showroom.astro';
         <div class="eqa__copy">
           <div class="eqa__who">
             <span class="eqa__av" aria-hidden="true"><i></i><i></i><b class="eqa__avt">AI</b></span>
-            <span class="eqa__name"><b>Lane Closure Expert</b><small><span class="eqa__dot"></span>Online · trained on our equipment</small></span>
+            <span class="eqa__name"><b>Equipment Expert</b><small><span class="eqa__dot"></span>Online · trained on our equipment</small></span>
           </div>
           <h2>Find Out If We Have The <em>Right Equipment For Your Job.</em></h2>
           <p class="eqa__lede eqa__lede--short">Describe the job. We’ll tell you what equipment fits.</p>
-          <p class="eqa__lede eqa__lede--long">Describe the work in your own words. Our AI Lane Closure Expert reads your project, checks it against every board, tower and trailer in our yard and tells you what fits, or if nothing does.</p>
+          <p class="eqa__lede eqa__lede--long">Describe the work in your own words. Our AI Equipment Expert reads your project, checks it against every board, tower and trailer in our yard and tells you what fits, or if nothing does.</p>
           <ol class="eqa__how">
             <li><span>1</span>Describe the job</li>
             <li><span>2</span>We check our equipment</li>
@@ -170,7 +170,7 @@ import Showroom from '../../components/Showroom.astro';
             {['Warn drivers of a lane closure', 'Light up a night paving job', 'Detour signs for a road closure', 'Slow traffic near a school zone'].map((t) => <button type="button" data-eqa-chip>{t}</button>)}
           </div>
           <p class="eqa__note eqa__note--short">AI can make mistakes. For a firm answer call <a href={PHONE_TEL}>{PHONE}</a>.</p>
-          <p class="eqa__note eqa__note--long" id="eqa-note">The Lane Closure Expert is an AI assistant and can make mistakes. For a firm answer and pricing, <a href="/pages/request-a-quote?type=rental">get equipment pricing</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
+          <p class="eqa__note eqa__note--long" id="eqa-note">The Equipment Expert is an AI assistant and can make mistakes. For a firm answer and pricing, <a href="/pages/request-a-quote?type=rental">get equipment pricing</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
         </form>
       </div>
       </div>
@@ -293,7 +293,7 @@ import Showroom from '../../components/Showroom.astro';
 </Layout>
 
 <script>
-  // AI Lane Closure Expert: which equipment fits: typed example placeholder, a short "checking the fleet" state, then the chat assistant answers.
+  // AI Equipment Expert: which equipment fits: typed example placeholder, a short "checking our equipment" state, then the chat assistant answers.
   {
     const f = document.querySelector('[data-eqa]');
     if (f) {
