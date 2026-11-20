@@ -8,12 +8,12 @@ const SCENE_W = 3000, SCENE_H = 760;
 // drawn in this order, so each truck sits in front of the one before it (TMA over the bucket truck's rear, van over the TMA's rear)
 const TRUCKS = [
   { k: 'bucket', d: 0.1, mx: 0, wheels: [[1533, 626, 33, 42], [1851, 560, 12, 26]], lamps: [[1430, 545, 66], [1408, 612, 24]], beam: [1210, 672] },
-  { k: 'tma', d: 0.8, mx: -4, wheels: [[2126,  617,  41,  47],  [2456,  544,  10,  28]], lamps: [[2053,  538,  79]], beam: [1850, 673] },
-  { k: 'van', d: 1.5, mx: -8, wheels: [[2658,  657,  22,  30],  [2907,  583,  10,  19]], lamps: [[2559,  577,  54],  [2559,  655,  23]], beam: [2411, 672], beacon: [2737, 378] }
+  { k: 'tma', d: 0.8, mx: -4, wheels: [[2105,  623,  38,  44],  [2411,  556,  9,  26]], lamps: [[2038,  550,  73]], beam: [1850, 675] },
+  { k: 'van', d: 1.5, mx: -8, wheels: [[2627,  653,  24,  33],  [2901,  571,  11,  21]], lamps: [[2518,  565,  59],  [2518,  650,  25]], beam: [2355, 669], beacon: [2714, 346] }
 ];
 const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
-const V = '?v=5';
+const V = '?v=6';
 ---
 <div class:list={['sr', animate ? 'sr--drive' : 'sr--parked', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label="TSS bucket truck, TMA crash truck and bucket van lined up in a showroom">
   <div class="sr__cv">
