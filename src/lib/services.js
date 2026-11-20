@@ -4,7 +4,7 @@ export const SERVICE_QUOTE = Q;
 export const SERVICES = [
   {
     slug: 'lane-and-road-closures', title: 'Lane And Road Closures', short: 'Single lane to full detours.',
-    img: '/fleet/lc-scene.webp', pos: '50% 50%',
+    img: '/fleet/lc-scene.webp', pos: '50% 50%', ph: '/fleet/sv-snow.webp', phPos: '50% 60%', phTall: true,
     h1: ['Every Closure, Set Right.', 'From One Lane To Full Detours.'],
     lede: 'Certified, experienced crews set up, maintain and remove MUTCD-compliant closures on local streets, county roads and the region’s busiest highways.',
     stats: [['25,000+', 'Closures set'], ['Since 1971', 'In traffic control'], ['5 States', 'NJ, NY, PA, CT and DE']],
@@ -26,7 +26,7 @@ export const SERVICES = [
   },
   {
     slug: 'tma-protection', title: 'TMA Protection', short: 'Crash trucks with certified operators.',
-    img: '/fleet/tma-rear-2.jpg', pos: '60% 40%',
+    img: '/fleet/sv-tma-rear.webp', pos: '55% 48%', phTall: true,
     h1: ['A Crash Truck Between', 'Your Crew And Traffic.'],
     lede: 'Truck mounted attenuators with certified operators, positioned behind your work zone to absorb an impact before it reaches your people.',
     stats: [['MASH', 'Tested attenuators'], ['Certified', 'TMA operators'], ['Since 1971', 'In traffic control']],
@@ -39,7 +39,7 @@ export const SERVICES = [
   },
   {
     slug: 'flagging-operations', title: 'Flagging Operations', short: 'ATSSA-certified flaggers.',
-    img: '/fleet/team-photo.webp', pos: '50% 62%',
+    img: '/fleet/sv-flag.webp', pos: '62% 72%', ph: '/fleet/team-photo.webp', phPos: '50% 62%',
     h1: ['Certified Flaggers.', 'Traffic That Keeps Moving.'],
     lede: 'ATSSA-certified flaggers who control traffic through your work zone, keep drivers informed and keep your crew safe.',
     stats: [['ATSSA', 'Certified flaggers'], ['OSHA', 'Trained crews'], ['5 States', 'NJ, NY, PA, CT and DE']],
@@ -52,7 +52,7 @@ export const SERVICES = [
   },
   {
     slug: 'sign-and-barricade-installs', title: 'Sign And Barricade Installs', short: 'Delivered, set and maintained.',
-    img: '/fleet/sv-signs.webp', pos: '60% 50%',
+    img: '/fleet/sv-roadclosed.webp', pos: '48% 55%', ph: '/fleet/sv-signs.webp', phPos: '60% 50%',
     h1: ['Signs And Barricades.', 'Delivered, Set And Maintained.'],
     lede: 'We deliver, install and look after the signs, barricades and devices your project needs, for a day or for the life of the job.',
     stats: [['MUTCD', 'Compliant setups'], ['Own Yard', 'Signs and devices in stock'], ['Since 1971', 'In traffic control']],
@@ -78,7 +78,7 @@ export const SERVICES = [
   },
   {
     slug: 'night-and-weekend-work', title: 'Night And Weekend Work', short: 'Off-peak closure windows.',
-    img: '/fleet/tma-dusk.jpg', pos: '50% 62%',
+    img: '/fleet/sv-night.webp', pos: '50% 45%', ph: '/fleet/sv-night-ground.webp', phPos: '50% 62%', phTall: true,
     h1: ['Closed After Dark.', 'Open By Morning.'],
     lede: 'Overnight and weekend closures that fit the hours the road authority allows, set up on time and cleared before traffic returns.',
     stats: [['25,000+', 'Closures set'], ['Nights', 'And weekends'], ['Certified', 'And experienced crews']],
@@ -91,7 +91,7 @@ export const SERVICES = [
   },
   {
     slug: 'traffic-control-plans', title: 'Traffic Control Plans', short: 'Permit-ready drawings.',
-    img: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg', pos: '50% 50%',
+    img: 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg', pos: '50% 50%', ph: '/fleet/sv-night.webp', phPos: '50% 45%',
     h1: ['Permit-Ready Plans.', 'Drawn By People Who Set Them.'],
     lede: 'Traffic control plans drawn to the MUTCD and state standards by the same team that builds closures in the field every day.',
     stats: [['MUTCD', 'And state standards'], ['25,000+', 'Closures behind every plan'], ['Free', 'Closure plan for your job']],
