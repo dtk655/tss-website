@@ -8,12 +8,12 @@ const SCENE_W = 3000, SCENE_H = 760;
 // drawn in this order, so each truck sits in front of the one before it (TMA over the bucket truck's rear, van over the TMA's rear)
 const TRUCKS = [
   { k: 'bucket', d: 0.1, mx: 0, wheels: [[1533, 626, 33, 42], [1851, 560, 12, 26]], lamps: [[1430, 545, 66], [1408, 612, 24]], beam: [1210, 672] },
-  { k: 'tma', d: 0.8, mx: -4, wheels: [[2095, 626, 36, 42], [2388, 561, 9, 25]], lamps: [[2030, 556, 70]], beam: [1850, 676] },
-  { k: 'van', d: 1.5, mx: -8, wheels: [[2614, 650, 25, 35], [2900, 566, 11, 22]], lamps: [[2500, 558, 62], [2500, 648, 26]], beam: [2330, 668], beacon: [2705, 330] }
+  { k: 'tma', d: 0.8, mx: -4, wheels: [[2126,  617,  41,  47],  [2456,  544,  10,  28]], lamps: [[2053,  538,  79]], beam: [1850, 673] },
+  { k: 'van', d: 1.5, mx: -8, wheels: [[2658,  657,  22,  30],  [2907,  583,  10,  19]], lamps: [[2559,  577,  54],  [2559,  655,  23]], beam: [2411, 672], beacon: [2737, 378] }
 ];
 const px = (x) => (x / SCENE_W * 100).toFixed(3) + '%';
 const py = (y) => (y / SCENE_H * 100).toFixed(3) + '%';
-const V = '?v=4';
+const V = '?v=5';
 ---
 <div class:list={['sr', animate ? 'sr--drive' : 'sr--parked', tall && 'sr--tall', band && 'sr--auto', duo && 'sr--duo', cls]} data-sr role="img" aria-label="TSS bucket truck, TMA crash truck and bucket van lined up in a showroom">
   <div class="sr__cv">
@@ -94,7 +94,7 @@ const V = '?v=4';
   /* Phones, duo mode: TMA and van only. Scene x 1780 to 3000 fills the screen (about 17px clear each side at 390 wide);
      the strip is 495 scene units tall, which leaves a small gap above the van's boom. */
   @media (max-width: 640px) {
-    .sr--duo.sr--auto { aspect-ratio: 1220 / 495; }
+    .sr--duo.sr--auto { aspect-ratio: 1220 / 510; }
     .sr--duo.sr--auto .sr__cv { width: calc(3000 / 1220 * 100%); left: calc(-1780 / 1220 * 100%); }
     .sr--duo .sr__t { --park: -.47%; }
     /* even vignette on both screen edges (the wall image only fades on its right) */
