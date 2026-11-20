@@ -1,0 +1,91 @@
+---
+// "The work we do" on the lane closure page: a simple photo grid of the kinds of jobs our crews handle.
+const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+const work = [
+  { t: 'Lane And Road Closures', s: 'Single lane, multi-lane and full road closures with detours.', img: '/fleet/lc-scene.webp', m: '/fleet/lc-scene-m.webp', pos: '50% 50%', size: 'xl' },
+  { t: 'TMA Protection', s: 'Crash trucks with certified operators.', img: '/fleet/tma-rear-2.jpg', pos: '60% 40%' },
+  { t: 'Flagging Operations', s: 'ATSSA-certified flaggers.', img: '/fleet/team-photo.webp', m: '/fleet/team-photo-m.webp', pos: '50% 62%' },
+  { t: 'Sign And Barricade Installs', s: 'Delivered, set and maintained.', img: CDN + 'thumbnail_IMG_0081_1209517d-0120-4e7d-b1dd-18ee0f120532.jpg', pos: '50% 45%' },
+  { t: 'Special Events', s: 'Parades, races and game days.', img: CDN + 'Water-Filled-Barricades-In-Use-3-1.png', pos: '50% 60%' },
+  { t: 'Night And Weekend Work', s: 'Off-peak closure windows, set up and taken down on schedule.', img: '/fleet/tma-dusk.jpg', pos: '50% 62%', size: 'wide' },
+  { t: 'Traffic Control Plans', s: 'Permit-ready drawings for your town, county or state.', img: CDN + 'thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg', pos: '50% 50%', size: 'wide' }
+];
+---
+<section class="lw" data-lw>
+  <div class="wrap">
+    <div class="lw__head">
+      <p class="lw__k"><span></span>What our crews handle</p>
+      <h2>Every Kind Of Closure. <em>One Call.</em></h2>
+    </div>
+    <ul class="lw__grid">
+      {work.map((w, i) => (
+        <li class:list={['lw__c', w.size && `lw__c--${w.size}`]} style={`--i:${i}`}>
+          <picture>
+            {w.m && <source media="(max-width: 640px)" srcset={w.m} />}
+            <img src={w.img} alt="" loading="lazy" style={`object-position:${w.pos}`} />
+          </picture>
+          <span class="lw__shade" aria-hidden="true"></span>
+          <div class="lw__t"><b>{w.t}</b><small>{w.s}</small></div>
+        </li>
+      ))}
+    </ul>
+    <p class="lw__foot">Don’t see your job? <a href="/pages/request-a-quote?type=lane-closure">Tell us about it<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const s = document.querySelector('[data-lw]'); if (!s) return;
+    if (!('IntersectionObserver' in window)) { s.classList.add('is-in'); return; }
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { s.classList.add('is-in'); io.disconnect(); } }, { threshold: .12 });
+    io.observe(s);
+  })();
+</script>
+
+<style>
+  .lw { padding: clamp(48px, 6vw, 92px) 0; background: #fff; }
+  .lw__head { margin-bottom: clamp(22px, 2.8vw, 38px); }
+  .lw__k { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: .82rem; letter-spacing: .16em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 720; }
+  .lw__k span { width: 26px; height: 2px; background: var(--red); }
+  .lw h2 { margin: 0; font-size: clamp(1.8rem, 3.6vw, 3.2rem); line-height: 1.05; letter-spacing: -.028em; font-variation-settings: 'wght' 780; font-weight: 400; color: var(--ink); }
+  .lw h2 em { font-style: normal; color: var(--red); }
+
+  .lw__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(170px, 17vw, 250px); gap: clamp(10px, 1.1vw, 16px); margin: 0; padding: 0; list-style: none; }
+  .lw__c { position: relative; overflow: hidden; border-radius: 18px; background: #16181b; isolation: isolate; opacity: 0; transform: translateY(22px); transition: opacity .7s calc(var(--i) * 70ms) ease, transform .8s calc(var(--i) * 70ms) cubic-bezier(.2, .8, .2, 1); }
+  .lw.is-in .lw__c { opacity: 1; transform: none; }
+  .lw__c--xl { grid-column: span 2; grid-row: span 2; }
+  .lw__c--wide { grid-column: span 2; }
+  .lw__c picture, .lw__c img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .lw__c img { object-fit: cover; transition: transform 1s cubic-bezier(.2, .8, .2, 1); }
+  .lw__c:hover img { transform: scale(1.06); }
+  .lw__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 11, 13, 0) 30%, rgba(10, 11, 13, .55) 62%, rgba(10, 11, 13, .9) 100%); }
+  .lw__t { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 4px; padding: clamp(14px, 1.5vw, 22px); color: #fff; }
+  .lw__t::before { content: ''; width: 28px; height: 3px; margin-bottom: 6px; border-radius: 2px; background: var(--red); transition: width .4s cubic-bezier(.2, .8, .2, 1); }
+  .lw__c:hover .lw__t::before { width: 56px; }
+  .lw__t b { font-size: clamp(1.02rem, 1.3vw, 1.3rem); line-height: 1.15; letter-spacing: -.012em; font-variation-settings: 'wght' 740; font-weight: 400; }
+  .lw__t small { font-size: clamp(.84rem, .92vw, .96rem); line-height: 1.35; color: rgba(255, 255, 255, .82); }
+  .lw__c--xl .lw__t { padding: clamp(18px, 2.2vw, 32px); }
+  .lw__c--xl .lw__t b { font-size: clamp(1.4rem, 2.3vw, 2.2rem); }
+  .lw__c--xl .lw__t small { font-size: clamp(.95rem, 1.1vw, 1.12rem); max-width: 34ch; }
+
+  .lw__foot { margin: clamp(18px, 2vw, 28px) 0 0; font-size: 1rem; color: var(--steel); }
+  .lw__foot a { display: inline-flex; align-items: center; gap: 6px; margin-left: 4px; color: var(--red); font-variation-settings: 'wght' 700; text-decoration: none; }
+  .lw__foot a svg { width: 16px; height: 16px; transition: transform .2s; }
+  .lw__foot a:hover svg { transform: translateX(3px); }
+
+  @media (max-width: 900px) {
+    .lw__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: clamp(150px, 40vw, 230px); }
+    .lw__c--xl { grid-row: span 1; }
+    .lw__c--wide { grid-column: span 1; }
+  }
+  @media (max-width: 640px) {
+    .lw__head, .lw__foot { text-align: center; }
+    .lw__k { justify-content: center; }
+    .lw__c { border-radius: 14px; }
+    .lw__t small { display: none; }
+    .lw__c--xl .lw__t small { display: block; }
+    .lw__t b { font-size: .98rem; }
+    .lw__c--xl .lw__t b { font-size: 1.35rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .lw__c { opacity: 1; transform: none; transition: none; } .lw__c img { transition: none; } }
+</style>
