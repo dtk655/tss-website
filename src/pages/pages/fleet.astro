@@ -137,33 +137,29 @@ const steps = [
     </div>
   </section>
 
-  <!-- ================= WHICH TRUCK ================= -->
-  {guide.length > 0 && (
-    <section class="eqg" data-in>
-      <div class="wrap">
-        <div class="eq-head eq-head--center">
-          <div>
-            <p class="eq-k"><span></span>Which truck do I need?<span></span></p>
-            <h2>Start with <em>the job.</em></h2>
-          </div>
+  <!-- ================= ASK CONNER: RIGHT TRUCK ================= -->
+  <section class="eqa" data-in>
+    <div class="wrap">
+      <div class="eqa__card">
+        <div class="eqa__copy">
+          <p class="eqa__k"><span class="eqa__dot"></span>Ask Conner, our AI assistant</p>
+          <h2>Find Out If We Have The <em>Right Vehicle For Your Job.</em></h2>
+          <p class="eqa__lede">Describe the work in your own words. Conner will tell you which of our trucks fits, or if we don’t have one for it.</p>
         </div>
-        <ul class="eqg__grid">
-          {guide.map((g, i) => (
-            <li style={`--i:${i}`}>
-              <a href={g.href} class="eqg__card">
-                <p class="eqg__q">{g.q}</p>
-                <span class="eqg__img" style={`--tint:${g.tint}`}><img src={g.img} alt="" loading="lazy" /></span>
-                <h3>{g.t}</h3>
-                <small>{g.d}</small>
-                <span class="eqg__a">See the truck<Fragment set:html={ARROW} /></span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <p class="eqr__calc">Not sure? <a href="/pages/request-a-quote?type=general">Describe the job and we’ll recommend the truck</a></p>
+        <form class="eqa__form" data-eqa>
+          <label class="eqa__lab" for="eqa-q">Tell us about the project</label>
+          <div class="eqa__box">
+            <textarea id="eqa-q" rows="3" placeholder="Example: replacing streetlights about 40 feet up on a county road, two nights" data-eqa-q></textarea>
+            <button type="submit" class="eqa__send">Find My Truck<Fragment set:html={ARROW} /></button>
+          </div>
+          <div class="eqa__chips" aria-label="Examples">
+            {['Overnight paving on a highway', 'Sign work 35 feet up', 'Setting cones for a long closure', 'Hauling barrier to a job site'].map((t) => <button type="button" data-eqa-chip>{t}</button>)}
+          </div>
+          <p class="eqa__note">Conner is an AI assistant. For a firm answer and pricing, <a href="/pages/request-a-quote?type=rental">get fleet pricing</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
+        </form>
       </div>
-    </section>
-  )}
+    </div>
+  </section>
 
   <TmaTruck />
 
@@ -205,6 +201,18 @@ const steps = [
 </Layout>
 
 <script>
+  // Ask Conner which truck fits: hands the project description to the site's chat assistant.
+  {
+    const f = document.querySelector('[data-eqa]'), q = f?.querySelector('[data-eqa-q]');
+    const ask = () => {
+      const t = q.value.trim(); if (!t) { q.focus(); return; }
+      const msg = 'Do you have the right truck in your fleet for this job? Project: ' + t;
+      if (window.TSSChat) window.TSSChat.ask(msg); else location.href = '/pages/request-a-quote?type=rental';
+    };
+    f?.addEventListener('submit', (e) => { e.preventDefault(); ask(); });
+    q?.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } });
+    f?.querySelectorAll('[data-eqa-chip]').forEach((b) => b.addEventListener('click', () => { q.value = b.textContent; ask(); }));
+  }
   // Phone hero: fill the screen below the header, leaving room for iPhone Safari's floating toolbar.
   {
     const hero = document.querySelector('.eqh'), box = hero?.querySelector('.eqh__in');
@@ -522,18 +530,29 @@ const steps = [
   /* ---------- fleet page extras ---------- */
   .eql__grid--big { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
   .eqt__go { display: inline-flex; align-items: center; gap: 4px; }
-  .eqg { padding: clamp(56px, 7vw, 100px) 0; background: var(--haze); }
-  .eqg__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
-  .eqg__card { display: grid; align-content: start; gap: 10px; height: 100%; padding: 24px 22px 22px; border-radius: 20px; border: 1px solid var(--line); background: #fff; text-decoration: none; color: var(--ink); transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s, border-color .3s; }
-  .eqg__card:hover { transform: translateY(-5px); border-color: var(--line-dark); box-shadow: 0 26px 46px -30px rgba(20, 23, 26, .5); }
-  .eqg__q { margin: 0; color: var(--steel); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; }
-  .eqg__card h3 { margin: 0; font-size: clamp(1.15rem, 1.4vw, 1.35rem); line-height: 1.2; letter-spacing: -.02em; font-variation-settings: 'wght' 740; font-weight: 400; }
-  .eqg__img { display: grid; place-items: center; margin: 4px 0; padding: 10px; border-radius: 14px; background: linear-gradient(185deg, var(--tint), #fff); }
-  .eqg__img img { display: block; width: 100%; height: clamp(100px, 8vw, 140px); object-fit: contain; filter: drop-shadow(0 12px 12px rgba(20, 23, 26, .2)); }
-  .eqg__a { color: var(--red); font-variation-settings: 'wght' 720; display: inline-flex; align-items: center; gap: 4px; }
-  .eqg__a :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
-  .eqg__card:hover .eqg__a :global(svg) { transform: translateX(3px); }
-  .eqg__card small { color: var(--steel); font-size: .92rem; line-height: 1.45; }
-  @media (max-width: 1100px) { .eqg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 640px) { .eqg__grid { grid-template-columns: 1fr; } }
+  .eqa { padding: clamp(40px, 5vw, 84px) 0; }
+  .eqa__card { position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(24px, 4vw, 68px); padding: clamp(26px, 4vw, 64px); border-radius: 28px; overflow: hidden; background: radial-gradient(80% 130% at 0% 0%, #2a2f36 0%, #121416 60%); color: #fff; box-shadow: 0 40px 80px -50px rgba(20, 23, 26, .8); opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .eqa.is-in .eqa__card { opacity: 1; transform: none; }
+  .eqa__card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--gold)); }
+  .eqa__k { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 14px; padding: 7px 14px 7px 12px; border-radius: 999px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); font-size: .84rem; letter-spacing: .04em; font-variation-settings: 'wght' 660; color: rgba(255, 255, 255, .9); }
+  .eqa__dot { width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; box-shadow: 0 0 0 0 rgba(61, 220, 132, .6); animation: eqaPulse 2s ease-out infinite; }
+  @keyframes eqaPulse { to { box-shadow: 0 0 0 10px rgba(61, 220, 132, 0); } }
+  .eqa h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.9rem); line-height: 1.08; letter-spacing: -.028em; font-variation-settings: 'wght' 780; font-weight: 400; color: #fff; text-wrap: balance; }
+  .eqa h2 em { font-style: normal; color: var(--gold); }
+  .eqa__lede { margin: 16px 0 0; max-width: 46ch; font-size: clamp(1rem, 1.12vw, 1.14rem); line-height: 1.55; color: rgba(255, 255, 255, .78); }
+  .eqa__form { display: grid; gap: 14px; }
+  .eqa__lab { font-size: clamp(1.05rem, 1.3vw, 1.3rem); font-variation-settings: 'wght' 720; color: #fff; }
+  .eqa__box { display: grid; gap: 12px; padding: 14px; border-radius: 20px; background: #fff; box-shadow: 0 24px 50px -28px rgba(0, 0, 0, .9); transition: box-shadow .25s; }
+  .eqa__box:focus-within { box-shadow: 0 0 0 4px rgba(245, 184, 0, .45), 0 24px 50px -28px rgba(0, 0, 0, .9); }
+  .eqa__box textarea { width: 100%; min-height: 84px; padding: 8px 10px; border: 0; outline: none; resize: none; background: none; font: inherit; font-size: 1.05rem; line-height: 1.45; color: var(--ink); }
+  .eqa__send { justify-self: end; display: inline-flex; align-items: center; gap: 9px; min-height: 50px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-size: 1rem; font-variation-settings: 'wght' 720; cursor: pointer; transition: background .2s, transform .2s; }
+  .eqa__send:hover { background: var(--red-press); transform: translateY(-1px); }
+  .eqa__send :global(svg) { width: 17px; height: 17px; }
+  .eqa__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .eqa__chips button { min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .06); color: #fff; font: inherit; font-size: .9rem; cursor: pointer; transition: background .2s, border-color .2s; }
+  .eqa__chips button:hover { background: rgba(255, 255, 255, .16); border-color: #fff; }
+  .eqa__note { margin: 2px 0 0; font-size: .86rem; line-height: 1.45; color: rgba(255, 255, 255, .6); }
+  .eqa__note a { color: #fff; }
+  @media (max-width: 900px) { .eqa__card { grid-template-columns: minmax(0, 1fr); border-radius: 22px; } .eqa__chips { justify-content: center; } .eqa__lab, .eqa__note { text-align: center; } .eqa__copy { text-align: center; } .eqa__lede { margin-inline: auto; } .eqa__send { justify-self: stretch; justify-content: center; } }
+  @media (prefers-reduced-motion: reduce) { .eqa__card { opacity: 1; transform: none; transition: none; } .eqa__dot { animation: none; } }
 </style>
