@@ -1,0 +1,177 @@
+---
+// Service page hero photo: a real job photo with a slow camera push, live flashing lights on the real
+// trucks, and callouts pinned to what is actually in the picture. The plans page turns the same aerial
+// into a blueprint and draws the traffic control plan on top of the real road.
+// All coordinates are percentages of the photo, so they stay glued to it at any screen size.
+const { slug } = Astro.props;
+const P = {
+  'lane-and-road-closures': { src: '/fleet/lc-scene.webp', m: '/fleet/lc-scene-m.webp', w: 2000, h: 1119, fx: 50, fy: 55,
+    pins: [[62, 31, 'Cone taper', 'u'], [31, 42, 'Channelizing drums', 'u'], [37.5, 26.5, 'Work zone lighting', 'u'], [47, 79, 'Crash trucks protecting the work', 'r']],
+    lights: [[37.6, 83.4, 2.6, 'a', 0], [43, 84.3, 2.6, 'a', .15], [47.7, 87.3, 2.6, 'a', .3], [43, 66.6, 1.6, 'b', 0], [48.6, 66.4, 1.6, 'b', .4], [52.6, 69.6, 1.6, 'b', .2], [37.2, 26.6, 5, 'w', 0], [3.6, 32, 6, 'w', 1]] },
+  'traffic-control-plans': { src: '/fleet/lc-scene.webp', m: '/fleet/lc-scene-m.webp', w: 2000, h: 1119, fx: 50, fy: 55, plan: true, pins: [] },
+  'night-and-weekend-work': { video: '/watercade/hero-1920.mp4', videoSm: '/watercade/hero-1280.mp4', src: '/watercade/hero-poster.jpg', w: 1920, h: 1080, fx: 70, fy: 55, pins: [] },
+  'tma-protection': { src: '/fleet/sv-tma.webp', w: 1600, h: 1257, fx: 55, fy: 40, tight: true,
+    pins: [[79, 29, 'Truck mounted attenuator', 'd'], [47, 21, 'Arrow board', 'r'], [49, 41, 'Certified operator', 'd']] },
+  'flagging-operations': { src: '/fleet/team-photo.webp', m: '/fleet/team-photo-m.webp', w: 1600, h: 1202, fx: 55, fy: 50, tight: true,
+    pins: [[44, 40, 'Certified, experienced crew', 'u'], [62, 46, 'Safety first, every shift', 'd']] },
+  'sign-and-barricade-installs': { src: '/watercade/photos/fence-2000.webp', w: 2000, h: 1982, fx: 60, fy: 64, tight: true,
+    pins: [[55, 68, 'Barrier run, set and filled', 'd'], [62, 43, 'Fence panels installed on top', 'u'], [30, 53, 'Crew protected behind the line', 'u']] },
+  'special-events': { src: '/fleet/sv-event.webp', w: 1400, h: 1400, fx: 55, fy: 58, tight: true,
+    pins: [[45, 62, 'Water-filled barrier run', 'u'], [80, 47, 'Traffic kept moving', 'u']] }
+};
+const p = P[slug];
+const X = (v) => v * 20, Y = (v) => v * 11.19;
+const up = [[4, 59], [11, 55], [21, 49], [31, 42], [46.5, 33.8], [55, 28], [63, 24], [70, 20], [78, 14.8]];
+const lo = [[3.5, 69], [12.5, 63], [20.5, 58], [27.5, 53.5], [35, 48.5], [45.5, 42.5], [52, 38], [58, 34.2], [65, 30], [72, 26], [78.6, 21.5]];
+const pts = (a) => a.map(([x, y]) => `${X(x)} ${Y(y)}`).join('L');
+const zone = `M${pts(up)}L${pts([...lo].reverse())}Z`;
+const dl = (s) => `style="animation-delay:${s}s"`;
+---
+{p && (
+  <div class:list={['sp', p.plan && 'sp--plan', p.tight && 'sp--tight', p.video && 'sp--video']} data-sp style={`--fx:${p.fx}%;--fy:${p.fy}%;--r:${(p.w / p.h).toFixed(4)}`}>
+    <div class="sp__cv">
+      <div class="sp__mv">
+        <picture>
+          {p.m && <source media="(max-width: 640px)" srcset={p.m} />}
+          <img class="sp__img" src={p.src} alt="" width={p.w} height={p.h} fetchpriority="high" />
+        </picture>
+        {p.video && <video class="sp__vid" muted loop playsinline preload="none" poster={p.src} data-src={p.video} data-src-sm={p.videoSm}></video>}
+        {p.plan && <span class="sp__blue" aria-hidden="true"></span>}
+        {p.plan && <span class="sp__grid" aria-hidden="true"></span>}
+        {(p.lights || []).map(([x, y, r, k, d]) => <span class={`sp__lt sp__lt--${k}`} style={`left:${x}%;top:${y}%;width:${r}%;animation-delay:${d}s`}></span>)}
+        {p.plan && (
+          <svg class="sp__plan" viewBox="0 0 2000 1119" aria-hidden="true">
+            <defs><pattern id="sph" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="5" height="22" fill="rgba(255,196,120,.6)"/></pattern></defs>
+            <path class="sp-fade" d={zone} fill="url(#sph)" set:html="" style="animation-delay:2.6s" />
+            <path class="sp-draw sp-zone" pathLength="1" d={zone} style="animation-delay:.9s" />
+            {up.map(([x, y], i) => <circle class="sp-pop" cx={X(x)} cy={Y(y)} r="11" style={`animation-delay:${2.4 + i * .07}s`} />)}
+            {lo.map(([x, y], i) => <circle class="sp-pop" cx={X(x)} cy={Y(y)} r="8" style={`animation-delay:${2.9 + i * .06}s`} />)}
+            <path class="sp-draw sp-dim" pathLength="1" d={`M${X(6)} ${Y(77)}L${X(79)} ${Y(29.5)}M${X(5)} ${Y(74.5)}l${X(2)} ${Y(5)}M${X(78)} ${Y(27)}l${X(2)} ${Y(5)}`} style="animation-delay:3.5s" />
+            <g class="sp-fade" style="animation-delay:4s" transform={`translate(${X(40)} ${Y(56.5)}) rotate(-23)`}><rect x="-150" y="-26" width="300" height="46" rx="6" /><text text-anchor="middle" y="8">WORK AREA</text></g>
+            <rect class="sp-draw sp-box" pathLength="1" x={X(34.5)} y={Y(62.5)} width={X(21)} height={Y(30)} rx="14" style="animation-delay:4.2s" />
+            <g class="sp-fade" style="animation-delay:4.7s" transform={`translate(${X(57.5)} ${Y(65)})`}><rect x="0" y="-30" width="450" height="92" rx="6" /><text x="18" y="2">CRASH TRUCKS (TMA)</text><text class="sp-sm" x="18" y="40">Lower roadway closed</text></g>
+            <path class="sp-draw sp-lead" pathLength="1" d={`M${X(63)} ${Y(24)}L${X(59)} ${Y(13)}H${X(46.5)}`} style="animation-delay:4.9s" />
+            <g class="sp-fade" style="animation-delay:5.2s" transform={`translate(${X(46.5)} ${Y(13)})`}><rect x="0" y="-52" width="250" height="46" rx="6" /><text x="18" y="-20">DRUMS</text></g>
+            <path class="sp-draw sp-lead" pathLength="1" d={`M${X(65)} ${Y(30)}L${X(70)} ${Y(40)}H${X(74)}`} style="animation-delay:5.2s" />
+            <g class="sp-fade" style="animation-delay:5.5s" transform={`translate(${X(74)} ${Y(40)})`}><rect x="0" y="-23" width="230" height="46" rx="6" /><text x="18" y="10">CONES</text></g>
+            <g class="sp-fade" style="animation-delay:5.8s" transform={`translate(${X(63)} ${Y(76.5)})`}><rect class="sp-tb" x="0" y="0" width="560" height="160" /><path class="sp-tbl" d="M0 62H560M360 62V160" /><text x="20" y="42">TRAFFIC CONTROL PLAN</text><text class="sp-sm" x="20" y="100">Bridge deck closure</text><text class="sp-sm" x="20" y="138">MUTCD and state standards</text><text class="sp-sm" x="378" y="100">Sheet 1 of 1</text><text class="sp-sm" x="378" y="138">TSS</text></g>
+            <g class="sp-stamp" transform={`translate(${X(80)} ${Y(55)})`}><g><rect x="-230" y="-52" width="460" height="104" rx="12" /><text text-anchor="middle" y="18">PERMIT READY</text></g></g>
+            <g class="sp-pen"><circle r="22" /><path d="M-38 0H38M0 -38V38" /></g>
+          </svg>
+        )}
+      </div>
+    </div>
+    <span class="sp__fade" aria-hidden="true"></span>
+    <div class="sp__cv sp__cv--top">
+      <div class="sp__mv">
+        {p.pins.map(([x, y, t, dir], i) => (
+          <span class={`sp__pin sp__pin--${dir}`} style={`left:${x}%;top:${y}%;--i:${i}`}><i></i><b>{t}</b></span>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+<script is:inline>
+  document.querySelectorAll('[data-sp]:not(.is-go)').forEach((el) => {
+    const img = el.querySelector('.sp__img'); const go = () => requestAnimationFrame(() => el.classList.add('is-go'));
+    const v = el.querySelector('.sp__vid');
+    if (v && !matchMedia('(prefers-reduced-motion: reduce)').matches) { v.src = innerWidth < 900 && v.dataset.srcSm ? v.dataset.srcSm : v.dataset.src; v.play().catch(() => {}); }
+    if (img.complete) go(); else { img.addEventListener('load', go); img.addEventListener('error', go); setTimeout(go, 2500); }
+  });
+</script>
+
+<style is:global>
+  .sp { position: absolute; top: 0; right: 0; bottom: 0; width: 68%; overflow: hidden; container-type: size; background: #121416; }
+  .sp__cv { position: absolute; left: var(--fx); top: var(--fy); width: max(100cqw, calc(100cqh * var(--r))); aspect-ratio: var(--r); transform: translate(calc(var(--fx) * -1), calc(var(--fy) * -1)); }
+  .sp__mv { position: absolute; inset: 0; transform-origin: var(--fx) var(--fy); transform: scale(1.14); opacity: 0; transition: opacity 1.2s ease; }
+  .sp.is-go .sp__mv { opacity: 1; animation: spPush 26s cubic-bezier(.3, 0, .3, 1) infinite alternate; }
+  @keyframes spPush { from { transform: scale(1.14); } to { transform: scale(1.02); } }
+  .sp__cv--top { pointer-events: none; }
+  .sp__vid { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
+  .sp--video .sp__mv, .sp--video.is-go .sp__mv { transform: none; animation: none; }
+  .sp--tight .sp__mv { transform: scale(1.07); }
+  .sp--tight.is-go .sp__mv { animation-name: spPushS; animation-duration: 22s; }
+  .sp--tight .sp__fade { background: linear-gradient(90deg, #121416 0%, rgba(18, 20, 22, .94) 20%, rgba(18, 20, 22, .55) 40%, rgba(18, 20, 22, 0) 62%), linear-gradient(180deg, rgba(18, 20, 22, .3) 0%, rgba(18, 20, 22, 0) 20%, rgba(18, 20, 22, 0) 88%, #121416 100%); }
+  .sp--plan .sp__mv { transform: scale(1.06); }
+  .sp--plan.is-go .sp__mv { animation-name: spPushS; }
+  @keyframes spPushS { from { transform: scale(1.07); } to { transform: scale(1); } }
+  .sp__img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
+  .sp picture { display: contents; }
+  .sp__fade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #121416 0%, rgba(18, 20, 22, .82) 14%, rgba(18, 20, 22, .25) 36%, rgba(18, 20, 22, 0) 52%), linear-gradient(180deg, rgba(18, 20, 22, .3) 0%, rgba(18, 20, 22, 0) 20%, rgba(18, 20, 22, 0) 88%, #121416 100%); }
+
+  /* live lights on the real equipment */
+  .sp__lt { position: absolute; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; mix-blend-mode: screen; pointer-events: none; }
+  .sp__lt--a { background: radial-gradient(closest-side, rgba(255, 176, 40, 1), rgba(255, 140, 0, .5) 45%, rgba(255, 140, 0, 0)); animation: spBlink 1.1s steps(1) infinite; }
+  .sp__lt--b { background: radial-gradient(closest-side, rgba(255, 200, 90, 1), rgba(255, 150, 20, .45) 45%, rgba(255, 150, 20, 0)); animation: spBlink .7s steps(1) infinite; }
+  .sp__lt--w { background: radial-gradient(closest-side, rgba(255, 246, 214, .7), rgba(255, 240, 200, .22) 50%, rgba(255, 240, 200, 0)); animation: spGlow 3.4s ease-in-out infinite; }
+  @keyframes spBlink { 0% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes spGlow { 50% { opacity: .45; } }
+
+  /* callouts pinned to the photo */
+  .sp__pin { position: absolute; width: 0; height: 0; opacity: 0; }
+  .sp.is-go .sp__pin { animation: spPin .6s calc(1.1s + var(--i) * .45s) cubic-bezier(.3, 1.4, .5, 1) forwards; }
+  @keyframes spPin { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+  .sp__pin i { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(224, 32, 28, .9), 0 4px 14px rgba(0, 0, 0, .6); }
+  .sp__pin i::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .8); animation: spRing 2.4s calc(var(--i) * .5s) ease-out infinite; }
+  @keyframes spRing { from { transform: scale(1); opacity: .9; } to { transform: scale(3.2); opacity: 0; } }
+  .sp__pin b { position: absolute; white-space: nowrap; padding: 8px 14px; border-radius: 999px; background: rgba(14, 16, 18, .82); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, .18); color: #fff; font-size: clamp(.78rem, .95vw, .98rem); font-variation-settings: 'wght' 680; font-weight: 400; letter-spacing: .005em; box-shadow: 0 12px 28px -12px rgba(0, 0, 0, .8); }
+  .sp__pin::before { content: ''; position: absolute; background: rgba(255, 255, 255, .85); }
+  .sp__pin--u b { left: 0; bottom: 44px; transform: translateX(-50%); } .sp__pin--u::before { left: -1px; bottom: 12px; width: 2px; height: 32px; }
+  .sp__pin--d b { left: 0; top: 44px; transform: translateX(-50%); } .sp__pin--d::before { left: -1px; top: 12px; width: 2px; height: 32px; }
+  .sp__pin--r b { left: 48px; top: 0; transform: translateY(-50%); } .sp__pin--r::before { left: 12px; top: -1px; width: 36px; height: 2px; }
+  .sp__pin--l b { right: 48px; top: 0; transform: translateY(-50%); } .sp__pin--l::before { right: 12px; top: -1px; width: 36px; height: 2px; }
+
+  /* plans page: the photo becomes a blueprint and the plan is drawn on the real road */
+  .sp__blue { position: absolute; inset: 0; background: #1556a8; mix-blend-mode: color; opacity: 0; transition: opacity 1.4s .5s ease; }
+  .sp__grid { position: absolute; inset: 0; background: linear-gradient(rgba(8, 24, 48, .5), rgba(8, 24, 48, .5)), repeating-linear-gradient(0deg, rgba(160, 200, 240, .13) 0 1px, transparent 1px 3.2%), repeating-linear-gradient(90deg, rgba(160, 200, 240, .13) 0 1px, transparent 1px 1.8%); opacity: 0; transition: opacity 1.4s .5s ease; }
+  .sp.is-go .sp__blue, .sp.is-go .sp__grid { opacity: 1; }
+  .sp--plan .sp__img { transition: filter 1.4s .5s ease; }
+  .sp--plan.is-go .sp__img { filter: contrast(1.15) brightness(1.05); }
+  .sp__plan { position: absolute; inset: 0; width: 100%; height: 100%; font-family: var(--font); overflow: visible; }
+  .sp__plan text { font-size: 30px; letter-spacing: .1em; fill: #fff; font-variation-settings: 'wght' 760; }
+  .sp__plan text.sp-sm { font-size: 25px; letter-spacing: .04em; fill: #bcd8f5; font-variation-settings: 'wght' 560; }
+  .sp__plan g rect { fill: rgba(8, 24, 48, .86); stroke: rgba(170, 208, 245, .7); stroke-width: 2; }
+  .sp__plan .sp-tbl { fill: none; stroke: rgba(170, 208, 245, .7); stroke-width: 2; }
+  .sp-draw { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; stroke-linecap: round; stroke-linejoin: round; }
+  .sp.is-go .sp-draw { animation: spDraw 1.5s cubic-bezier(.4, 0, .2, 1) both; }
+  @keyframes spDraw { to { stroke-dashoffset: 0; } }
+  .sp-zone { stroke: #ffc478; stroke-width: 6; }
+  .sp-dim, .sp-lead { stroke: #cfe5fb; stroke-width: 3.5; }
+  .sp-box { stroke: #ff7a70; stroke-width: 5; stroke-dasharray: .012 .01 !important; fill: none; opacity: 0; }
+  .sp.is-go .sp-box { animation: spFade .7s both; }
+  .sp-fade { opacity: 0; }
+  .sp.is-go .sp-fade { animation: spFade .7s ease both; }
+  @keyframes spFade { to { opacity: 1; } }
+  .sp-pop { opacity: 0; fill: none; stroke: #ffc478; stroke-width: 4.5; transform-box: fill-box; transform-origin: center; }
+  .sp.is-go .sp-pop { animation: spPop .45s cubic-bezier(.3, 1.5, .5, 1) both; }
+  @keyframes spPop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
+  .sp-stamp > g { opacity: 0; transform: rotate(-9deg) scale(2.2); }
+  .sp.is-go .sp-stamp > g { animation: spStamp .5s 6.7s cubic-bezier(.3, 1.6, .5, 1) forwards; }
+  .sp-stamp rect { fill: rgba(8, 24, 48, .5) !important; stroke: #ff5a4f !important; stroke-width: 8 !important; }
+  .sp-stamp text { font-size: 50px !important; letter-spacing: .12em !important; fill: #ff5a4f !important; font-variation-settings: 'wght' 820 !important; }
+  @keyframes spStamp { to { opacity: 1; transform: rotate(-9deg) scale(1); } }
+  .sp-pen { opacity: 0; fill: none; stroke: #fff; stroke-width: 3.5; }
+  .sp.is-go .sp-pen { animation: spPen 6.6s .6s cubic-bezier(.5, 0, .3, 1) both; }
+  @keyframes spPen {
+    0% { opacity: 0; transform: translate(80px, 660px); } 5% { opacity: 1; transform: translate(80px, 660px); } 24% { transform: translate(1560px, 166px); } 30% { transform: translate(1572px, 240px); }
+    48% { transform: translate(70px, 772px); } 60% { transform: translate(800px, 620px); } 70% { transform: translate(900px, 900px); } 80% { transform: translate(1260px, 268px); } 90% { transform: translate(1500px, 940px); } 96% { opacity: 1; transform: translate(1600px, 615px); } 100% { opacity: 0; transform: translate(1600px, 615px); }
+  }
+
+  @media (max-width: 900px) {
+    .sp { position: relative; width: 100%; aspect-ratio: 16 / 11; }
+    .sp .sp__fade { background: linear-gradient(180deg, rgba(18, 20, 22, 0) 62%, #121416 100%); }
+    .sp__pin b { font-size: .74rem; padding: 6px 10px; }
+    .sp__pin--u b { bottom: 30px; } .sp__pin--u::before { height: 20px; } .sp__pin--d b { top: 30px; } .sp__pin--d::before { height: 20px; }
+    .sp__pin--r b { left: 32px; } .sp__pin--r::before { width: 22px; } .sp__pin--l b { right: 32px; } .sp__pin--l::before { width: 22px; }
+  }
+  @media (max-width: 640px) { .sp__pin { display: none; } .sp { aspect-ratio: 16 / 10; } }
+  @media (prefers-reduced-motion: reduce) {
+    .sp * { animation: none !important; transition: none !important; }
+    .sp__mv, .sp__pin, .sp-fade, .sp-pop, .sp-box { opacity: 1 !important; transform: none !important; }
+    .sp__mv { transform: scale(1.02) !important; }
+    .sp-draw { stroke-dashoffset: 0 !important; }
+    .sp-stamp > g { opacity: 1 !important; transform: rotate(-9deg) !important; }
+    .sp-pen, .sp__lt { display: none; }
+  }
+</style>

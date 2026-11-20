@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import ServiceScene from '../../components/ServiceScene.astro';
-import ClosureDiagram from '../../components/ClosureDiagram.astro';
+import ServicePhoto from '../../components/ServicePhoto.astro';
 import CredsRoads from '../../components/CredsRoads.astro';
 import { SERVICES, SERVICE_QUOTE } from '../../lib/services.js';
 import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../../lib/config.js';
@@ -30,6 +29,8 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
 
   <!-- ================= HERO ================= -->
   <section class="sv">
+    <div class="sv__top">
+    <ServicePhoto slug={s.slug} />
     <div class="wrap sv__in">
       <div class="sv__copy">
         <nav class="sv__crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/pages/lane-closure">Lane Closures</a><span>/</span><b>{s.title}</b></nav>
@@ -41,7 +42,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
         </div>
         <p class="sv__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
       </div>
-      <div class="sv__scene"><ServiceScene slug={s.slug} /></div>
+    </div>
     </div>
     <div class="wrap">
       <ul class="sv__stats">
@@ -57,10 +58,10 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
         <p class="sv-k"><span></span>{s.typesK}</p>
         <h2>{s.typesH[0]} <em>{s.typesH[1]}</em></h2>
       </div>
-      <ul class:list={['svt__grid', s.diagrams && 'svt__grid--d']}>
+      <ul class:list={['svt__grid', s.types.length > 6 && 'svt__grid--4']}>
         {s.types.map(([kind, t, d], i) => (
           <li class="svt__c" style={`--i:${i}`}>
-            {s.diagrams ? <ClosureDiagram kind={kind} /> : <span class="svt__n">{String(i + 1).padStart(2, '0')}</span>}
+            <span class="svt__n">{String(i + 1).padStart(2, '0')}</span>
             <b>{t}</b>
             <p>{d}</p>
           </li>
@@ -242,8 +243,10 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
   [data-rv].is-in .sv-head { opacity: 1; transform: none; }
 
   /* hero */
-  .sv { position: relative; overflow: hidden; background: radial-gradient(90% 120% at 85% 10%, #23282e 0%, #121416 55%); color: #fff; padding: clamp(22px, 2.6vw, 44px) 0 clamp(28px, 3vw, 52px); }
-  .sv__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr); align-items: center; gap: clamp(24px, 3.6vw, 64px); }
+  .sv { position: relative; overflow: hidden; background: #121416; color: #fff; padding: 0 0 clamp(28px, 3vw, 52px); }
+  .sv__top { position: relative; }
+  .sv__in { position: relative; display: grid; align-content: center; min-height: clamp(440px, 37vw, 660px); padding-block: clamp(26px, 3vw, 52px); pointer-events: none; }
+  .sv__copy { max-width: min(44%, 640px); pointer-events: auto; }
   .sv__crumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: clamp(14px, 1.6vw, 24px); font-size: .86rem; color: rgba(255, 255, 255, .55); }
   .sv__crumbs a { color: rgba(255, 255, 255, .72); text-decoration: none; }
   .sv__crumbs a:hover { color: #fff; }
@@ -256,8 +259,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
   .sv__acts { display: flex; flex-wrap: wrap; gap: 12px; opacity: 0; animation: svUp .8s .5s ease forwards; }
   .sv__call { margin: 16px 0 0; font-size: .95rem; color: rgba(255, 255, 255, .7); opacity: 0; animation: svUp .8s .6s ease forwards; }
   .sv__call a { color: #fff; font-variation-settings: 'wght' 700; }
-  .sv__scene { opacity: 0; transform: translateY(20px) scale(.98); animation: svScene 1s .2s cubic-bezier(.2, .8, .2, 1) forwards; }
-  .sv__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: clamp(24px, 3vw, 48px) 0 0; padding: 0; list-style: none; border: 1px solid rgba(255, 255, 255, .1); border-radius: 20px; background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .02)); overflow: hidden; position: relative; opacity: 0; animation: svUp .9s .7s ease forwards; }
+  .sv__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: clamp(6px, 1vw, 16px) 0 0; padding: 0; list-style: none; border: 1px solid rgba(255, 255, 255, .1); border-radius: 20px; background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .02)); overflow: hidden; position: relative; opacity: 0; animation: svUp .9s .7s ease forwards; }
   .sv__stats::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 2px; background: linear-gradient(90deg, transparent, #e0201c 20%, #e0201c 80%, transparent); }
   .sv__stats li { display: grid; gap: 4px; padding: clamp(16px, 1.8vw, 28px) clamp(16px, 2vw, 34px); border-left: 1px solid rgba(255, 255, 255, .08); }
   .sv__stats li:first-child { border-left: 0; }
@@ -270,11 +272,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
   /* types */
   .svt { padding: clamp(52px, 6.4vw, 100px) 0; background: #fff; }
   .svt__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.3vw, 20px); margin: 0; padding: 0; list-style: none; }
-  .svt__grid--d { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .svt__c { display: grid; align-content: start; gap: 8px; padding: clamp(18px, 1.7vw, 26px); border: 1px solid var(--line); border-radius: 18px; background: #fff; transition: border-color .25s, box-shadow .3s, transform .3s; }
-  .svt__grid--d .svt__c { padding: 12px 12px clamp(16px, 1.5vw, 22px); }
-  .svt__grid--d .svt__c b, .svt__grid--d .svt__c p { padding-inline: 8px; }
-  .svt__grid--d .svt__c b { margin-top: 8px; }
+  .svt__grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .svt__c:hover { border-color: var(--line-dark); box-shadow: 0 24px 40px -28px rgba(20, 23, 26, .35); }
   .svt.is-in .svt__c:hover { transform: translateY(-4px); }
   .svt__n { font-size: .86rem; letter-spacing: .1em; color: var(--red); font-variation-settings: 'wght' 760; }
@@ -366,12 +364,13 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
   .svo__c:hover b::after { width: 52px; }
 
   @media (max-width: 1100px) {
-    .svt__grid--d { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .svt__grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .svo__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   @media (max-width: 900px) {
-    .sv__in, .svi__in, .svf__in, .svq__in { grid-template-columns: minmax(0, 1fr); }
-    .sv__copy { text-align: center; }
+    .svi__in, .svf__in, .svq__in { grid-template-columns: minmax(0, 1fr); }
+    .sv__in { min-height: 0; padding-block: 18px 22px; }
+    .sv__copy { max-width: none; text-align: center; }
     .sv__crumbs, .sv__acts { justify-content: center; }
     .sv__lede { margin-inline: auto; }
     .svt__grid, .svr__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -388,10 +387,6 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
     .sv-k { justify-content: center; }
     .svi__list { text-align: left; }
     .svt__grid, .svr__grid { grid-template-columns: minmax(0, 1fr); }
-    .svt__grid--d { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .svt__grid--d .svt__c { padding: 8px 8px 14px; }
-    .svt__grid--d .svt__c b { font-size: .98rem; }
-    .svt__grid--d .svt__c p { font-size: .86rem; }
     .svp__steps { grid-template-columns: minmax(0, 1fr); }
     .svp__steps li { grid-template-columns: 48px 1fr; column-gap: 14px; }
     .svp__n { grid-row: span 2; margin: 0; }
@@ -402,7 +397,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
     .svo__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sv__ln > span, .sv__lede, .sv__acts, .sv__call, .sv__scene, .sv__stats { animation: none; opacity: 1; transform: none; }
+    .sv__ln > span, .sv__lede, .sv__acts, .sv__call, .sv__stats { animation: none; opacity: 1; transform: none; }
     [data-rv] [style*="--i"], [data-rv] .sv-head, .svi__ph, .svi__ph img, .svq__form { opacity: 1; transform: none; transition: none; }
     .svp__steps::before { transform: none; transition: none; }
   }

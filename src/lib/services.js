@@ -52,7 +52,7 @@ export const SERVICES = [
   },
   {
     slug: 'sign-and-barricade-installs', title: 'Sign And Barricade Installs', short: 'Delivered, set and maintained.',
-    img: '/fleet/vms-yard.webp', pos: '50% 50%',
+    img: '/fleet/sv-signs.webp', pos: '60% 50%',
     h1: ['Signs And Barricades.', 'Delivered, Set And Maintained.'],
     lede: 'We deliver, install and look after the signs, barricades and devices your project needs, for a day or for the life of the job.',
     stats: [['MUTCD', 'Compliant setups'], ['Own Yard', 'Signs and devices in stock'], ['Since 1971', 'In traffic control']],
