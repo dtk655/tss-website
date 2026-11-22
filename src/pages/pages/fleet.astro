@@ -109,7 +109,7 @@ const steps = [
         {fleet.map((e, i) => (
           <li style={`--i:${i}`}>
             <div class="eqt" style={`--tint:${e.tint}`}>
-              <a href={e.href} class="eqt__img" tabindex="-1" aria-hidden="true"><img src={e.img} alt="" loading="lazy" class={e.cut ? '' : 'is-blend'} /></a>
+              <a href={e.href} class="eqt__img" tabindex="-1" aria-hidden="true"><img src={e.img} alt="" loading="lazy" data-fit class={e.cut ? '' : 'is-blend'} /></a>
               <div class="eqt__txt">
                 <b><a href={e.href}>{e.title}</a></b>
                 {e.blurb && <small>{e.blurb}</small>}
@@ -444,9 +444,9 @@ const steps = [
   .eqt { position: relative; display: grid; grid-template-rows: auto 1fr; height: 100%; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; text-decoration: none; color: var(--ink); background: linear-gradient(185deg, var(--tint) 0%, #fff 72%); transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s, border-color .3s; }
   .eqt:hover { transform: translateY(-6px); border-color: var(--line-dark); box-shadow: 0 28px 50px -30px rgba(20, 23, 26, .5); }
   .eqt__img { display: grid; place-items: center; padding: 18px 18px 6px; overflow: hidden; }
-  .eqt__img img { display: block; width: 100%; height: clamp(150px, 12.5vw, 210px); object-fit: contain; filter: drop-shadow(0 16px 14px rgba(20, 23, 26, .2)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqt__img img { display: block; width: 100%; height: clamp(150px, 12.5vw, 210px); object-fit: contain; transform: var(--ft, translate(0, 0)); filter: drop-shadow(0 16px 14px rgba(20, 23, 26, .2)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
   .eqt__img img.is-blend { mix-blend-mode: multiply; filter: none; }
-  .eqt:hover .eqt__img img { transform: translateY(-6px) scale(1.05); }
+  .eqt:hover .eqt__img img { transform: translateY(-6px) var(--ft, translate(0, 0)) scale(1.05); }
   .eqt__txt { display: grid; align-content: start; gap: 6px; padding: 8px 20px 20px; }
   .eqt__txt b { font-size: clamp(1.08rem, 1.25vw, 1.25rem); line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 750; }
   .eqt__txt small { color: var(--steel); font-size: .9rem; line-height: 1.4; }
@@ -489,9 +489,9 @@ const steps = [
   .eqft { display: grid; gap: 6px; height: 100%; padding: 18px 20px 20px; border-radius: 20px; text-decoration: none; color: #fff; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); transition: background .3s, border-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1); }
   .eqft:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .25); transform: translateY(-5px); }
   .eqft__img { display: grid; place-items: center; padding: 12px; margin-bottom: 6px; border-radius: 14px; overflow: hidden; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, .82)); }
-  .eqft__img img { display: block; width: 100%; height: clamp(110px, 9.5vw, 160px); object-fit: contain; filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .25)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqft__img img { display: block; width: 100%; height: clamp(110px, 9.5vw, 160px); object-fit: contain; transform: var(--ft, translate(0, 0)); filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .25)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
   .eqft__img img.is-blend { mix-blend-mode: multiply; filter: none; }
-  .eqft:hover .eqft__img img { transform: translateY(-4px) scale(1.05); }
+  .eqft:hover .eqft__img img { transform: translateY(-4px) var(--ft, translate(0, 0)) scale(1.05); }
   .eqft b { font-size: 1.1rem; line-height: 1.2; font-variation-settings: 'wght' 740; }
   .eqft small { color: #b9bfc6; font-size: .9rem; line-height: 1.4; }
   .eqft__mode { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; color: var(--gold); font-size: .88rem; font-variation-settings: 'wght' 700; }
@@ -549,7 +549,7 @@ const steps = [
     .eql__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .eqt { border-radius: 16px; }
     .eqt__img { padding: 12px 10px 4px; }
-    .eqt__img img { height: 110px; }
+    .eqt__img img { height: 140px; }
     .eqt__txt { padding: 6px 12px 14px; }
     .eqt__txt b { font-size: .98rem; }
     .eqt__txt small { display: none; }

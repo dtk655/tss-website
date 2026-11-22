@@ -112,6 +112,50 @@ const ogImage = isProduct && image ? abs(image) : origin + '/og-share.png?v=2';
       set(); addEventListener('resize', set); document.fonts?.ready.then(set);
     })();
   </script>
+
+    <script is:inline>
+      // Card images: measure where the product actually sits inside each photo (ignoring transparent or white
+      // margins) and scale it so every product fills its card the same way, on any screen size.
+      (() => {
+        const boxes = new WeakMap();
+        const measure = (src) => new Promise((res) => {
+          const im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async';
+          im.onload = () => {
+            try {
+              const S = 160, k = S / Math.max(im.naturalWidth, im.naturalHeight), w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+              const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', { willReadFrequently: true });
+              x.drawImage(im, 0, 0, w, h); const d = x.getImageData(0, 0, w, h).data;
+              let x0 = w, y0 = h, x1 = -1, y1 = -1;
+              for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) {
+                const o = (y * w + i) * 4, a = d[o + 3], r = d[o], g = d[o + 1], b = d[o + 2];
+                if (a < 24 || (r > 236 && g > 236 && b > 236)) continue;
+                if (i < x0) x0 = i; if (i > x1) x1 = i; if (y < y0) y0 = y; if (y > y1) y1 = y;
+              }
+              res(x1 < 0 ? null : { nw: im.naturalWidth, nh: im.naturalHeight, b: [x0 / w, y0 / h, (x1 + 1) / w, (y1 + 1) / h] });
+            } catch { res(null); }
+          };
+          im.onerror = () => res(null); im.src = src;
+        });
+        const apply = (img) => {
+          const m = boxes.get(img); if (!m) return;
+          const W = img.clientWidth, H = img.clientHeight; if (!W || !H) return;
+          const s0 = Math.min(W / m.nw, H / m.nh), rw = m.nw * s0, rh = m.nh * s0;
+          const [bx0, by0, bx1, by1] = m.b, cw = (bx1 - bx0) * rw, ch = (by1 - by0) * rh;
+          const k = Math.min(2.6, (W * .94) / cw, (H * .95) / ch);
+          const cx = (W - rw) / 2 + (bx0 + bx1) / 2 * rw, cy = (H - rh) / 2 + (by0 + by1) / 2 * rh;
+          const tx = -k * (cx - W / 2), ty = -k * (cy - H / 2);
+          img.style.setProperty('--ft', `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${k.toFixed(3)})`);
+        };
+        const run = (img) => {
+          if (img.dataset.fitDone) return; img.dataset.fitDone = '1';
+          const go = () => measure(img.currentSrc || img.src).then((m) => { if (m) { boxes.set(img, m); apply(img); } });
+          if (img.complete && img.naturalWidth) go(); else img.addEventListener('load', go, { once: true });
+        };
+        const scan = () => document.querySelectorAll('img[data-fit]').forEach(run);
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan); else scan();
+        let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => document.querySelectorAll('img[data-fit]').forEach(apply), 150); });
+      })();
+    </script>
 </body>
 </html>
 <style is:global>
