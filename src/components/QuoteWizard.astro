@@ -148,6 +148,8 @@ const photos = [
 
   /* chips */
   .qs-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  [data-qs-field="sourceOther"] { margin-top: -6px; padding: 14px 16px; border-radius: 14px; background: var(--haze, #f4f5f6); border: 1px solid var(--line); animation: qsSlide .35s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes qsSlide { from { opacity: 0; transform: translateY(-6px); } }
   .qs-chip { position: relative; }
   .qs-chip input { position: absolute; opacity: 0; pointer-events: none; }
   .qs-chip span { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 10px 17px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font-size: .95rem; font-variation-settings: 'wght' 560; cursor: pointer; transition: border-color .2s, background .2s, color .2s, transform .2s; user-select: none; }
@@ -853,12 +855,14 @@ const photos = [
   const ABOUT = [
     { id: 'name', label: 'Your name', type: 'text', req: true, w: 'half', ac: 'name' },
     { id: 'company', label: 'Company or agency', type: 'text', w: 'half', ac: 'organization' },
-    { id: 'email', label: 'Email', type: 'email', w: 'half', ph: 'you@company.com', ac: 'email' },
+    { id: 'email', label: 'Email', type: 'email', req: true, w: 'half', ph: 'you@company.com', ac: 'email' },
     { id: 'phone', label: 'Phone', type: 'tel', w: 'half', ph: '(908) 555-0123', ac: 'tel' },
     { id: 'role', label: 'Which best describes you?', type: 'chips', opts: ['Contractor', 'Municipality or agency', 'Utility', 'Event organizer', 'Other'] },
     { id: 'prefer', label: 'Best way to reach you', type: 'seg', opts: ['Call', 'Email', 'Text'] },
     { id: 'urgency', label: 'How soon do you need pricing?', type: 'chips', opts: ['Today', 'This week', 'Just planning ahead'] },
     { id: 'account', label: 'Do you have a TSS account?', type: 'chips', opts: ['Yes', 'No', 'No, but I want one'] },
+    { id: 'source', label: 'How did you hear about us?', type: 'chips', opts: ['I\u2019ve bought from you before', 'A referral', 'Google search', 'Trade show', 'Brochure', 'Email', 'Saw your equipment on the road', 'Other'] },
+    { id: 'sourceOther', label: 'How did you find us?', type: 'text', ph: 'e.g. LinkedIn or a coworker', showIf: { source: 'Other' } },
     { id: 'extra', label: 'Anything else we should know?', type: 'textarea' }
   ];
 
@@ -934,7 +938,8 @@ const photos = [
     const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
     const flow = () => FLOW[state.type];
     const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
-    const visible = (f) => (!f.showIf || Object.entries(f.showIf).every(([k, v]) => state.job[k] === v)) && !(f.hideIf && Object.entries(f.hideIf).every(([k, v]) => state.job[k] === v));
+    const val = (k) => (k in (state.about || {}) && !(k in state.job) ? state.about[k] : state.job[k]);
+    const visible = (f) => (!f.showIf || Object.entries(f.showIf).every(([k, v]) => val(k) === v)) && !(f.hideIf && Object.entries(f.hideIf).every(([k, v]) => val(k) === v));
     const isPickup = () => state.job.fulfill === 'Customer Pick Up';
     const labelOf = (f) => (f.alt && isPickup() ? f.alt : f.label);
     const mapsUrl = (a) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Traffic Safety Service, ' + a);
@@ -1254,8 +1259,7 @@ const photos = [
       body.querySelector('[data-qs-next]').addEventListener('click', () => {
         if (!validate(ABOUT, 'about')) return;
         const a = state.about;
-        if (!a.email && !a.phone) return showErr('email', 'Add an email or a phone number so the quote can reach you.');
-        if (a.email && !/^\S+@\S+\.\S+$/.test(a.email)) return showErr('email', 'That email doesn’t look complete.');
+        if (!/^\S+@\S+\.\S+$/.test(a.email)) return showErr('email', 'That email doesn’t look complete.');
         if (a.phone && a.phone.replace(/\D/g, '').length < 10) return showErr('phone', 'Add the full 10-digit number.');
         go(4);
       });
@@ -1273,7 +1277,7 @@ const photos = [
       }));
       const n = dayCount(state.job.deliverDate, state.job.pickupDate);
       if (state.type === 'rental' && n) job.push(['Rental length', `${n} day${n > 1 ? 's' : ''}`]);
-      const about = ABOUT.filter((f) => state.about[f.id] && String(state.about[f.id]).trim()).map((f) => [f.label, state.about[f.id], f.type === 'textarea']);
+      const about = ABOUT.filter((f) => visible(f) && state.about[f.id] && String(state.about[f.id]).trim()).map((f) => [f.label, state.about[f.id], f.type === 'textarea']);
       return { job, about };
     }
     function stepReview(dir) {
@@ -1351,7 +1355,7 @@ const photos = [
           if (el.dataset.qsMulti) { const set = new Set(state[scope][id] || []); el.checked ? set.add(el.value) : set.delete(el.value); state[scope][id] = [...set]; }
           else state[scope][id] = el.value;
           save(); clearErr(id);
-          if (scope === 'job') sync(id);
+          sync(id);
           renderTicket();
         });
       });
@@ -1557,6 +1561,7 @@ const photos = [
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
     function sync(id) {
+      ABOUT.forEach((f) => { if (f.showIf) { const el = body.querySelector(`[data-qs-field="${f.id}"]`); if (el) el.hidden = !visible(f); } });
       flow().forEach((s) => s.fields.forEach((f) => { if (f.showIf || f.hideIf) { const el = body.querySelector(`[data-qs-field="${f.id}"]`); if (el) el.hidden = !visible(f); } if (f.alt) { const l = body.querySelector(`#${ns}-${f.id}-l`); if (l && l.firstChild) l.firstChild.nodeValue = labelOf(f); } }));
       if (id === 'deliverDate' || id === 'startDate') { const end = body.querySelector(`[data-qs-f="${id === 'deliverDate' ? 'pickupDate' : 'endDate'}"]`); if (end) end.min = state.job[id] || today(); }
       const days = body.querySelector('[data-qs-days]');
@@ -1581,7 +1586,7 @@ const photos = [
           continue;
         }
         if (f.type === 'multi' || f.type === 'equip') { if (!Array.isArray(v) || !v.length) return showErr(f.id, 'Pick at least one.'); continue; }
-        if (!v || !String(v).trim()) return showErr(f.id, f.type === 'date' ? 'Pick a date. A best guess is fine.' : f.type === 'pics' || f.type === 'seg' ? 'Pick one to continue.' : 'We need this one to price the job.');
+        if (!v || !String(v).trim()) return showErr(f.id, f.id === 'email' ? 'Add your email so we can send the quote.' : f.id === 'name' ? 'Add your name.' : f.type === 'date' ? 'Pick a date. A best guess is fine.' : f.type === 'pics' || f.type === 'seg' ? 'Pick one to continue.' : 'We need this one to price the job.');
       }
       return true;
     }
