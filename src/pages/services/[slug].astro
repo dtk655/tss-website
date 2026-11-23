@@ -12,16 +12,16 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
 const CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 // where each service connects to the rest of the site
 const RELATED = {
-  'lane-and-road-closures': [['Free Closure Plan', 'Get a starting plan for your job in minutes.', '/tools/lane-closure-plan'], ['Truck Fleet', 'Crash trucks, cone trucks and more from our yard.', '/pages/fleet'], ['Equipment', 'Arrow boards, message boards and light towers.', '/pages/equipment']],
+  'lane-and-road-closures': [['Lane Closure Expert', 'Describe the job and our AI tells you what it needs.', '/pages/lane-closure#lane-expert'], ['Truck Fleet', 'Crash trucks, cone trucks and more from our yard.', '/pages/fleet'], ['Equipment', 'Arrow boards, message boards and light towers.', '/pages/equipment']],
   'tma-protection': [['Truck Fleet', 'See every truck we run and rent.', '/pages/fleet'], ['Rent A TMA', 'Daily, weekly and monthly truck rentals.', '/collections/truck-rentals'], ['Lane And Road Closures', 'Add a full closure crew to the truck.', '/services/lane-and-road-closures']],
-  'flagging-operations': [['Lane And Road Closures', 'Flaggers as part of a full closure.', '/services/lane-and-road-closures'], ['Free Closure Plan', 'See what your job needs before you book.', '/tools/lane-closure-plan'], ['Safety Products', 'Paddles, vests and gear for your own crew.', '/collections/safety-products']],
+  'flagging-operations': [['Lane And Road Closures', 'Flaggers as part of a full closure.', '/services/lane-and-road-closures'], ['Lane Closure Expert', 'See what your job needs before you book.', '/pages/lane-closure#lane-expert'], ['Safety Products', 'Paddles, vests and gear for your own crew.', '/collections/safety-products']],
   'sign-and-barricade-installs': [['Sign Shop', 'Stock and custom signs made in house.', '/collections/sign-shop'], ['Custom Shop', 'Design a sign of any size, color and legend.', '/pages/custom-stenciling'], ['Barricades', 'Type III, A-frame and plastic barricades.', '/collections/barricades']],
   'special-events': [['WATERCADE Barriers', 'Water-filled barrier for crowds and closures.', '/watercade/'], ['Barricades', 'Buy or rent barricades for event day.', '/collections/barricades'], ['Flagging Operations', 'Certified flaggers for crossings and parking.', '/services/flagging-operations']],
   'night-and-weekend-work': [['TMA Protection', 'Crash trucks for overnight closures.', '/services/tma-protection'], ['Equipment', 'Arrow boards, message boards and light towers.', '/pages/equipment'], ['Lane And Road Closures', 'Every type of closure we set.', '/services/lane-and-road-closures']],
-  'traffic-control-plans': [['Free Closure Plan', 'Build a starting plan for your job now.', '/tools/lane-closure-plan'], ['Work Zone Builder', 'Lay out a work zone and see what it needs.', '/tools/work-zone-builder'], ['Lane And Road Closures', 'Have our crews build the plan.', '/services/lane-and-road-closures']]
+  'traffic-control-plans': [['Lane Closure Expert', 'Describe the job and our AI tells you what it needs.', '/pages/lane-closure#lane-expert'], ['Work Zone Builder', 'Lay out a work zone and see what it needs.', '/tools/work-zone-builder'], ['Lane And Road Closures', 'Have our crews build the plan.', '/services/lane-and-road-closures']]
 };
 const related = RELATED[s.slug] || [];
-const cta2 = s.cta2 || ['Get A Free Closure Plan', '/tools/lane-closure-plan'];
+const cta2 = s.cta2 || ['Ask Our Lane Closure Expert', '/pages/lane-closure#lane-expert'];
 const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: s.faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) };
 ---
 <Layout title={`${s.title}: Lane Closure Services`} description={s.lede} image={s.img.startsWith('/') ? s.img : undefined}>

@@ -100,7 +100,7 @@ export const SERVICES = [
     inclH: 'What Is On Every Plan',
     incl: ['Sign types, sizes and spacing', 'Taper and buffer lengths for the road’s speed', 'Device counts, so nothing is missing on the day', 'Notes and details the road authority asks for', 'Revisions when the reviewer comments', 'A crew that can build exactly what is drawn'],
     steps: [['Tell Us About The Job', 'Location, road, dates and the work being done.'], ['We Draw The Plan', 'Laid out to the MUTCD and the state’s standards.'], ['You Submit It', 'Ready for your permit application, with revisions if needed.'], ['We Can Build It', 'The same team can set the closure in the field.']],
-    faqs: [['Is the closure plan really free?', 'Yes. Use the free closure plan tool to get a starting plan for your job.'], ['Who do you draw plans for?', 'Contractors, utilities, towns and event organizers working in NJ, NY, PA, CT and DE.'], ['Can you also set the closure?', 'Yes. Our crews build what we draw, with our own equipment.']],
-    cta2: ['Get A Free Closure Plan', '/tools/lane-closure-plan']
+    faqs: [['How do I get started?', 'Build a quote in about two minutes, or describe the job to our AI Lane Closure Expert to see what it will likely need.'], ['Who do you draw plans for?', 'Contractors, utilities, towns and event organizers working in NJ, NY, PA, CT and DE.'], ['Can you also set the closure?', 'Yes. Our crews build what we draw, with our own equipment.']],
+    cta2: ['Ask Our Lane Closure Expert', '/pages/lane-closure#lane-expert']
   }
 ];

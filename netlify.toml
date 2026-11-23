@@ -27,3 +27,10 @@
   from = "/watercade"
   to = "/watercade/"
   status = 301
+
+# The free lane closure plan tool was replaced by the AI Lane Closure Expert on the lane closure page.
+[[redirects]]
+  from = "/tools/lane-closure-plan"
+  to = "/pages/lane-closure#lane-expert"
+  status = 301
+  force = true
