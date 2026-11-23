@@ -301,6 +301,23 @@ import Showroom from '../../components/Showroom.astro';
 </Layout>
 
 <script>
+  // Desktop: if the strip under the hero would run past the bottom of the screen, compact it so the whole hero fits.
+  {
+    const h = document.querySelector('.eqh'), s = h && h.querySelector('.eqh__xp > *');
+    const fit = () => {
+      if (!h || !s) return;
+      h.classList.remove('is-short', 'is-tight');
+      if (innerWidth >= 1200) {
+        const over = () => h.getBoundingClientRect().bottom + scrollY > innerHeight + 1;
+        if (over()) { h.classList.add('is-short'); if (over()) h.classList.add('is-tight'); }
+      }
+      dispatchEvent(new Event('eqh-fit'));
+    };
+    fit(); addEventListener('resize', fit); addEventListener('load', fit);
+    if (document.fonts) document.fonts.ready.then(fit);
+  }
+</script>
+<script>
   // Program the board: what the visitor types shows on the VMS in the hero.
   {
     const f = document.querySelector('[data-eqv]');
@@ -313,7 +330,7 @@ import Showroom from '../../components/Showroom.astro';
         const a = sr.getBoundingClientRect().bottom, z = pn.getBoundingClientRect().top, o = op.getBoundingClientRect().top;
         f.style.setProperty('--eqv-top', Math.round((a + z) / 2 - f.offsetHeight / 2 - o) + 'px');
       };
-      place(); addEventListener('resize', place); addEventListener('load', place);
+      place(); addEventListener('resize', place); addEventListener('load', place); addEventListener('eqh-fit', place);
       const upd = () => { if (window.TSSVms) window.TSSVms.set(inp.value); clr.hidden = !inp.value; };
       inp.addEventListener('input', upd);
       clr.addEventListener('click', () => { inp.value = ''; upd(); inp.focus(); });
@@ -804,10 +821,18 @@ import Showroom from '../../components/Showroom.astro';
   @media (min-width: 1200px) {
     .eqh .eqh__in { grid-template-rows: auto auto auto; align-content: center; row-gap: 0; }
     .eqh .eqh__in > .eqh__ways { margin-top: clamp(18px, 1.8vw, 30px); }
-    .eqh .eqh__in > .eqv { position: absolute; z-index: 4; left: calc(100vw * 1660 / 3000); top: var(--eqv-top, calc(100vw * 760 / 3000 + 8px)); transform: translateX(-50%); width: calc(100vw * 640 / 3000); min-width: 330px; max-width: none; margin: 0; }
+    .eqh .eqh__in > .eqv { position: absolute; z-index: 4; left: calc(100vw * 1680 / 3000); top: var(--eqv-top, calc(100vw * 760 / 3000 + 8px)); transform: translateX(-50%); width: calc(100vw * 640 / 3000); min-width: 330px; max-width: none; margin: 0; }
     .eqh__xp { padding-top: calc(clamp(10px, 1.2vw, 22px) + 34px) !important; padding-bottom: clamp(14px, 1.6vw, 28px) !important; }
     .eqv input { min-height: 40px; text-align: center; box-shadow: inset 0 1px 0 rgba(255, 210, 120, .06), 0 0 0 4px rgba(18, 20, 22, .9); padding: 0 40px 0 40px; border-radius: 999px; font-size: .95rem; }
     .eqv input::placeholder { font-size: .92rem; letter-spacing: .01em; }
     .eqv__row::before { left: 18px; }
+  }
+  @media (min-width: 1200px) {
+    .eqh.is-short .eqh__xp small { display: none; }
+    .eqh.is-short .eqh__xp li { align-items: center; padding-block: clamp(14px, 1.3vw, 20px); }
+    .eqh.is-short .eqh__xp b br { display: none; }
+    .eqh.is-short .eqh__xp { padding-bottom: 14px !important; }
+    .eqh.is-tight .eqh__xp li { padding-block: 10px; }
+    .eqh.is-tight .eqh__xi { width: 36px; }
   }
 </style>

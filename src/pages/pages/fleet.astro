@@ -227,6 +227,23 @@ const steps = [
 </Layout>
 
 <script>
+  // Desktop: if the strip under the hero would run past the bottom of the screen, compact it so the whole hero fits.
+  {
+    const h = document.querySelector('.eqh'), s = h && h.querySelector('.eqh__xp > *');
+    const fit = () => {
+      if (!h || !s) return;
+      h.classList.remove('is-short', 'is-tight');
+      if (innerWidth >= 1200) {
+        const over = () => h.getBoundingClientRect().bottom + scrollY > innerHeight + 1;
+        if (over()) { h.classList.add('is-short'); if (over()) h.classList.add('is-tight'); }
+      }
+      dispatchEvent(new Event('eqh-fit'));
+    };
+    fit(); addEventListener('resize', fit); addEventListener('load', fit);
+    if (document.fonts) document.fonts.ready.then(fit);
+  }
+</script>
+<script>
   // AI Fleet Expert: which truck fits: typed example placeholder, a short "checking the fleet" state, then the chat assistant answers.
   {
     const f = document.querySelector('[data-eqa]');
@@ -703,4 +720,12 @@ const steps = [
   }
   /* the floor stripe and wall fade out behind the headline */
   @media (min-width: 1200px) { .eqh :global(.eqh__sr .sr__cv)::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(90deg, #121416 0%, #121416 16%, rgba(18, 20, 22, .7) 26%, rgba(18, 20, 22, 0) 36%); } }
+  @media (min-width: 1200px) {
+    .eqh.is-short .eqh__xp small { display: none; }
+    .eqh.is-short .eqh__xp li { align-items: center; padding-block: clamp(14px, 1.3vw, 20px); }
+    .eqh.is-short .eqh__xp b br { display: none; }
+    .eqh.is-short .eqh__xp { padding-bottom: 14px !important; }
+    .eqh.is-tight .eqh__xp li { padding-block: 10px; }
+    .eqh.is-tight .eqh__xi { width: 36px; }
+  }
 </style>
