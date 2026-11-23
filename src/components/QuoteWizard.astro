@@ -1027,6 +1027,10 @@ const photos = [
       if (qp.get('from') === 'builder') { state.type = 'lane-closure'; state.step = 1; }
       const qt = qp.get('type'); if (qt && FLOW[qt]) { state.type = qt; if (state.step < 1) state.step = 1; }
     }
+    // From a lane closure service page: /pages/request-a-quote?type=lane-closure&scope=<service slug> starts fresh with that scope picked.
+    { const SC = { 'lane-and-road-closures': 'Lane Or Road Closure', 'tma-protection': 'TMA Protection', 'flagging-operations': 'Flagging Operation', 'sign-and-barricade-installs': 'Sign And Barricade Install', 'special-events': 'Special Event', 'night-and-weekend-work': 'Night Or Weekend Work', 'traffic-control-plans': 'Traffic Control Plan' };
+      const sc = root.dataset.fromParam ? SC[qp.get('scope')] : null;
+      if (sc) { state.type = 'lane-closure'; state.step = 1; state.job = { sel: {}, scope: [sc] }; history.replaceState(null, '', location.pathname + '?type=lane-closure'); } }
     if (preset !== 'general' && state.step < 1) { state.type = preset; state.step = 1; }
     delete state.job.cat; state.job.sel = state.job.sel || {};
     let lastStep = state.step, seen = new Set();

@@ -37,7 +37,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
         <h1><span class="sv__ln lch__ln"><span>{s.h1[0]}</span></span> <span class="sv__ln lch__ln"><span>{s.h1[1]}</span></span></h1>
         <p class="sv__lede">{s.lede}</p>
         <div class="sv__acts">
-          <a href="#quote" class="sv__btn sv__btn--solid">Get A Quote<Fragment set:html={ARROW} /></a>
+          <a href={`${SERVICE_QUOTE}&scope=${s.slug}`} class="sv__btn sv__btn--solid">Get A Quote<Fragment set:html={ARROW} /></a>
           <a href={cta2[1]} class="sv__btn sv__btn--line">{cta2[0]}</a>
         </div>
         <p class="sv__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
@@ -80,7 +80,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
         <ul class="svi__list">
           {s.incl.map((t, i) => <li style={`--i:${i}`}><span class="svi__chk" set:html={CHK}></span>{t}</li>)}
         </ul>
-        <a href="#quote" class="sv__btn sv__btn--red">Get A Quote<Fragment set:html={ARROW} /></a>
+        <a href={`${SERVICE_QUOTE}&scope=${s.slug}`} class="sv__btn sv__btn--red">Get A Quote<Fragment set:html={ARROW} /></a>
       </div>
     </div>
   </section>
@@ -137,39 +137,21 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
       <div class="svq__copy">
         <p class="sv-k sv-k--gold"><span></span>Free quote</p>
         <h2>Tell Us About The Job. <em>We’ll Price It Fast.</em></h2>
-        <p class="svq__lede">Send a few details and our lane closure team will get back to you with a quote for {s.title.toLowerCase()}.</p>
+        <p class="svq__lede">Tell us about the road and the closure, and our lane closure team will get back to you with a quote for {s.title}.</p>
         <ul class="svq__pts">
           <li><span set:html={CHK}></span>No obligation, no cost</li>
           <li><span set:html={CHK}></span>Priced by the shift or by the job</li>
           <li><span set:html={CHK}></span>NJ, NY, PA, CT and DE</li>
         </ul>
-        <p class="svq__alt">Need products or rentals too? <a href={SERVICE_QUOTE}>Use the full Quote Builder</a></p>
-        <p class="svq__alt">Or call our office at <a href={PHONE_TEL}>{PHONE}</a></p>
+                <p class="svq__alt">Or call our office at <a href={PHONE_TEL}>{PHONE}</a></p>
       </div>
-      <form class="svq__form" data-sv-form data-service={s.title} novalidate={false}>
-        <input type="hidden" name="topic" value={`Lane closure quote: ${s.title}`} />
-        <div class="svq__row">
-          <label>Name<input name="name" required autocomplete="name" /></label>
-          <label>Company<input name="company" autocomplete="organization" /></label>
-        </div>
-        <div class="svq__row">
-          <label>Email<input name="email" type="email" required autocomplete="email" /></label>
-          <label>Phone<input name="phone" type="tel" required autocomplete="tel" /></label>
-        </div>
-        <div class="svq__row">
-          <label>Job location<input name="location" required placeholder="Road, town and state" /></label>
-          <label>When is the work?<input name="timing" placeholder="Dates or rough timing" /></label>
-        </div>
-        <label>Service
-          <select name="service">
-            {SERVICES.map((o) => <option selected={o.slug === s.slug}>{o.title}</option>)}
-          </select>
-        </label>
-        <label>About the job<textarea name="message" rows="4" required placeholder="What work is being done, which lanes, how long"></textarea></label>
-        <button type="submit" class="sv__btn sv__btn--red svq__send" data-submit>Request My Quote<Fragment set:html={ARROW} /></button>
-        <p class="svq__ok" data-ok hidden>Thanks. Your request is in, and our lane closure team will be in touch.</p>
-        <p class="svq__err" data-err hidden>We couldn’t send that automatically, so we opened an email for you instead. You can also call {PHONE}.</p>
-      </form>
+      <div class="svq__cta">
+        <span class="svq__cta-k">Quote Builder</span>
+        <b>Build Your Lane Closure Quote</b>
+        <p>Pick the road, the closure and the schedule. It takes about two minutes, and {s.title} is already selected for you.</p>
+        <a href={`${SERVICE_QUOTE}&scope=${s.slug}`} class="sv__btn sv__btn--red svq__go">Build A Quote<Fragment set:html={ARROW} /></a>
+        <span class="svq__cta-note">No obligation. Priced by a real person.</span>
+      </div>
     </div>
   </section>
 
@@ -402,4 +384,12 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
     [data-rv] [style*="--i"], [data-rv] .sv-head, .svi__ph, .svi__ph img, .svq__form { opacity: 1; transform: none; transition: none; }
     .svp__steps::before { transform: none; transition: none; }
   }
+  /* Quote CTA card (replaces the inline form; sends people to the Quote Builder with the service picked). */
+  .svq__cta { display: grid; justify-items: start; gap: 12px; align-self: center; padding: clamp(24px, 3vw, 40px); border-radius: 22px; background: #fff; color: var(--ink); box-shadow: 0 30px 60px -34px rgba(0, 0, 0, .7); }
+  .svq__cta-k { font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 750; }
+  .svq__cta b { font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.1; letter-spacing: -.02em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .svq__cta p { margin: 0; color: var(--steel); line-height: 1.5; max-width: 42ch; }
+  .svq__go { margin-top: 6px; }
+  .svq__cta-note { font-size: .84rem; color: var(--steel); }
+  @media (max-width: 640px) { .svq__cta { justify-items: stretch; text-align: center; } .svq__cta p { margin-inline: auto; } .svq__go { justify-content: center; } }
 </style>
