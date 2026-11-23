@@ -112,13 +112,13 @@ const agencies = [
 <style>
   /* ================= HERO ================= */
   .lch { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
-  .lch::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/fleet/lc-hero.webp') 60% 46% / cover no-repeat; transform: scale(1.06); animation: lchZoom 18s ease-out forwards; }
-  .lch::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(122,4,4,.92) 0%, rgba(140,5,5,.78) 32%, rgba(90,4,4,.35) 55%, rgba(12,12,14,.12) 78%), linear-gradient(0deg, rgba(10,10,12,.5), transparent 45%); }
+  .lch::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/fleet/lc-hero2.webp') 62% 50% / cover no-repeat; transform: scale(1.06); animation: lchZoom 18s ease-out forwards; }
+  .lch::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(10,11,13,.92) 0%, rgba(10,11,13,.78) 32%, rgba(10,11,13,.38) 58%, rgba(10,11,13,.08) 80%), linear-gradient(0deg, rgba(8,9,10,.6), transparent 45%); }
   @keyframes lchZoom { to { transform: scale(1); } }
   .lch__in { position: relative; display: grid; grid-template-columns: minmax(0, 720px); align-items: center; min-height: clamp(420px, 44vw, 600px); padding-block: clamp(40px, 5vw, 76px); }
   .lch__k { color: var(--gold); font-size: clamp(.92rem, 1.05vw, 1.05rem); letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; margin: 0 0 12px; }
   .lch h1 { font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 790; margin: 0 0 16px; text-wrap: balance; color: #fff; }
-  .lch__lede { color: #fde0db; font-size: clamp(1.05rem, 1.35vw, 1.24rem); line-height: 1.5; max-width: 46ch; margin: 0 0 26px; text-wrap: balance; }
+  .lch__lede { color: rgba(255,255,255,.86); font-size: clamp(1.05rem, 1.35vw, 1.24rem); line-height: 1.5; max-width: 46ch; margin: 0 0 26px; text-wrap: balance; }
 
   /* load-in animation (matches homepage header) */
   .lch__k { opacity: 0; animation: lchFade .8s .2s ease forwards; }
@@ -149,7 +149,7 @@ const agencies = [
   .lway--solid .lway__t b { color: var(--red); }
   .lway__go { width: 18px; height: 18px; transition: transform .2s; }
   .lway:hover .lway__go { transform: translateX(3px); }
-  .lch__call { margin: 14px 0 0; font-size: .95rem; color: #fbd2cc; }
+  .lch__call { margin: 14px 0 0; font-size: .95rem; color: rgba(255,255,255,.78); }
   .lch__call a { color: #fff; font-variation-settings: 'wght' 700; text-decoration: underline; text-underline-offset: 3px; }
 
   @keyframes lchPop { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: none; } }
@@ -177,8 +177,8 @@ const agencies = [
   
 
 
-  @media (max-width: 1100px) { .lch::after { background: linear-gradient(180deg, rgba(120,4,4,.88) 0%, rgba(120,4,4,.7) 40%, rgba(20,10,10,.35) 100%); } }
-  @media (max-width: 640px) { .lch::before { background-image: url('/fleet/lc-hero-m.webp'); } }
+  @media (max-width: 1100px) { .lch::after { background: linear-gradient(180deg, rgba(10,11,13,.86) 0%, rgba(10,11,13,.66) 42%, rgba(8,9,10,.55) 100%); } }
+  @media (max-width: 640px) { .lch::before { background-image: url('/fleet/lc-hero2-m.webp'); background-position: 50% 50%; } }
   @media (prefers-reduced-motion: reduce) { .lch::before { animation: none; transform: none; } }
   @media (max-width: 640px) { .lch :global(.jb) { order: 3; margin-top: 10px !important; } }
   /* Proof bar: certification seals + road owners, glass panel along the bottom of the header. */
