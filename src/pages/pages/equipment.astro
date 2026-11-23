@@ -131,6 +131,26 @@ import Showroom from '../../components/Showroom.astro';
             </a>
           </li>
         ))}
+        <li style={`--i:${equipment.length}`}>
+          <a href="/pages/fleet" class="eqx eqx--fleet">
+            <span class="eqx__img"><img src="/fleet/tma-side.png" alt="" loading="lazy" /></span>
+            <span class="eqx__txt">
+              <b>Need A Work Vehicle For Your Job?</b>
+              <small>TMA crash trucks, bucket trucks and more, ready to roll.</small>
+              <span class="eqx__btn">See Our Fleet<Fragment set:html={ARROW} /></span>
+            </span>
+          </a>
+        </li>
+        <li style={`--i:${equipment.length + 1}`}>
+          <a href="/pages/contact" class="eqx eqx--ask">
+            <span class="eqx__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.3 9.4a1.9 1.9 0 1 1 2.6 1.8c-.6.3-.9.7-.9 1.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="11" cy="14.3" r=".9" fill="currentColor"/></svg></span>
+            <span class="eqx__txt">
+              <b>Don’t See What You’re Looking For?</b>
+              <small>Not everything we have available is on our website. Contact us and we’ll see if we can get what you need.</small>
+              <span class="eqx__btn">Contact Us<Fragment set:html={ARROW} /></span>
+            </span>
+          </a>
+        </li>
       </ul>
     </div>
   </section>
@@ -854,5 +874,39 @@ import Showroom from '../../components/Showroom.astro';
     .eqft b { grid-column: 2; grid-row: 2; font-size: 1.02rem; }
     .eqft small { display: none; }
     .eqft__mode { grid-column: 2; grid-row: 3; margin: 0; }
+  }
+  /* Lineup extras: fleet cross-sell and "don't see it" tiles, same size as the equipment tiles. */
+  .eqx { position: relative; display: grid; grid-template-rows: auto 1fr; height: 100%; min-height: 100%; border-radius: 20px; overflow: hidden; text-decoration: none; transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s, border-color .3s; }
+  .eqx:hover { transform: translateY(-6px); box-shadow: 0 28px 50px -30px rgba(20, 23, 26, .55); }
+  .eqx__txt { display: grid; align-content: start; justify-items: start; gap: 8px; padding: 8px 20px 20px; }
+  .eqx__txt b { font-size: clamp(1.08rem, 1.25vw, 1.25rem); line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 750; font-weight: 400; text-wrap: balance; }
+  .eqx__txt small { font-size: .9rem; line-height: 1.4; }
+  .eqx__btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; padding: 10px 18px; border-radius: 999px; font-size: .9rem; font-variation-settings: 'wght' 700; }
+  .eqx__btn :global(svg) { width: 15px; height: 15px; transition: transform .2s; }
+  .eqx:hover .eqx__btn :global(svg) { transform: translateX(3px); }
+  .eqx--fleet { color: #fff; background: radial-gradient(120% 90% at 50% 0%, #c8140f 0%, #8f0707 55%, #5c0303 100%); border: 1px solid #7a0505; }
+  .eqx--fleet .eqx__img { display: grid; place-items: center; padding: 18px 14px 4px; }
+  .eqx--fleet .eqx__img img { display: block; width: 100%; height: clamp(150px, 12.5vw, 210px); object-fit: contain; filter: drop-shadow(0 16px 14px rgba(0, 0, 0, .45)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqx--fleet:hover .eqx__img img { transform: translateY(-6px) scale(1.04); }
+  .eqx--fleet small { color: rgba(255, 255, 255, .8); }
+  .eqx--fleet .eqx__btn { background: #fff; color: var(--red); }
+  .eqx--ask { grid-template-rows: 1fr; align-content: center; color: var(--ink); background: linear-gradient(185deg, #f6f7f8, #fff 70%); border: 1.5px dashed var(--line-dark); }
+  .eqx--ask:hover { border-color: var(--red); background: linear-gradient(185deg, var(--red-tint), #fff 75%); }
+  .eqx--ask { display: flex; flex-direction: column; justify-content: center; padding: clamp(18px, 2vw, 26px) 0; }
+  .eqx--ask .eqx__ic { display: grid; place-items: center; width: 46px; height: 46px; margin: 0 20px 6px; border-radius: 14px; background: var(--red-tint); color: var(--red); }
+  .eqx--ask .eqx__ic svg { width: 24px; height: 24px; }
+  .eqx--ask .eqx__txt { padding-block: 0; }
+  .eqx--ask small { color: var(--steel); }
+  .eqx--ask .eqx__btn { background: var(--red); color: #fff; }
+  @media (max-width: 640px) {
+    .eqx { border-radius: 16px; }
+    .eqx__txt { padding: 6px 12px 14px; gap: 6px; }
+    .eqx__txt b { font-size: .98rem; }
+    .eqx__txt small { display: none; }
+    .eqx--fleet .eqx__img { padding: 12px 10px 4px; }
+    .eqx--fleet .eqx__img img { height: 110px; }
+    .eqx__btn { padding: 8px 12px; font-size: .8rem; }
+    .eqx--ask .eqx__ic { margin: 0 12px 4px; width: 40px; height: 40px; }
+    .eqx--ask .eqx__txt { padding-block: 0; }
   }
 </style>
