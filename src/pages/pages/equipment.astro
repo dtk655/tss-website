@@ -842,4 +842,17 @@ import Showroom from '../../components/Showroom.astro';
   /* Even rhythm: the AI card shares the lineup's white band, and How Renting Works shares the TMA's. */
   .eqa { padding-top: 0 !important; padding-bottom: clamp(56px, 7vw, 100px) !important; }
   .eqs { padding-top: 0 !important; }
+  /* Fleet teaser on desktop: slim horizontal cards, one row. */
+  @media (min-width: 900px) {
+    .eqf { padding-block: clamp(48px, 5vw, 72px) !important; }
+    .eqf .eq-head { margin-bottom: clamp(20px, 2vw, 28px); }
+    .eqf .eq-head h2 { font-size: clamp(2rem, 3.4vw, 3.2rem); }
+    .eqf__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .eqft { grid-template-columns: clamp(110px, 10vw, 150px) minmax(0, 1fr); grid-template-rows: 1fr auto auto 1fr; column-gap: 16px; row-gap: 4px; padding: 12px; border-radius: 18px; }
+    .eqft__img { grid-row: 1 / -1; margin: 0; padding: 6px; border-radius: 12px; }
+    .eqft__img img { height: clamp(78px, 7vw, 100px); }
+    .eqft b { grid-column: 2; grid-row: 2; font-size: 1.02rem; }
+    .eqft small { display: none; }
+    .eqft__mode { grid-column: 2; grid-row: 3; margin: 0; }
+  }
 </style>
