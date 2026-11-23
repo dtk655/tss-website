@@ -26,6 +26,15 @@ const fleet = (fleetCol?.products || []).map((p, i) => ({
   cut: !!cutouts[p.handle],
   tint: tints[i % tints.length]
 }));
+// Equipment teaser: boards, towers and trailers (everything in Equipment Rentals that isn't a truck).
+const equipCol = colByHandle.get('equipment-rentals');
+const fleetHandles = new Set(fleet.map((f) => f.handle));
+const equipment = (equipCol?.products || []).filter((p) => !fleetHandles.has(p.handle)).slice(0, 4).map((p) => ({
+  href: `/products/${p.handle}`,
+  title: p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim(),
+  img: cutouts[p.handle] || (p.featuredImage ? img(p.featuredImage.url, 400) : ''),
+  cut: !!cutouts[p.handle]
+}));
 const byHandle = Object.fromEntries(fleet.map((f) => [f.handle, f]));
 // "Which truck do I need?" guide; each card only shows if that truck is in the fleet collection.
 const guide = [
@@ -188,6 +197,32 @@ const steps = [
       </ul>
     </div>
   </section>
+
+  <!-- ================= EQUIPMENT TEASER ================= -->
+  {equipment.length > 0 && (
+  <section class="eqf" data-in id="equipment">
+    <div class="wrap">
+      <div class="eq-head">
+        <div>
+          <p class="eq-k eq-k--light"><span></span>The equipment</p>
+          <h2>Boards and towers, <em>ready to go.</em></h2>
+        </div>
+        <a href="/pages/equipment" class="eq-link eq-link--light">See the equipment<Fragment set:html={ARROW} /></a>
+      </div>
+      <ul class="eqf__grid">
+        {equipment.map((e, i) => (
+          <li style={`--i:${i}`}>
+            <a href={e.href} class="eqft">
+              <span class="eqft__img"><img src={e.img} alt="" loading="lazy" data-fit class={e.cut ? '' : 'is-blend'} /></span>
+              <b>{e.title}</b>
+              <span class="eqft__mode">Buy or rent<Fragment set:html={ARROW} /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+  )}
 
   <!-- ================= HOW IT WORKS ================= -->
   <section class="eqs" data-in>
@@ -728,4 +763,28 @@ const steps = [
     .eqh.is-tight .eqh__xp li { padding-block: 10px; }
     .eqh.is-tight .eqh__xi { width: 36px; }
   }
+  /* Equipment teaser (mirrors the fleet teaser on the Equipment page): slim cards, one row on desktop. */
+  .eqf { padding: clamp(48px, 5vw, 72px) 0; background: linear-gradient(180deg, #15181c, #1d2126); color: #fff; }
+  .eqf .eq-head { margin-bottom: clamp(20px, 2vw, 28px); }
+  .eqf .eq-head h2 { font-size: clamp(2rem, 3.4vw, 3.2rem); }
+  .eqf__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqft { display: grid; gap: 6px; height: 100%; padding: 12px; border-radius: 16px; text-decoration: none; color: #fff; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); transition: background .3s, border-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1); }
+  .eqft:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .25); transform: translateY(-5px); }
+  .eqft__img { display: grid; place-items: center; padding: 6px; border-radius: 12px; overflow: hidden; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, .82)); }
+  .eqft__img img { display: block; width: 100%; height: 120px; object-fit: contain; transform: var(--ft, translate(0, 0)); filter: drop-shadow(0 10px 10px rgba(0, 0, 0, .25)); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .eqft__img img.is-blend { mix-blend-mode: multiply; filter: none; }
+  .eqft:hover .eqft__img img { transform: translateY(-3px) var(--ft, translate(0, 0)) scale(1.05); }
+  .eqft b { font-size: .98rem; line-height: 1.2; font-variation-settings: 'wght' 740; font-weight: 400; }
+  .eqft__mode { display: inline-flex; align-items: center; gap: 4px; color: var(--gold, #f5b800); font-size: .88rem; font-variation-settings: 'wght' 700; }
+  .eqft__mode :global(svg) { width: 14px; height: 14px; transition: transform .2s; }
+  .eqft:hover .eqft__mode :global(svg) { transform: translateX(3px); }
+  @media (min-width: 900px) {
+    .eqft { grid-template-columns: clamp(96px, 8vw, 130px) minmax(0, 1fr); grid-template-rows: 1fr auto auto 1fr; column-gap: 14px; row-gap: 4px; border-radius: 18px; }
+    .eqft__img { grid-row: 1 / -1; }
+    .eqft__img img { height: clamp(72px, 6vw, 92px); }
+    .eqft b { grid-column: 2; grid-row: 2; }
+    .eqft__mode { grid-column: 2; grid-row: 3; }
+  }
+  @media (min-width: 1200px) { .eqf__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .eqf .eq-head { justify-content: center; text-align: center; } .eqf .eq-k { justify-content: center; } }
 </style>
