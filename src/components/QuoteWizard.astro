@@ -727,15 +727,30 @@ const photos = [
     .qs-clock { width: 38px; height: 38px; }
     .qs-pics.is-logo .qs-pic small, .qs-pics.is-mini .qs-pic small, .qs-pics.is-clock .qs-pic small, .qs-pics.is-badge .qs-pic small { font-size: .76rem; }
   }
-  .qs-pics.is-scope .qs-pic > span { grid-template-columns: 40px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 2px; padding: 12px 40px 12px 12px; }
-  .qs-pics.is-scope .qs-pic .qs-ico { grid-row: 1 / span 2; }
-  .qs-pics.is-scope .qs-pic b { padding-right: 0; font-size: .94rem; }
-  .qs-pics.is-scope .qs-pic small { margin-top: 0; font-size: .8rem; }
-  .qs-pics.is-scope .qs-pic .qs-tick { top: 50%; transform: translateY(-50%); }
-  .qs-pics.is-scope .qs-pic input:checked + span .qs-tick { transform: translateY(-50%) scale(1.08); }
   [data-qs-field]:not([hidden]) { animation: qsReveal .45s cubic-bezier(.2, .8, .2, 1) both; }
   @keyframes qsReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  @media (max-width: 640px) { .qs-pics.is-scope { grid-template-columns: 1fr; } }
+  /* Scope of work: photo tiles. */
+  .qs-pics.is-photo { gap: 10px; }
+  .qs-pics.is-photo .qs-pic > span { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 3px; min-height: 0; aspect-ratio: 16 / 10.5; padding: 14px 16px; border: 0; border-radius: 16px; overflow: hidden; isolation: isolate; background: #14171a; color: #fff; box-shadow: 0 0 0 1px rgba(20, 23, 26, .08); transition: box-shadow .3s, transform .4s cubic-bezier(.2, .8, .2, 1); }
+  .qs-pics.is-photo .qs-pic > span:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -20px rgba(20, 23, 26, .6); }
+  .qs-ph { position: absolute; inset: 0; z-index: -1; }
+  .qs-ph img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.02); filter: saturate(.92); transition: transform .8s cubic-bezier(.2, .8, .2, 1), filter .4s; }
+  .qs-ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 12, 14, .05) 20%, rgba(10, 12, 14, .55) 55%, rgba(10, 12, 14, .92) 100%); transition: background .4s; }
+  .qs-pics.is-photo .qs-pic > span:hover .qs-ph img { transform: scale(1.07); }
+  .qs-pics.is-photo .qs-pic b { padding-right: 0; color: #fff; font-size: 1rem; line-height: 1.15; letter-spacing: -.01em; text-shadow: 0 1px 10px rgba(0, 0, 0, .35); }
+  .qs-pics.is-photo .qs-pic small { margin: 0; color: rgba(255, 255, 255, .78); font-size: .8rem; line-height: 1.3; }
+  .qs-pics.is-photo .qs-pic .qs-tick { top: 12px; right: 12px; width: 24px; height: 24px; border: 1.5px solid rgba(255, 255, 255, .85); background: rgba(10, 12, 14, .25); backdrop-filter: blur(4px); }
+  .qs-pics.is-photo .qs-pic input:checked + span { box-shadow: 0 0 0 2.5px var(--red), 0 18px 34px -20px rgba(182, 6, 6, .7); }
+  .qs-pics.is-photo .qs-pic input:checked + span .qs-ph::after { background: linear-gradient(180deg, rgba(120, 4, 4, .12) 20%, rgba(90, 4, 4, .6) 58%, rgba(40, 2, 2, .94) 100%); }
+  .qs-pics.is-photo .qs-pic input:checked + span .qs-ph img { filter: saturate(1.05); }
+  .qs-pics.is-photo .qs-pic input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .45); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    .qs-pics.is-photo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .qs-pics.is-photo .qs-pic > span { aspect-ratio: 1 / 1; padding: 11px 12px; border-radius: 14px; }
+    .qs-pics.is-photo .qs-pic b { font-size: .9rem; }
+    .qs-pics.is-photo .qs-pic small { display: none; }
+    .qs-pics.is-photo .qs-pic .qs-tick { top: 9px; right: 9px; width: 22px; height: 22px; }
+  }
 </style>
 
 <script>
@@ -871,10 +886,11 @@ const photos = [
   const FLOW = {
     'lane-closure': [
       { name: 'Scope and road', k: 'Lane closure', title: 'What\u2019s the scope of work?', lead: 'Pick everything the job involves. Then tell us whose road it\u2019s on.', fields: [
-        { id: 'scope', label: 'Scope of work', type: 'pics', multi: true, req: true, n: 3, cls: 'is-scope', opts: [
-          { v: 'Lane or road closure', s: 'Single lane to full detours', icon: ICON.cone }, { v: 'Flagging operation', s: 'Certified flaggers direct traffic', icon: ICON.flag }, { v: 'TMA protection', s: 'Crash trucks with certified operators', icon: ICON.truck },
-          { v: 'Traffic control plan', s: 'Permit-ready drawings', icon: ICON.plan }, { v: 'Special event', s: 'Parades, races and game days', icon: ICON.star }, { v: 'Sign and barricade install', s: 'Delivered, set and maintained', icon: ICON.sign },
-          { v: 'Night or weekend work', s: 'Off-peak closure windows', icon: ICON.moon }, { v: 'Emergency response', s: 'For onboarded TSS accounts', icon: ICON.bolt }, { v: 'Not sure', s: 'Describe it and we\u2019ll recommend', icon: ICON.q }] },
+        { id: 'scope', label: 'Scope of work', type: 'pics', multi: true, req: true, n: 3, cls: 'is-photo', opts: [
+          ['Lane or road closure', 'Single lane to full detours', '/fleet/sv-roadclosed.webp', '48% 55%'], ['Flagging operation', 'Certified flaggers direct traffic', '/fleet/sv-flag.webp', '62% 62%'], ['TMA protection', 'Crash trucks with certified operators', '/fleet/sv-tma-rear.webp', '55% 48%'],
+          ['Traffic control plan', 'Permit-ready drawings', 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg?width=600', '50% 50%'], ['Special event', 'Parades, races and game days', '/fleet/sv-event.webp', '50% 50%'], ['Sign and barricade install', 'Delivered, set and maintained', '/fleet/sv-signs.webp', '60% 50%'],
+          ['Night or weekend work', 'Off-peak closure windows', '/fleet/sv-night.webp', '50% 45%'], ['Emergency response', 'For onboarded TSS accounts', '/fleet/sv-snow.webp', '50% 60%'], ['Not sure', 'Describe it and we\u2019ll recommend', '/fleet/team-photo.webp', '50% 40%']
+        ].map(([v, s, src, pos]) => ({ v, s, art: `<span class="qs-ph"><img src="${src}" alt="" loading="lazy" style="object-position:${pos}"></span>` })) },
         { id: 'authority', label: 'Whose road is the work on?', type: 'pics', req: true, showIf: { scope: '*' }, n: 4, cls: 'is-logo', opts: Object.values(LC_AUTH).map((x) => ({ v: x.v, s: x.by, art: lcLogo(x) })) },
         { id: 'location', label: 'Road or route, plus milepost, exit or cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd, or MP 142.3', showIf: { scope: '*' } },
         { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT', 'DE'], areaMsg: 'Our lane closure crews work in NJ, NY, PA, CT and DE. Send it anyway and we’ll let you know.', showIf: { scope: '*' } },
