@@ -111,6 +111,10 @@ const agencies = [
 </Layout>
 
 
+<script>
+  // Phone: let the lane closure header fill the screen below the site header.
+  { const h = document.querySelector('.lch'); const set = () => { if (h) h.style.setProperty('--lch-top', Math.round(h.getBoundingClientRect().top + scrollY) + 'px'); }; set(); addEventListener('resize', set); addEventListener('load', set); }
+</script>
 <style>
   /* ================= HERO ================= */
   .lch { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
@@ -282,5 +286,15 @@ const agencies = [
     .lch__ways .lway { justify-content: center; padding: 14px 10px; }
     .lch__ways .lway__ic { display: none; }
     .lch__ways .lway__t { text-align: center; }
+  }
+  /* Phone: header fills the first screen, content spread evenly. */
+  @media (max-width: 640px) {
+    .lch { display: flex; flex-direction: column; min-height: calc(100svh - var(--lch-top, 150px)); }
+    .lch__in { flex: 1; justify-content: space-evenly; gap: 14px; padding-block: 22px 18px; }
+    .lch__in, .lch__proof { width: 100%; box-sizing: border-box; }
+    .lch__k { margin-bottom: 0 !important; }
+    .lch h1 { font-size: clamp(1.8rem, 8vw, 2.2rem); }
+    .lch__lede { margin-bottom: 0 !important; }
+    .lch__proof { padding-bottom: 20px; }
   }
 </style>
