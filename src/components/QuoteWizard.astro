@@ -706,6 +706,27 @@ const photos = [
     .qs-nav .qs-skip { display: none; }
     .qs-nav:not(:has(.qs-back)) .qs-btn { flex: 1; justify-content: center; }
   }
+  /* Lane closure cards: road-owner logos, closure diagrams, clocks and service badges (match the free plan tool). */
+  .qs-pics.is-logo, .qs-pics.is-mini, .qs-pics.is-clock, .qs-pics.is-badge { gap: 8px; }
+  .qs-pics.is-logo .qs-pic > span, .qs-pics.is-mini .qs-pic > span, .qs-pics.is-clock .qs-pic > span, .qs-pics.is-badge .qs-pic > span { align-content: start; gap: 8px; padding: 12px; }
+  .qs-logo { display: flex; align-items: center; height: 50px; }
+  .qs-logo img { max-height: 50px; max-width: 112px; object-fit: contain; }
+  .qs-shield { display: grid; place-items: center; min-width: 50px; height: 50px; padding: 0 8px; border-radius: 12px; background: var(--ink); color: #fff; font-size: .9rem; letter-spacing: .02em; font-variation-settings: 'wght' 800; }
+  .qs-shield--red { background: var(--red); }
+  .qs-shield--gold { background: var(--gold, #f5b800); color: var(--ink); }
+  .qs-clock { width: 46px; height: 46px; }
+  .qs-mini { display: block; }
+  .qs-mini svg { display: block; width: 100%; height: auto; max-height: 64px; border-radius: 6px; }
+  .qs-pics.is-logo .qs-pic small, .qs-pics.is-mini .qs-pic small, .qs-pics.is-clock .qs-pic small, .qs-pics.is-badge .qs-pic small { margin-top: -4px; font-size: .8rem; }
+  .qs-pics.is-logo .qs-pic b, .qs-pics.is-mini .qs-pic b, .qs-pics.is-clock .qs-pic b, .qs-pics.is-badge .qs-pic b { font-size: .92rem; }
+  .qs-pic input:checked + span .qs-mini svg { box-shadow: 0 0 0 2px rgba(182, 6, 6, .25); }
+  @media (max-width: 640px) {
+    .qs-logo { height: 40px; }
+    .qs-logo img { max-height: 40px; max-width: 92px; }
+    .qs-shield { min-width: 40px; height: 40px; font-size: .78rem; }
+    .qs-clock { width: 38px; height: 38px; }
+    .qs-pics.is-logo .qs-pic small, .qs-pics.is-mini .qs-pic small, .qs-pics.is-clock .qs-pic small, .qs-pics.is-badge .qs-pic small { font-size: .76rem; }
+  }
 </style>
 
 <script>
@@ -768,6 +789,61 @@ const photos = [
     return s + '</svg>';
   }
 
+  // Lane closure: road owners with their logos, closure diagrams, duration clocks (same visuals as the free plan tool).
+  const RCDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
+  const LC_AUTH = {
+    njtp: { v: 'NJ Turnpike', by: 'NJ Turnpike Authority', logo: RCDN + 'Untitled_design_26.png' },
+    gsp: { v: 'Garden State Parkway', by: 'NJ Turnpike Authority', logo: RCDN + 'Untitled_design_23.png' },
+    njdot: { v: 'NJDOT', by: 'NJ state highway or interstate', logo: RCDN + 'Untitled_design_27.png' },
+    thruway: { v: 'NYS Thruway', by: 'NYS Thruway Authority', logo: RCDN + 'Untitled_design_24.png' },
+    nysdot: { v: 'NYSDOT', by: 'NY state highway or interstate', logo: RCDN + 'Untitled_design_29.png' },
+    panynj: { v: 'Port Authority', by: 'Bridge, tunnel or airport', logo: RCDN + 'Untitled_design_28.png' },
+    penndot: { v: 'PennDOT', by: 'PA state road or interstate', logo: RCDN + 'Untitled_design_30.png' },
+    ctdot: { v: 'CTDOT', by: 'CT state road or interstate', badge: 'CT' },
+    deldot: { v: 'DelDOT', by: 'Delaware state road', badge: 'DE' },
+    local: { v: 'County or town road', by: 'County or municipality', badge: 'CO', tone: 'red' },
+    private: { v: 'Private property or event', by: 'Owner or event organizer', badge: 'EV', tone: 'gold' },
+    unsure: { v: 'Not sure who owns it', by: 'We’ll confirm', badge: '?', tone: 'gold' }
+  };
+  const LC_WORK = [
+    ['shoulder', 'Shoulder work', 'On or just off the shoulder'], ['right', 'Right lane closure', 'Close the right travel lane'], ['left', 'Left lane closure', 'Close the left or fast lane'], ['interior', 'Center lane', 'Traffic on both sides'],
+    ['double', 'Two or more lanes', 'Two lanes, one direction'], ['flagging', 'One lane, flaggers', 'Two-lane road, alternate traffic'], ['full', 'Full road closure', 'Close the road with a detour'], ['intersection', 'Intersection work', 'In or next to an intersection'],
+    ['ramp', 'Ramp work', 'Entrance or exit ramp'], ['sidewalk', 'Sidewalk or crosswalk', 'Pedestrian route closed'], ['mobile', 'Moving operation', 'Striping, sweeping, inspections'], ['unsure', 'Not sure', 'Describe it, we’ll recommend']
+  ];
+  const lcBadge = (txt, tone) => `<span class="qs-logo"><span class="qs-shield${tone ? ' qs-shield--' + tone : ''}">${txt}</span></span>`;
+  const lcLogo = (x) => x.logo ? `<span class="qs-logo"><img src="${x.logo}" alt="" loading="lazy"></span>` : lcBadge(x.badge, x.tone);
+  const lcClock = (frac) => { const a = frac * Math.PI * 2 - Math.PI / 2, lg = frac > .5 ? 1 : 0; const x = 23 + 17 * Math.cos(a), y = 23 + 17 * Math.sin(a); return `<span class="qs-logo"><svg class="qs-clock" viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="20" fill="#f5f6f7" stroke="#cfd4d9" stroke-width="2"/>${frac >= 1 ? '<circle cx="23" cy="23" r="17" fill="#b60606"/>' : `<path d="M23 23 L23 6 A17 17 0 ${lg} 1 ${x.toFixed(1)} ${y.toFixed(1)} Z" fill="#b60606"/>`}<circle cx="23" cy="23" r="3" fill="#14171a"/></svg></span>`; };
+  function lcMini(type) {
+    const W = 96, H = 50;
+    let lanes = 3, closed = [], sh = false, flag = false, full = false, ped = false, mob = false, x = false, rp = false;
+    if (type === 'shoulder') sh = true;
+    else if (type === 'right') closed = [2];
+    else if (type === 'left') closed = [0];
+    else if (type === 'interior') closed = [1];
+    else if (type === 'double') closed = [1, 2];
+    else if (type === 'flagging') { lanes = 2; closed = [1]; flag = true; }
+    else if (type === 'full') full = true;
+    else if (type === 'intersection') { x = true; closed = [2]; }
+    else if (type === 'ramp') rp = true;
+    else if (type === 'sidewalk') { lanes = 2; ped = true; }
+    else if (type === 'mobile') mob = true;
+    const top = 6, lh = (H - 12 - (sh || ped ? 8 : 0)) / lanes;
+    let g = `<rect x="0" y="${top - 2}" width="${W}" height="${lanes * lh + 4 + (sh || ped ? 8 : 0)}" rx="5" fill="#2b3036"/>`;
+    for (let i = 1; i < lanes; i++) g += `<line x1="4" x2="${W - 4}" y1="${top + i * lh}" y2="${top + i * lh}" stroke="${flag && i === 1 ? '#f5b800' : '#fff'}" stroke-width="1.4" stroke-dasharray="${flag ? '0' : '6 5'}"/>`;
+    const by = top + lanes * lh;
+    if (sh || ped) g += `<rect x="0" y="${by + 1}" width="${W}" height="8" fill="${ped ? '#c9ced3' : '#3a4047'}"/>`;
+    closed.forEach((c) => { const y = top + c * lh; g += `<path d="M24 ${c === 0 ? y : y + lh} L44 ${c === 0 ? y + lh : y} L${W - 8} ${c === 0 ? y + lh : y} L${W - 8} ${c === 0 ? y : y + lh} Z" fill="#b60606" opacity=".85"/>`; });
+    if (sh) g += `<path d="M30 ${by + 9} L44 ${by + 1} L${W - 8} ${by + 1} L${W - 8} ${by + 9} Z" fill="#b60606"/>`;
+    if (ped) g += `<rect x="30" y="${by + 1}" width="40" height="8" fill="#b60606"/><path d="M26 ${by - 2} q24 -10 48 0" stroke="#f5b800" stroke-width="2" fill="none" stroke-dasharray="3 3"/>`;
+    if (full) g += `<rect x="40" y="${top - 2}" width="6" height="${lanes * lh + 4}" fill="#f5b800"/><rect x="40" y="${top + 4}" width="6" height="5" fill="#fff"/><rect x="40" y="${top + 18}" width="6" height="5" fill="#fff"/><rect x="40" y="${top + 32}" width="6" height="5" fill="#fff"/><rect x="46" y="${top - 2}" width="${W - 46}" height="${lanes * lh + 4}" fill="#b60606" opacity=".75"/>`;
+    if (flag) g += `<circle cx="18" cy="${top + lh * 1.5}" r="4" fill="#f5b800"/><circle cx="${W - 4}" cy="${top + lh * .5}" r="4" fill="#f5b800"/>`;
+    if (x) g += `<rect x="58" y="0" width="18" height="${H}" fill="#2b3036"/><rect x="58" y="${top + 2 * lh}" width="18" height="${lh}" fill="#b60606" opacity=".85"/>`;
+    if (rp) g += `<path d="M20 ${by} L60 ${by} L90 ${H}" stroke="#2b3036" stroke-width="10" fill="none"/><path d="M48 ${by + 2} L60 ${by + 2} L84 ${H}" stroke="#b60606" stroke-width="6" fill="none"/>`;
+    if (mob) g += `<rect x="58" y="${top + 2 * lh + 2}" width="16" height="${lh - 4}" rx="2" fill="#f5b800"/><rect x="34" y="${top + 2 * lh + 2}" width="16" height="${lh - 4}" rx="2" fill="#fff"/><path d="M38 ${top + 2 * lh + lh / 2} h8 l-3 -3 m3 3 l-3 3" stroke="#b60606" stroke-width="1.6" fill="none"/>`;
+    if (type === 'unsure') g += `<text x="${W / 2}" y="${top + lanes * lh / 2 + 6}" text-anchor="middle" font-size="20" font-weight="800" fill="#f5b800">?</text>`;
+    return `<span class="qs-mini"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${g}</svg></span>`;
+  }
+
     const YARD_PRODUCTS = '601 Hadley Road, South Plainfield, NJ 07080';
     const YARD_EQUIP = '448 Hollywood Avenue, South Plainfield, NJ 07080';
   const SVC = [
@@ -780,28 +856,32 @@ const photos = [
   // Each service: two job steps between "Service" and "Your details".
   const FLOW = {
     'lane-closure': [
-      { name: 'The job', k: 'Lane closure', title: 'Tell us about the closure', lead: 'A few taps. The more we know, the sharper your price.', fields: [
-        { id: 'roadType', label: 'What kind of road?', type: 'pics', req: true, n: 4, opts: [
-          { v: 'Local road', art: road(2, false, false) }, { v: 'County road', art: road(2, false, true) }, { v: 'State highway', art: road(4, false, true) }, { v: 'Interstate or parkway', art: road(6, true, true) }] },
-        { id: 'speed', label: 'Posted speed limit', type: 'chips', opts: ['25 or less', '30 to 35', '40 to 45', '50 to 55', '60+', 'Not sure'] },
-        { id: 'lanes', label: 'What needs to close?', type: 'multi', req: true, opts: ['Right lane', 'Left lane', 'Center lane', 'Shoulder', 'Full road', 'Sidewalk or crosswalk', 'Not sure yet'] },
-        { id: 'crew', label: 'What should our crew handle?', type: 'pics', n: 4, opts: [
-          { v: 'Flaggers only', s: 'Certified flaggers direct traffic', icon: ICON.flag }, { v: 'Full closure setup', s: 'We set and remove the closure', icon: ICON.cone }, { v: 'Closure plus maintenance', s: 'Crew stays on site all shift', icon: ICON.crew }, { v: 'Traffic control plan', s: 'Drawings for your permit', icon: ICON.plan }] },
-        { id: 'equipment', label: 'Equipment you need from us', type: 'equip', opts: [
-          { v: 'TMA crash truck', img: IMG.tma, tint: T.red }, { v: 'Arrow board', img: IMG.arrow, tint: T.yellow }, { v: 'Message board (VMS)', img: IMG.vms, tint: T.orange }, { v: 'Cones or drums', img: IMG.cones, tint: T.orange },
-          { v: 'Barricades', img: IMG.barricades, tint: T.blue }, { v: 'Signs', img: IMG.signs, tint: T.red }, { v: 'Lights', img: IMG.tower, tint: T.yellow }, { v: 'We have our own', icon: ICON.box, tint: T.grey }] },
-        { id: 'work', label: 'Describe the work', type: 'textarea', req: true, ph: 'e.g. Crane pick over the right lane for rooftop HVAC units. Lane and sidewalk need to close.' }
+      { name: 'The road', k: 'Lane closure', title: 'Whose road is the work on?', lead: 'The road owner sets the permit, closure hours and standard drawings. Pick the closest match.', fields: [
+        { id: 'authority', label: 'Road owner', type: 'pics', req: true, n: 4, cls: 'is-logo', opts: Object.values(LC_AUTH).map((x) => ({ v: x.v, s: x.by, art: lcLogo(x) })) },
+        { id: 'location', label: 'Road or route, plus milepost, exit or cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd, or MP 142.3' },
+        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT', 'DE'], areaMsg: 'Our lane closure crews work in NJ, NY, PA, CT and DE. Send it anyway and we’ll let you know.' },
+        { id: 'speed', label: 'Posted speed limit (mph)', type: 'chips', req: true, opts: ['25', '30', '35', '40', '45', '50', '55', '60', '65', '70', 'Not sure'] },
+        { id: 'travelLanes', label: 'Travel lanes in the direction of work', type: 'chips', opts: ['1 lane', '2 lanes', '3 lanes', '4+ lanes'] },
+        { id: 'layout', label: 'Road layout', type: 'chips', opts: ['Divided highway', 'Two-way, undivided', 'One-way street'] }
       ] },
-      { name: 'Where and when', k: 'Location and schedule', title: 'Where and when is the job?', lead: 'An exact spot helps us plan the right setup and drive time.', fields: [
-        { id: 'location', label: 'Job address or route, plus nearest cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd' },
-        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT', 'DE'], areaMsg: 'Our lane closure crews work in NJ, NY, PA, CT and DE. Send it anyway and we\u2019ll let you know.' },
-        { id: 'shift', label: 'When does the work happen?', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock]] },
+      { name: 'The closure', k: 'Closure and schedule', title: 'What does the closure look like?', lead: 'Pick what the work needs. Not sure? Choose “Not sure” and describe the job below.', fields: [
+        { id: 'closure', label: 'Type of closure', type: 'pics', req: true, n: 4, cls: 'is-mini', opts: LC_WORK.map(([k, v, s]) => ({ v, s, art: lcMini(k) })) },
+        { id: 'workArea', label: 'Length of the work area', type: 'chips', opts: ['Under 250 ft', '250 to 500 ft', '500 to 1,000 ft', 'Over 1,000 ft', 'Not sure'] },
+        { id: 'duration', label: 'How long will the closure stay up?', type: 'pics', req: true, n: 4, cls: 'is-clock', opts: [
+          { v: 'Under an hour', s: 'Short duration', art: lcClock(.12) }, { v: 'One shift', s: 'Up to 12 hours, same day', art: lcClock(.45) }, { v: 'Overnight to 3 days', s: 'Left up between shifts', art: lcClock(.75) }, { v: 'More than 3 days', s: 'Long-term setup', art: lcClock(1) }] },
+        { id: 'shift', label: 'Work hours', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock]] },
         { id: 'startDate', label: 'Start date', type: 'date', req: true, w: 'third', pair: 1 },
         { id: 'endDate', label: 'End date', type: 'date', w: 'third', pair: 1 },
         { id: 'startTime', label: 'Start time', type: 'time', w: 'third' },
-        { id: 'recur', label: 'Is this a one-time job?', type: 'chips', opts: ['One-time', 'Recurring work'] },
-        { id: 'permit', label: 'Police detail or permit arranged?', type: 'chips', opts: ['Yes', 'No', 'Not sure'] },
-        { id: 'authority', label: 'Road authority, if you know it', type: 'chips', opts: ['NJDOT', 'NYSDOT', 'PennDOT', 'County', 'Town or city', 'Turnpike or parkway', 'Not sure'] }
+        { id: 'crew', label: 'What do you need from TSS?', type: 'pics', n: 4, cls: 'is-badge', opts: [
+          { v: 'Full closure crew', s: 'Certified crew sets, maintains and removes it', art: lcBadge('CREW', 'red') }, { v: 'Flaggers only', s: 'Certified flaggers direct traffic', art: lcBadge('FLAG', 'gold') }, { v: 'Equipment and setup', s: 'We set it and take it down, you run the job', art: lcBadge('SET', '') }, { v: 'Equipment only', s: 'Delivered and picked up, your crew sets it', art: lcBadge('EQ', '') }] },
+        { id: 'equipment', label: 'Equipment you need from us', type: 'equip', opts: [
+          { v: 'TMA crash truck', img: IMG.tma, tint: T.red }, { v: 'Arrow board', img: IMG.arrow, tint: T.yellow }, { v: 'Message board (VMS)', img: IMG.vms, tint: T.orange }, { v: 'Cones or drums', img: IMG.cones, tint: T.orange },
+          { v: 'Barricades', img: IMG.barricades, tint: T.blue }, { v: 'Signs', img: IMG.signs, tint: T.red }, { v: 'Lights', img: IMG.tower, tint: T.yellow }, { v: 'We have our own', icon: ICON.box, tint: T.grey }] },
+        { id: 'permit', label: 'Permit status', type: 'chips', opts: ['Have it', 'Applied', 'Not yet', 'Not sure'] },
+        { id: 'police', label: 'Police detail', type: 'chips', opts: ['Already arranged', 'Need guidance', 'Not required'] },
+        { id: 'tcp', label: 'Need a traffic control plan drawing for the permit?', type: 'chips', opts: ['Yes, prepare one', 'No, we have one', 'Not sure'] },
+        { id: 'work', label: 'Describe the work', type: 'textarea', req: true, ph: 'e.g. Crane pick over the right lane for rooftop HVAC units. Lane and sidewalk need to close.' }
       ] }
     ],
     rental: [
@@ -936,6 +1016,7 @@ const photos = [
 
     const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
     const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
+    const lcp = (() => { try { const d = JSON.parse(sessionStorage.getItem('tss_lcp_v1') || 'null'); return d && d.auth ? d : null; } catch { return null; } })();
     const flow = () => FLOW[state.type];
     const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
     const val = (k) => (k in (state.about || {}) && !(k in state.job) ? state.about[k] : state.job[k]);
@@ -971,7 +1052,7 @@ const photos = [
         case 'info':
           return wrap(`<div class="qs-pu"><p class="qs-pu__k">${PIN}Customer Pick Up</p>${f.places.map(([k, a]) => `<a class="qs-pu__row" href="${mapsUrl(a)}" target="_blank" rel="noopener"><span><small>${esc(k)}</small><b>${esc(a)}</b></span><i>Map</i></a>`).join('')}<p class="qs-pu__n">We\u2019ll confirm when your order is ready before you come.</p></div>`);
         case 'pics':
-          return wrap(`<div class="qs-pics" style="--n:${f.n || 4}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="radio" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${v === o.v ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
+          return wrap(`<div class="qs-pics ${f.cls || ''}" style="--n:${f.n || 4}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="radio" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${v === o.v ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
         case 'equip': {
           const vals = Array.isArray(v) ? v : [];
           return wrap(`<div class="qs-eqs" role="group" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-eq"><input type="checkbox" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}" data-qs-multi="1"${vals.includes(o.v) ? ' checked' : ''}><span style="--tint:${o.tint}">${o.img ? `<img src="${o.img}" alt="" loading="lazy">` : `<span class="qs-noimg">${o.icon}</span>`}<b>${esc(o.v)}</b><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
@@ -1079,9 +1160,10 @@ const photos = [
       const svc = SVC.find((s) => s.id === state.type);
       if (state.step > 0 || state.touched) L.push(['svc', 'Service', esc(svc.b)]);
       if (state.type === 'lane-closure') {
-        if (j.roadType) L.push(['road', 'Road', esc(j.roadType + (j.speed ? `, ${j.speed} mph` : ''))]);
-        if (j.lanes?.length) L.push(['lanes', 'Closing', esc(j.lanes.join(', '))]);
-        if (j.crew) L.push(['crew', 'Crew', esc(j.crew)]);
+        const rd = [j.authority, j.speed && j.speed !== 'Not sure' ? `${j.speed} mph` : '', j.travelLanes].filter(Boolean).join(' \u00b7 ');
+        if (rd) L.push(['road:' + rd, 'Road', esc(rd)]);
+        if (j.closure) L.push(['closure:' + j.closure, 'Closure', esc(j.closure + (j.duration ? ` \u00b7 ${j.duration}` : ''))]);
+        if (j.crew) L.push(['crew:' + j.crew, 'From TSS', esc(j.crew)]);
         if (j.equipment?.length) L.push(['eq', 'Equipment', esc(j.equipment.join(', '))]);
       }
       if (state.type === 'rental' || state.type === 'products') {
@@ -1228,12 +1310,36 @@ const photos = [
     function stepJob(k, dir) {
       const s = flow()[k];
       let banners = '';
-      if (k === 0 && state.type === 'lane-closure' && plan && !state.planApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You built a work zone plan. Use it to fill in this step?</p><button type="button" data-qs-useplan>Use my plan</button></div>`;
+      if (k === 0 && state.type === 'lane-closure' && lcp && !state.lcpApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You built a free lane closure plan. Use it to fill in this quote?</p><button type="button" data-qs-uselcp>Use my plan</button></div>`;
+      else if (k === 0 && state.type === 'lane-closure' && plan && !state.planApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You built a work zone plan. Use it to fill in this step?</p><button type="button" data-qs-useplan>Use my plan</button></div>`;
       const list = window.TSSQuote?.items?.() || [];
       if (k === 0 && state.type !== 'lane-closure' && list.length && !state.listApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You have ${list.length} item${list.length > 1 ? 's' : ''} in your quote list.</p><button type="button" data-qs-uselist>Add them here</button></div>`;
       body.innerHTML = `<div class="qs-step${dir}">${head(s.k, s.title, s.lead)}${banners}
         <div class="qs-fields">${s.fields.map((f, i) => field(f, 'job', i + 2)).join('')}</div>${navHtml()}</div>`;
       wire('job');
+      body.querySelector('[data-qs-uselcp]')?.addEventListener('click', () => {
+        const p = lcp, j = state.job, A = LC_AUTH[p.auth], W = LC_WORK.find((w) => w[0] === p.work);
+        const pick = (m, v) => (v in m ? m[v] : undefined);
+        const set = (k, v) => { if (v) j[k] = v; };
+        set('authority', A && A.v);
+        set('location', [p.road, p.mp, p.town].filter(Boolean).join(', '));
+        set('speed', p.speed ? String(p.speed) : '');
+        set('travelLanes', pick({ 1: '1 lane', 2: '2 lanes', 3: '3 lanes', 4: '4+ lanes' }, p.lanes));
+        set('layout', pick({ divided: 'Divided highway', undivided: 'Two-way, undivided', oneway: 'One-way street' }, p.divided));
+        set('closure', W && W[1]);
+        set('workArea', pick({ s: 'Under 250 ft', m: '250 to 500 ft', l: '500 to 1,000 ft', xl: 'Over 1,000 ft' }, p.wa));
+        set('duration', pick({ short: 'Under an hour', shift: 'One shift', days: 'Overnight to 3 days', long: 'More than 3 days' }, p.dur));
+        set('shift', pick({ day: 'Day work', night: 'Night work', both: '24-hour' }, p.hours));
+        set('startDate', p.start);
+        set('crew', pick({ crew: 'Full closure crew', install: 'Equipment and setup', equip: 'Equipment only' }, p.service));
+        set('permit', pick({ have: 'Have it', applied: 'Applied', none: 'Not yet', unsure: 'Not sure' }, p.permit));
+        set('police', pick({ arranged: 'Already arranged', help: 'Need guidance', no: 'Not required' }, p.police));
+        set('tcp', pick({ yes: 'Yes, prepare one', no: 'No, we have one', unsure: 'Not sure' }, p.tcp));
+        if (p.notes && !j.work) j.work = p.notes;
+        if (p.id) j.work = ((j.work || '') + `\n\nFrom free lane closure plan ${p.id}.`).trim();
+        ['name', 'company', 'email', 'phone'].forEach((k) => { if (p[k] && !state.about[k]) state.about[k] = p[k]; });
+        state.lcpApplied = true; save(); render();
+      });
       body.querySelector('[data-qs-useplan]')?.addEventListener('click', () => {
         const eq = (plan.equipment || []).map((e) => (typeof e === 'string' ? e : e.name || e.title || '')).join(' ');
         const map = [['TMA|attenuator', 'TMA crash truck'], ['arrow', 'Arrow board'], ['VMS|message', 'Message board (VMS)'], ['cone|drum', 'Cones or drums'], ['barricade', 'Barricades'], ['sign', 'Signs'], ['light', 'Lights']];
