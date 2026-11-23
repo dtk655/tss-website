@@ -909,4 +909,11 @@ import Showroom from '../../components/Showroom.astro';
     .eqx--ask .eqx__ic { margin: 0 12px 4px; width: 40px; height: 40px; }
     .eqx--ask .eqx__txt { padding-block: 0; }
   }
+  /* Lineup extras: the single button sits centred; on phones the whole bubble is centred. */
+  .eqx__btn { justify-self: center; }
+  @media (max-width: 640px) {
+    .eqx__txt { justify-items: center; text-align: center; }
+    .eqx--ask { align-items: center; }
+    .eqx--ask .eqx__ic { margin-inline: auto; }
+  }
 </style>
