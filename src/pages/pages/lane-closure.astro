@@ -84,7 +84,7 @@ const agencies = [
           <p class="lpf__k"><span>Trusted On</span><b>The region’s toughest roads</b></p>
           <ul class="lpf__logos">
             {agencies.map(([t, src], i) => (
-              <li style={`--i:${i + certs.length}`} title={t}><span class="lpf__chip"><img src={src} alt={t} loading="lazy" width="56" height="56" /></span><small>{({ 'NJ Turnpike Authority': 'NJ Turnpike', 'Garden State Parkway': 'GS Parkway', 'NYS Thruway Authority': 'NYS Thruway', 'Port Authority of NY & NJ': 'Port Authority' })[t] || t}</small></li>
+              <li style={`--i:${i + certs.length}`} title={t} class={t === 'NYS Thruway Authority' ? 'lpf__mhide' : undefined}><span class="lpf__chip"><img src={src} alt={t} loading="lazy" width="56" height="56" /></span><small>{({ 'NJ Turnpike Authority': 'NJ Turnpike', 'Garden State Parkway': 'GS Parkway', 'NYS Thruway Authority': 'NYS Thruway', 'Port Authority of NY & NJ': 'Port Authority' })[t] || t}</small></li>
             ))}
           </ul>
         </div>
@@ -247,5 +247,15 @@ const agencies = [
     .lpf__logos li { width: 52px; min-width: 52px; gap: 4px; }
     .lpf__chip { width: 40px; }
     .lpf__logos small { font-size: .56rem; }
+  }
+  /* Phone: both logo rows fit without scrolling (NYS Thruway hidden here only). */
+  @media (max-width: 640px) {
+    .lpf { padding: 12px; }
+    .lpf__mhide { display: none !important; }
+    .lpf__logos { overflow: visible; gap: 4px; padding-right: 0; justify-content: space-between; -webkit-mask-image: none; mask-image: none; }
+    .lpf__logos li { flex: 1 1 0; width: auto; min-width: 0; }
+    .lpf__chip { width: min(40px, 100%); }
+    .lpf__logos small { font-size: .54rem; letter-spacing: 0; white-space: normal; overflow: visible; text-wrap: balance; }
+    .lpf__logos li { align-content: start; }
   }
 </style>
