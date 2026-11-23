@@ -1,5 +1,5 @@
 ---
-// Cinematic homepage header: full-screen photo loop with slow motion, one bold headline, then a slim three-business bar.
+// Cinematic homepage header: full-screen photo loop with slow motion, one bold headline, then a slim four-business bar.
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
 const shots = [
   { img: '/fleet/lc-hero.webp', pos: '58% 45%', cap: 'Overnight bridge work, lanes closed by TSS crews' },
@@ -9,8 +9,8 @@ const shots = [
 const lines = [
   { t: 'Products', d: 'Cones, barriers, signs and drums. Shipped nationwide.', href: '/collections', cta: 'Shop products',
     ic: '<path d="M9.5 4h5l3.6 14H5.9z"/><path d="M8.4 9.5h7.2M7.2 14h9.6"/><path d="M3.5 20.5h17"/>' },
-  { t: 'Equipment & fleet', d: 'VMS and arrow boards to TMA trucks. Rent or buy.', href: '/collections/equipment-rentals', cta: 'See equipment',
-    ic: '<path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 9.5h4l3.5 3.5v3.5h-7.5"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/>' },
+  { t: 'Equipment', d: 'VMS boards, arrow boards and light towers. Rent or buy.', href: '/pages/equipment', cta: 'See equipment' },
+  { t: 'Truck fleet', d: 'TMA crash trucks and bucket vans, ready to roll.', href: '/pages/fleet', cta: 'See the fleet' },
   { t: 'Lane closures', d: 'Certified, experienced crews. NJ, NY, PA, CT and DE.', href: '/pages/lane-closure', cta: 'Book a crew',
     ic: '<path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M8.6 12l2.3 2.3 4.5-4.6"/>' }
 ];
@@ -23,7 +23,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   </div>
 
   <div class="wrap cx__in">
-    <p class="cx__k"><span></span>Products · Rentals · Lane closures</p>
+    <p class="cx__k"><span></span>Products · Equipment · Fleet · Lane closures</p>
     <h1 class="cx__h"><span><span>The trusted leader</span></span><span><span>in traffic safety.</span></span></h1>
     <div class="cx__row">
       <p class="cx__lede">Serving contractors, agencies and venues since 1971.</p>
@@ -102,7 +102,7 @@ const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 
   .cx__dots button:focus-visible i { outline: 2px solid #fff; outline-offset: 3px; }
   @keyframes cxBar { to { width: 100%; } }
 
-  .cx-cards ul { list-style: none; margin: 0 0 clamp(18px, 2vw, 26px); padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .cx-cards ul { list-style: none; margin: 0 0 clamp(18px, 2vw, 26px); padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
   .cx-cards li { opacity: 0; transform: translateY(24px); animation: cxCardIn .9s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: calc(.8s + var(--i) * .12s); }
   @keyframes cxCardIn { to { opacity: 1; transform: none; } }
   .cx-card { position: relative; display: grid; gap: 6px; height: 100%; box-sizing: border-box; padding: clamp(18px, 1.8vw, 24px) clamp(18px, 1.8vw, 26px); border-radius: 16px; color: #fff; text-decoration: none; background: rgba(12,13,15,.42); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); overflow: hidden; transition: background .45s cubic-bezier(.2,.8,.2,1), color .45s, border-color .45s, transform .45s cubic-bezier(.2,.8,.2,1); }
