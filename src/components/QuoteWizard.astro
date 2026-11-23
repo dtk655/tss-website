@@ -1066,8 +1066,6 @@ const photos = [
     });
 
     const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
-    const plan = (() => { try { return JSON.parse(sessionStorage.getItem('tss_workzone_plan') || 'null'); } catch { return null; } })();
-    const lcp = (() => { try { const d = JSON.parse(sessionStorage.getItem('tss_lcp_v1') || 'null'); return d && d.auth ? d : null; } catch { return null; } })();
     const flow = () => FLOW[state.type];
     const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
     const val = (k) => (k in (state.about || {}) && !(k in state.job) ? state.about[k] : state.job[k]);
@@ -1241,8 +1239,10 @@ const photos = [
       const svc = SVC.find((s) => s.id === state.type);
       root.querySelectorAll('[data-ph]').forEach((im) => im.classList.toggle('is-on', im.dataset.ph === state.type));
       root.querySelector('[data-qs-tktitle]').textContent = state.step > 0 || state.touched ? svc.b : 'Start with what you need';
-      topEl.hidden = !allItems().length;
-      { const m = root.querySelector('[data-qs-mrs]'); if (m) m.hidden = !allItems().length || !!body.querySelector('.qs-done'); }
+      const filled = (o) => Object.entries(o || {}).some(([k, v]) => k !== 'sel' && (Array.isArray(v) ? v.length : v && typeof v !== 'object'));
+      const started = allItems().length > 0 || filled(state.job) || filled(state.about);
+      topEl.hidden = !started;
+      { const m = root.querySelector('[data-qs-mrs]'); if (m) m.hidden = !started || !!body.querySelector('.qs-done'); }
       const L = ticketLines();
       const ghosts = ['What you need', 'Where', 'When', 'Your details'].slice(Math.min(L.length, 4));
       linesEl.innerHTML = L.map(([k, t, v]) => `<li class="${seen.has(k) ? '' : 'is-new'}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')
@@ -1364,46 +1364,11 @@ const photos = [
     function stepJob(k, dir) {
       const s = flow()[k];
       let banners = '';
-      if (k === 0 && state.type === 'lane-closure' && lcp && !state.lcpApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You built a free lane closure plan. Use it to fill in this quote?</p><button type="button" data-qs-uselcp>Use my plan</button></div>`;
-      else if (k === 0 && state.type === 'lane-closure' && plan && !state.planApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You built a work zone plan. Use it to fill in this step?</p><button type="button" data-qs-useplan>Use my plan</button></div>`;
       const list = window.TSSQuote?.items?.() || [];
       if (k === 0 && state.type !== 'lane-closure' && list.length && !state.listApplied) banners += `<div class="qs-note qs-in" style="--i:1"><p>You have ${list.length} item${list.length > 1 ? 's' : ''} in your quote list.</p><button type="button" data-qs-uselist>Add them here</button></div>`;
       body.innerHTML = `<div class="qs-step${dir}">${head(s.k, s.title, s.lead)}${banners}
         <div class="qs-fields">${s.fields.map((f, i) => field(f, 'job', i + 2)).join('')}</div>${navHtml()}</div>`;
       wire('job');
-      body.querySelector('[data-qs-uselcp]')?.addEventListener('click', () => {
-        const p = lcp, j = state.job, A = LC_AUTH[p.auth], W = LC_WORK.find((w) => w[0] === p.work);
-        const pick = (m, v) => (v in m ? m[v] : undefined);
-        const set = (k, v) => { if (v) j[k] = v; };
-        if (!j.scope?.length) j.scope = [p.work === 'flagging' ? 'Flagging Operation' : 'Lane Or Road Closure'].concat(p.tcp === 'yes' ? ['Traffic Control Plan'] : []);
-        set('authority', A && A.v);
-        set('location', [p.road, p.mp, p.town].filter(Boolean).join(', '));
-        set('speed', p.speed ? String(p.speed) : '');
-        set('travelLanes', pick({ 1: '1 lane', 2: '2 lanes', 3: '3 lanes', 4: '4+ lanes' }, p.lanes));
-        set('layout', pick({ divided: 'Divided highway', undivided: 'Two-way, undivided', oneway: 'One-way street' }, p.divided));
-        set('closure', W && W[1]);
-        set('workArea', pick({ s: 'Under 250 ft', m: '250 to 500 ft', l: '500 to 1,000 ft', xl: 'Over 1,000 ft' }, p.wa));
-        set('duration', pick({ short: 'Under an hour', shift: 'One shift', days: 'Overnight to 3 days', long: 'More than 3 days' }, p.dur));
-        set('shift', pick({ day: 'Day work', night: 'Night work', both: '24-hour' }, p.hours));
-        set('startDate', p.start);
-        set('crew', pick({ crew: 'Full closure crew', install: 'Full closure crew', equip: 'Equipment rental only', unsure: 'Not sure' }, p.service));
-        set('permit', pick({ have: 'Have it', applied: 'Applied', none: 'Not yet', unsure: 'Not sure' }, p.permit));
-        set('police', pick({ arranged: 'Already arranged', help: 'Need guidance', no: 'Not required' }, p.police));
-        set('tcp', pick({ yes: 'Yes, prepare one', no: 'No, we have one', unsure: 'Not sure' }, p.tcp));
-        if (p.notes && !j.work) j.work = p.notes;
-        if (p.id) j.work = ((j.work || '') + `\n\nFrom free lane closure plan ${p.id}.`).trim();
-        ['name', 'company', 'email', 'phone'].forEach((k) => { if (p[k] && !state.about[k]) state.about[k] = p[k]; });
-        state.lcpApplied = true; save(); render();
-      });
-      body.querySelector('[data-qs-useplan]')?.addEventListener('click', () => {
-        const eq = (plan.equipment || []).map((e) => (typeof e === 'string' ? e : e.name || e.title || '')).join(' ');
-        const map = [['TMA|attenuator', 'TMA crash truck'], ['arrow', 'Arrow board'], ['VMS|message', 'Message board (VMS)'], ['cone|drum', 'Cones or drums'], ['barricade', 'Barricades'], ['sign', 'Signs'], ['light', 'Lights']];
-        const set = new Set(state.job.equipment || []);
-        map.forEach(([re, v]) => { if (new RegExp(re, 'i').test(eq)) set.add(v); });
-        state.job.equipment = [...set];
-        if (plan.summary) state.job.work = ((state.job.work || '') + '\n\nWork zone plan: ' + plan.summary).trim();
-        state.planApplied = true; save(); render();
-      });
       body.querySelector('[data-qs-uselist]')?.addEventListener('click', () => {
         const rows = list.map((it) => ({ desc: `${it.title}${it.variant ? ` (${it.variant})` : ''}${it.mode ? `, ${it.mode}` : ''}${it.note ? `. ${it.note}` : ''}`, qty: it.qty || 1 }));
         if (state.type === 'general') state.job.what = ((state.job.what || '') + '\nQuote list: ' + rows.map((r) => `${r.qty} x ${r.desc}`).join('; ')).trim();
