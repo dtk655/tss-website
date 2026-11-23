@@ -477,7 +477,7 @@ import Showroom from '../../components/Showroom.astro';
   .eqr__calc a { color: var(--red); font-variation-settings: 'wght' 700; text-underline-offset: 3px; }
   /* ---------- fleet ---------- */
   .eqf { padding: clamp(56px, 7vw, 100px) 0; background: linear-gradient(180deg, #15181c, #1d2126); color: #fff; }
-  .eqf__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+  .eqf__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: clamp(10px, 1.2vw, 16px); }
   .eqft { display: grid; gap: 6px; height: 100%; padding: 18px 20px 20px; border-radius: 20px; text-decoration: none; color: #fff; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); transition: background .3s, border-color .3s, transform .45s cubic-bezier(.2, .8, .2, 1); }
   .eqft:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .25); transform: translateY(-5px); }
   .eqft__img { display: grid; place-items: center; padding: 12px; margin-bottom: 6px; border-radius: 14px; overflow: hidden; background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, .82)); }
@@ -835,4 +835,11 @@ import Showroom from '../../components/Showroom.astro';
     .eqh.is-tight .eqh__xp li { padding-block: 10px; }
     .eqh.is-tight .eqh__xi { width: 36px; }
   }
+  /* Centred kickers and notes: drop the global 68ch paragraph cap so they centre on the page. */
+  .eq-head--center .eq-k, .eqr__calc { max-width: none; }
+  .eq-k { letter-spacing: .18em; }
+  .eq-head--center .eq-k { padding-left: .18em; }
+  /* Even rhythm: the AI card shares the lineup's white band, and How Renting Works shares the TMA's. */
+  .eqa { padding-top: 0 !important; padding-bottom: clamp(56px, 7vw, 100px) !important; }
+  .eqs { padding-top: 0 !important; }
 </style>
