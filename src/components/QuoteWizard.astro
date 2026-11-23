@@ -727,6 +727,15 @@ const photos = [
     .qs-clock { width: 38px; height: 38px; }
     .qs-pics.is-logo .qs-pic small, .qs-pics.is-mini .qs-pic small, .qs-pics.is-clock .qs-pic small, .qs-pics.is-badge .qs-pic small { font-size: .76rem; }
   }
+  .qs-pics.is-scope .qs-pic > span { grid-template-columns: 40px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 2px; padding: 12px 40px 12px 12px; }
+  .qs-pics.is-scope .qs-pic .qs-ico { grid-row: 1 / span 2; }
+  .qs-pics.is-scope .qs-pic b { padding-right: 0; font-size: .94rem; }
+  .qs-pics.is-scope .qs-pic small { margin-top: 0; font-size: .8rem; }
+  .qs-pics.is-scope .qs-pic .qs-tick { top: 50%; transform: translateY(-50%); }
+  .qs-pics.is-scope .qs-pic input:checked + span .qs-tick { transform: translateY(-50%) scale(1.08); }
+  [data-qs-field]:not([hidden]) { animation: qsReveal .45s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes qsReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 640px) { .qs-pics.is-scope { grid-template-columns: 1fr; } }
 </style>
 
 <script>
@@ -769,6 +778,10 @@ const photos = [
     plan: '<svg viewBox="0 0 24 24"><path d="M4 5l5-2 6 2 5-2v16l-5 2-6-2-5 2z"/><path d="M9 3v16M15 5v16"/></svg>',
     box: '<svg viewBox="0 0 24 24"><path d="M3 7.5L12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg>',
     chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4"/></svg>',
+    truck: '<svg viewBox="0 0 24 24"><path d="M2.5 6.5h11v10h-11zM13.5 10h4l3.5 3.5v3h-7.5"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
+    sign: '<svg viewBox="0 0 24 24"><path d="M12 2.8l7.5 7.5-7.5 7.5-7.5-7.5z"/><path d="M12 17.8V22M9 22h6"/></svg>',
+    bolt: '<svg viewBox="0 0 24 24"><path d="M13.5 2.5L5 13.5h6l-1 8 8.5-11h-6z"/></svg>',
+    star: '<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"/></svg>',
     q: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4"/><path d="M12 16.6v.1"/></svg>',
     cal: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>'
   };
@@ -857,13 +870,17 @@ const photos = [
   // Each service: two job steps between "Service" and "Your details".
   const FLOW = {
     'lane-closure': [
-      { name: 'The road', k: 'Lane closure', title: 'Whose road is the work on?', lead: 'The road owner sets the permit, closure hours and standard drawings. Pick the closest match.', fields: [
-        { id: 'authority', label: 'Road owner', type: 'pics', req: true, n: 4, cls: 'is-logo', opts: Object.values(LC_AUTH).map((x) => ({ v: x.v, s: x.by, art: lcLogo(x) })) },
-        { id: 'location', label: 'Road or route, plus milepost, exit or cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd, or MP 142.3' },
-        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT', 'DE'], areaMsg: 'Our lane closure crews work in NJ, NY, PA, CT and DE. Send it anyway and we’ll let you know.' },
-        { id: 'speed', label: 'Posted speed limit (mph)', type: 'chips', req: true, opts: ['25', '30', '35', '40', '45', '50', '55', '60', '65', '70', 'Not sure'] },
-        { id: 'travelLanes', label: 'Travel lanes in the direction of work', type: 'chips', opts: ['1 lane', '2 lanes', '3 lanes', '4+ lanes', 'Not sure'] },
-        { id: 'layout', label: 'Road layout', type: 'chips', opts: ['Divided highway', 'Two-way, undivided', 'One-way street', 'Not sure'] }
+      { name: 'Scope and road', k: 'Lane closure', title: 'What\u2019s the scope of work?', lead: 'Pick everything the job involves. Then tell us whose road it\u2019s on.', fields: [
+        { id: 'scope', label: 'Scope of work', type: 'pics', multi: true, req: true, n: 3, cls: 'is-scope', opts: [
+          { v: 'Lane or road closure', s: 'Single lane to full detours', icon: ICON.cone }, { v: 'Flagging operation', s: 'Certified flaggers direct traffic', icon: ICON.flag }, { v: 'TMA protection', s: 'Crash trucks with certified operators', icon: ICON.truck },
+          { v: 'Traffic control plan', s: 'Permit-ready drawings', icon: ICON.plan }, { v: 'Special event', s: 'Parades, races and game days', icon: ICON.star }, { v: 'Sign and barricade install', s: 'Delivered, set and maintained', icon: ICON.sign },
+          { v: 'Night or weekend work', s: 'Off-peak closure windows', icon: ICON.moon }, { v: 'Emergency response', s: 'For onboarded TSS accounts', icon: ICON.bolt }, { v: 'Not sure', s: 'Describe it and we\u2019ll recommend', icon: ICON.q }] },
+        { id: 'authority', label: 'Whose road is the work on?', type: 'pics', req: true, showIf: { scope: '*' }, n: 4, cls: 'is-logo', opts: Object.values(LC_AUTH).map((x) => ({ v: x.v, s: x.by, art: lcLogo(x) })) },
+        { id: 'location', label: 'Road or route, plus milepost, exit or cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd, or MP 142.3', showIf: { scope: '*' } },
+        { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT', 'DE'], areaMsg: 'Our lane closure crews work in NJ, NY, PA, CT and DE. Send it anyway and we’ll let you know.', showIf: { scope: '*' } },
+        { id: 'speed', label: 'Posted speed limit (mph)', type: 'chips', req: true, opts: ['25', '30', '35', '40', '45', '50', '55', '60', '65', '70', 'Not sure'], showIf: { scope: '*' } },
+        { id: 'travelLanes', label: 'Travel lanes in the direction of work', type: 'chips', opts: ['1 lane', '2 lanes', '3 lanes', '4+ lanes', 'Not sure'], showIf: { scope: '*' } },
+        { id: 'layout', label: 'Road layout', type: 'chips', opts: ['Divided highway', 'Two-way, undivided', 'One-way street', 'Not sure'], showIf: { scope: '*' } }
       ] },
       { name: 'The closure', k: 'Closure and schedule', title: 'What does the closure look like?', lead: 'Pick what the work needs. Not sure? Choose “Not sure” and describe the job below.', fields: [
         { id: 'closure', label: 'Type of closure', type: 'pics', req: true, n: 4, cls: 'is-mini', opts: LC_WORK.map(([k, v, s]) => ({ v, s, art: lcMini(k) })) },
@@ -1022,7 +1039,8 @@ const photos = [
     const flow = () => FLOW[state.type];
     const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
     const val = (k) => (k in (state.about || {}) && !(k in state.job) ? state.about[k] : state.job[k]);
-    const visible = (f) => (!f.showIf || Object.entries(f.showIf).every(([k, v]) => val(k) === v)) && !(f.hideIf && Object.entries(f.hideIf).every(([k, v]) => val(k) === v));
+    const has = (x) => (Array.isArray(x) ? x.length > 0 : !!x);
+    const visible = (f) => (!f.showIf || Object.entries(f.showIf).every(([k, v]) => (v === '*' ? has(val(k)) : val(k) === v))) && !(f.hideIf && Object.entries(f.hideIf).every(([k, v]) => val(k) === v));
     const isPickup = () => state.job.fulfill === 'Customer Pick Up';
     const labelOf = (f) => (f.alt && isPickup() ? f.alt : f.label);
     const mapsUrl = (a) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Traffic Safety Service, ' + a);
@@ -1055,7 +1073,7 @@ const photos = [
         case 'info':
           return wrap(`<div class="qs-pu"><p class="qs-pu__k">${PIN}Customer Pick Up</p>${f.places.map(([k, a]) => `<a class="qs-pu__row" href="${mapsUrl(a)}" target="_blank" rel="noopener"><span><small>${esc(k)}</small><b>${esc(a)}</b></span><i>Map</i></a>`).join('')}<p class="qs-pu__n">We\u2019ll confirm when your order is ready before you come.</p></div>`);
         case 'pics':
-          return wrap(`<div class="qs-pics ${f.cls || ''}" style="--n:${f.n || 4}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="radio" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${v === o.v ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.t || o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
+          return wrap(`<div class="qs-pics ${f.cls || ''}" style="--n:${f.n || 4}" role="${f.multi ? 'group' : 'radiogroup'}" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="${f.multi ? 'checkbox' : 'radio'}" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${f.multi ? ' data-qs-multi="1"' : ''}${(f.multi ? (Array.isArray(v) && v.includes(o.v)) : v === o.v) ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.t || o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
         case 'equip': {
           const vals = Array.isArray(v) ? v : [];
           return wrap(`<div class="qs-eqs" role="group" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-eq"><input type="checkbox" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}" data-qs-multi="1"${vals.includes(o.v) ? ' checked' : ''}><span style="--tint:${o.tint}">${o.img ? `<img src="${o.img}" alt="" loading="lazy">` : `<span class="qs-noimg">${o.icon}</span>`}<b>${esc(o.v)}</b><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
@@ -1163,6 +1181,7 @@ const photos = [
       const svc = SVC.find((s) => s.id === state.type);
       if (state.step > 0 || state.touched) L.push(['svc', 'Service', esc(svc.b)]);
       if (state.type === 'lane-closure') {
+        if (j.scope?.length) L.push(['scope:' + j.scope.join('|'), 'Scope', esc(j.scope.join(', '))]);
         const rd = [j.authority, j.speed && j.speed !== 'Not sure' ? `${j.speed} mph` : '', j.travelLanes].filter(Boolean).join(' \u00b7 ');
         if (rd) L.push(['road:' + rd, 'Road', esc(rd)]);
         if (j.closure) L.push(['closure:' + j.closure, 'Closure', esc(j.closure + (j.duration ? ` \u00b7 ${j.duration}` : ''))]);
@@ -1324,6 +1343,7 @@ const photos = [
         const p = lcp, j = state.job, A = LC_AUTH[p.auth], W = LC_WORK.find((w) => w[0] === p.work);
         const pick = (m, v) => (v in m ? m[v] : undefined);
         const set = (k, v) => { if (v) j[k] = v; };
+        if (!j.scope?.length) j.scope = [p.work === 'flagging' ? 'Flagging operation' : 'Lane or road closure'].concat(p.tcp === 'yes' ? ['Traffic control plan'] : []);
         set('authority', A && A.v);
         set('location', [p.road, p.mp, p.town].filter(Boolean).join(', '));
         set('speed', p.speed ? String(p.speed) : '');
