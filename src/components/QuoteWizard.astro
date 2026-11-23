@@ -751,6 +751,22 @@ const photos = [
     .qs-pics.is-photo .qs-pic small { display: none; }
     .qs-pics.is-photo .qs-pic .qs-tick { top: 9px; right: 9px; width: 22px; height: 22px; }
   }
+  /* Scope tiles: compact, title-first. */
+  .qs-pics.is-photo { gap: 8px; }
+  .qs-pics.is-photo .qs-pic > span { aspect-ratio: auto; height: 96px; padding: 12px 14px; border-radius: 14px; justify-content: flex-end; }
+  .qs-pics.is-photo .qs-ph::after { background: linear-gradient(90deg, rgba(10, 12, 14, .88) 0%, rgba(10, 12, 14, .6) 55%, rgba(10, 12, 14, .25) 100%); }
+  .qs-pics.is-photo .qs-pic input:checked + span .qs-ph::after { background: linear-gradient(90deg, rgba(120, 4, 4, .94) 0%, rgba(140, 6, 6, .66) 55%, rgba(140, 6, 6, .3) 100%); }
+  .qs-pics.is-photo .qs-pic b { max-width: 80%; font-size: 1.06rem; line-height: 1.15; letter-spacing: -.015em; font-variation-settings: 'wght' 760; }
+  .qs-pics.is-photo .qs-pic small:empty { display: none; }
+  .qs-pics.is-photo .qs-pic small { align-self: flex-start; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: rgba(245, 184, 0, .95); color: var(--ink); font-size: .68rem; letter-spacing: .04em; text-transform: uppercase; font-variation-settings: 'wght' 750; }
+  .qs-pics.is-photo .qs-pic .qs-tick { top: 10px; right: 10px; width: 22px; height: 22px; }
+  @media (max-width: 640px) {
+    .qs-pics.is-photo .qs-pic > span { aspect-ratio: auto; height: 84px; padding: 10px 11px; }
+    .qs-pics.is-photo .qs-pic b { max-width: 88%; font-size: .9rem; }
+    .qs-pics.is-photo .qs-pic small { display: inline-block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: clip; font-size: 0; padding: 2px 6px; }
+    .qs-pics.is-photo .qs-pic small::after { content: 'Onboarded Only'; font-size: .6rem; }
+    .qs-pics.is-photo .qs-pic small:empty { display: none; }
+  }
 </style>
 
 <script>
@@ -887,9 +903,9 @@ const photos = [
     'lane-closure': [
       { name: 'Scope and road', k: 'Lane closure', title: 'What\u2019s the scope of work?', lead: 'Pick everything the job involves. Then tell us whose road it\u2019s on.', fields: [
         { id: 'scope', label: 'Scope of work', type: 'pics', multi: true, req: true, n: 3, cls: 'is-photo', opts: [
-          ['Lane or road closure', 'Single lane to full detours', '/fleet/sv-roadclosed.webp', '48% 55%'], ['Flagging operation', 'Certified flaggers direct traffic', '/fleet/sv-flag.webp', '62% 62%'], ['TMA protection', 'Crash trucks with certified operators', '/fleet/sv-tma-rear.webp', '55% 48%'],
-          ['Traffic control plan', 'Permit-ready drawings', 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg?width=600', '50% 50%'], ['Special event', 'Parades, races and game days', '/fleet/sv-event.webp', '50% 50%'], ['Sign and barricade install', 'Delivered, set and maintained', '/fleet/sv-signs.webp', '60% 50%'],
-          ['Night or weekend work', 'Off-peak closure windows', '/fleet/sv-night.webp', '50% 45%'], ['Emergency response', 'For onboarded TSS accounts', '/fleet/sv-snow.webp', '50% 60%'], ['Not sure', 'Describe it and we\u2019ll recommend', '/fleet/team-photo.webp', '50% 40%']
+          ['Lane Or Road Closure', '', '/fleet/sv-roadclosed.webp', '48% 55%'], ['Flagging Operation', '', '/fleet/sv-flag.webp', '62% 62%'], ['TMA Protection', '', '/fleet/sv-tma-rear.webp', '55% 48%'],
+          ['Traffic Control Plan', '', 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg?width=600', '50% 50%'], ['Special Event', '', '/fleet/sv-event.webp', '50% 50%'], ['Sign And Barricade Install', '', '/fleet/sv-signs.webp', '60% 50%'],
+          ['Night Or Weekend Work', '', '/fleet/sv-night.webp', '50% 45%'], ['Emergency Response', 'Onboarded Accounts Only', '/fleet/sv-snow.webp', '50% 60%'], ['Not Sure', '', '/fleet/team-photo.webp', '50% 40%']
         ].map(([v, s, src, pos]) => ({ v, s, art: `<span class="qs-ph"><img src="${src}" alt="" loading="lazy" style="object-position:${pos}"></span>` })) },
         { id: 'authority', label: 'Whose road is the work on?', type: 'pics', req: true, showIf: { scope: '*' }, n: 4, cls: 'is-logo', opts: Object.values(LC_AUTH).map((x) => ({ v: x.v, s: x.by, art: lcLogo(x) })) },
         { id: 'location', label: 'Road or route, plus milepost, exit or cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd, or MP 142.3', showIf: { scope: '*' } },
@@ -1359,7 +1375,7 @@ const photos = [
         const p = lcp, j = state.job, A = LC_AUTH[p.auth], W = LC_WORK.find((w) => w[0] === p.work);
         const pick = (m, v) => (v in m ? m[v] : undefined);
         const set = (k, v) => { if (v) j[k] = v; };
-        if (!j.scope?.length) j.scope = [p.work === 'flagging' ? 'Flagging operation' : 'Lane or road closure'].concat(p.tcp === 'yes' ? ['Traffic control plan'] : []);
+        if (!j.scope?.length) j.scope = [p.work === 'flagging' ? 'Flagging Operation' : 'Lane Or Road Closure'].concat(p.tcp === 'yes' ? ['Traffic Control Plan'] : []);
         set('authority', A && A.v);
         set('location', [p.road, p.mp, p.town].filter(Boolean).join(', '));
         set('speed', p.speed ? String(p.speed) : '');
