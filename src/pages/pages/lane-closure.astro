@@ -112,7 +112,7 @@ const agencies = [
 <style>
   /* ================= HERO ================= */
   .lch { position: relative; color: #fff; overflow: hidden; background: #14171a; isolation: isolate; }
-  .lch::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/fleet/lc-hero2.webp') 62% 50% / cover no-repeat; transform: scale(1.06); animation: lchZoom 18s ease-out forwards; }
+  .lch::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/fleet/lc-hero2.webp') 62% 0% / cover no-repeat; transform: scale(1.06); transform-origin: 62% 0%; animation: lchZoom 18s ease-out forwards; }
   .lch::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(10,11,13,.92) 0%, rgba(10,11,13,.78) 32%, rgba(10,11,13,.38) 58%, rgba(10,11,13,.08) 80%), linear-gradient(0deg, rgba(8,9,10,.6), transparent 45%); }
   @keyframes lchZoom { to { transform: scale(1); } }
   .lch__in { position: relative; display: grid; grid-template-columns: minmax(0, 720px); align-items: center; min-height: clamp(420px, 44vw, 600px); padding-block: clamp(40px, 5vw, 76px); }
@@ -178,7 +178,7 @@ const agencies = [
 
 
   @media (max-width: 1100px) { .lch::after { background: linear-gradient(180deg, rgba(10,11,13,.86) 0%, rgba(10,11,13,.66) 42%, rgba(8,9,10,.55) 100%); } }
-  @media (max-width: 640px) { .lch::before { background-image: url('/fleet/lc-hero2-m.webp'); background-position: 50% 50%; } }
+  @media (max-width: 640px) { .lch::before { background-image: url('/fleet/lc-hero2-m.webp'); background-position: 50% 0%; } }
   @media (prefers-reduced-motion: reduce) { .lch::before { animation: none; transform: none; } }
   @media (max-width: 640px) { .lch :global(.jb) { order: 3; margin-top: 10px !important; } }
   /* Proof bar: certification seals + road owners, glass panel along the bottom of the header. */
