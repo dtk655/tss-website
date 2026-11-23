@@ -68,6 +68,29 @@ const agencies = [
 
     </div>
 
+    <!-- Proof bar: certifications and the roads our crews work on -->
+    <div class="wrap lch__proof">
+      <div class="lpf">
+        <div class="lpf__grp">
+          <p class="lpf__k"><span>Certified</span><b>{certs.length} credentials</b></p>
+          <ul class="lpf__logos">
+            {certs.map(([t, src], i) => (
+              <li style={`--i:${i}`} title={t}><span class="lpf__chip"><img src={src} alt={t} loading="lazy" width="56" height="56" /></span><small>{t.replace(/ (Trained & Certified|Flagger Certified|Clearance|Compliant|Tested Equipment)$/, '').replace('Rutgers-Certified TCCs', 'Rutgers TCC')}</small></li>
+            ))}
+          </ul>
+        </div>
+        <span class="lpf__div" aria-hidden="true"></span>
+        <div class="lpf__grp">
+          <p class="lpf__k"><span>Trusted On</span><b>The region’s toughest roads</b></p>
+          <ul class="lpf__logos">
+            {agencies.map(([t, src], i) => (
+              <li style={`--i:${i + certs.length}`} title={t}><span class="lpf__chip"><img src={src} alt={t} loading="lazy" width="56" height="56" /></span><small>{({ 'NJ Turnpike Authority': 'NJ Turnpike', 'Garden State Parkway': 'GS Parkway', 'NYS Thruway Authority': 'NYS Thruway', 'Port Authority of NY & NJ': 'Port Authority' })[t] || t}</small></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+
   </section>
 
   <LaneWork />
@@ -157,4 +180,38 @@ const agencies = [
   @media (max-width: 640px) { .lch::before { background-image: url('/fleet/lc-hero-m.webp'); } }
   @media (prefers-reduced-motion: reduce) { .lch::before { animation: none; transform: none; } }
   @media (max-width: 640px) { .lch :global(.jb) { order: 3; margin-top: 10px !important; } }
+  /* Proof bar: certification seals + road owners, glass panel along the bottom of the header. */
+  .lch__proof { position: relative; padding-bottom: clamp(22px, 2.6vw, 40px); margin-top: calc(-1 * clamp(8px, 1.4vw, 30px)); }
+  .lpf { display: grid; grid-template-columns: auto 1px minmax(0, 1fr); align-items: center; gap: clamp(18px, 2.4vw, 36px); padding: clamp(14px, 1.4vw, 20px) clamp(18px, 2vw, 30px); border-radius: 20px; background: rgba(14, 15, 17, .55); border: 1px solid rgba(255, 255, 255, .14); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2); box-shadow: 0 24px 60px -30px rgba(0, 0, 0, .8); opacity: 0; translate: 0 18px; animation: lchUpT .9s .95s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .lpf__grp { display: grid; gap: 10px; min-width: 0; }
+  .lpf__div { align-self: stretch; background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .22), transparent); }
+  .lpf__k { display: flex; align-items: baseline; gap: 10px; margin: 0; }
+  .lpf__k span { color: var(--gold); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 760; }
+  .lpf__k b { color: rgba(255, 255, 255, .7); font-size: .8rem; font-weight: 400; font-variation-settings: 'wght' 520; }
+  .lpf__logos { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(8px, 1vw, 16px); }
+  .lpf__logos li { display: grid; justify-items: center; gap: 6px; width: clamp(54px, 4.6vw, 70px); opacity: 0; transform: translateY(8px) scale(.92); animation: lpfIn .6s cubic-bezier(.2, .8, .2, 1) forwards; animation-delay: calc(1.15s + var(--i) * .05s); }
+  .lpf__chip { display: grid; place-items: center; width: clamp(46px, 3.8vw, 56px); aspect-ratio: 1; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, .08), 0 8px 18px -8px rgba(0, 0, 0, .7); transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s; }
+  .lpf__chip img { width: 82%; height: 82%; object-fit: contain; }
+  .lpf__logos li:hover .lpf__chip { transform: translateY(-3px) scale(1.06); box-shadow: 0 0 0 3px rgba(245, 184, 0, .55), 0 12px 22px -8px rgba(0, 0, 0, .8); }
+  .lpf__logos small { max-width: 100%; color: rgba(255, 255, 255, .82); font-size: .66rem; line-height: 1.15; text-align: center; letter-spacing: .01em; font-variation-settings: 'wght' 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes lpfIn { to { opacity: 1; transform: none; } }
+  @media (max-width: 1100px) {
+    .lpf { grid-template-columns: 1fr; }
+    .lpf__div { height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .22), transparent); }
+  }
+  @media (max-width: 640px) {
+    .lch__proof { margin-top: 0; padding-bottom: 22px; }
+    .lpf { padding: 14px 0 14px 14px; gap: 14px; border-radius: 16px; }
+    .lpf__k { justify-content: flex-start; padding-right: 14px; }
+    .lpf__logos { overflow-x: auto; scrollbar-width: none; padding-right: 14px; scroll-snap-type: x proximity; }
+    .lpf__logos::-webkit-scrollbar { display: none; }
+    .lpf__logos li { flex: none; width: 58px; scroll-snap-align: start; }
+    .lpf__chip { width: 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .lpf, .lpf__logos li { animation: none; opacity: 1; transform: none; translate: none; } }
+  .lpf__logos { justify-content: space-between; }
+  .lpf__logos li { width: auto; min-width: clamp(54px, 4.6vw, 70px); }
+  .lpf__logos small { overflow: visible; }
+  @media (min-width: 1101px) { .lch__in { min-height: clamp(400px, 38vw, 540px); padding-block: clamp(34px, 4vw, 60px) clamp(28px, 3vw, 48px); } }
+  @media (min-width: 1101px) and (max-height: 820px) { .lch__in { min-height: 0; padding-block: 28px 24px; } .lch h1 { font-size: clamp(2.4rem, 4.2vw, 4rem); } .lch__lede { margin-bottom: 20px; } }
 </style>
