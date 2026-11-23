@@ -16,7 +16,7 @@ const photos = [
 <section class="qs" data-qw data-preset={preset} data-from-param={fromParam ? '1' : ''} data-phone={PHONE} data-tel={PHONE_TEL} data-email={EMAIL} data-webhook={FORM_WEBHOOK}>
   <div class="qs__main">
     <ol class="qs__steps" data-qs-steps aria-label="Progress"></ol>
-    <div class="qs-mrs" data-qs-mrs hidden><button type="button" class="qs-restart" data-qs-mrestart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span>Restart quote</span></button></div>
+    <div class="qs-mrs" data-qs-mrs hidden><button type="button" class="qs-restart" data-qs-mrestart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span>Restart Quote</span></button></div>
     <div class="qs__stage" data-qw-body aria-live="polite">
       <noscript>
         <p><strong>This form needs JavaScript.</strong> You can also call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> with what you need, where, and when.</p>
@@ -29,13 +29,13 @@ const photos = [
         {photos.map(([t, src, pos], i) => <img src={src} alt="" data-ph={t} style={`object-position:${pos}`} loading={i === 0 ? 'eager' : 'lazy'} />)}
         <div class="qs-tk__cap">
           <span class="qs-tk__k">Your quote</span>
-          <b data-qs-tktitle>Start with what you need</b>
+          <b data-qs-tktitle>Start With What You Need</b>
         </div>
       </div>
       <div class="qs-tk__body">
         <ul class="qs-tk__lines" data-qs-lines></ul>
         <div class="qs-tk__rs" data-qs-top hidden>
-          <button type="button" class="qs-restart" data-qs-restart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span data-qs-restart-t>Restart quote</span></button>
+          <button type="button" class="qs-restart" data-qs-restart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span data-qs-restart-t>Restart Quote</span></button>
         </div>
         <div class="qs-tk__perf" aria-hidden="true"></div>
         <ul class="qs-tk__promise">
@@ -767,6 +767,8 @@ const photos = [
     .qs-pics.is-photo .qs-pic small::after { content: 'Onboarded Only'; font-size: .6rem; }
     .qs-pics.is-photo .qs-pic small:empty { display: none; }
   }
+  .qs-pics.is-photo .qs-pic:last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
+  @media (max-width: 640px) { .qs-pics.is-photo .qs-pic:last-child:nth-child(3n + 1) { grid-column: auto; } .qs-pics.is-photo .qs-pic:last-child:nth-child(odd) { grid-column: 1 / -1; } }
 </style>
 
 <script>
@@ -905,7 +907,7 @@ const photos = [
         { id: 'scope', label: 'Scope of work', type: 'pics', multi: true, req: true, n: 3, cls: 'is-photo', opts: [
           ['Lane Or Road Closure', '', '/fleet/sv-roadclosed.webp', '48% 55%'], ['Flagging Operation', '', '/fleet/sv-flag.webp', '62% 62%'], ['TMA Protection', '', '/fleet/sv-tma-rear.webp', '55% 48%'],
           ['Traffic Control Plan', '', 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/thumbnail_IMG_7041_98e15159-1e86-4b04-9da2-0308665c2a89.jpg?width=600', '50% 50%'], ['Special Event', '', '/fleet/sv-event.webp', '50% 50%'], ['Sign And Barricade Install', '', '/fleet/sv-signs.webp', '60% 50%'],
-          ['Night Or Weekend Work', '', '/fleet/sv-night.webp', '50% 45%'], ['Emergency Response', 'Onboarded Accounts Only', '/fleet/sv-snow.webp', '50% 60%'], ['Not Sure', '', '/fleet/team-photo.webp', '50% 40%']
+          ['Equipment Rental', '', '/fleet/vms-yard.webp', '30% 45%'], ['Night Or Weekend Work', '', '/fleet/sv-night.webp', '50% 45%'], ['Emergency Response', 'Onboarded Accounts Only', '/fleet/sv-snow.webp', '50% 60%'], ['Not Sure', '', '/fleet/team-photo.webp', '50% 40%']
         ].map(([v, s, src, pos]) => ({ v, s, art: `<span class="qs-ph"><img src="${src}" alt="" loading="lazy" style="object-position:${pos}"></span>` })) },
         { id: 'authority', label: 'Whose road is the work on?', type: 'pics', req: true, showIf: { scope: '*' }, n: 4, cls: 'is-logo', opts: Object.values(LC_AUTH).map((x) => ({ v: x.v, s: x.by, art: lcLogo(x) })) },
         { id: 'location', label: 'Road or route, plus milepost, exit or cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd, or MP 142.3', showIf: { scope: '*' } },
@@ -918,15 +920,13 @@ const photos = [
         { id: 'closure', label: 'Type of closure', type: 'pics', req: true, n: 4, cls: 'is-mini', opts: LC_WORK.map(([k, v, s]) => ({ v, s, art: lcMini(k) })) },
         { id: 'workArea', label: 'Length of the work area', type: 'chips', opts: ['Under 250 ft', '250 to 500 ft', '500 to 1,000 ft', 'Over 1,000 ft', 'Not sure'] },
         { id: 'duration', label: 'How long will the closure stay up?', type: 'pics', req: true, n: 4, n: 4, cls: 'is-clock', opts: [
-          { v: 'One shift', s: 'Up to 12 hours, same day', art: lcClock(.45) }, { v: 'Overnight to 3 days', s: 'Left up between shifts', art: lcClock(.75) }, { v: 'More than 3 days', s: 'Long-term setup', art: lcClock(1) }, { v: 'Not sure', t: 'Not sure yet', s: 'We\u2019ll work it out with you', art: lcBadge('?', 'gold') }] },
+          { v: 'One shift', s: 'Up to 12 hours, same day', art: lcClock(.45) }, { v: 'Overnight to 3 days', s: 'Left up between shifts', art: lcClock(.75) }, { v: 'More than 3 days', s: 'Long-term setup', art: lcClock(1) }, { v: 'Not sure', t: 'Not sure yet', s: 'We\u2019ll work it out with you', art: '<span class="qs-logo"><img src="/roads/unsure.svg" alt=""></span>' }] },
         { id: 'shift', label: 'Work hours', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock], ['Not sure', ICON.q]] },
         { id: 'dateSet', label: 'Do you have dates yet?', type: 'chips', opts: ['Yes', 'Not sure yet'], def: 'Yes' },
         { id: 'startDate', label: 'Start date', type: 'date', req: true, w: 'third', pair: 1, hideIf: { dateSet: 'Not sure yet' } },
         { id: 'endDate', label: 'End date', type: 'date', w: 'third', pair: 1, hideIf: { dateSet: 'Not sure yet' } },
         { id: 'startTime', label: 'Start time', type: 'time', w: 'third', hideIf: { dateSet: 'Not sure yet' } },
-        { id: 'crew', label: 'What do you need from TSS?', type: 'pics', n: 4, cls: 'is-badge', opts: [
-          { v: 'Full closure crew', s: 'Certified crew sets, maintains and removes it', art: lcBadge('CREW', 'red') }, { v: 'Flaggers only', s: 'Certified flaggers direct traffic', art: lcBadge('FLAG', 'gold') }, { v: 'Equipment rental only', t: 'Need to Rent Equipment?', s: 'We can supply the equipment for your own closure, subject to the requirements of the road', art: lcBadge('EQ', '') }, { v: 'Not sure', t: 'Not sure yet', s: 'We\u2019ll recommend the right setup', art: lcBadge('?', 'gold') }] },
-        { id: 'equipment', label: 'What equipment do you need?', type: 'equip', showIf: { crew: 'Equipment rental only' }, opts: [
+        { id: 'equipment', label: 'What equipment do you need?', type: 'equip', showIf: { scope: 'Equipment Rental' }, hint: 'We can supply the equipment for your own closure, subject to the requirements of the road.', opts: [
           { v: 'TMA crash truck', img: IMG.tma, tint: T.red }, { v: 'Arrow board', img: IMG.arrow, tint: T.yellow }, { v: 'Message board (VMS)', img: IMG.vms, tint: T.orange }, { v: 'Cones or drums', img: IMG.cones, tint: T.orange },
           { v: 'Barricades', img: IMG.barricades, tint: T.blue }, { v: 'Signs', img: IMG.signs, tint: T.red }, { v: 'Lights', img: IMG.tower, tint: T.yellow }, { v: 'Not sure', icon: ICON.q, tint: T.grey }] },
         { id: 'permit', label: 'Permit status', type: 'chips', opts: ['Have it', 'Applied', 'Not yet', 'Not sure'] },
@@ -997,6 +997,14 @@ const photos = [
     { id: 'extra', label: 'Anything else we should know?', type: 'textarea' }
   ];
 
+  // Title Case for every label, option and heading (descriptions, hints and placeholders stay as written).
+  const KEEP = new Set(['mph', '(mph)', 'ft', 'e.g.']);
+  const tc = (s) => typeof s !== 'string' ? s : s.split(' ').map((w) => (KEEP.has(w) ? w : w.replace(/^([^A-Za-z0-9]*)([a-z])/, (m, p, c) => p + c.toUpperCase()))).join(' ');
+  const tcOpt = (o) => (typeof o === 'string' ? tc(o) : Array.isArray(o) ? [tc(o[0]), ...o.slice(1)] : { ...o, v: tc(o.v), t: o.t && tc(o.t) });
+  const tcMap = (m) => m && Object.fromEntries(Object.entries(m).map(([k, v]) => [k, v === '*' ? v : tc(v)]));
+  const tcField = (f) => { f.label = tc(f.label); f.alt = tc(f.alt); if (f.def) f.def = tc(f.def); if (f.opts) f.opts = f.opts.map(tcOpt); f.showIf = tcMap(f.showIf); f.hideIf = tcMap(f.hideIf); if (f.places) f.places = f.places.map(([k, a]) => [tc(k), a]); };
+  Object.values(FLOW).forEach((steps) => steps.forEach((s) => { s.name = tc(s.name); s.k = tc(s.k); s.title = tc(s.title); s.fields.forEach(tcField); }));
+  ABOUT.forEach(tcField);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
   const fmtDate = (s) => { if (!s) return ''; const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); };
@@ -1042,7 +1050,7 @@ const photos = [
     const topEl = root.querySelector('[data-qs-top]'), rsBtn = root.querySelector('[data-qs-restart]'), rsTxt = root.querySelector('[data-qs-restart-t]');
     let rsTimer = 0;
     function restart() {
-      clearTimeout(rsTimer); rsBtn.classList.remove('is-confirm'); rsTxt.textContent = 'Restart quote';
+      clearTimeout(rsTimer); rsBtn.classList.remove('is-confirm'); rsTxt.textContent = 'Restart Quote';
       try { sessionStorage.removeItem(KEY); } catch {}
       state = { type: 'general', job: { sel: {} }, about: {}, step: 0, planApplied: false, listApplied: false };
       Object.keys(rowVar).forEach((k) => delete rowVar[k]);
@@ -1054,23 +1062,23 @@ const photos = [
     { const mb = root.querySelector('[data-qs-mrestart]'); let mt = 0;
       mb.addEventListener('click', () => {
         const sp = mb.querySelector('span'); clearTimeout(mt);
-        if (mb.classList.contains('is-confirm')) { mb.classList.remove('is-confirm'); sp.textContent = 'Restart quote'; return restart(); }
-        mb.classList.add('is-confirm'); sp.textContent = 'Tap again to clear';
-        mt = setTimeout(() => { mb.classList.remove('is-confirm'); sp.textContent = 'Restart quote'; }, 3500);
+        if (mb.classList.contains('is-confirm')) { mb.classList.remove('is-confirm'); sp.textContent = 'Restart Quote'; return restart(); }
+        mb.classList.add('is-confirm'); sp.textContent = 'Tap Again To Clear';
+        mt = setTimeout(() => { mb.classList.remove('is-confirm'); sp.textContent = 'Restart Quote'; }, 3500);
       }); }
     rsBtn.addEventListener('click', () => {
       if (rsBtn.classList.contains('is-confirm') || body.querySelector('.qs-done')) return restart();
-      rsBtn.classList.add('is-confirm'); rsTxt.textContent = 'Tap again to clear';
+      rsBtn.classList.add('is-confirm'); rsTxt.textContent = 'Tap Again To Clear';
       clearTimeout(rsTimer);
-      rsTimer = setTimeout(() => { rsBtn.classList.remove('is-confirm'); rsTxt.textContent = 'Restart quote'; }, 3500);
+      rsTimer = setTimeout(() => { rsBtn.classList.remove('is-confirm'); rsTxt.textContent = 'Restart Quote'; }, 3500);
     });
 
     const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
     const flow = () => FLOW[state.type];
-    const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your details', 'Review'];
+    const stepNames = () => ['Service', flow()[0].name, flow()[1].name, 'Your Details', 'Review'];
     const val = (k) => (k in (state.about || {}) && !(k in state.job) ? state.about[k] : state.job[k]);
     const has = (x) => (Array.isArray(x) ? x.length > 0 : !!x);
-    const visible = (f) => (!f.showIf || Object.entries(f.showIf).every(([k, v]) => (v === '*' ? has(val(k)) : val(k) === v))) && !(f.hideIf && Object.entries(f.hideIf).every(([k, v]) => val(k) === v));
+    const visible = (f) => (!f.showIf || Object.entries(f.showIf).every(([k, v]) => (v === '*' ? has(val(k)) : Array.isArray(val(k)) ? val(k).includes(v) : val(k) === v))) && !(f.hideIf && Object.entries(f.hideIf).every(([k, v]) => val(k) === v));
     const isPickup = () => state.job.fulfill === 'Customer Pick Up';
     const labelOf = (f) => (f.alt && isPickup() ? f.alt : f.label);
     const mapsUrl = (a) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Traffic Safety Service, ' + a);
@@ -1112,8 +1120,8 @@ const photos = [
           const rows = Array.isArray(state.job.items) && state.job.items.length ? state.job.items : [];
           curShop = f.shop;
           return wrap(`<div data-qs-shop>${shopHtml(f.shop)}</div>
-            <div class="qs-more"><p>Need something not shown?</p><div class="qs-rows" data-qs-rows>${rows.map(rowHtml).join('')}</div>
-            <button type="button" class="qs-addrow" data-qs-addrow>${ICON.plus}Add an item</button></div>`);
+            <div class="qs-more"><p>Need Something Not Shown?</p><div class="qs-rows" data-qs-rows>${rows.map(rowHtml).join('')}</div>
+            <button type="button" class="qs-addrow" data-qs-addrow>${ICON.plus}Add An Item</button></div>`);
         }
         case 'zip': {
           return wrap(`<div class="qs-zip"><input class="qs-input qs-zip__in" id="${id}" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="e.g. 07080" value="${esc(state.job.zip || '')}" data-qs-zip aria-describedby="${id}-out"><div class="qs-zip__out" id="${id}-out" data-qs-zipout aria-live="polite">${zipOut(f)}</div></div>
@@ -1212,10 +1220,9 @@ const photos = [
       if (state.step > 0 || state.touched) L.push(['svc', 'Service', esc(svc.b)]);
       if (state.type === 'lane-closure') {
         if (j.scope?.length) L.push(['scope:' + j.scope.join('|'), 'Scope', esc(j.scope.join(', '))]);
-        const rd = [j.authority, j.speed && j.speed !== 'Not sure' ? `${j.speed} mph` : '', j.travelLanes].filter(Boolean).join(' \u00b7 ');
+        const rd = [j.authority, j.speed && !/^not sure/i.test(j.speed) ? `${j.speed} mph` : '', j.travelLanes].filter(Boolean).join(' \u00b7 ');
         if (rd) L.push(['road:' + rd, 'Road', esc(rd)]);
         if (j.closure) L.push(['closure:' + j.closure, 'Closure', esc(j.closure + (j.duration ? ` \u00b7 ${j.duration}` : ''))]);
-        if (j.crew) L.push(['crew:' + j.crew, 'From TSS', esc(j.crew)]);
         if (j.equipment?.length) L.push(['eq', 'Equipment', esc(j.equipment.join(', '))]);
       }
       if (state.type === 'rental' || state.type === 'products') {
@@ -1225,12 +1232,12 @@ const photos = [
         if (j.custom === 'Yes') L.push(['custom', 'Custom', 'Colors, stenciling or logo']);
         if (j.fulfill || state.step >= 2) { const v = `${isPickup() ? 'Pick Up' : 'Delivery'} \u00b7 ${j.timing === 'Rush/Emergency' ? 'Rush' : 'Standard'}`; L.push(['ship:' + v, 'Shipping', v]); }
       }
-      if (state.type === 'general' && j.what) L.push(['what', 'The job', esc(j.what.length > 90 ? j.what.slice(0, 90) + '…' : j.what)]);
+      if (state.type === 'general' && j.what) L.push(['what', 'The Job', esc(j.what.length > 90 ? j.what.slice(0, 90) + '…' : j.what)]);
       const cityLine = j.town ? `${j.town}${j.state ? ', ' + j.state : ''}${j.zip && !j.zipManual ? ' ' + j.zip : ''}` : '';
       const place = [j.location || j.address, cityLine, !j.town && j.shipTo, j.where].filter(Boolean).join(', ');
-      if (place && !((state.type === 'rental' || state.type === 'products') && isPickup())) L.push(['place', state.type === 'products' ? 'Ships to' : 'Where', esc(place)]);
+      if (place && !((state.type === 'rental' || state.type === 'products') && isPickup())) L.push(['place', state.type === 'products' ? 'Ships To' : 'Where', esc(place)]);
       const d1 = j.startDate || j.deliverDate || j.needBy, d2 = j.endDate || j.pickupDate;
-      if (d1) L.push(['dates', state.type === 'products' ? 'Needed by' : 'Dates', esc(fmtDate(d1) + (d2 ? ` → ${fmtDate(d2)}` : '')) + (j.shift ? ` &middot; ${esc(j.shift)}` : '')]);
+      if (d1) L.push(['dates', state.type === 'products' ? 'Needed By' : 'Dates', esc(fmtDate(d1) + (d2 ? ` → ${fmtDate(d2)}` : '')) + (j.shift ? ` &middot; ${esc(j.shift)}` : '')]);
       else if (j.when) L.push(['when', 'When', esc(j.when)]);
       if (a.name) L.push(['who', 'For', esc([a.name, a.company].filter(Boolean).join(', '))]);
       return L;
@@ -1238,13 +1245,13 @@ const photos = [
     function renderTicket() {
       const svc = SVC.find((s) => s.id === state.type);
       root.querySelectorAll('[data-ph]').forEach((im) => im.classList.toggle('is-on', im.dataset.ph === state.type));
-      root.querySelector('[data-qs-tktitle]').textContent = state.step > 0 || state.touched ? svc.b : 'Start with what you need';
+      root.querySelector('[data-qs-tktitle]').textContent = state.step > 0 || state.touched ? svc.b : 'Start With What You Need';
       const filled = (o) => Object.entries(o || {}).some(([k, v]) => k !== 'sel' && (Array.isArray(v) ? v.length : v && typeof v !== 'object'));
       const started = allItems().length > 0 || filled(state.job) || filled(state.about);
       topEl.hidden = !started;
       { const m = root.querySelector('[data-qs-mrs]'); if (m) m.hidden = !started || !!body.querySelector('.qs-done'); }
       const L = ticketLines();
-      const ghosts = ['What you need', 'Where', 'When', 'Your details'].slice(Math.min(L.length, 4));
+      const ghosts = ['What You Need', 'Where', 'When', 'Your Details'].slice(Math.min(L.length, 4));
       linesEl.innerHTML = L.map(([k, t, v]) => `<li class="${seen.has(k) ? '' : 'is-new'}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')
         + (L.length < 4 ? ghosts.map((g) => `<li class="is-ghost"><span class="qs-dot"></span><div><span class="v">${g}</span></div></li>`).join('') : '');
       seen = new Set(L.map((l) => l[0]));
@@ -1277,7 +1284,7 @@ const photos = [
       sheet.querySelector('[data-qs-sbody]').innerHTML = `<div class="qs-tk__ph">${[...ph.querySelectorAll('img')].map((im) => im.outerHTML.replace('loading="lazy"', '')).join('')}<div class="qs-tk__cap"><span class="qs-tk__k">Your quote</span><b>${esc(svc.b)}</b></div><button type="button" class="qs-modal__x qs-qsheet__x" data-qs-sclose aria-label="Close">${ICON.x}</button></div>
         <ul class="qs-tk__lines">${L.map(([k, t, v], i) => `<li class="qs-in" style="--i:${i}"><span class="qs-dot">${ICON.check}</span><div><small>${t}</small><span class="v">${v}</span></div></li>`).join('')}</ul>
         ${L.length < 2 ? '<p class="qs-qsheet__empty">Your answers show up here as you go.</p>' : ''}
-        ${allItems().length ? '<div class="qs-qsheet__rs"><button type="button" class="qs-restart" data-qs-srestart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span>Restart quote</span></button></div>' : ''}`;
+        ${allItems().length ? '<div class="qs-qsheet__rs"><button type="button" class="qs-restart" data-qs-srestart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4.2h4.2"/></svg><span>Restart Quote</span></button></div>' : ''}`;
     }
     function openSheetUI() {
       sheet.hidden = false;
@@ -1289,8 +1296,8 @@ const photos = [
     sheet.addEventListener('click', (e) => {
       const b = e.target.closest('[data-qs-srestart]'); if (!b) return;
       if (b.classList.contains('is-confirm')) { closeSheet(); restart(); return; }
-      b.classList.add('is-confirm'); b.querySelector('span').textContent = 'Tap again to clear';
-      setTimeout(() => { if (b.isConnected) { b.classList.remove('is-confirm'); b.querySelector('span').textContent = 'Restart quote'; } }, 3500);
+      b.classList.add('is-confirm'); b.querySelector('span').textContent = 'Tap Again To Clear';
+      setTimeout(() => { if (b.isConnected) { b.classList.remove('is-confirm'); b.querySelector('span').textContent = 'Restart Quote'; } }, 3500);
     });
     function closeSheet() {
       if (sheet.hidden) return;
@@ -1348,7 +1355,7 @@ const photos = [
     document.fonts?.ready.then(fitHeads);
 
     function stepService(dir) {
-      body.innerHTML = `<div class="qs-step${dir}">${head('Get started', 'What can we quote for you?', 'Pick the closest fit. You can change it any time.')}
+      body.innerHTML = `<div class="qs-step${dir}">${head('Get Started', 'What Can We Quote For You?', 'Pick the closest fit. You can change it any time.')}
         <div class="qs-svc" role="radiogroup" aria-label="Service">${SVC.map((s, i) => `<label class="qs-in" style="--i:${i + 1}"><input type="radio" name="${ns}-svc" value="${s.id}"${state.touched && state.type === s.id ? ' checked' : ''}><span class="qs-svc__card"><span class="qs-svc__art${s.photo ? ' is-photo' : ''}" style="--tint:${s.tint || '#ececea'}"><img class="is-photo${s.fit ? ' is-contain' : ''}" src="${s.photo}" alt="" style="object-position:${s.pos || '50% 50%'}" loading="lazy"></span><span class="qs-svc__txt"><b>${esc(s.b)}</b><small>${esc(s.s)}</small></span><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>
         ${navHtml('Continue', false)}</div>`;
       body.querySelectorAll(`[name="${ns}-svc"]`).forEach((r) => r.addEventListener('change', () => {
@@ -1379,7 +1386,7 @@ const photos = [
     }
 
     function stepAbout(dir) {
-      body.innerHTML = `<div class="qs-step${dir}">${head('Your details', 'Who should the quote go to?', 'We only use this to send your price.')}
+      body.innerHTML = `<div class="qs-step${dir}">${head('Your Details', 'Who Should The Quote Go To?', 'We only use this to send your price.')}
         <div class="qs-fields">${ABOUT.map((f, i) => field(f, 'about', i + 1)).join('')}</div>${navHtml('Review my request')}</div>`;
       wire('about');
       body.querySelector('[data-qs-next]').addEventListener('click', () => {
@@ -1411,7 +1418,7 @@ const photos = [
       const { job, about } = pairs();
       const items = allItems();
       const dl = (ps) => `<dl>${ps.map(([k, v, wide]) => `<div${wide ? ' class="is-wide"' : ''}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`;
-      body.innerHTML = `<div class="qs-step${dir}">${head('Review', 'Look good?', 'Check the details, then send it over.')}
+      body.innerHTML = `<div class="qs-step${dir}">${head('Review', 'Look Good?', 'Check the details, then send it over.')}
         <div class="qs-rv">
           <section class="qs-in" style="--i:1"><header><h3>${esc(svc.b)}</h3><button type="button" data-qs-goto2="0">Change</button></header>
             ${items.length ? `<div class="qs-rv__items">${items.map((x) => `<span>${x.img ? `<img src="${x.img}" alt="">` : ''}<b>${x.qty}</b>${esc(x.desc)}${x.buy ? BUYTAG : ''}${rmBtn(x)}</span>`).join('')}</div>` : `<p class="qs-fine" style="margin:0">${esc(svc.s)}</p>`}
