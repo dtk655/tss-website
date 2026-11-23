@@ -917,8 +917,8 @@ const photos = [
       { name: 'The closure', k: 'Closure and schedule', title: 'What does the closure look like?', lead: 'Pick what the work needs. Not sure? Choose “Not sure” and describe the job below.', fields: [
         { id: 'closure', label: 'Type of closure', type: 'pics', req: true, n: 4, cls: 'is-mini', opts: LC_WORK.map(([k, v, s]) => ({ v, s, art: lcMini(k) })) },
         { id: 'workArea', label: 'Length of the work area', type: 'chips', opts: ['Under 250 ft', '250 to 500 ft', '500 to 1,000 ft', 'Over 1,000 ft', 'Not sure'] },
-        { id: 'duration', label: 'How long will the closure stay up?', type: 'pics', req: true, n: 4, n: 5, cls: 'is-clock', opts: [
-          { v: 'Under an hour', s: 'Short duration', art: lcClock(.12) }, { v: 'One shift', s: 'Up to 12 hours, same day', art: lcClock(.45) }, { v: 'Overnight to 3 days', s: 'Left up between shifts', art: lcClock(.75) }, { v: 'More than 3 days', s: 'Long-term setup', art: lcClock(1) }, { v: 'Not sure', t: 'Not sure yet', s: 'We\u2019ll work it out with you', art: lcBadge('?', 'gold') }] },
+        { id: 'duration', label: 'How long will the closure stay up?', type: 'pics', req: true, n: 4, n: 4, cls: 'is-clock', opts: [
+          { v: 'One shift', s: 'Up to 12 hours, same day', art: lcClock(.45) }, { v: 'Overnight to 3 days', s: 'Left up between shifts', art: lcClock(.75) }, { v: 'More than 3 days', s: 'Long-term setup', art: lcClock(1) }, { v: 'Not sure', t: 'Not sure yet', s: 'We\u2019ll work it out with you', art: lcBadge('?', 'gold') }] },
         { id: 'shift', label: 'Work hours', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock], ['Not sure', ICON.q]] },
         { id: 'dateSet', label: 'Do you have dates yet?', type: 'chips', opts: ['Yes', 'Not sure yet'], def: 'Yes' },
         { id: 'startDate', label: 'Start date', type: 'date', req: true, w: 'third', pair: 1, hideIf: { dateSet: 'Not sure yet' } },
