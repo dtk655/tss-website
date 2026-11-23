@@ -2,7 +2,8 @@
 // Quote builder: a visual five-step request flow with a live quote ticket.
 // Props: preset = 'lane-closure' | 'rental' | 'products' | 'general', fromParam (reads ?type= and ?from=builder).
 // Step and field definitions live in the script below so they're easy to edit.
-// Posts { type, answers: { job, about }, summary, quoteList, page, submittedAt } to FORM_WEBHOOK.
+// Posts { type, ref, answers: { job, about }, review, summary, quoteList, page, submittedAt } to FORM_WEBHOOK.
+// Lane closure requests are also posted to /api/portal-quote, which forwards them to the Operations Portal.
 import { PHONE, PHONE_TEL, EMAIL, FORM_WEBHOOK } from '../lib/config.js';
 const { preset = 'general', fromParam = false } = Astro.props;
 const CDN = 'https://cdn.shopify.com/s/files/1/0587/7701/0241/files/';
@@ -1444,14 +1445,22 @@ const photos = [
       btn.disabled = true; btn.classList.add('is-sending'); btn.innerHTML = `Sending<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg>`;
       const items = allItems().map(({ desc, qty, buy }) => (buy ? { desc, qty, alsoQuotePurchase: true } : { desc, qty }));
       const { sel, ...rest } = state.job;
-      const payload = { type: state.type, answers: { job: { ...rest, items }, about: state.about }, summary: summaryText(), rush: state.job.timing === 'Rush/Emergency', quoteList: window.TSSQuote?.items?.() || [], page: location.pathname, submittedAt: new Date().toISOString() };
+      // One reference per request: shown to the customer, and used by the Operations Portal to ignore a repeat send.
+      const ref = (state.ref ||= 'TSS-' + Date.now().toString(36).slice(-6).toUpperCase() + Math.random().toString(36).slice(2, 4).toUpperCase());
+      const rv = pairs();
+      const review = { job: rv.job.map(([k, v]) => [k, String(v)]), about: rv.about.map(([k, v]) => [k, String(v)]) };
+      const payload = { type: state.type, ref, answers: { job: { ...rest, items }, about: state.about }, review, summary: summaryText(), rush: state.job.timing === 'Rush/Emergency', quoteList: window.TSSQuote?.items?.() || [], page: location.pathname, submittedAt: new Date().toISOString() };
+      const send = (url) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); });
       try {
-        if (!HOOK) throw new Error('no webhook');
-        const r = await fetch(HOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
+        // Lane closure requests also go to the Operations Portal's Quote Requests page, through this site's own
+        // server function (it holds the key). The request counts as sent if either destination took it.
+        const sends = [HOOK ? send(HOOK) : Promise.reject(new Error('no webhook'))];
+        if (state.type === 'lane-closure') sends.push(send('/api/portal-quote'));
+        const results = await Promise.allSettled(sends);
+        if (!results.some((x) => x.status === 'fulfilled')) throw results[0].reason;
         try { sessionStorage.removeItem(KEY); } catch {}
         window.TSSQuote?.clear?.();
-        done();
+        done(ref);
       } catch (e) {
         const fail = body.querySelector('[data-qs-fail]');
         fail.hidden = false;
@@ -1460,8 +1469,8 @@ const photos = [
         btn.disabled = false; btn.classList.remove('is-sending'); btn.innerHTML = `Try again${ICON.arrow}`;
       }
     }
-    function done() {
-      const ref = 'TSS-' + Date.now().toString(36).slice(-6).toUpperCase();
+    function done(sentRef) {
+      const ref = sentRef || 'TSS-' + Date.now().toString(36).slice(-6).toUpperCase();
       stepsEl.querySelectorAll('li').forEach((li) => { li.className = 'is-done'; li.querySelector('.qs-n').innerHTML = ICON.check; li.querySelector('button').disabled = true; });
       body.innerHTML = `<div class="qs-done">
         <svg class="qs-done__check" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44"/><path d="M31 51l13 13 26-28"/></svg>
