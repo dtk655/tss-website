@@ -769,6 +769,7 @@ const photos = [
     plan: '<svg viewBox="0 0 24 24"><path d="M4 5l5-2 6 2 5-2v16l-5 2-6-2-5 2z"/><path d="M9 3v16M15 5v16"/></svg>',
     box: '<svg viewBox="0 0 24 24"><path d="M3 7.5L12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg>',
     chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4"/></svg>',
+    q: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4"/><path d="M12 16.6v.1"/></svg>',
     cal: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>'
   };
 
@@ -861,25 +862,26 @@ const photos = [
         { id: 'location', label: 'Road or route, plus milepost, exit or cross street', type: 'text', req: true, ph: 'e.g. Route 22 westbound at Terrill Rd, or MP 142.3' },
         { id: 'zip', label: 'ZIP code', type: 'zip', req: true, area: ['NJ', 'NY', 'PA', 'CT', 'DE'], areaMsg: 'Our lane closure crews work in NJ, NY, PA, CT and DE. Send it anyway and we’ll let you know.' },
         { id: 'speed', label: 'Posted speed limit (mph)', type: 'chips', req: true, opts: ['25', '30', '35', '40', '45', '50', '55', '60', '65', '70', 'Not sure'] },
-        { id: 'travelLanes', label: 'Travel lanes in the direction of work', type: 'chips', opts: ['1 lane', '2 lanes', '3 lanes', '4+ lanes'] },
-        { id: 'layout', label: 'Road layout', type: 'chips', opts: ['Divided highway', 'Two-way, undivided', 'One-way street'] }
+        { id: 'travelLanes', label: 'Travel lanes in the direction of work', type: 'chips', opts: ['1 lane', '2 lanes', '3 lanes', '4+ lanes', 'Not sure'] },
+        { id: 'layout', label: 'Road layout', type: 'chips', opts: ['Divided highway', 'Two-way, undivided', 'One-way street', 'Not sure'] }
       ] },
       { name: 'The closure', k: 'Closure and schedule', title: 'What does the closure look like?', lead: 'Pick what the work needs. Not sure? Choose “Not sure” and describe the job below.', fields: [
         { id: 'closure', label: 'Type of closure', type: 'pics', req: true, n: 4, cls: 'is-mini', opts: LC_WORK.map(([k, v, s]) => ({ v, s, art: lcMini(k) })) },
         { id: 'workArea', label: 'Length of the work area', type: 'chips', opts: ['Under 250 ft', '250 to 500 ft', '500 to 1,000 ft', 'Over 1,000 ft', 'Not sure'] },
-        { id: 'duration', label: 'How long will the closure stay up?', type: 'pics', req: true, n: 4, cls: 'is-clock', opts: [
-          { v: 'Under an hour', s: 'Short duration', art: lcClock(.12) }, { v: 'One shift', s: 'Up to 12 hours, same day', art: lcClock(.45) }, { v: 'Overnight to 3 days', s: 'Left up between shifts', art: lcClock(.75) }, { v: 'More than 3 days', s: 'Long-term setup', art: lcClock(1) }] },
-        { id: 'shift', label: 'Work hours', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock]] },
-        { id: 'startDate', label: 'Start date', type: 'date', req: true, w: 'third', pair: 1 },
-        { id: 'endDate', label: 'End date', type: 'date', w: 'third', pair: 1 },
-        { id: 'startTime', label: 'Start time', type: 'time', w: 'third' },
+        { id: 'duration', label: 'How long will the closure stay up?', type: 'pics', req: true, n: 4, n: 5, cls: 'is-clock', opts: [
+          { v: 'Under an hour', s: 'Short duration', art: lcClock(.12) }, { v: 'One shift', s: 'Up to 12 hours, same day', art: lcClock(.45) }, { v: 'Overnight to 3 days', s: 'Left up between shifts', art: lcClock(.75) }, { v: 'More than 3 days', s: 'Long-term setup', art: lcClock(1) }, { v: 'Not sure', t: 'Not sure yet', s: 'We\u2019ll work it out with you', art: lcBadge('?', 'gold') }] },
+        { id: 'shift', label: 'Work hours', type: 'seg', opts: [['Day work', ICON.sun], ['Night work', ICON.moon], ['24-hour', ICON.clock], ['Not sure', ICON.q]] },
+        { id: 'dateSet', label: 'Do you have dates yet?', type: 'chips', opts: ['Yes', 'Not sure yet'], def: 'Yes' },
+        { id: 'startDate', label: 'Start date', type: 'date', req: true, w: 'third', pair: 1, hideIf: { dateSet: 'Not sure yet' } },
+        { id: 'endDate', label: 'End date', type: 'date', w: 'third', pair: 1, hideIf: { dateSet: 'Not sure yet' } },
+        { id: 'startTime', label: 'Start time', type: 'time', w: 'third', hideIf: { dateSet: 'Not sure yet' } },
         { id: 'crew', label: 'What do you need from TSS?', type: 'pics', n: 4, cls: 'is-badge', opts: [
-          { v: 'Full closure crew', s: 'Certified crew sets, maintains and removes it', art: lcBadge('CREW', 'red') }, { v: 'Flaggers only', s: 'Certified flaggers direct traffic', art: lcBadge('FLAG', 'gold') }, { v: 'Equipment and setup', s: 'We set it and take it down, you run the job', art: lcBadge('SET', '') }, { v: 'Equipment only', s: 'Delivered and picked up, your crew sets it', art: lcBadge('EQ', '') }] },
-        { id: 'equipment', label: 'Equipment you need from us', type: 'equip', opts: [
+          { v: 'Full closure crew', s: 'Certified crew sets, maintains and removes it', art: lcBadge('CREW', 'red') }, { v: 'Flaggers only', s: 'Certified flaggers direct traffic', art: lcBadge('FLAG', 'gold') }, { v: 'Equipment rental only', t: 'Need to Rent Equipment?', s: 'We can supply the equipment for your own closure, subject to the requirements of the road', art: lcBadge('EQ', '') }, { v: 'Not sure', t: 'Not sure yet', s: 'We\u2019ll recommend the right setup', art: lcBadge('?', 'gold') }] },
+        { id: 'equipment', label: 'What equipment do you need?', type: 'equip', showIf: { crew: 'Equipment rental only' }, opts: [
           { v: 'TMA crash truck', img: IMG.tma, tint: T.red }, { v: 'Arrow board', img: IMG.arrow, tint: T.yellow }, { v: 'Message board (VMS)', img: IMG.vms, tint: T.orange }, { v: 'Cones or drums', img: IMG.cones, tint: T.orange },
-          { v: 'Barricades', img: IMG.barricades, tint: T.blue }, { v: 'Signs', img: IMG.signs, tint: T.red }, { v: 'Lights', img: IMG.tower, tint: T.yellow }, { v: 'We have our own', icon: ICON.box, tint: T.grey }] },
+          { v: 'Barricades', img: IMG.barricades, tint: T.blue }, { v: 'Signs', img: IMG.signs, tint: T.red }, { v: 'Lights', img: IMG.tower, tint: T.yellow }, { v: 'Not sure', icon: ICON.q, tint: T.grey }] },
         { id: 'permit', label: 'Permit status', type: 'chips', opts: ['Have it', 'Applied', 'Not yet', 'Not sure'] },
-        { id: 'police', label: 'Police detail', type: 'chips', opts: ['Already arranged', 'Need guidance', 'Not required'] },
+        { id: 'police', label: 'Police detail', type: 'chips', opts: ['Already arranged', 'Need guidance', 'Not required', 'Not sure'] },
         { id: 'tcp', label: 'Need a traffic control plan drawing for the permit?', type: 'chips', opts: ['Yes, prepare one', 'No, we have one', 'Not sure'] },
         { id: 'work', label: 'Describe the work', type: 'textarea', req: true, ph: 'e.g. Crane pick over the right lane for rooftop HVAC units. Lane and sidewalk need to close.' }
       ] }
@@ -1043,7 +1045,8 @@ const photos = [
         case 'textarea':
           return wrap(`<textarea class="qs-input" id="${id}" rows="4" data-qs-f="${f.id}"${f.ph ? ` placeholder="${esc(f.ph)}"` : ''}>${esc(v || '')}</textarea>`, id);
         case 'chips': case 'multi': {
-          const multi = f.type === 'multi'; const vals = multi ? (Array.isArray(v) ? v : []) : v;
+          if (!v && f.def) state[scope][f.id] = f.def;
+          const multi = f.type === 'multi'; const vals = multi ? (Array.isArray(v) ? v : []) : (v || f.def);
           return wrap(`<div class="qs-chips" role="group" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-chip"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${esc(o)}" data-qs-f="${f.id}"${multi ? ' data-qs-multi="1"' : ''}${(multi ? vals.includes(o) : vals === o) ? ' checked' : ''}><span>${multi ? ICON.check.replace('<svg', '<svg aria-hidden="true"') : ''}${esc(o)}</span></label>`).join('')}</div>`);
         }
         case 'seg':
@@ -1052,7 +1055,7 @@ const photos = [
         case 'info':
           return wrap(`<div class="qs-pu"><p class="qs-pu__k">${PIN}Customer Pick Up</p>${f.places.map(([k, a]) => `<a class="qs-pu__row" href="${mapsUrl(a)}" target="_blank" rel="noopener"><span><small>${esc(k)}</small><b>${esc(a)}</b></span><i>Map</i></a>`).join('')}<p class="qs-pu__n">We\u2019ll confirm when your order is ready before you come.</p></div>`);
         case 'pics':
-          return wrap(`<div class="qs-pics ${f.cls || ''}" style="--n:${f.n || 4}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="radio" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${v === o.v ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
+          return wrap(`<div class="qs-pics ${f.cls || ''}" style="--n:${f.n || 4}" role="radiogroup" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-pic"><input type="radio" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}"${v === o.v ? ' checked' : ''}><span>${o.art || `<span class="qs-ico">${o.icon}</span>`}<b>${esc(o.t || o.v)}</b>${o.s ? `<small>${esc(o.s)}</small>` : ''}<span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
         case 'equip': {
           const vals = Array.isArray(v) ? v : [];
           return wrap(`<div class="qs-eqs" role="group" aria-labelledby="${id}-l">${f.opts.map((o) => `<label class="qs-eq"><input type="checkbox" name="${name}" value="${esc(o.v)}" data-qs-f="${f.id}" data-qs-multi="1"${vals.includes(o.v) ? ' checked' : ''}><span style="--tint:${o.tint}">${o.img ? `<img src="${o.img}" alt="" loading="lazy">` : `<span class="qs-noimg">${o.icon}</span>`}<b>${esc(o.v)}</b><span class="qs-tick">${ICON.check}</span></span></label>`).join('')}</div>`);
@@ -1331,7 +1334,7 @@ const photos = [
         set('duration', pick({ short: 'Under an hour', shift: 'One shift', days: 'Overnight to 3 days', long: 'More than 3 days' }, p.dur));
         set('shift', pick({ day: 'Day work', night: 'Night work', both: '24-hour' }, p.hours));
         set('startDate', p.start);
-        set('crew', pick({ crew: 'Full closure crew', install: 'Equipment and setup', equip: 'Equipment only' }, p.service));
+        set('crew', pick({ crew: 'Full closure crew', install: 'Full closure crew', equip: 'Equipment rental only', unsure: 'Not sure' }, p.service));
         set('permit', pick({ have: 'Have it', applied: 'Applied', none: 'Not yet', unsure: 'Not sure' }, p.permit));
         set('police', pick({ arranged: 'Already arranged', help: 'Need guidance', no: 'Not required' }, p.police));
         set('tcp', pick({ yes: 'Yes, prepare one', no: 'No, we have one', unsure: 'Not sure' }, p.tcp));
