@@ -126,6 +126,11 @@ const faqs = [
 ].filter(Boolean);
 const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M3 10h18v9H3z M7 10V6h10v4', 'M5 21V5l7-2 7 2v16 M9 21v-5h6v5', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z M12 7.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z', 'M4 17l5-5 4 4 7-8 M20 8v5 M20 8h-5', 'M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z'];
 const SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z M8.5 12l2.4 2.4 4.6-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const trust = [
+  ...badges.map((b) => [b.k === 'MUTCD' ? 'MUTCD Compliant' : b.k === 'MASH' ? 'MASH Approved' : b.k, 'green']),
+  p.collections.includes('best-selling-collection') && ['Top Seller', 'red'],
+  customizable && ['Custom Branding', 'blue']
+].filter(Boolean);
 const tabs = [['description', 'Description'], ['specs', 'Specifications'], customizable && ['customize', 'Customize'], WatercadePlanner && ['plan', 'Plan Layout'], faqs.length && ['faq', 'Questions']].filter(Boolean);
 const nav = [['overview', 'Overview'], ['specs', 'Specs'], customizable && ['customize', 'Customize'], WatercadePlanner && ['plan', 'Layout'], uses.length && ['uses', 'Uses'], accessories.length && ['pairs', 'Pairs With'], faqs.length && ['faq', 'Questions']].filter(Boolean);
 const num = (id) => String(nav.findIndex(([k]) => k === id) + 1).padStart(2, '0');
@@ -144,10 +149,9 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
   <div class="pp">
     <div class="wrap">
       <nav class="pp__crumbs" aria-label="Breadcrumb">
-        <a href="/">Home</a><span>/</span>
-        <a href="/collections">Shop</a>
-        {crumbCol && <><span>/</span><a href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a></>}
-        <span>/</span><b aria-current="page">{p.title}</b>
+        <a href="/">Home</a><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        {crumbCol && <><a href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></>}
+        <b aria-current="page">{p.title}</b>
       </nav>
 
       <div class="pp__top">
@@ -156,63 +160,122 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
         </div>
 
         <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
-          {crumbCol && <a class="buy__cat" href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a>}
-          <h1 class="buy__title">{p.title}</h1>
-          <p class="buy__meta">
-            {p.isRental ? <span class="st st--rent">Available to rent</span> : inStock ? <span class="st st--ok">In stock</span> : <span class="st">Made to order</span>}
-            {pickupOnly && <span class="st">Customer Pick Up only</span>}
-            {badges.map((b) => <span class="st st--std" title={b.d}>{b.k}</span>)}
+          <p class="buy__status">
+            {p.isRental ? <span class="st st--rent">Available to rent · NJ, NY, PA and CT</span> : inStock ? <span class="st st--ok">{pickupOnly ? 'In stock · Customer Pick Up' : 'In stock & ready to ship'}</span> : <span class="st">Made to order</span>}
           </p>
-
-          {sellable && <div class="mode" role="tablist" aria-label="Rent or buy" data-mode-sw data-on="rent"><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
-
+          <h1 class="buy__title">{p.title}</h1>
           <div class="buy__price">
             {p.isRental ? (
-              <p class="buy__q" data-mode-txt>Priced per job. Get a quote for daily, weekly or monthly rates.</p>
+              <p class="buy__q" data-mode-txt>Priced per job. Request a quote for daily, weekly or monthly rates.</p>
             ) : (
-              <p><strong data-price>{money(first.price)}</strong> <span>each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
+              <>
+                <p><strong data-price>{money(first.price)}</strong><span>each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
+                <small>{pickupOnly ? 'Customer Pick Up at 601 Hadley Road. Call for delivery.' : 'Shipping calculated at checkout.'}</small>
+              </>
             )}
           </div>
 
-          {intro && <p class="buy__intro">{intro}</p>}
+          {sellable && <div class="mode" role="tablist" aria-label="Rent or buy" data-mode-sw data-on="rent"><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
 
           {options.map((o) => (
             <fieldset class="opt" data-option={o.name}>
               <legend>{cap(o.name)}: <span data-opt-val>{first.opts[o.name]}</span></legend>
-              <div class={isColor(o.name) ? 'swatches' : 'pills'}>
+              <div class="pills">
                 {o.values.map((val) => (
-                  <label class={isColor(o.name) ? 'sw' : 'pill'} title={val}>
+                  <label class="pill" title={val}>
                     <input type="radio" name={`opt-${o.name}`} value={val} checked={first.opts[o.name] === val} />
-                    {isColor(o.name) ? <span style={`--c:${SWATCH[val.toLowerCase()] || '#ccc'}`}><span class="sr-only">{val}</span></span> : <span>{val}</span>}
+                    <span>{isColor(o.name) && <i style={`--c:${SWATCH[val.toLowerCase()] || '#ccc'}`}></i>}{val}</span>
                   </label>
                 ))}
               </div>
             </fieldset>
           ))}
 
-          <div class="qty-row">
-            <label class="qty">
-              <span class="sr-only">Quantity</span>
-              <button type="button" data-q="-1" aria-label="Decrease quantity">−</button>
-              <input type="number" min="1" value="1" data-qty inputmode="numeric" />
-              <button type="button" data-q="1" aria-label="Increase quantity">+</button>
-            </label>
-            {!p.isRental && <button class="buy__add" data-add-cart><span class="buy__addt">Add to Cart</span></button>}
-            {p.isRental && <button class="buy__add" data-get-quote="rental" data-mode-btn><span class="buy__addt">Request a Quote</span></button>}
+          <div class="buy__act">
+            <p class="buy__lab">Quantity</p>
+            <div class="qty-row">
+              <label class="qty">
+                <span class="sr-only">Quantity</span>
+                <button type="button" data-q="-1" aria-label="Decrease quantity">−</button>
+                <input type="number" min="1" value="1" data-qty inputmode="numeric" />
+                <button type="button" data-q="1" aria-label="Increase quantity">+</button>
+              </label>
+              {!p.isRental && <button class="buy__add" data-add-cart><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10.4l2-8H6.4 M9.5 20a1 1 0 1 0 0-.01 M17.5 20a1 1 0 1 0 0-.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="buy__addt">Add to Cart</span></button>}
+              {p.isRental && <button class="buy__add" data-get-quote="rental" data-mode-btn><span class="buy__addt">Request a Quote</span></button>}
+            </div>
+            {!p.isRental && <p class="bulk" data-bulk hidden>Ordering 25 or more? <button type="button" data-get-quote="products">Get bulk pricing</button></p>}
+            <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Request a quote and we’ll source it.</p>
           </div>
-          {!p.isRental && <button class="buy__sec" data-get-quote="products">Request a Quote</button>}
-          {!p.isRental && <p class="bulk" data-bulk hidden>Ordering 25 or more? <button type="button" data-get-quote="products">Get bulk pricing</button></p>}
-          <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Request a quote and we’ll source it.</p>
 
-          <ul class="buy__info">
-            {perks.map(([t, d]) => <li><b>{t}</b> <span>{d}</span></li>)}
-          </ul>
+          <div class="buy__pick">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              {p.isRental ? <p>Delivered, set up and picked up by our crews</p> : <p>Pickup available at <b>601 Hadley Road</b>, South Plainfield, NJ</p>}
+              <small>{p.isRental ? 'Daily, weekly, monthly or long-term rentals.' : pickupOnly ? 'This item is pick up only online. Call for delivery.' : 'Or ship it anywhere in the U.S.'}</small>
+            </div>
+          </div>
 
           <div class="tools">
+            {!p.isRental && <button type="button" class="tool tool--red" data-get-quote="products">Request Quote</button>}
             <button type="button" class="tool" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5 M12 11v6 M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Spec Sheet</button>
-            {customizable && <a href="#tabs" class="tool" data-tab-go="customize"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z M14 7l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Customize</a>}
+            {customizable && <a href="#customize" class="tool"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z M14 7l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Customize</a>}
             <button type="button" class="tool tool--ai" data-ask><span class="tool__ai">AI</span>Ask a Question</button>
           </div>
+
+          <div class="acc">
+            <details open>
+              <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H9l-4 4z" /></svg>Product Description</summary>
+              <div class="acc__b">
+                {kicker && <p class="acc__kick">{kicker}</p>}
+                {leadText.length ? leadText.map((l) => <p>{l}</p>) : <p>{meta?.sub || 'Built for work zones, job sites and events.'}</p>}
+                {features.length > 0 && <ul>{features.map((fe) => <li>{fe.label && <b>{fe.label}: </b>}{fe.text}</li>)}</ul>}
+                {uses.length > 0 && <p class="acc__uses"><b>Common uses:</b> {uses.join(', ')}.</p>}
+                {included.length > 0 && <p class="acc__uses"><b>Included:</b> {included.join(', ')}.</p>}
+              </div>
+            </details>
+            <details>
+              <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M4 10h16 M10 10v10" /></svg>Specifications</summary>
+              <div class="acc__b">
+                <table class="spec"><tbody>
+                  {badges.length > 0 && <tr><th>Standards</th><td>{badges.map((b) => b.k).join(', ')}</td></tr>}
+                  {allSpecs.filter(([k]) => !['Shipping', 'Fulfillment', 'Rent it', 'Ordering', 'Customizing', 'Price', 'Category'].includes(k)).map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}
+                </tbody></table>
+                <button type="button" class="acc__link" data-print>Download the spec sheet</button>
+              </div>
+            </details>
+            <details>
+              <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 7h11v9h-11z M13.5 10h4l3 3v3h-7 M6 18.5a1.5 1.5 0 1 0 0-.01 M17 18.5a1.5 1.5 0 1 0 0-.01" /></svg>{p.isRental ? 'Delivery & Setup' : 'Shipping & Pickup'}</summary>
+              <div class="acc__b">
+                {p.isRental ? (
+                  <p>We deliver, set up and pick up anywhere in New Jersey, New York, Pennsylvania and Connecticut. Our certified, experienced crews can also run it for you.</p>
+                ) : (
+                  <>
+                    <p>{pickupOnly ? 'Online orders for this item are Customer Pick Up.' : 'We ship anywhere in the U.S. Shipping is calculated at checkout.'}</p>
+                    <p>Customer Pick Up is available at 601 Hadley Road, South Plainfield, NJ 07080. Need it fast? Ask about Rush/Emergency Pick Ups.</p>
+                    <a class="acc__link" href="/policies/shipping-policy">Shipping policy</a>
+                  </>
+                )}
+              </div>
+            </details>
+            {!p.isRental && (
+              <details>
+                <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6 M4 4v4h4" /></svg>Returns</summary>
+                <div class="acc__b"><p>See our refund policy for return windows and conditions, or call us and we’ll help.</p><a class="acc__link" href="/policies/refund-policy">Refund policy</a></div>
+              </details>
+            )}
+            {faqs.length > 0 && (
+              <details>
+                <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5 M12 16.5v.1" /></svg>Questions</summary>
+                <div class="acc__b acc__faq">{faqs.map(([q, a]) => <div><b>{q}</b><p>{a}</p></div>)}</div>
+              </details>
+            )}
+          </div>
+
+          {trust.length > 0 && (
+            <ul class="trust">
+              {trust.map(([t2, tone]) => <li class={`trust--${tone}`}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z M8.5 12l2.4 2.4 4.6-4.8" /></svg>{t2}</li>)}
+            </ul>
+          )}
         </div>
       </div>
     </div>
@@ -220,89 +283,43 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 
   {/^truck-mounted-attenuator/.test(p.handle) && <TmaTruck />}
 
-  <!-- ================= TABS ================= -->
-  <div class="ptabs" id="tabs" data-tabs>
-    <div class="wrap">
-      <div class="tabs__bar" role="tablist" aria-label="Product information">
-        {tabs.map(([id, l], i) => <button type="button" role="tab" id={`tab-${id}`} aria-controls={`panel-${id}`} aria-selected={i === 0 ? 'true' : 'false'} data-tab={id}>{l}</button>)}
-      </div>
-
-      <section class="tab" id="panel-description" role="tabpanel" aria-labelledby="tab-description" data-panel="description">
-        <h2 class="tab__h">Description</h2>
-        <div class="desc">
-          <div class="desc__main">
-            {kicker && <p class="desc__kick">{kicker}</p>}
-            {leadText.length ? leadText.map((l) => <p>{l}</p>) : <p>{meta?.sub || 'Built for work zones, job sites and events.'}</p>}
-            {features.length > 0 && (
-              <>
-                <h3>Features</h3>
-                <ul class="desc__list">{features.map((fe) => <li>{fe.label && <b>{fe.label}: </b>}{fe.text}</li>)}</ul>
-              </>
-            )}
-          </div>
-          <aside class="desc__side">
-            {uses.length > 0 && (<><h3>Common uses</h3><ul class="desc__list desc__list--plain">{uses.map((u) => <li>{u}</li>)}</ul></>)}
-            {included.length > 0 && (<><h3>Included</h3><ul class="desc__list desc__list--plain">{included.map((x) => <li>{x}</li>)}</ul></>)}
-            {chipsLine.length > 0 && (<><h3>Highlights</h3><ul class="desc__list desc__list--plain">{chipsLine.map((x) => <li>{x}</li>)}</ul></>)}
-          </aside>
+  {customizable && (
+    <section class="pcz" id="customize">
+      <div class="wrap">
+        <div class="sec__h">
+          <h2>{builder?.kind === 'aframe' ? 'Print Your Own Rails' : builder ? 'Stencil Your Name Or Logo' : 'Brand Your WATERCADE'}</h2>
+          <p>{builder ? builder.lede : 'Choose your color, upload your logo and add your message. Our team confirms every detail and price before anything is made.'}</p>
         </div>
-      </section>
-
-      <section class="tab" id="panel-specs" role="tabpanel" aria-labelledby="tab-specs" data-panel="specs" hidden>
-        <h2 class="tab__h">Specifications</h2>
-        <table class="spec">
-          <tbody>
-            {badges.length > 0 && <tr><th>Standards</th><td>{badges.map((b) => b.k).join(', ')}</td></tr>}
-            {allSpecs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}
-          </tbody>
-        </table>
-        <p class="spec__note">Need product data or certification documents for a bid? <button type="button" data-print>Download the spec sheet</button> or <a href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`}>request documents</a>.</p>
-      </section>
-
-      {customizable && (
-        <section class="tab" id="panel-customize" role="tabpanel" aria-labelledby="tab-customize" data-panel="customize" hidden>
-          <h2 class="tab__h">Customize</h2>
-          {builder ? (
-            <>
-              <p class="tab__lede">{builder.lede}</p>
-              <CustomBuilder kind={builder.kind} lock bare coneSize={builder.size || '28"'} id="customize-builder" />
-            </>
-          ) : (
-            <div class="wcb">
-              <img src="/custom/police-barrier.webp" alt="White WATERCADE barrier with a custom police wrap" loading="lazy" />
-              <div>
-                <h3>WATERCADE Builder</h3>
-                <p>Choose your color, upload your logo and add your message, then send it to us. Our team confirms every detail and price before anything is made.</p>
-                <a href="/watercade/#customize" class="btn-p">Open the WATERCADE Builder</a>
-              </div>
+        {builder ? (
+          <CustomBuilder kind={builder.kind} lock bare coneSize={builder.size || '28"'} id="customize-builder" />
+        ) : (
+          <div class="wcb">
+            <img src="/custom/police-barrier.webp" alt="White WATERCADE barrier with a custom police wrap" loading="lazy" />
+            <div>
+              <h3>WATERCADE Builder</h3>
+              <p>Pick a color, upload your logo and add your message, then send it to us for a quote.</p>
+              <a href="/watercade/#customize" class="btn-p">Open the WATERCADE Builder</a>
             </div>
-          )}
-        </section>
-      )}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
 
-      {WatercadePlanner && (
-        <section class="tab" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" data-panel="plan" hidden>
-          <h2 class="tab__h">Plan Your Layout</h2>
-          <p class="tab__lede">See how many barriers your run or perimeter needs.</p>
-          <WatercadePlanner heading="" variants={p.variants.map((v) => ({ id: v.id, title: v.title, price: v.price }))} image={firstImg} />
-        </section>
-      )}
-
-      <section class="tab" id="panel-faq" role="tabpanel" aria-labelledby="tab-faq" data-panel="faq" hidden>
-        <h2 class="tab__h">Questions</h2>
-        <div class="faq">
-          {faqs.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
-        </div>
-        <p class="spec__note">Still have a question? Call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
-      </section>
-    </div>
-  </div>
+  {WatercadePlanner && (
+    <section class="pcz pcz--alt" id="plan">
+      <div class="wrap">
+        <div class="sec__h"><h2>Plan Your Layout</h2><p>See how many barriers your run or perimeter needs.</p></div>
+        <WatercadePlanner heading="" variants={p.variants.map((v) => ({ id: v.id, title: v.title, price: v.price }))} image={firstImg} />
+      </div>
+    </section>
+  )}
 
   {related.length > 0 && (
     <section class="rel">
       <div class="wrap">
         <div class="rel__h">
-          <h2>More {crumbCol ? crumbCol.title : 'Products'}</h2>
+          <h2>You May Also Like</h2>
           {crumbCol && <a href={`/collections/${crumbCol.handle}`}>View all</a>}
         </div>
         <ul class="rel__grid">{related.slice(0, 4).map((r) => <li><ProductCard p={r} /></li>)}</ul>
@@ -536,166 +553,157 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 </script>
 
 <style>
-  /* Traditional product page: white page, clear hierarchy, hairline rules, one accent color. */
-  .pp { padding: 18px 0 clamp(40px, 5vw, 64px); background: #fff; }
-  .pp__crumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; font-size: .86rem; color: var(--steel); }
+  .pp { padding: 14px 0 clamp(44px, 5vw, 72px); background: #fff; }
+  .pp__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 18px; font-size: .88rem; }
   .pp__crumbs a { color: var(--steel); text-decoration: none; }
-  .pp__crumbs a:hover { color: var(--ink); text-decoration: underline; }
-  .pp__crumbs b { color: var(--ink); font-weight: 400; max-width: 46ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pp__top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 4.5vw, 72px); align-items: start; }
-  .pp__gal { min-width: 0; }
-  .pp__gal :global(.gal__stage) { border-radius: 4px; border: 1px solid var(--line); box-shadow: none; background: #fff; }
-  .pp__gal :global(.gal__thumb) { border-radius: 4px; }
-  .pp__gal :global(.gal__zoom), .pp__gal :global(.gal__nav) { border-radius: 4px; }
+  .pp__crumbs a:hover { color: var(--red); }
+  .pp__crumbs svg { width: 14px; height: 14px; fill: none; stroke: var(--line-dark); stroke-width: 2.4; }
+  .pp__crumbs b { color: var(--ink); font-weight: 400; max-width: 50ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pp__top { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: clamp(28px, 4.5vw, 72px); align-items: start; }
+  .pp__gal { position: sticky; top: calc(var(--hdr-h, 140px) + 16px); min-width: 0; }
+  .pp__gal :global(.gal__stage) { border: 0; border-radius: 24px; background: radial-gradient(85% 75% at 50% 45%, #ffffff 0%, #f4f5f6 100%); }
+  .pp__gal :global(.gal__slide) { padding: clamp(22px, 3.4vw, 44px); }
+  .pp__gal :global(.gal__thumbs) { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .pp__gal :global(.gal__thumb) { width: 100%; height: auto; aspect-ratio: 1; flex: none; padding: 8px; border-radius: 16px; border: 1.5px solid transparent; background: #f4f5f6; }
+  .pp__gal :global(.gal__thumb[aria-selected=true]) { border-color: var(--ink); background: #fff; }
+  .pp__gal :global(.gal__zoom) { border-radius: 999px; }
+  /* white photo backgrounds melt into the stage instead of showing as a box */
+  .pp__gal :global(.gal__slide img), .pp__gal :global(.gal__thumb img) { mix-blend-mode: multiply; }
 
-  .buy { display: grid; gap: 18px; position: sticky; top: calc(var(--hdr-h, 140px) + 20px); }
-  .buy__cat { justify-self: start; color: var(--red); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; text-decoration: none; }
-  .buy__cat:hover { text-decoration: underline; }
-  .buy__title { margin: -8px 0 0; font-size: clamp(1.7rem, 2.6vw, 2.35rem); line-height: 1.12; letter-spacing: -.02em; font-variation-settings: 'wght' 720; font-weight: 400; text-wrap: balance; }
-  .buy__meta { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: -6px 0 0; font-size: .9rem; color: var(--steel); }
-  .st { display: inline-flex; align-items: center; gap: 6px; }
-  .st::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--line-dark); }
-  .st--ok { color: var(--ok); } .st--ok::before { background: var(--ok); }
-  .st--rent::before { background: var(--red); }
-  .st--std { color: var(--ink); font-variation-settings: 'wght' 650; }
-  .st--std::before { content: none; }
-  .st--std { padding: 1px 8px; border: 1px solid var(--line-dark); border-radius: 3px; font-size: .78rem; letter-spacing: .04em; }
-
-  .buy__price { padding: 16px 0; border-block: 1px solid var(--line); }
+  .buy { display: grid; gap: 20px; min-width: 0; }
+  .buy__status { margin: 0; }
+  .st { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; color: var(--steel); }
+  .st::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--line-dark); }
+  .st--ok { color: var(--ok); } .st--ok::before { background: var(--ok); box-shadow: 0 0 0 4px rgba(31, 122, 58, .15); }
+  .st--rent { color: var(--red); } .st--rent::before { background: var(--red); box-shadow: 0 0 0 4px var(--red-tint); }
+  .buy__title { margin: -8px 0 0; font-size: clamp(1.75rem, 2.5vw, 2.3rem); line-height: 1.1; letter-spacing: -.025em; font-variation-settings: 'wght' 720; font-weight: 400; text-wrap: balance; }
+  .buy__price { display: grid; gap: 4px; margin-top: -8px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
   .buy__price p { margin: 0; display: flex; align-items: baseline; gap: 8px; color: var(--steel); }
   .buy__price strong { color: var(--ink); font-size: 1.9rem; letter-spacing: -.02em; font-variation-settings: 'wght' 720; }
   .buy__price strong.is-flip { animation: pxFlip .35s ease; }
   @keyframes pxFlip { from { opacity: .3; } to { opacity: 1; } }
-  .buy__price s { font-size: 1.05rem; }
-  .buy__q { font-size: 1rem; color: var(--ink-2) !important; display: block !important; line-height: 1.5; }
-  .buy__intro { margin: 0; color: var(--ink-2); line-height: 1.65; }
+  .buy__price small { color: var(--steel); font-size: .88rem; }
+  .buy__q { display: block !important; color: var(--ink-2) !important; line-height: 1.5; }
 
   .opt { border: 0; padding: 0; margin: 0; min-width: 0; }
   .opt legend { margin-bottom: 10px; padding: 0; font-size: .92rem; color: var(--steel); }
-  .opt legend span { color: var(--ink); font-variation-settings: 'wght' 650; }
-  .swatches, .pills { display: flex; flex-wrap: wrap; gap: 8px; }
-  .sw, .pill { position: relative; }
-  .sw input, .pill input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
-  .sw > span { display: block; width: 34px; height: 34px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); }
-  .sw input:checked + span { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18), 0 0 0 2px #fff, 0 0 0 3.5px var(--ink); }
-  .sw input:focus-visible + span { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--red); }
-  .pill > span { display: block; min-width: 54px; padding: 9px 14px; border: 1px solid var(--line-dark); border-radius: 4px; background: #fff; text-align: center; font-size: .92rem; cursor: pointer; transition: border-color .15s; }
-  .pill > span:hover { border-color: var(--ink); }
-  .pill input:checked + span { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); font-variation-settings: 'wght' 650; }
+  .opt legend span { color: var(--ink); font-variation-settings: 'wght' 680; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { position: relative; }
+  .pill input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .pill > span { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; font-size: .92rem; cursor: pointer; transition: border-color .15s, background .15s; }
+  .pill > span i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2); }
+  .pill > span:hover { border-color: var(--line-dark); }
+  .pill input:checked + span { border-color: var(--red); background: var(--red-tint); color: var(--red); font-variation-settings: 'wght' 680; }
   .pill input:focus-visible + span { outline: 2px solid var(--red); outline-offset: 2px; }
 
-  .mode { display: inline-flex; justify-self: start; border: 1px solid var(--line-dark); border-radius: 4px; overflow: hidden; }
-  .mode button { all: unset; padding: 9px 22px; cursor: pointer; font-size: .94rem; color: var(--steel); }
-  .mode button + button { border-left: 1px solid var(--line-dark); }
+  .mode { display: inline-flex; justify-self: start; gap: 4px; padding: 4px; border-radius: 999px; background: var(--haze); }
+  .mode button { all: unset; padding: 8px 22px; border-radius: 999px; cursor: pointer; font-size: .94rem; color: var(--steel); }
   .mode button[aria-selected="true"] { background: var(--ink); color: #fff; }
-  .mode button:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
 
+  .buy__act { display: grid; gap: 10px; }
+  .buy__lab { margin: 0; font-size: .92rem; color: var(--steel); }
   .qty-row { display: flex; gap: 10px; }
-  .qty { display: flex; border: 1px solid var(--line-dark); border-radius: 4px; overflow: hidden; flex: none; }
-  .qty button { width: 42px; border: 0; background: #fff; font-size: 1.2rem; color: var(--ink-2); cursor: pointer; }
+  .qty { display: flex; flex: none; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .qty button { width: 44px; border: 0; background: #fff; font-size: 1.2rem; color: var(--ink-2); cursor: pointer; }
   .qty button:hover { background: var(--haze); }
-  .qty input { width: 48px; border: 0; border-inline: 1px solid var(--line); text-align: center; font: inherit; font-size: 1rem; -moz-appearance: textfield; }
+  .qty input { width: 44px; border: 0; text-align: center; font: inherit; -moz-appearance: textfield; }
   .qty input::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .buy__add { flex: 1; min-height: 52px; border: 0; border-radius: 4px; background: var(--red); color: #fff; font: inherit; font-size: 1.02rem; font-variation-settings: 'wght' 680; letter-spacing: .01em; cursor: pointer; transition: background .15s; }
-  .buy__add:hover { background: var(--red-press); }
+  .buy__add { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; border: 0; border-radius: 999px; background: linear-gradient(180deg, #c80a0a, var(--red)); color: #fff; font: inherit; font-size: 1.04rem; font-variation-settings: 'wght' 700; cursor: pointer; box-shadow: 0 14px 26px -14px rgba(182, 6, 6, .85); transition: transform .15s, box-shadow .2s, background .2s; }
+  .buy__add svg { width: 20px; height: 20px; }
+  .buy__add:hover { transform: translateY(-1px); box-shadow: 0 18px 30px -14px rgba(182, 6, 6, .9); }
   .buy__add[disabled] { opacity: .5; cursor: not-allowed; }
-  .buy__add.is-busy { cursor: progress; }
   .buy__add.is-done { background: var(--ok); }
-  .buy__sec { min-height: 48px; margin-top: -8px; border: 1px solid var(--ink); border-radius: 4px; background: #fff; color: var(--ink); font: inherit; font-size: .98rem; font-variation-settings: 'wght' 650; cursor: pointer; transition: background .15s, color .15s; }
-  .buy__sec:hover { background: var(--ink); color: #fff; }
-  .bulk { margin: -6px 0 0; font-size: .92rem; color: var(--ink-2); }
+  .bulk { margin: 0; font-size: .92rem; color: var(--ink-2); }
   .bulk[hidden] { display: none; }
   .bulk button { padding: 0; border: 0; background: none; font: inherit; color: var(--red); text-decoration: underline; cursor: pointer; }
   .buy__unavail { margin: 0; color: var(--red); }
 
-  .buy__info { list-style: none; margin: 0; padding: 14px 0 0; border-top: 1px solid var(--line); display: grid; gap: 6px; font-size: .92rem; }
-  .buy__info b { font-variation-settings: 'wght' 650; }
-  .buy__info span { color: var(--steel); }
-  .buy__info b::after { content: ' ·'; color: var(--line-dark); }
-  .buy__links { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: .92rem; }
-  .buy__links a, .buy__links button { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-dark); cursor: pointer; }
-  .buy__links a:hover, .buy__links button:hover { color: var(--red); text-decoration-color: currentColor; }
+  .buy__pick { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; }
+  .buy__pick svg { width: 20px; height: 20px; color: var(--ok); margin-top: 1px; }
+  .buy__pick p { margin: 0; }
+  .buy__pick b { font-variation-settings: 'wght' 680; }
+  .buy__pick small { color: var(--steel); }
 
-  /* tabs */
-  .ptabs { padding: clamp(28px, 4vw, 48px) 0 clamp(48px, 6vw, 80px); background: #fff; scroll-margin-top: calc(var(--hdr-h, 120px) + 10px); }
-  .tabs__bar { display: flex; gap: 4px; border-bottom: 1px solid var(--line-dark); overflow-x: auto; scrollbar-width: none; }
-  .tabs__bar::-webkit-scrollbar { display: none; }
-  .tabs__bar button { position: relative; flex: none; padding: 14px 18px; border: 0; background: none; font: inherit; font-size: 1rem; color: var(--steel); cursor: pointer; }
-  .tabs__bar button:hover { color: var(--ink); }
-  .tabs__bar button[aria-selected="true"] { color: var(--ink); font-variation-settings: 'wght' 680; }
-  .tabs__bar button[aria-selected="true"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--red); }
-  .tabs__bar button:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
-  .tab { padding-top: clamp(26px, 3vw, 40px); }
-  .tab[hidden] { display: none; }
-  .tab__h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .tab__lede { margin: 0 0 22px; max-width: 70ch; color: var(--ink-2); line-height: 1.6; }
+  .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tool { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .94rem; font-variation-settings: 'wght' 660; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+  .tool svg { width: 18px; height: 18px; flex: none; }
+  .tool:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .tool--red { border-color: var(--red); color: var(--red); }
+  .tool--red:hover { background: var(--red); border-color: var(--red); color: #fff; }
+  .tool__ai { display: inline-grid; place-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: var(--gold); color: var(--ink); font-size: .68rem; letter-spacing: .04em; font-variation-settings: 'wght' 800; }
+  .tools > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 
-  .desc { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); }
-  .desc__main p { margin: 0 0 14px; max-width: 72ch; color: var(--ink-2); line-height: 1.75; }
-  .desc__kick { color: var(--ink) !important; font-size: 1.15rem; font-variation-settings: 'wght' 680; }
-  .desc h3 { margin: 26px 0 10px; font-size: 1rem; font-variation-settings: 'wght' 700; }
-  .desc__side h3:first-child, .desc__main h3:first-child { margin-top: 0; }
-  .desc__side { padding-left: clamp(20px, 3vw, 40px); border-left: 1px solid var(--line); }
-  .desc__list { margin: 0; padding-left: 1.15em; color: var(--ink-2); line-height: 1.65; }
-  .desc__list li { margin-bottom: 6px; }
-  .desc__list li::marker { color: var(--red); }
-  .desc__list b { color: var(--ink); font-variation-settings: 'wght' 650; }
-
-  .spec { width: 100%; max-width: 880px; border-collapse: collapse; font-size: .98rem; }
-  .spec th, .spec td { padding: 13px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  .acc { border-top: 1px solid var(--line); }
+  .acc details { border-bottom: 1px solid var(--line); }
+  .acc summary { list-style: none; display: flex; align-items: center; gap: 14px; padding: 18px 2px; font-size: 1.02rem; font-variation-settings: 'wght' 640; cursor: pointer; }
+  .acc summary::-webkit-details-marker { display: none; }
+  .acc summary svg { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--red); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .acc summary::after { content: ''; width: 9px; height: 9px; margin-left: auto; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); rotate: 45deg; translate: 0 -3px; transition: rotate .25s, translate .25s; }
+  .acc details[open] summary::after { rotate: 225deg; translate: 0 3px; }
+  .acc summary:hover { color: var(--red); }
+  .acc__b { padding: 0 2px 20px 36px; color: var(--ink-2); line-height: 1.65; }
+  .acc__b p { margin: 0 0 12px; }
+  .acc__b ul { margin: 0 0 12px; padding-left: 1.1em; }
+  .acc__b li { margin-bottom: 6px; }
+  .acc__b li::marker { color: var(--red); }
+  .acc__b b { color: var(--ink); font-variation-settings: 'wght' 660; }
+  .acc__kick { color: var(--ink); font-variation-settings: 'wght' 680; }
+  .acc__uses { font-size: .95rem; }
+  .acc__link { display: inline-block; padding: 0; border: 0; background: none; font: inherit; color: var(--red); font-variation-settings: 'wght' 650; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .acc__faq > div { padding: 10px 0; border-top: 1px dashed var(--line); }
+  .acc__faq > div:first-child { border-top: 0; padding-top: 0; }
+  .acc__faq p { margin: 4px 0 0; }
+  .spec { width: 100%; margin-bottom: 12px; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: .94rem; }
+  .spec th, .spec td { padding: 10px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  .spec tr:last-child th, .spec tr:last-child td { border-bottom: 0; }
   .spec tr:nth-child(odd) { background: var(--haze); }
-  .spec th { width: 34%; color: var(--steel); font-weight: 400; }
+  .spec th { width: 40%; color: var(--steel); font-weight: 400; }
   .spec td { color: var(--ink); overflow-wrap: anywhere; }
-  .spec__note { margin: 20px 0 0; color: var(--steel); font-size: .94rem; }
-  .spec__note a, .spec__note button { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-decoration: underline; cursor: pointer; }
 
+  .trust { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .trust li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px 7px 10px; border-radius: 999px; color: #fff; font-size: .84rem; font-variation-settings: 'wght' 700; }
+  .trust svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .trust--green { background: #1f7a3a; }
+  .trust--red { background: var(--red); }
+  .trust--blue { background: #1b4f9c; }
+
+  /* customize + layout sections */
+  .pcz { padding: clamp(48px, 6vw, 88px) 0; background: var(--haze); border-top: 1px solid var(--line); scroll-margin-top: calc(var(--hdr-h, 120px) + 10px); }
+  .pcz--alt { background: #fff; }
+  .sec__h { display: grid; gap: 8px; margin-bottom: clamp(22px, 2.6vw, 34px); max-width: 70ch; }
+  .sec__h h2 { margin: 0; font-size: clamp(1.7rem, 2.6vw, 2.4rem); letter-spacing: -.025em; font-variation-settings: 'wght' 740; font-weight: 400; }
+  .sec__h p { margin: 0; color: var(--ink-2); line-height: 1.6; }
+  .pcz :global(.sb--bare .sb__stage) { top: calc(var(--hdr-h, 120px) + 16px); }
+  .pcz :global(.sb__stage), .pcz :global(.sb__grp) { border-radius: 20px; }
   .wcb { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(22px, 4vw, 56px); align-items: center; max-width: 1000px; }
-  .wcb img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
+  .wcb img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 20px; }
   .wcb h3 { margin: 0 0 10px; font-size: 1.4rem; font-variation-settings: 'wght' 700; }
   .wcb p { margin: 0 0 20px; color: var(--ink-2); line-height: 1.65; }
-  .btn-p { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 26px; border-radius: 4px; background: var(--red); color: #fff; text-decoration: none; font-variation-settings: 'wght' 680; white-space: nowrap; transition: background .15s; }
+  .btn-p { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 26px; border-radius: 999px; background: var(--red); color: #fff; text-decoration: none; font-variation-settings: 'wght' 680; white-space: nowrap; }
   .btn-p:hover { background: var(--red-press); }
 
-  .faq { max-width: 880px; border-top: 1px solid var(--line); }
-  .faq details { border-bottom: 1px solid var(--line); }
-  .faq summary { list-style: none; display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; font-variation-settings: 'wght' 650; cursor: pointer; }
-  .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: '+'; color: var(--steel); font-size: 1.3rem; line-height: 1; }
-  .faq details[open] summary::after { content: '−'; }
-  .faq p { margin: 0; padding: 0 0 18px; max-width: 72ch; color: var(--ink-2); line-height: 1.65; }
-
-  /* related */
-  .rel { padding: clamp(44px, 5vw, 72px) 0; background: var(--haze); border-top: 1px solid var(--line); }
+  .rel { padding: clamp(44px, 5vw, 72px) 0; background: #fff; border-top: 1px solid var(--line); }
   .rel__h { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
-  .rel__h h2 { margin: 0; font-size: clamp(1.4rem, 2vw, 1.8rem); letter-spacing: -.02em; font-variation-settings: 'wght' 720; font-weight: 400; }
+  .rel__h h2 { margin: 0; font-size: clamp(1.6rem, 2.4vw, 2.2rem); letter-spacing: -.025em; font-variation-settings: 'wght' 740; font-weight: 400; }
   .rel__h a { color: var(--ink); text-underline-offset: 3px; }
   .rel__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
   .rel__grid > li { display: grid; }
 
-  /* help strip */
-  .help { padding: clamp(32px, 4vw, 48px) 0; background: #fff; border-top: 1px solid var(--line); }
+  .help { padding: clamp(32px, 4vw, 48px) 0; background: var(--haze); border-top: 1px solid var(--line); }
   .help__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 40px; }
   .help h2 { margin: 0 0 6px; font-size: 1.35rem; font-variation-settings: 'wght' 720; font-weight: 400; }
   .help p { margin: 0; color: var(--steel); }
   .help p a { color: var(--ink); font-variation-settings: 'wght' 650; }
 
-  /* sticky buy bar */
-  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: #fff; border-top: 1px solid var(--line-dark); box-shadow: 0 -8px 24px -18px rgba(20, 23, 26, .5); translate: 0 110%; transition: translate .3s ease; }
+  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: rgba(255, 255, 255, .96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); box-shadow: 0 -10px 30px -20px rgba(20, 23, 26, .5); translate: 0 110%; transition: translate .3s ease; }
   .buybar.is-on { translate: 0 0; }
   .buybar__in { display: flex; align-items: center; gap: 14px; padding-block: 10px; padding-right: clamp(88px, 9vw, 116px); }
-  .buybar__img { width: 46px; height: 46px; object-fit: contain; border: 1px solid var(--line); border-radius: 4px; flex: none; }
+  .buybar__img { width: 46px; height: 46px; object-fit: contain; border-radius: 12px; background: var(--haze); flex: none; }
   .buybar__txt { display: grid; min-width: 0; margin-right: auto; line-height: 1.3; }
   .buybar__txt b { font-variation-settings: 'wght' 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .buybar__txt span { color: var(--steel); font-size: .92rem; }
-  .buybar__btn { white-space: nowrap; min-height: 46px; padding: 0 24px; border: 0; border-radius: 4px; background: var(--red); color: #fff; font: inherit; font-variation-settings: 'wght' 680; cursor: pointer; }
-
-  /* the locked builder inside the Customize tab */
-  .tab :global(.sb--bare .sb__stage) { top: calc(var(--hdr-h, 120px) + 16px); }
-  .tab :global(.sb__stage), .tab :global(.sb__grp) { border-radius: 6px; box-shadow: none; }
-  .tab :global(.sb__send) { border-radius: 4px; box-shadow: none; }
-  .tab :global(.sb__chip span), .tab :global(.sb__shape span), .tab :global(.sb__in), .tab :global(.sb__step), .tab :global(.sb__dl) { border-radius: 4px; }
-  .tab :global(.sb__canvas) { border-radius: 4px; }
-  .tab :global(.sb__grp legend span) { border-radius: 3px; }
+  .buybar__btn { white-space: nowrap; min-height: 46px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-variation-settings: 'wght' 680; cursor: pointer; }
 
   /* spec sheet (print only) */
   .sheet { display: none; }
@@ -723,55 +731,21 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 
   @media (max-width: 1000px) { .rel__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .rel__grid > li:nth-child(4) { display: none; } }
   @media (max-width: 900px) {
-    .pp__top, .desc, .wcb { grid-template-columns: minmax(0, 1fr); }
-    .buy { position: static; }
-    .desc__side { padding: 22px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+    .pp__top, .wcb { grid-template-columns: minmax(0, 1fr); }
+    .pp__gal { position: static; }
   }
   @media (max-width: 640px) {
-    .pp { padding-top: 12px; }
-    .pp__crumbs { margin-bottom: 14px; font-size: .8rem; }
-    .pp__crumbs b { max-width: 20ch; }
-    .tabs__bar button { padding: 12px 12px; font-size: .94rem; }
-    .spec th, .spec td { padding: 11px 10px; font-size: .92rem; }
-    .spec th { width: 40%; }
+    .pp__crumbs { font-size: .8rem; margin-bottom: 12px; }
+    .pp__crumbs b { max-width: 22ch; }
+    .pp__gal :global(.gal__stage) { border-radius: 18px; }
+    .pp__gal :global(.gal__thumbs) { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .pp__gal :global(.gal__thumb) { border-radius: 12px; padding: 5px; }
+    .buy { gap: 18px; }
+    .acc__b { padding-left: 2px; }
     .rel__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .rel__grid > li:nth-child(4) { display: grid; }
     .help__in .btn-p { width: 100%; }
     .buybar__img { display: none; }
     .buybar__btn { padding: 0 16px; }
-  }
-
-  /* modern finish: rounded controls, tool buttons */
-  .pill > span { border-radius: 999px; padding: 9px 16px; }
-  .mode { border-radius: 999px; padding: 4px; gap: 4px; background: var(--haze); border-color: var(--line); }
-  .mode button { border-radius: 999px; padding: 8px 22px; }
-  .mode button + button { border-left: 0; }
-  .qty { border-radius: 999px; }
-  .qty input { border-inline: 0; }
-  .buy__add, .buy__sec, .btn-p, .buybar__btn { border-radius: 999px; }
-  .buy__add { box-shadow: 0 12px 24px -14px rgba(182, 6, 6, .8); }
-  .st--std { border-radius: 999px; padding: 2px 10px; }
-  .tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; }
-  .tool { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .92rem; font-variation-settings: 'wght' 650; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
-  .tool svg { width: 18px; height: 18px; flex: none; }
-  .tool:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
-  .tool__ai { display: inline-grid; place-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: var(--gold); color: var(--ink); font-size: .68rem; letter-spacing: .04em; font-variation-settings: 'wght' 800; }
-  .tool--ai:hover .tool__ai { background: #fff; }
-  .pp__gal :global(.gal__stage) { border-radius: 18px; }
-  .pp__gal :global(.gal__slide) { padding: clamp(18px, 3vw, 36px); }
-  .pp__gal :global(.gal__thumb) { border-radius: 12px; }
-  .pp__gal :global(.gal__zoom) { border-radius: 999px; }
-  .pp__gal :global(.gal__nav) { border-radius: 50%; }
-  .wcb img, .tab :global(.sb__canvas) { border-radius: 14px; }
-  .tab :global(.sb__stage), .tab :global(.sb__grp) { border-radius: 16px; }
-  .tab :global(.sb__chip span), .tab :global(.sb__shape span), .tab :global(.sb__step), .tab :global(.sb__dl), .tab :global(.sb__send) { border-radius: 999px; }
-  .tab :global(.sb__in) { border-radius: 12px; }
-  .tab :global(.sb__grp legend span) { border-radius: 50%; }
-  .spec { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); border-collapse: separate; border-spacing: 0; }
-  .spec tr:last-child th, .spec tr:last-child td { border-bottom: 0; }
-  @media (max-width: 640px) {
-    .tools { grid-template-columns: 1fr 1fr; }
-    .tools .tool--ai { grid-column: 1 / -1; }
-    .tools:not(:has(> a)) .tool--ai { grid-column: auto; }
   }
 </style>
