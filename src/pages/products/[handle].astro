@@ -126,6 +126,17 @@ const faqs = [
 ].filter(Boolean);
 const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M3 10h18v9H3z M7 10V6h10v4', 'M5 21V5l7-2 7 2v16 M9 21v-5h6v5', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z M12 7.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z', 'M4 17l5-5 4 4 7-8 M20 8v5 M20 8h-5', 'M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z'];
 const SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z M8.5 12l2.4 2.4 4.6-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// Real job and yard photos added after the Shopify product images (shown full-bleed in the gallery).
+const PH = (file, alt) => ({ url: `/photos/${file}.webp`, altText: alt, photo: true });
+const EXTRA = {
+  'truck-mounted-attenuator-tma': [PH('tma-fleet-lineup', 'Line of TSS truck-mounted attenuator trucks in the yard')],
+  'waterbarriertss590rparent': [PH('watercade-in-use-street', 'Orange and white water-filled barriers lining a city street'), PH('watercade-in-use-fence', 'Blue and white water-filled barriers with fence panels on a city plaza')],
+  'bucket-van': [PH('bucket-van-yard', 'TSS bucket van in the yard')],
+  'a-frame-plastic-rail-2w-x-10-5h-x-6ft-double-faced-left-right-hi-intensity-orange-white-stripes': [PH('a-frame-barricades', 'A-frame barricades with striped and blank rails')],
+  'a-frame-plastic-rail-2w-x-10-5h-x-6ft-double-faced-left-right-engineer-grade-orange-white-stripes': [PH('a-frame-barricades', 'A-frame barricades with striped and blank rails')],
+  'a-frame-leg-end-white-blank': [PH('a-frame-barricades', 'A-frame barricades with striped and blank rails')]
+};
+const extraPhotos = EXTRA[handle] || [];
 const trust = [
   ...badges.map((b) => [b.k === 'MUTCD' ? 'MUTCD Compliant' : b.k === 'MASH' ? 'MASH Approved' : b.k, 'green']),
   p.collections.includes('best-selling-collection') && ['Top Seller', 'red'],
@@ -156,7 +167,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 
       <div class="pp__top">
         <div class="pp__gal">
-          <ProductGallery images={p.images} title={p.title} />
+          <ProductGallery images={[...p.images, ...extraPhotos]} title={p.title} />
         </div>
 
         <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
