@@ -5,6 +5,9 @@ import ProductGallery from '../../components/ProductGallery.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import QuickView from '../../components/QuickView.astro';
 import RecentlyViewed from '../../components/RecentlyViewed.astro';
+import CustomBuilder from '../../components/CustomBuilder.astro';
+import { parseDescription, deriveSpecs, deriveBadges, deriveIncluded, USES, accessoriesFor } from '../../lib/productInfo.js';
+import { PHONE, PHONE_TEL, EMAIL } from '../../lib/config.js';
 import { loadCatalog, money, img } from '../../lib/shopify.js';
 import { CATEGORY_META } from '../../lib/categories.js';
 
@@ -29,8 +32,13 @@ const model =
   inCol('traffic-drums') && handle.startsWith('traffic-drum') ? 'drum' :
   handle.startsWith('type-iii') ? 'barricade' : null;
 
-const CUSTOM_COLS = ['cones', 'traffic-drums', 'water-filled-barriers', 'barricades', 'safety-gear', 'sign-shop', 'deliniators', 'a-frame-barricade', 'type-lll-barricades'];
-const customizable = !p.isRental && CUSTOM_COLS.some(inCol);
+// Custom builders only where the Custom Shop has one: 18", 28" and 36" cones, A-frame rails and WATERCADE.
+// Signs get a builder later (no sign product code yet).
+const coneM = handle.match(/^cone(18|28|36)/);
+const builder = coneM ? { kind: 'cone', size: `${coneM[1]}"`, noun: 'Cones', lede: 'Stencil your company, department or initials on every cone so your gear comes home. Build it live, then our team confirms the details and pricing before anything is made.' }
+  : handle.startsWith('a-frame-plastic-rail') ? { kind: 'aframe', noun: 'Rails', lede: 'Print your name, department or message on the rails, from POLICE LINE to your company name. Build it live, then our team confirms the details and pricing before anything is made.' } : null;
+const isWatercade = handle === 'waterbarriertss590rparent';
+const customizable = !!builder || isWatercade;
 
 const SWATCH = { orange: '#f26a1b', lime: '#c6e33b', 'dark green': '#1f5d3a', green: '#2e8b3d', 'navy blue': '#1f2f5c', navy: '#1f2f5c', blue: '#1f5fbf', 'sky blue': '#6cc4ee', pink: '#ff6fae', red: '#c8102e', white: '#f7f7f2', yellow: '#f6d10b', black: '#1d2024', silver: '#c0c4c8', gray: '#8a9097', grey: '#8a9097' };
 const options = p.options.filter((o) => !(o.name === 'Title' && o.values[0] === 'Default Title'));
@@ -41,7 +49,8 @@ const viewerColors = model === 'cone' ? (options.find((o) => isColor(o.name))?.v
 
 // Related: same primary collection
 const primary = ['cones', 'water-filled-barriers', 'barricades', 'traffic-drums', 'sign-shop', 'safety-gear', 'lights', 'reflectors', 'equipment-rentals', 'truck-rentals'].find(inCol);
-const related = primary ? colByHandle.get(primary)?.products.filter((x) => x.handle !== handle).slice(0, 4) || [] : [];
+const skipRel = new Set(accessoriesFor(handle, p.collections));
+const related = primary ? colByHandle.get(primary)?.products.filter((x) => x.handle !== handle && !skipRel.has(x.handle)).slice(0, 4) || [] : [];
 const crumbCol = primary ? colByHandle.get(primary) : null;
 const desc = (p.seo?.description || p.description || '').slice(0, 155);
 const firstImg = p.featuredImage?.url;
@@ -52,6 +61,8 @@ const tint = meta?.tint || '#ebebe8';
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const plain = (p.description || '').replace(/\s+/g, ' ').trim();
 const intro = (() => {
+  const src0 = (parseDescription(p.descriptionHtml || p.description).lead[0] || '');
+  if (src0) { const c = src0.slice(0, 230); const e = Math.max(c.lastIndexOf('. '), c.lastIndexOf('! ')); return e > 60 ? c.slice(0, e + 1) : src0.length <= 230 ? src0 : c.replace(/\s+\S*$/, '') + '…'; }
   if (!plain) return '';
   const cut = plain.slice(0, 220);
   const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '));
@@ -65,10 +76,10 @@ const specs = [
   p.isRental ? ['Rental area', 'NJ, NY, PA and CT'] : ['Shipping', 'Ships anywhere in the U.S.'],
   !p.isRental && ['Rent it', 'Available to rent in NJ, NY, PA and CT'],
   sellable && ['Buy it', 'Also available to buy new'],
-  customizable && ['Customizing', 'Your logo, colors or stenciling'],
+  customizable && ['Customizing', builder?.kind === 'aframe' ? 'Your printed text, colors and logo' : builder ? 'Your stenciled name or logo' : 'Your colors, name and logo'],
   ['Ordering', p.isRental ? 'Daily, weekly, monthly or long-term' : 'Card, net terms or purchase order']
 ].filter(Boolean);
-const perks = p.isRental ? [
+const perks0 = p.isRental ? [
   ['Delivered and picked up', 'Anywhere in NJ, NY, PA and CT', 'M2.5 7h11v9h-11z M13.5 10h4l3 3.5V16h-7z M6.5 19a1.7 1.7 0 1 0 0-.01 M16.5 19a1.7 1.7 0 1 0 0-.01'],
   ['Day, week or month', 'Rates that fit the job', 'M4 5h16v15H4z M4 9h16 M8 3v4M16 3v4'],
   ['Crews on call', 'We can set it up and run it', 'M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z M8.5 12l2.4 2.4 4.6-4.8']
@@ -77,7 +88,47 @@ const perks = p.isRental ? [
   ['Net terms and POs', 'For agencies and contractors', 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6M9 16h3'],
   ['Rent it too', 'In NJ, NY, PA and CT', 'M15 7a3 3 0 1 1-3 3 M12 10l-8 8 2 2 2-2 1 1 2-2-1-1 2-2']
 ];
+const perks = (!p.isRental && /pick-?up only/i.test(p.descriptionHtml || p.description || '')) ? [['Customer Pick Up', '601 Hadley Road, South Plainfield, NJ', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z M12 7.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z'], ...perks0.slice(1)] : perks0;
 const inStock = !p.isRental && variants.some((v) => v.available);
+
+// ---------- structured content from the product's own description ----------
+const info = parseDescription(p.descriptionHtml || p.description);
+const pickupOnly = info.pickupOnly && !p.isRental;
+const parsedSpecs = deriveSpecs({ title: p.title, handle, text: info.text, options, specLines: info.specLines });
+const badges = deriveBadges(`${p.title} ${info.text}`);
+const included = deriveIncluded(info.text);
+const uses = (info.uses.length ? info.uses : USES[primary] || []).slice(0, 6);
+const accessories = accessoriesFor(handle, p.collections).map((h) => byHandle.get(h)).filter((x) => x && x.handle !== handle).slice(0, 4);
+const keySpecs = parsedSpecs.filter(([, v]) => v.length <= 26).slice(0, 4);
+// thin descriptions: a lone unlabeled line reads better as the lead, and the parsed specs stand in as features
+const soloLine = !info.lead.length && info.features.length === 1 && !info.features[0].label ? info.features[0].text : '';
+const leadText = soloLine ? [soloLine] : info.lead.slice(0, 2);
+const factOnly = !info.lead.length && info.features.every((f0) => !f0.label) && parsedSpecs.length >= 2;
+const features = (info.features.length && !soloLine && !factOnly ? info.features : parsedSpecs.map(([k, v]) => ({ label: k, text: v }))).slice(0, 8);
+const kicker = info.kicker || (info.tagline[0] && info.tagline[0].length < 60 ? info.tagline[0] : '');
+const chipsLine = info.tagline.filter((x) => x !== kicker).slice(0, 3);
+const allSpecs = [
+  ...parsedSpecs,
+  ...specs.filter(([k]) => !parsedSpecs.some(([a]) => a.toLowerCase() === k.toLowerCase()))
+].map(([k, v]) => (k === 'Shipping' && pickupOnly ? ['Fulfillment', 'Customer Pick Up at 601 Hadley Road, South Plainfield, NJ. Call for delivery.'] : [k, v]));
+const wE = parsedSpecs.find(([k]) => k === 'Weight empty')?.[1], wF = parsedSpecs.find(([k]) => k === 'Weight filled')?.[1];
+const faqs = [
+  customizable && ['Can you add our company name or logo?', `Yes. ${builder ? 'Lay it out in the builder above' : 'Use the WATERCADE builder'} or send us your artwork. We confirm every detail and send a proof before anything is made.`],
+  wE && wF && ['How heavy is it?', `${wE} empty and up to ${wF} once filled with water, so one person can place it and it stays put once it’s filled.`],
+  !p.isRental && ['Do you offer bulk or agency pricing?', 'Yes. For larger quantities, municipalities, agencies and contractors, request a quote and our team will price the whole order.'],
+  !p.isRental && (pickupOnly
+    ? ['Can I get this delivered?', `Online orders for this item are Customer Pick Up at 601 Hadley Road, South Plainfield, NJ. For delivery, call ${PHONE} or request a quote and we’ll arrange it.`]
+    : ['Where do you ship?', 'We ship anywhere in the U.S. You can also choose Customer Pick Up at 601 Hadley Road, South Plainfield, NJ.']),
+  !p.isRental && ['Can I rent this instead of buying?', 'Yes. We rent what we sell, with delivery and pickup in NJ, NY, PA and CT.'],
+  !p.isRental && ['How can I pay?', 'Pay by card at checkout, or open an account with us for net terms and purchase orders.'],
+  p.isRental && ['Where do you deliver rentals?', 'We deliver, set up and pick up rentals anywhere in New Jersey, New York, Pennsylvania and Connecticut.'],
+  p.isRental && ['How long can I rent it?', 'Daily, weekly, monthly or long-term. Tell us your dates and we’ll quote the best rate for the job.'],
+  p.isRental && ['Can your crew set it up?', 'Yes. Our certified, experienced crews can deliver it, set it up and run it for you.'],
+  sellable && ['Can I buy one instead?', 'Yes. It’s also available to buy new. Switch to Buy above and request a quote for pricing and lead time.']
+].filter(Boolean);
+const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M3 10h18v9H3z M7 10V6h10v4', 'M5 21V5l7-2 7 2v16 M9 21v-5h6v5', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z M12 7.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z', 'M4 17l5-5 4 4 7-8 M20 8v5 M20 8h-5', 'M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z'];
+const SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z M8.5 12l2.4 2.4 4.6-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const nav = [['overview', 'Overview'], ['specs', 'Specs'], customizable && ['customize', 'Customize'], uses.length && ['uses', 'Uses'], accessories.length && ['pairs', 'Pairs With'], faqs.length && ['faq', 'FAQ']].filter(Boolean);
 const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 ---
 <Layout title={p.seo?.title || p.title} description={desc} image={firstImg}>
@@ -106,12 +157,18 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
           <div class="buy__chips px__in" style="--d:0">
             {crumbCol && <a href={`/collections/${crumbCol.handle}`} class="chip chip--cat"><i></i>{crumbCol.title}</a>}
             {p.isRental ? <span class="chip chip--rent">Rental</span> : inStock ? <span class="chip chip--ok"><i></i>In stock</span> : <span class="chip">Made to order</span>}
+            {pickupOnly && <span class="chip chip--pick">Customer Pick Up</span>}
             {customizable && <span class="chip">Customizable</span>}
           </div>
 
           {sellable && <div class="mode px__in" style="--d:1" role="tablist" aria-label="Rent or buy" data-mode-sw><i aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
 
           <h1 class="buy__title"><span class="buy__ln"><span>{p.title}</span></span></h1>
+          {badges.length > 0 && (
+            <ul class="cert px__in" style="--d:1" aria-label="Standards">
+              {badges.map((b) => <li title={b.d}><Fragment set:html={SHIELD} />{b.k}</li>)}
+            </ul>
+          )}
 
           {p.isRental ? (
             <p class="buy__price buy__price--q px__in" style="--d:2" data-mode-txt>Priced per job. Get a quote for daily, weekly or monthly rates.</p>
@@ -119,6 +176,11 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
             <p class="buy__price px__in" style="--d:2"><strong data-price>{money(first.price)}</strong> <span class="buy__unit">each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
           )}
           {intro && <p class="buy__intro px__in" style="--d:3">{intro}</p>}
+          {keySpecs.length > 1 && (
+            <dl class="kspec px__in" style={`--d:3;--n:${keySpecs.length}`}>
+              {keySpecs.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+            </dl>
+          )}
 
           {options.map((o, oi) => (
             <fieldset class="opt px__in" style={`--d:${4 + oi}`} data-option={o.name}>
@@ -144,6 +206,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
             {!p.isRental && <button class="buy__add" data-add-cart><span class="buy__addt">Add to cart</span><Fragment set:html={ARROW} /></button>}
             {p.isRental && <button class="buy__add" data-get-quote="rental" data-mode-btn><span class="buy__addt">Get a Quote</span><Fragment set:html={ARROW} /></button>}
           </div>
+          {!p.isRental && <p class="bulk" data-bulk hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z M3 12l9 4 9-4 M3 17l9 4 9-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span>Ordering <b data-bulk-n>25</b> or more? We’ll price the whole order.</span><button type="button" data-get-quote="products">Get bulk pricing</button></p>}
           <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Get a quote and we'll source it.</p>
 
           <div class="alt-actions px__in" style={`--d:${5 + options.length}`}>
@@ -161,37 +224,11 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
           </ul>
 
           {customizable && (
-            <details class="custom px__in" style={`--d:${7 + options.length}`} data-custom>
-              <summary>
-                <span class="custom__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.4-9-7.4z M7.5 11.5a1 1 0 1 0 0-.01 M10 7.5a1 1 0 1 0 0-.01 M14.5 7.5a1 1 0 1 0 0-.01"/></svg></span>
-                <span class="custom__t"><strong>Make it yours</strong><span class="custom__sub">Custom colors, your logo, stenciling and bulk branding</span></span>
-                <svg class="custom__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-              </summary>
-              <div class="custom__body">
-                <div class="field">
-                  <label for="cc-color">Color you want</label>
-                  <div class="custom__color">
-                    <input type="color" id="cc-color" value="#f26a1b" data-cc-color />
-                    <input type="text" placeholder="Or describe it, e.g. PMS 286 blue" data-cc-colortext aria-label="Describe the color" />
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="cc-logo">Your logo</label>
-                  <input type="file" id="cc-logo" accept="image/png,image/jpeg,image/svg+xml,image/webp" data-cc-logo />
-                  <p class="hint">PNG, JPG or SVG. A transparent background works best. You'll approve a proof before production.</p>
-                  <div class="custom__preview" data-cc-preview hidden>
-                    <img data-cc-img alt="Your uploaded logo" />
-                    <button type="button" class="line__rm" data-cc-clear>Remove logo</button>
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="cc-notes">Placement, text or stenciling</label>
-                  <textarea id="cc-notes" rows="3" placeholder="e.g. Logo on both sides, your company name stenciled on the base, 200 units" data-cc-notes></textarea>
-                </div>
-                <button type="button" class="buy__add buy__add--dark" data-cc-add><span class="buy__addt">Get a Quote for this custom order</span><Fragment set:html={ARROW} /></button>
-                {model && <p class="hint">Preview your logo and color on the 3D model below.</p>}
-              </div>
-            </details>
+            <a href="#customize" class="cz px__in" style={`--d:${7 + options.length}`}>
+              <span class="cz__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.4-9-7.4z M7.5 11.5a1 1 0 1 0 0-.01 M10 7.5a1 1 0 1 0 0-.01 M14.5 7.5a1 1 0 1 0 0-.01"/></svg></span>
+              <span class="cz__t"><strong>{builder?.kind === 'aframe' ? 'Print Your Own Rails' : builder ? 'Stencil Your Name Or Logo' : 'Brand It With Your Logo'}</strong><small>Design it live below. We confirm every detail before it’s made.</small></span>
+              <svg class="cz__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v13M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
           )}
         </div>
       </div>
@@ -200,36 +237,113 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 
   {/^truck-mounted-attenuator/.test(p.handle) && <TmaTruck />}
 
-  <!-- ================= SPECS + DETAILS ================= -->
-  <section class="pxd" data-in>
-    <div class="wrap">
-      <div class="eq-head">
-        <div>
-          <p class="eq-k"><span></span>At a glance</p>
-          <h2>Specs and <em>details.</em></h2>
-        </div>
+  <!-- ================= SECTION NAV ================= -->
+  <nav class="pnav" aria-label="On this page" data-pnav>
+    <div class="wrap pnav__in">
+      <div class="pnav__links">
+        {nav.map(([id, l]) => <a href={`#${id}`} data-pnav-a={id}>{l}</a>)}
+      </div>
+      <div class="pnav__acts">
+        <button type="button" class="pnav__sheet" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Spec Sheet</button>
       </div>
     </div>
-    <div class="wrap pxd__grid">
-      <div>
-        <ul class="spec">
-          {specs.map(([k, v], i) => (
-            <li style={`--i:${i}`}><span>{k}</span><b>{v}</b></li>
+  </nav>
+
+  <!-- ================= OVERVIEW ================= -->
+  <section class="pov" id="overview" data-in>
+    <div class="wrap pov__grid">
+      <div class="pov__copy">
+        <p class="eq-k"><span></span>Overview</p>
+        <h2 class="pov__h">{kicker || (p.isRental ? 'Ready For Your Job.' : 'Built For Real Job Sites.')}</h2>
+        {leadText.length ? leadText.map((l) => <p class="pov__lead">{l}</p>) : <p class="pov__lead">{meta?.sub || 'Built for work zones, job sites and events across the region.'}</p>}
+        {chipsLine.length > 0 && <ul class="pov__tags">{chipsLine.map((c) => <li>{c}</li>)}</ul>}
+        {included.length > 0 && (
+          <div class="pov__box">
+            <b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4z M3 7l9 4 9-4 M12 11v10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>Included</b>
+            <ul>{included.map((x) => <li>{x}</li>)}</ul>
+          </div>
+        )}
+      </div>
+      {features.length > 0 ? (
+        <ul class="pov__feat">
+          {features.map((fe, i) => (
+            <li style={`--i:${i}`}>
+              <span class="pov__chk" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span>{fe.label && <b>{fe.label}</b>}<span>{fe.text}</span></span>
+            </li>
           ))}
         </ul>
-      </div>
-      {p.descriptionHtml ? (
-        <div class="pxd__desc">
-          <div class="rte" set:html={p.descriptionHtml} />
-        </div>
       ) : (
-        <div class="pxd__desc pxd__desc--empty">
+        <div class="pov__empty">
           <p>Need dimensions, weights or a spec sheet for a bid? Our team can send it over, usually the same day.</p>
           <a href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`} class="eq-link">Request specs<Fragment set:html={ARROW} /></a>
         </div>
       )}
     </div>
   </section>
+
+  <!-- ================= SPECS ================= -->
+  <section class="pxd" id="specs" data-in>
+    <div class="wrap">
+      <div class="eq-head">
+        <div>
+          <p class="eq-k"><span></span>Specifications</p>
+          <h2>Specs and <em>details.</em></h2>
+        </div>
+      </div>
+    </div>
+    <div class="wrap pxd__grid">
+      <ul class="spec">
+        {allSpecs.map(([k, v], i) => (
+          <li style={`--i:${i}`}><span>{k}</span><b>{v}</b></li>
+        ))}
+      </ul>
+      <aside class="pxs">
+        {badges.length > 0 && (
+          <div class="pxs__card">
+            <p class="pxs__k">Standards</p>
+            <ul class="pxs__std">
+              {badges.map((b) => <li><span class="pxs__seal"><Fragment set:html={SHIELD} /></span><span><b>{b.k}</b><small>{b.d}</small></span></li>)}
+            </ul>
+          </div>
+        )}
+        <div class="pxs__card pxs__card--dark">
+          <p class="pxs__k">For bids and submittals</p>
+          <p class="pxs__p">Download a one-page spec sheet for this item, or ask our team for product data and certification documents.</p>
+          <div class="pxs__acts">
+            <button type="button" class="pxs__btn" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download Spec Sheet</button>
+            <a class="pxs__link" href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`}>Request Documents<Fragment set:html={ARROW} /></a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {builder && (
+    <div id="customize" class="pcz">
+      <CustomBuilder kind={builder.kind} lock coneSize={builder.size || '28"'} id="customize-builder" kicker="Custom builder" title={`Make These ${builder.noun} <em>Yours.</em>`} lede={builder.lede} />
+    </div>
+  )}
+
+  {isWatercade && (
+    <section class="pwc" id="customize" data-in>
+      <div class="wrap pwc__in">
+        <div class="pwc__copy">
+          <p class="eq-k eq-k--light"><span></span>WATERCADE builder</p>
+          <h2>Brand Every Barrier. <em>See It In 3D.</em></h2>
+          <p>Pick your color, add your logo and message, and see your WATERCADE before it’s made. Our team confirms every detail and price.</p>
+          <div class="pwc__acts">
+            <a href="/watercade/#customize" class="eq-pill eq-pill--red">Open The WATERCADE Builder<Fragment set:html={ARROW} /></a>
+            <a href="#plan" class="eq-pill eq-pill--glass">Plan Your Layout</a>
+          </div>
+        </div>
+        <a href="/watercade/#customize" class="pwc__art" aria-label="Open the WATERCADE builder">
+          <img src="/custom/tpl/watercade-3.webp" alt="" loading="lazy" />
+          <img src="/custom/police-barrier.webp" alt="" loading="lazy" class="pwc__ph" />
+        </a>
+      </div>
+    </section>
+  )}
 
   {model && Viewer3D && (
     <section class="px3" aria-labelledby="h3d">
@@ -239,17 +353,17 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
             <p class="eq-k"><span></span>3D view</p>
             <h2 id="h3d">Turn it <em>around.</em></h2>
           </div>
-          <p class="px3__lede">Drag to rotate, pinch or scroll to zoom.{customizable && ' Pick a color or upload your logo above to preview it.'}</p>
+          <p class="px3__lede">Drag to rotate, pinch or scroll to zoom.{isWatercade && ' Pick a color or add your logo to preview it.'}</p>
         </div>
         <div class="px3__frame">
-          <Viewer3D model={model} colors={viewerColors} customize={customizable} controls="minimal" height="min(70vh, 560px)" />
+          <Viewer3D model={model} colors={viewerColors} customize={isWatercade} controls="minimal" height="min(70vh, 560px)" />
         </div>
       </div>
     </section>
   )}
 
   {WatercadePlanner && (
-    <section class="px3" aria-labelledby="hplan">
+    <section class="px3" id="plan" aria-labelledby="hplan">
       <div class="wrap">
         <div class="eq-head">
           <div>
@@ -259,6 +373,62 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
           <p class="px3__lede">See how many barriers your run or perimeter needs.</p>
         </div>
         <WatercadePlanner heading="" variants={p.variants.map((v) => ({ id: v.id, title: v.title, price: v.price }))} image={firstImg} />
+      </div>
+    </section>
+  )}
+
+  {uses.length > 0 && (
+    <section class="puse" id="uses" data-in>
+      <div class="wrap">
+        <div class="eq-head">
+          <div>
+            <p class="eq-k"><span></span>Where it’s used</p>
+            <h2>Made for <em>the job.</em></h2>
+          </div>
+          {!p.isRental && <p class="px3__lede">Not sure it fits your job? <a href="/pages/contact">Ask our team</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>}
+        </div>
+        <ul class="puse__grid">
+          {uses.map((u, i) => (
+            <li style={`--i:${i}`}>
+              <span class="puse__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={USE_IC[i % USE_IC.length]} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+              <b>{u}</b>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {accessories.length > 0 && (
+    <section class="pxr pxr--pairs" id="pairs" aria-labelledby="hpairs" data-in>
+      <div class="wrap">
+        <div class="eq-head">
+          <div>
+            <p class="eq-k"><span></span>Complete the setup</p>
+            <h2 id="hpairs">Pairs well <em>with.</em></h2>
+          </div>
+        </div>
+        <ul class="pxr__grid">{accessories.map((r, i) => <li style={`--i:${i}`}><ProductCard p={r} /></li>)}</ul>
+      </div>
+    </section>
+  )}
+
+  {faqs.length > 0 && (
+    <section class="pfaq" id="faq" data-in>
+      <div class="wrap pfaq__grid">
+        <div>
+          <p class="eq-k"><span></span>FAQ</p>
+          <h2 class="pfaq__h">Good <em>questions.</em></h2>
+          <p class="pfaq__p">Can’t find your answer? Call <a href={PHONE_TEL}>{PHONE}</a> or <button type="button" class="pfaq__ai" data-ask-page>ask Conner</button>.</p>
+        </div>
+        <div class="pfaq__list">
+          {faqs.map(([q, a], i) => (
+            <details class="pfaq__it" open={i === 0}>
+              <summary>{q}<span class="pfaq__pm" aria-hidden="true"></span></summary>
+              <p>{a}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   )}
@@ -290,6 +460,23 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       </div>
     </div>
   </section>
+
+  <!-- printable one-page spec sheet -->
+  <div class="sheet" aria-hidden="true">
+    <div class="sheet__top"><img src="/brand/tss-logo.webp" alt="" width="200" /><span>Traffic Safety Service · South Plainfield, NJ · {PHONE} · {EMAIL}</span></div>
+    <div class="sheet__main">
+      {firstImg && <img class="sheet__img" src={img(firstImg, 700)} alt="" />}
+      <div>
+        <p class="sheet__cat">{crumbCol?.title || 'Product'}</p>
+        <h2 class="sheet__h">{p.title}</h2>
+        {badges.length > 0 && <p class="sheet__std">{badges.map((b) => b.k).join(' · ')}</p>}
+        {intro && <p class="sheet__p">{intro}</p>}
+      </div>
+    </div>
+    <table class="sheet__t"><tbody>{allSpecs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}</tbody></table>
+    {features.length > 0 && <ul class="sheet__f">{features.slice(0, 8).map((fe) => <li>{fe.label ? `${fe.label}: ` : ''}{fe.text}</li>)}</ul>}
+    <p class="sheet__foot">trafficsafetyservice.com/products/{p.handle} · Specifications subject to change. Contact us to confirm before ordering.</p>
+  </div>
 
   <RecentlyViewed exclude={p.handle} />
   <QuickView />
@@ -333,7 +520,11 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       if (viewer && color) viewer.dispatchEvent(new CustomEvent('tss:viewer-colorname', { detail: { name: color } }));
     };
     root.addEventListener('change', (e) => { if (e.target.closest('[data-option]')) update(); });
-    root.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => { qtyEl.value = Math.max(1, (+qtyEl.value || 1) + +b.dataset.q); }));
+    // bulk nudge: from 25 units, offer a quote for the whole order
+    const bulk = root.querySelector('[data-bulk]');
+    const checkBulk = () => { if (bulk) bulk.hidden = (parseInt(qtyEl.value, 10) || 1) < 25; };
+    root.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => { qtyEl.value = Math.max(1, (+qtyEl.value || 1) + +b.dataset.q); checkBulk(); }));
+    qtyEl.addEventListener('input', checkBulk);
     const qty = () => Math.max(1, parseInt(qtyEl.value, 10) || 1);
     const vtitle = (v) => (v.title === 'Default Title' ? '' : v.title);
 
@@ -425,6 +616,23 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       if (logoData) parts[parts.indexOf('Logo attached')] = 'Has a logo to add (will email it)';
       toQuote('products', parts.join('. '));
     });
+  }
+
+  {
+    // spec sheet: print just the one-page sheet
+    document.querySelectorAll('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+    document.querySelector('[data-ask-page]')?.addEventListener('click', () => {
+      const r = document.querySelector('[data-product]');
+      window.TSSChat?.ask(`I have a question about ${r?.dataset.title || 'this product'}.`);
+    });
+    // section nav: highlight the section in view
+    const pnav = document.querySelector('[data-pnav]');
+    if (pnav && 'IntersectionObserver' in window) {
+      const links = [...pnav.querySelectorAll('[data-pnav-a]')];
+      const set = (id) => links.forEach((a) => a.classList.toggle('is-on', a.dataset.pnavA === id));
+      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) set(e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
+      links.forEach((a) => { const s = document.getElementById(a.dataset.pnavA); if (s) io.observe(s); });
+    }
   }
 
   {
@@ -689,7 +897,9 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
     .buy__add { padding: 0 16px; font-size: 1rem; }
     .eq-head { justify-content: center; text-align: center; }
     .eq-head .eq-k { justify-content: center; }
-    .spec li { grid-template-columns: 1fr; gap: 2px; padding: 14px 18px; }
+    .spec li { grid-template-columns: minmax(96px, .8fr) minmax(0, 1.2fr); gap: 12px; padding: 12px 16px; }
+    .spec span { font-size: .86rem; }
+    .spec b { font-size: .92rem; }
     .pxr__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .pxr__grid > li:nth-child(4) { display: grid; }
     .eqc__in { justify-content: center; text-align: center; }
@@ -707,4 +917,185 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
   .alt--quote { background: var(--ink); border-color: var(--ink); color: #fff; }
   .alt--quote:hover { background: var(--red); border-color: var(--red); }
   .alt--quote :global(svg) { width: 16px; height: 16px; }
+
+  /* ================= upgraded product page ================= */
+  .chip--pick { background: #fff3cc; color: #6b4b00; }
+  .cert { list-style: none; margin: -6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .cert li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 8px; border-radius: 999px; background: #eef5ff; color: #1b4f9c; font-size: .8rem; letter-spacing: .02em; font-variation-settings: 'wght' 720; }
+  .cert li :global(svg) { width: 15px; height: 15px; }
+  .kspec { display: grid; grid-template-columns: repeat(min(var(--n, 4), 4), minmax(0, 1fr)); gap: 1px; margin: 0; border-radius: 16px; overflow: hidden; background: var(--line); border: 1px solid var(--line); }
+  .kspec > div { display: grid; gap: 3px; align-content: start; padding: 12px 14px; background: #fff; }
+  .kspec dt { color: var(--steel); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; font-variation-settings: 'wght' 700; }
+  .kspec dd { margin: 0; font-size: .98rem; line-height: 1.25; font-variation-settings: 'wght' 720; }
+  .bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: -6px 0 0; padding: 12px 14px; border-radius: 14px; background: #fff7df; border: 1px solid #f5dc8c; color: #5c4300; font-size: .92rem; animation: pxUp .4s cubic-bezier(.2, .8, .2, 1); }
+  .bulk[hidden] { display: none; }
+  .bulk svg { width: 20px; height: 20px; flex: none; }
+  .bulk span { flex: 1 1 200px; }
+  .bulk button { border: 0; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: #fff; font: inherit; font-size: .86rem; font-variation-settings: 'wght' 700; cursor: pointer; }
+  .bulk button:hover { background: var(--red); }
+  .cz { display: grid; grid-template-columns: 44px minmax(0, 1fr) 22px; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; text-decoration: none; color: var(--ink); background: linear-gradient(135deg, #fff 0%, var(--haze) 100%); border: 1px solid var(--line); transition: border-color .2s, transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s; }
+  .cz:hover { border-color: var(--ink); transform: translateY(-2px); box-shadow: 0 18px 34px -24px rgba(20, 23, 26, .6); }
+  .cz__ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: conic-gradient(from 200deg, #ff6a13, #ffcd00, #23a454, #0047bb, #c8102e, #ff6a13); }
+  .cz__ic svg { width: 22px; height: 22px; fill: #fff; }
+  .cz__t { display: grid; gap: 2px; }
+  .cz__t strong { font-variation-settings: 'wght' 740; }
+  .cz__t small { color: var(--steel); font-size: .86rem; }
+  .cz__go { width: 20px; height: 20px; color: var(--steel); transition: transform .3s; }
+  .cz:hover .cz__go { transform: translateY(3px); color: var(--red); }
+
+  /* section nav */
+  .pnav { position: sticky; top: var(--hdr-h, 120px); z-index: 20; background: rgba(255, 255, 255, .9); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); border-block: 1px solid var(--line); }
+  .pnav__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 58px; }
+  .pnav__links { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .pnav__links::-webkit-scrollbar { display: none; }
+  .pnav__links a { position: relative; flex: none; padding: 10px 14px; border-radius: 999px; color: var(--steel); text-decoration: none; font-size: .95rem; font-variation-settings: 'wght' 650; transition: color .2s, background .2s; }
+  .pnav__links a:hover { color: var(--ink); background: var(--haze); }
+  .pnav__links a.is-on { color: #fff; background: var(--ink); }
+  .pnav__sheet { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .9rem; font-variation-settings: 'wght' 680; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+  .pnav__sheet:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .pnav__sheet svg { width: 16px; height: 16px; }
+  #overview, #specs, #customize, #uses, #pairs, #faq, #plan { scroll-margin-top: calc(var(--hdr-h, 120px) + 70px); }
+  :global(html) { scroll-behavior: smooth; }
+
+  /* overview */
+  .pov { padding: clamp(52px, 6.4vw, 100px) 0; background: #fff; }
+  .pov__grid { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(26px, 4.4vw, 72px); align-items: start; }
+  .pov__h { margin: 0 0 18px; font-size: clamp(1.9rem, 3.4vw, 3rem); line-height: 1.02; letter-spacing: -.035em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .pov__lead { margin: 0 0 14px; max-width: 58ch; color: var(--ink-2); font-size: 1.08rem; line-height: 1.65; }
+  .pov__tags { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .pov__tags li { padding: 8px 14px; border-radius: 999px; background: var(--haze); font-size: .9rem; font-variation-settings: 'wght' 640; }
+  .pov__box { margin-top: 22px; padding: 16px 18px; border-radius: 18px; border: 1px dashed var(--line-dark); }
+  .pov__box b { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-variation-settings: 'wght' 740; }
+  .pov__box b svg { width: 20px; height: 20px; color: var(--red); }
+  .pov__box ul { margin: 0; padding-left: 1.1em; color: var(--ink-2); }
+  .pov__box li::marker { color: var(--red); }
+  .pov__feat { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .pov__feat li { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; align-items: start; padding: 18px; border-radius: 18px; background: var(--haze); border: 1px solid transparent; transition: border-color .2s, background .2s, opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); }
+  .pov__feat li:hover { background: #fff; border-color: var(--line-dark); }
+  .pov__feat li > span:last-child { display: grid; gap: 3px; }
+  .pov__feat b { font-variation-settings: 'wght' 740; line-height: 1.25; }
+  .pov__feat li > span:last-child > span { color: var(--ink-2); font-size: .94rem; line-height: 1.45; }
+  .pov__chk { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--red); color: #fff; }
+  .pov__chk svg { width: 17px; height: 17px; }
+  .pov__empty { display: grid; gap: 16px; justify-items: start; padding: clamp(22px, 2.6vw, 34px); border-radius: 22px; background: var(--haze); }
+  .pov__empty p { margin: 0; font-size: 1.1rem; line-height: 1.55; color: var(--ink-2); }
+
+  /* specs side */
+  .pxs { display: grid; gap: 14px; }
+  .pxs__card { padding: clamp(20px, 2.2vw, 28px); border-radius: 22px; background: #fff; border: 1px solid var(--line); }
+  .pxs__card--dark { background: radial-gradient(120% 140% at 100% 0%, #3a0505 0%, #16181b 60%); color: #fff; border-color: transparent; }
+  .pxs__k { margin: 0 0 14px; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 700; }
+  .pxs__card--dark .pxs__k { color: var(--gold); }
+  .pxs__p { margin: 0 0 18px; color: rgba(255, 255, 255, .78); line-height: 1.55; }
+  .pxs__std { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .pxs__std li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: center; }
+  .pxs__seal { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #eef5ff; color: #1b4f9c; }
+  .pxs__seal :global(svg) { width: 22px; height: 22px; }
+  .pxs__std b { display: block; font-variation-settings: 'wght' 740; }
+  .pxs__std small { color: var(--steel); }
+  .pxs__acts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pxs__btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: 999px; border: 0; background: #fff; color: var(--ink); font: inherit; font-variation-settings: 'wght' 720; cursor: pointer; transition: background .2s, color .2s; }
+  .pxs__btn:hover { background: var(--gold); }
+  .pxs__btn svg { width: 17px; height: 17px; }
+  .pxs__link { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px; border-radius: 999px; border: 1.5px solid rgba(255, 255, 255, .35); color: #fff; text-decoration: none; font-variation-settings: 'wght' 680; }
+  .pxs__link:hover { border-color: #fff; }
+  .pxs__link :global(svg) { width: 16px; height: 16px; }
+
+  /* customize */
+  .pcz :global(.sb) { background: #fff; }
+  .pcz :global(.sb__stage) { top: calc(var(--hdr-h, 120px) + 76px); }
+  @media (max-width: 1000px) { .pcz :global(.sb__stage) { top: calc(var(--hdr-h, 120px) + 56px); } }
+  .pwc { padding: clamp(52px, 6.4vw, 100px) 0; background: radial-gradient(120% 140% at 85% 0%, #3a0505 0%, #16181b 55%); color: #fff; }
+  .pwc__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(26px, 4vw, 64px); align-items: center; }
+  .pwc h2 { margin: 0 0 16px; font-size: clamp(2rem, 4vw, 3.6rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .pwc h2 em { font-style: normal; color: var(--gold); }
+  .pwc__copy p:not(.eq-k) { margin: 0 0 26px; max-width: 46ch; color: rgba(255, 255, 255, .78); font-size: 1.08rem; line-height: 1.6; }
+  .pwc__acts { display: flex; flex-wrap: wrap; gap: 12px; }
+  .pwc__art { position: relative; display: block; aspect-ratio: 4 / 3; border-radius: 26px; overflow: hidden; background: radial-gradient(90% 80% at 50% 40%, #ffffff 0%, #e9ecef 70%); }
+  .pwc__art img { position: absolute; inset: 8% 6% auto; width: 88%; height: 70%; object-fit: contain; transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .pwc__art .pwc__ph { inset: auto 4% 4% auto; width: 40%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; border: 4px solid #fff; box-shadow: 0 20px 40px -20px rgba(0, 0, 0, .6); }
+  .pwc__art:hover img:first-child { transform: scale(1.04); }
+
+  /* uses */
+  .puse { padding: clamp(52px, 6.4vw, 100px) 0; background: var(--haze); }
+  .puse .px3__lede a { color: var(--red); }
+  .puse__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+  .puse__grid li { display: grid; gap: 14px; align-content: start; padding: 20px; border-radius: 20px; background: #fff; border: 1px solid var(--line); transition: border-color .2s, opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); }
+  .puse__grid li:hover { border-color: var(--line-dark); }
+  .puse__ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: var(--red-tint); color: var(--red); }
+  .puse__ic svg { width: 22px; height: 22px; }
+  .puse__grid b { font-size: 1.02rem; line-height: 1.3; font-variation-settings: 'wght' 700; }
+
+  /* faq */
+  .pfaq { padding: clamp(52px, 6.4vw, 100px) 0; background: #fff; }
+  .pfaq__grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(26px, 4vw, 64px); align-items: start; }
+  .pfaq__h { margin: 0 0 14px; font-size: clamp(2rem, 4vw, 3.6rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .pfaq__h em { font-style: normal; color: var(--red); }
+  .pfaq__p { margin: 0; color: var(--steel); line-height: 1.6; }
+  .pfaq__p a { color: var(--ink); font-variation-settings: 'wght' 680; }
+  .pfaq__ai { padding: 0; border: 0; background: none; font: inherit; color: var(--red); font-variation-settings: 'wght' 680; text-decoration: underline; cursor: pointer; }
+  .pfaq__list { display: grid; gap: 10px; }
+  .pfaq__it { border-radius: 18px; background: var(--haze); border: 1px solid transparent; transition: background .2s, border-color .2s; }
+  .pfaq__it[open] { background: #fff; border-color: var(--line-dark); }
+  .pfaq__it summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; font-size: 1.04rem; font-variation-settings: 'wght' 700; cursor: pointer; }
+  .pfaq__it summary::-webkit-details-marker { display: none; }
+  .pfaq__pm { position: relative; flex: none; width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid var(--line-dark); }
+  .pfaq__pm::before, .pfaq__pm::after { content: ''; position: absolute; left: 50%; top: 50%; width: 11px; height: 2px; border-radius: 2px; background: var(--ink); translate: -50% -50%; transition: rotate .3s; }
+  .pfaq__pm::after { rotate: 90deg; }
+  .pfaq__it[open] .pfaq__pm::after { rotate: 0deg; }
+  .pfaq__it p { margin: 0; padding: 0 20px 20px; color: var(--ink-2); line-height: 1.6; }
+  .pfaq__it[open] p { animation: pxUp .4s cubic-bezier(.2, .8, .2, 1); }
+  .pxr--pairs { background: #fff; border-top: 1px solid var(--line); }
+
+  /* spec sheet (print only) */
+  .sheet { display: none; }
+  @media print {
+    :global(body > *:not(main)), :global(main > *:not(.sheet)) { display: none !important; }
+    :global(html), :global(body) { background: #fff !important; }
+    @page { margin: 0.5in; }
+    .sheet { display: block; width: 100%; padding: 0; color: #111; font-size: 10.5pt; }
+    .sheet__top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 3px solid #b60606; font-size: 9pt; color: #444; }
+    .sheet__top img { width: 150px; height: auto; }
+    .sheet__main { display: grid; grid-template-columns: 180px 1fr; gap: 22px; align-items: center; margin: 14px 0; }
+    .sheet__img { width: 180px; height: 180px; object-fit: contain; border: 1px solid #ddd; border-radius: 10px; }
+    .sheet__cat { margin: 0 0 4px; font-size: 9pt; letter-spacing: .14em; text-transform: uppercase; color: #b60606; }
+    .sheet__h { margin: 0 0 8px; font-size: 20pt; line-height: 1.1; }
+    .sheet__std { margin: 0 0 8px; font-weight: 700; color: #1b4f9c; }
+    .sheet__p { margin: 0; color: #333; line-height: 1.45; }
+    .sheet__t { width: 100%; border-collapse: collapse; margin: 6px 0 14px; }
+    .sheet__t th, .sheet__t td { text-align: left; padding: 5px 10px; border-bottom: 1px solid #ddd; vertical-align: top; }
+    .sheet__t th { width: 32%; color: #555; font-weight: 600; }
+    .sheet__f { margin: 0 0 14px; padding-left: 1.1em; columns: 2; column-gap: 24px; }
+    .sheet__f li { margin: 0 0 4px; break-inside: avoid; }
+    .sheet__foot { margin: 16px 0 0; padding-top: 10px; border-top: 1px solid #ddd; font-size: 8.5pt; color: #666; }
+  }
+
+  @media (max-width: 1100px) {
+    .kspec { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 900px) {
+    .pov__grid, .pfaq__grid, .pwc__in { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .pnav__in { min-height: 52px; gap: 8px; }
+    .pnav__links a { padding: 8px 12px; font-size: .9rem; }
+    .pnav__sheet { padding: 0 12px; font-size: .84rem; }
+    .pnav__acts { display: none; }
+    .pov__feat { grid-template-columns: 1fr; }
+    .pov__feat li { padding: 14px; }
+    .pov__h, .pfaq__h { text-align: center; }
+    .pov .eq-k, .pfaq .eq-k { justify-content: center; }
+    .pov__lead, .pfaq__p { text-align: center; margin-inline: auto; }
+    .pov__tags { justify-content: center; }
+    .puse__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .puse__grid li { padding: 14px; gap: 10px; }
+    .puse__grid b { font-size: .92rem; }
+    .pwc__copy { text-align: center; }
+    .pwc .eq-k { justify-content: center; }
+    .pwc__copy p:not(.eq-k) { margin-inline: auto; }
+    .pwc__acts { justify-content: center; }
+    .pwc__acts .eq-pill { width: 100%; }
+    .pfaq__it summary { padding: 16px; font-size: .98rem; }
+    .pfaq__it p { padding: 0 16px 16px; }
+  }
 </style>

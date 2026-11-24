@@ -225,7 +225,7 @@ WORK
     const SHAPE_NAMES = { rect: 'Rectangle', diamond: 'Diamond', octagon: 'Octagon', circle: 'Circle' };
     const SQUARE = new Set(['diamond', 'octagon', 'circle']);
     const st = { bg: '#ff6a13', bgName: 'Fluorescent Orange', fg: '#141414', fgName: 'Black', rail: '#1f45c8', railName: 'Blue' };
-    let kind = 'sign';
+    let kind = root.closest('[data-kind-init]')?.dataset.kindInit || 'sign';
     const KIND = {
       sign: { n: 5, label: 'Get a quote for this sign', name: 'Custom sign' },
       cone: { n: 4, label: 'Get a quote for these cones', name: 'Stenciled cones' },
@@ -448,7 +448,7 @@ WORK
       form.querySelector('[data-ok]').hidden = true;
       const stage = root.querySelector('.sb__canvas'); stage.classList.remove('is-swap'); void stage.offsetWidth; stage.classList.add('is-swap');
       draw();
-      if (scroll) document.getElementById('builder').scrollIntoView({ behavior: 'smooth' });
+      if (scroll) root.closest('section').scrollIntoView({ behavior: 'smooth' });
     };
     picks.forEach((b) => b.addEventListener('click', () => setKind(b.dataset.kindPick)));
     document.querySelectorAll('[data-kind-go]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); setKind(a.dataset.kindGo, true); }));
@@ -481,6 +481,7 @@ WORK
     }));
     form.addEventListener('input', draw);
     form.addEventListener('change', draw);
+    if (kind !== 'sign') setKind(kind);
     document.fonts?.ready.then(draw);
     draw();
 
@@ -637,7 +638,7 @@ WORK
   .sb__step .sb__in::-webkit-inner-spin-button { -webkit-appearance: none; }
   .sb__send { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; padding: 0 28px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-size: 1.05rem; font-variation-settings: 'wght' 720; cursor: pointer; box-shadow: 0 16px 34px -16px rgba(182, 6, 6, .8); transition: background .2s; }
   .sb__send:hover { background: var(--red-press); }
-  .sb__send :global(svg) { width: 18px; height: 18px; }
+  .sb__send svg { width: 18px; height: 18px; }
   .sb__send[disabled] { opacity: .7; cursor: progress; }
   .sb__msg { margin: 0; padding: 14px 16px; border-radius: 14px; font-variation-settings: 'wght' 600; }
   .sb__msg--ok { background: #e7f3eb; color: #1c6b37; }
