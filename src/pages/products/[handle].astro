@@ -138,6 +138,8 @@ const EXTRA = {
   'type-iii-breakaway-barricade-hi-intensity-right-stripes': [PH('type-iii-barricades', 'Type III barricades with striped and blank rails')],
 };
 const extraPhotos = EXTRA[handle] || [];
+// TMA: the scorpion attenuator unfolding leads the gallery
+const leadMedia = handle === 'truck-mounted-attenuator-tma' ? [{ url: '/video/tma-unfold.webp', video: '/video/tma-unfold.mp4', altText: 'TSS TMA truck unfolding its scorpion attenuator', photo: true }] : [];
 const trust = [
   ...badges.map((b) => [b.k === 'MUTCD' ? 'MUTCD Compliant' : b.k === 'MASH' ? 'MASH Approved' : b.k, 'green']),
   p.collections.includes('best-selling-collection') && ['Top Seller', 'red'],
@@ -168,7 +170,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 
       <div class="pp__top">
         <div class="pp__gal">
-          <ProductGallery images={[...p.images, ...extraPhotos]} title={p.title} />
+          <ProductGallery images={[...leadMedia, ...p.images, ...extraPhotos]} title={p.title} />
         </div>
 
         <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
