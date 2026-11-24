@@ -10,7 +10,7 @@ const list = images.length ? images : [{ url: '', altText: title }];
     <div class="gal__track" tabindex="0" aria-label={`${title} images. Use arrow keys or swipe to browse.`} role="region">
       {list.map((im, i) => (
         <figure class={`gal__slide${im.photo ? ' gal__slide--photo' : ''}`} data-i={i} data-src={im.url}>
-          {im.url && <img data-fit={im.photo ? undefined : true} src={im.photo ? im.url : img(im.url, 1100)} alt={im.altText || `${title}, image ${i + 1} of ${list.length}`} loading={i === 0 ? 'eager' : 'lazy'} draggable="false" />}
+          {im.url && <img data-fit={im.photo ? undefined : '0.84'} class={im.photo ? 'is-photo' : undefined} src={im.photo ? im.url : img(im.url, 1100)} alt={im.altText || `${title}, image ${i + 1} of ${list.length}`} loading={i === 0 ? 'eager' : 'lazy'} draggable="false" />}
         </figure>
       ))}
     </div>
@@ -28,7 +28,7 @@ const list = images.length ? images : [{ url: '', altText: title }];
     <div class="gal__thumbs" role="tablist" aria-label="Choose image">
       {list.map((im, i) => (
         <button role="tab" class="gal__thumb" data-go={i} aria-selected={i === 0 ? 'true' : 'false'} aria-label={`Image ${i + 1}`}>
-          <img data-fit={im.photo ? undefined : true} class={im.photo ? 'is-photo' : undefined} src={im.photo ? im.url : img(im.url, 160)} alt="" loading="lazy" />
+          <img data-fit={im.photo ? undefined : '0.8'} class={im.photo ? 'is-photo' : undefined} src={im.photo ? im.url : img(im.url, 160)} alt="" loading="lazy" />
         </button>
       ))}
     </div>
@@ -185,7 +185,10 @@ const list = images.length ? images : [{ url: '', altText: title }];
   .lb__bar button { width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--asphalt-line); color: #fff; display: grid; place-items: center; cursor: pointer; }
   .lb__bar span { min-width: 56px; text-align: center; font-weight: 800; }
   .lb__hint { text-align: center; margin: 0 auto 16px; color: #aab0b7; font-size: .9rem; }
-  .gal__slide--photo { padding: 0 !important; }
-  .gal__slide--photo img { object-fit: cover; mix-blend-mode: normal !important; transform: none; }
-  .gal__thumb img.is-photo { object-fit: cover; mix-blend-mode: normal !important; border-radius: 8px; }
+  /* every image: contained, then auto-trimmed and scaled to fill the same share of the box */
+  .gal__slide img.is-photo, .gal__thumb img.is-photo { mix-blend-mode: normal !important; }
+  .gal__slide img.is-photo { width: 94%; height: 94%; border-radius: 14px; }
+  .gal__thumb img.is-photo { object-fit: cover; }
+  .gal__slide { padding: 0 !important; }
+  .gal__thumb { padding: 0 !important; }
 </style>
