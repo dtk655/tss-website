@@ -2,8 +2,8 @@
 // Custom builder: signs, stenciled cones and drums, A-frame rails. Used on the Custom Shop page (all kinds, with a picker)
 // and on product pages (one kind, locked).
 import { PHONE, EMAIL, FORM_WEBHOOK } from '../lib/config.js';
-interface Props { kind?: 'sign' | 'cone' | 'drum' | 'aframe'; lock?: boolean; coneSize?: string; id?: string; kicker?: string; title?: string; lede?: string }
-const { kind = 'sign', lock = false, coneSize = '28"', id = 'builder', kicker = 'Custom builder', title = 'Design your equipment. <em>See it live.</em>', lede = 'Pick what you want to customize, build it, and our team will price it. We confirm every detail before anything is made.' } = Astro.props;
+interface Props { kind?: 'sign' | 'cone' | 'drum' | 'aframe'; lock?: boolean; bare?: boolean; coneSize?: string; id?: string; kicker?: string; title?: string; lede?: string }
+const { kind = 'sign', lock = false, bare = false, coneSize = '28"', id = 'builder', kicker = 'Custom builder', title = 'Design your equipment. <em>See it live.</em>', lede = 'Pick what you want to customize, build it, and our team will price it. We confirm every detail before anything is made.' } = Astro.props;
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const COLORS = [
   ['White', '#ffffff'], ['Yellow', '#ffcd00'], ['Fluorescent Orange', '#ff6a13'], ['Red', '#c8102e'], ['Green', '#006747'],
@@ -18,8 +18,9 @@ const SHAPES = [
 ];
 const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '↑'], ['up-right', '↗'], ['right', '→']];
 ---
-  <section class={`sb${lock ? ' sb--lock' : ''}`} id={id} data-kind-init={kind} data-cone-size={coneSize}>
+  <section class={`sb${lock ? ' sb--lock' : ''}${bare ? ' sb--bare' : ''}`} id={id} data-kind-init={kind} data-cone-size={coneSize}>
     <div class="wrap">
+      {!bare && (
       <div class="sbh">
         <div>
           <p class="sbh__k"><span></span>{kicker}</p>
@@ -27,6 +28,7 @@ const ARROWS = [['none', 'None'], ['left', '←'], ['up-left', '↖'], ['up', '�
         </div>
         <p class="sb__note">{lede}</p>
       </div>
+      )}
 
       {!lock && (
       <div class="sbp" role="tablist" aria-label="What do you want to customize?">
@@ -696,4 +698,6 @@ WORK
     .sbp__img { width: 52px; height: 52px; }
   }
   @media (prefers-reduced-motion: reduce) { .sb__canvas.is-swap .sb__svg { animation: none; } }
+  .sb--bare { padding: 0; background: none; }
+  .sb--bare > .wrap { padding: 0; max-width: none; }
 </style>
