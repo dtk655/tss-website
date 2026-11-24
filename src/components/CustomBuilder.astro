@@ -484,6 +484,8 @@ WORK
     form.addEventListener('input', draw);
     form.addEventListener('change', draw);
     if (kind !== 'sign') setKind(kind);
+    // redraw when the builder becomes visible (e.g. inside a tab), since text fitting needs real sizes
+    if ('ResizeObserver' in window) { let w0 = 0; new ResizeObserver(([en]) => { const w = Math.round(en.contentRect.width); if (w && w !== w0) { w0 = w; draw(); } }).observe(svg); }
     document.fonts?.ready.then(draw);
     draw();
 

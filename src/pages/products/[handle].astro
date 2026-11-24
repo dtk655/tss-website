@@ -47,7 +47,7 @@ const viewerColors = model === 'cone' ? (options.find((o) => isColor(o.name))?.v
 
 // Related: same primary collection
 const primary = ['cones', 'water-filled-barriers', 'barricades', 'traffic-drums', 'sign-shop', 'safety-gear', 'lights', 'reflectors', 'equipment-rentals', 'truck-rentals'].find(inCol);
-const skipRel = new Set(accessoriesFor(handle, p.collections));
+const skipRel = new Set();
 const related = primary ? colByHandle.get(primary)?.products.filter((x) => x.handle !== handle && !skipRel.has(x.handle)).slice(0, 4) || [] : [];
 const crumbCol = primary ? colByHandle.get(primary) : null;
 const desc = (p.seo?.description || p.description || '').slice(0, 155);
@@ -126,6 +126,7 @@ const faqs = [
 ].filter(Boolean);
 const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M3 10h18v9H3z M7 10V6h10v4', 'M5 21V5l7-2 7 2v16 M9 21v-5h6v5', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z M12 7.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z', 'M4 17l5-5 4 4 7-8 M20 8v5 M20 8h-5', 'M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z'];
 const SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z M8.5 12l2.4 2.4 4.6-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const tabs = [['description', 'Description'], ['specs', 'Specifications'], customizable && ['customize', 'Customize'], WatercadePlanner && ['plan', 'Plan Layout'], faqs.length && ['faq', 'Questions']].filter(Boolean);
 const nav = [['overview', 'Overview'], ['specs', 'Specs'], customizable && ['customize', 'Customize'], WatercadePlanner && ['plan', 'Layout'], uses.length && ['uses', 'Uses'], accessories.length && ['pairs', 'Pairs With'], faqs.length && ['faq', 'Questions']].filter(Boolean);
 const num = (id) => String(nav.findIndex(([k]) => k === id) + 1).padStart(2, '0');
 const DL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -140,53 +141,44 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
     ...(p.isRental ? {} : { offers: { '@type': 'AggregateOffer', priceCurrency: 'USD', lowPrice: p.minPrice, highPrice: p.maxPrice, availability: 'https://schema.org/InStock' } })
   })} />
 
-  <!-- ================= TOP: gallery + buy panel ================= -->
-  <section class="px" style={`--tint:${tint}`}>
-    <div class="px__bg" aria-hidden="true"></div>
+  <div class="pp">
     <div class="wrap">
-      <nav class="px__crumbs" aria-label="Breadcrumb">
+      <nav class="pp__crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a><span>/</span>
         <a href="/collections">Shop</a>
-        {crumbCol && <><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><a href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a></>}
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span aria-current="page">{p.title}</span>
+        {crumbCol && <><span>/</span><a href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a></>}
+        <span>/</span><b aria-current="page">{p.title}</b>
       </nav>
 
-      <div class="px__grid">
-        <div class="px__gal">
+      <div class="pp__top">
+        <div class="pp__gal">
           <ProductGallery images={p.images} title={p.title} />
         </div>
 
         <div class="buy" data-product data-handle={p.handle} data-title={p.title} data-image={firstImg} data-minprice={p.isRental ? '' : p.minPrice} data-variants={JSON.stringify(variants)} data-rental={p.isRental ? '1' : ''}>
-          <div class="buy__chips px__in" style="--d:0">
-            {crumbCol && <a href={`/collections/${crumbCol.handle}`} class="chip chip--cat"><i></i>{crumbCol.title}</a>}
-            {p.isRental ? <span class="chip chip--rent">Rental</span> : inStock ? <span class="chip chip--ok"><i></i>In stock</span> : <span class="chip">Made to order</span>}
-            {pickupOnly && <span class="chip chip--pick">Customer Pick Up</span>}
-            {customizable && <span class="chip">Customizable</span>}
+          {crumbCol && <a class="buy__cat" href={`/collections/${crumbCol.handle}`}>{crumbCol.title}</a>}
+          <h1 class="buy__title">{p.title}</h1>
+          <p class="buy__meta">
+            {p.isRental ? <span class="st st--rent">Available to rent</span> : inStock ? <span class="st st--ok">In stock</span> : <span class="st">Made to order</span>}
+            {pickupOnly && <span class="st">Customer Pick Up only</span>}
+            {badges.map((b) => <span class="st st--std" title={b.d}>{b.k}</span>)}
+          </p>
+
+          {sellable && <div class="mode" role="tablist" aria-label="Rent or buy" data-mode-sw data-on="rent"><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
+
+          <div class="buy__price">
+            {p.isRental ? (
+              <p class="buy__q" data-mode-txt>Priced per job. Get a quote for daily, weekly or monthly rates.</p>
+            ) : (
+              <p><strong data-price>{money(first.price)}</strong> <span>each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
+            )}
           </div>
 
-          {sellable && <div class="mode px__in" style="--d:1" role="tablist" aria-label="Rent or buy" data-mode-sw><i aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-m="rent">Rent</button><button type="button" role="tab" aria-selected="false" data-m="buy">Buy</button></div>}
+          {intro && <p class="buy__intro">{intro}</p>}
 
-          <h1 class="buy__title"><span class="buy__ln"><span>{p.title}</span></span></h1>
-          {badges.length > 0 && (
-            <ul class="cert px__in" style="--d:1" aria-label="Standards">
-              {badges.map((b) => <li title={b.d}><Fragment set:html={SHIELD} />{b.k}</li>)}
-            </ul>
-          )}
-
-          {p.isRental ? (
-            <p class="buy__price buy__price--q px__in" style="--d:2" data-mode-txt>Priced per job. Get a quote for daily, weekly or monthly rates.</p>
-          ) : (
-            <p class="buy__price px__in" style="--d:2"><strong data-price>{money(first.price)}</strong> <span class="buy__unit">each</span>{first.compare && first.compare > first.price && <s data-compare>{money(first.compare)}</s>}</p>
-          )}
-          {intro && <p class="buy__intro px__in" style="--d:3">{intro}</p>}
-          {keySpecs.length > 1 && (
-            <dl class="kspec px__in" style={`--d:3;--n:${keySpecs.length}`}>
-              {keySpecs.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
-            </dl>
-          )}
-
-          {options.map((o, oi) => (
-            <fieldset class="opt px__in" style={`--d:${4 + oi}`} data-option={o.name}>
-              <legend>{cap(o.name)} <span data-opt-val>{first.opts[o.name]}</span></legend>
+          {options.map((o) => (
+            <fieldset class="opt" data-option={o.name}>
+              <legend>{cap(o.name)}: <span data-opt-val>{first.opts[o.name]}</span></legend>
               <div class={isColor(o.name) ? 'swatches' : 'pills'}>
                 {o.values.map((val) => (
                   <label class={isColor(o.name) ? 'sw' : 'pill'} title={val}>
@@ -198,210 +190,133 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
             </fieldset>
           ))}
 
-          <div class="qty-row px__in" style={`--d:${4 + options.length}`}>
+          <div class="qty-row">
             <label class="qty">
               <span class="sr-only">Quantity</span>
               <button type="button" data-q="-1" aria-label="Decrease quantity">−</button>
               <input type="number" min="1" value="1" data-qty inputmode="numeric" />
               <button type="button" data-q="1" aria-label="Increase quantity">+</button>
             </label>
-            {!p.isRental && <button class="buy__add" data-add-cart><span class="buy__addt">Add to cart</span><Fragment set:html={ARROW} /></button>}
-            {p.isRental && <button class="buy__add" data-get-quote="rental" data-mode-btn><span class="buy__addt">Get a Quote</span><Fragment set:html={ARROW} /></button>}
+            {!p.isRental && <button class="buy__add" data-add-cart><span class="buy__addt">Add to Cart</span></button>}
+            {p.isRental && <button class="buy__add" data-get-quote="rental" data-mode-btn><span class="buy__addt">Request a Quote</span></button>}
           </div>
-          {!p.isRental && <p class="bulk" data-bulk hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z M3 12l9 4 9-4 M3 17l9 4 9-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span>Ordering <b data-bulk-n>25</b> or more? We’ll price the whole order.</span><button type="button" data-get-quote="products">Get bulk pricing</button></p>}
-          <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Get a quote and we'll source it.</p>
+          {!p.isRental && <button class="buy__sec" data-get-quote="products">Request a Quote</button>}
+          {!p.isRental && <p class="bulk" data-bulk hidden>Ordering 25 or more? <button type="button" data-get-quote="products">Get bulk pricing</button></p>}
+          <p class="buy__unavail" data-unavail hidden>This combination is sold out online. Request a quote and we’ll source it.</p>
 
-          <div class="alt-actions px__in" style={`--d:${5 + options.length}`}>
-            {!p.isRental && <button class="alt alt--quote" data-get-quote="products">Get a Quote<Fragment set:html={ARROW} /></button>}
-            <button class="alt alt--ai" data-ask><span class="alt__ai">AI</span>Ask Conner about this</button>
-          </div>
-
-          <ul class="assure px__in" style={`--d:${6 + options.length}`}>
-            {perks.map(([t, d, ic]) => (
-              <li>
-                <span class="assure__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={ic} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
-                <span><b>{t}</b><small>{d}</small></span>
-              </li>
-            ))}
+          <ul class="buy__info">
+            {perks.map(([t, d]) => <li><b>{t}</b> <span>{d}</span></li>)}
           </ul>
 
-          {customizable && (
-            <a href="#customize" class="cz px__in" style={`--d:${7 + options.length}`}>
-              <span class="cz__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20l4-1L19 8l-3-3L5 16z M14 7l3 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span class="cz__t"><strong>{builder?.kind === 'aframe' ? 'Print Your Own Rails' : builder ? 'Stencil Your Name Or Logo' : 'Brand It With Your Logo'}</strong><small>Design it live below. We confirm every detail before it’s made.</small></span>
-              <svg class="cz__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v13M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          )}
+          <div class="buy__links">
+            {customizable && <a href="#tabs" data-tab-go="customize">{builder?.kind === 'aframe' ? 'Print your own rails' : builder ? 'Stencil your name or logo' : 'Brand it with your logo'}</a>}
+            <button type="button" data-print>Download spec sheet</button>
+            <button type="button" data-ask>Ask a question</button>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   {/^truck-mounted-attenuator/.test(p.handle) && <TmaTruck />}
 
-  <!-- ================= DETAIL: one consistent layout, title column + content column per section ================= -->
-  <nav class="pnav" aria-label="On this page" data-pnav>
-    <div class="wrap pnav__in">
-      <div class="pnav__links">
-        {nav.map(([id, l]) => <a href={`#${id}`} data-pnav-a={id}>{l}</a>)}
-      </div>
-      <button type="button" class="pbtn pbtn--line pnav__sheet" data-print><Fragment set:html={DL} />Spec Sheet</button>
-    </div>
-  </nav>
-
-  <div class="pdoc">
+  <!-- ================= TABS ================= -->
+  <div class="ptabs" id="tabs" data-tabs>
     <div class="wrap">
+      <div class="tabs__bar" role="tablist" aria-label="Product information">
+        {tabs.map(([id, l], i) => <button type="button" role="tab" id={`tab-${id}`} aria-controls={`panel-${id}`} aria-selected={i === 0 ? 'true' : 'false'} data-tab={id}>{l}</button>)}
+      </div>
 
-      <section class="prow" id="overview">
-        <header class="prow__h"><span class="prow__n">{num('overview')}</span><h2>Overview</h2></header>
-        <div class="prow__b">
-          {kicker && <p class="pdoc__kick">{kicker}</p>}
-          {leadText.length ? leadText.map((l) => <p class="pdoc__lead">{l}</p>) : <p class="pdoc__lead">{meta?.sub || 'Built for work zones, job sites and events across the region.'}</p>}
-          {(chipsLine.length > 0 || included.length > 0) && (
-            <dl class="pdoc__facts">
-              {chipsLine.length > 0 && <div><dt>Highlights</dt><dd>{chipsLine.join(' · ')}</dd></div>}
-              {included.length > 0 && <div><dt>Included</dt><dd>{included.join(' · ')}</dd></div>}
-            </dl>
-          )}
-          {features.length > 0 && (
-            <ul class="pfeat">
-              {features.map((fe) => (
-                <li>
-                  <Fragment set:html={CHECK} />
-                  <span>{fe.label && <b>{fe.label}</b>}{fe.text}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+      <section class="tab" id="panel-description" role="tabpanel" aria-labelledby="tab-description" data-panel="description">
+        <h2 class="tab__h">Description</h2>
+        <div class="desc">
+          <div class="desc__main">
+            {kicker && <p class="desc__kick">{kicker}</p>}
+            {leadText.length ? leadText.map((l) => <p>{l}</p>) : <p>{meta?.sub || 'Built for work zones, job sites and events.'}</p>}
+            {features.length > 0 && (
+              <>
+                <h3>Features</h3>
+                <ul class="desc__list">{features.map((fe) => <li>{fe.label && <b>{fe.label}: </b>}{fe.text}</li>)}</ul>
+              </>
+            )}
+          </div>
+          <aside class="desc__side">
+            {uses.length > 0 && (<><h3>Common uses</h3><ul class="desc__list desc__list--plain">{uses.map((u) => <li>{u}</li>)}</ul></>)}
+            {included.length > 0 && (<><h3>Included</h3><ul class="desc__list desc__list--plain">{included.map((x) => <li>{x}</li>)}</ul></>)}
+            {chipsLine.length > 0 && (<><h3>Highlights</h3><ul class="desc__list desc__list--plain">{chipsLine.map((x) => <li>{x}</li>)}</ul></>)}
+          </aside>
         </div>
       </section>
 
-      <section class="prow" id="specs">
-        <header class="prow__h">
-          <span class="prow__n">{num('specs')}</span><h2>Specifications</h2>
-          <p class="prow__sub">Need product data or certifications for a bid? We can send them over.</p>
-          <div class="prow__acts">
-            <button type="button" class="pbtn pbtn--line" data-print><Fragment set:html={DL} />Download Spec Sheet</button>
-            <a class="ptext" href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`}>Request documents<Fragment set:html={ARROW} /></a>
-          </div>
-        </header>
-        <div class="prow__b">
-          <table class="ptab">
-            <tbody>
-              {badges.length > 0 && <tr><th>Standards</th><td><span class="pstd">{badges.map((b) => <span title={b.d}><Fragment set:html={SHIELD} />{b.k}</span>)}</span></td></tr>}
-              {allSpecs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}
-            </tbody>
-          </table>
-        </div>
+      <section class="tab" id="panel-specs" role="tabpanel" aria-labelledby="tab-specs" data-panel="specs" hidden>
+        <h2 class="tab__h">Specifications</h2>
+        <table class="spec">
+          <tbody>
+            {badges.length > 0 && <tr><th>Standards</th><td>{badges.map((b) => b.k).join(', ')}</td></tr>}
+            {allSpecs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}
+          </tbody>
+        </table>
+        <p class="spec__note">Need product data or certification documents for a bid? <button type="button" data-print>Download the spec sheet</button> or <a href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`}>request documents</a>.</p>
       </section>
 
-      {builder && (
-        <section class="prow prow--wide" id="customize">
-          <header class="prow__h">
-            <span class="prow__n">{num('customize')}</span><h2>Customize</h2>
-            <p class="prow__sub">{builder.lede}</p>
-          </header>
-          <div class="prow__full">
-            <CustomBuilder kind={builder.kind} lock bare coneSize={builder.size || '28"'} id="customize-builder" />
-          </div>
-        </section>
-      )}
-
-      {isWatercade && (
-        <section class="prow" id="customize">
-          <header class="prow__h">
-            <span class="prow__n">{num('customize')}</span><h2>Customize</h2>
-            <p class="prow__sub">Your color, logo and message on every barrier. Our team confirms every detail and price before it’s made.</p>
-          </header>
-          <div class="prow__b">
-            <a href="/watercade/#customize" class="pwc">
-              <span class="pwc__img"><img src="/custom/police-barrier.webp" alt="White WATERCADE barrier with a custom police wrap" loading="lazy" /></span>
-              <span class="pwc__t"><b>WATERCADE Builder</b><span>Pick a color, upload your logo and add your message, then send it to us for a quote.</span><span class="pbtn pbtn--red">Open The Builder<Fragment set:html={ARROW} /></span></span>
-            </a>
-          </div>
+      {customizable && (
+        <section class="tab" id="panel-customize" role="tabpanel" aria-labelledby="tab-customize" data-panel="customize" hidden>
+          <h2 class="tab__h">Customize</h2>
+          {builder ? (
+            <>
+              <p class="tab__lede">{builder.lede}</p>
+              <CustomBuilder kind={builder.kind} lock bare coneSize={builder.size || '28"'} id="customize-builder" />
+            </>
+          ) : (
+            <div class="wcb">
+              <img src="/custom/police-barrier.webp" alt="White WATERCADE barrier with a custom police wrap" loading="lazy" />
+              <div>
+                <h3>WATERCADE Builder</h3>
+                <p>Choose your color, upload your logo and add your message, then send it to us. Our team confirms every detail and price before anything is made.</p>
+                <a href="/watercade/#customize" class="btn-p">Open the WATERCADE Builder</a>
+              </div>
+            </div>
+          )}
         </section>
       )}
 
       {WatercadePlanner && (
-        <section class="prow prow--wide" id="plan">
-          <header class="prow__h">
-            <span class="prow__n">{num('plan')}</span><h2>Plan Your Layout</h2>
-            <p class="prow__sub">See how many barriers your run or perimeter needs.</p>
-          </header>
-          <div class="prow__full">
-            <WatercadePlanner heading="" variants={p.variants.map((v) => ({ id: v.id, title: v.title, price: v.price }))} image={firstImg} />
-          </div>
+        <section class="tab" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" data-panel="plan" hidden>
+          <h2 class="tab__h">Plan Your Layout</h2>
+          <p class="tab__lede">See how many barriers your run or perimeter needs.</p>
+          <WatercadePlanner heading="" variants={p.variants.map((v) => ({ id: v.id, title: v.title, price: v.price }))} image={firstImg} />
         </section>
       )}
 
-      {uses.length > 0 && (
-        <section class="prow" id="uses">
-          <header class="prow__h">
-            <span class="prow__n">{num('uses')}</span><h2>Where It’s Used</h2>
-            {!p.isRental && <p class="prow__sub">Not sure it fits your job? <a href="/pages/contact">Ask our team</a> or call <a href={PHONE_TEL}>{PHONE}</a>.</p>}
-          </header>
-          <div class="prow__b">
-            <ul class="puse">
-              {uses.map((u) => <li><Fragment set:html={DOT} />{u}</li>)}
-            </ul>
-          </div>
-        </section>
-      )}
-
-      {accessories.length > 0 && (
-        <section class="prow" id="pairs">
-          <header class="prow__h">
-            <span class="prow__n">{num('pairs')}</span><h2>Pairs Well With</h2>
-            <p class="prow__sub">Accessories that complete the setup.</p>
-          </header>
-          <div class="prow__b">
-            <ul class="ppair">{accessories.map((r) => <li><ProductCard p={r} /></li>)}</ul>
-          </div>
-        </section>
-      )}
-
-      {faqs.length > 0 && (
-        <section class="prow" id="faq">
-          <header class="prow__h">
-            <span class="prow__n">{num('faq')}</span><h2>Questions</h2>
-            <p class="prow__sub">Can’t find your answer? Call <a href={PHONE_TEL}>{PHONE}</a> or <button type="button" class="ptext ptext--inline" data-ask-page>ask Conner</button>.</p>
-          </header>
-          <div class="prow__b">
-            {faqs.map(([q, a], i) => (
-              <details class="pq" open={i === 0}>
-                <summary>{q}<span class="pq__pm" aria-hidden="true"></span></summary>
-                <p>{a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {related.length > 0 && (
-        <section class="prow" id="more">
-          <header class="prow__h">
-            <span class="prow__n">{String(nav.length + 1).padStart(2, '0')}</span><h2>More {crumbCol ? crumbCol.title : 'Products'}</h2>
-            {crumbCol && <a class="ptext" href={`/collections/${crumbCol.handle}`}>See all {relTitle}<Fragment set:html={ARROW} /></a>}
-          </header>
-          <div class="prow__b">
-            <ul class="ppair">{related.slice(0, 3).map((r) => <li><ProductCard p={r} /></li>)}</ul>
-          </div>
-        </section>
-      )}
-
+      <section class="tab" id="panel-faq" role="tabpanel" aria-labelledby="tab-faq" data-panel="faq" hidden>
+        <h2 class="tab__h">Questions</h2>
+        <div class="faq">
+          {faqs.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+        </div>
+        <p class="spec__note">Still have a question? Call <a href={PHONE_TEL}>{PHONE}</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+      </section>
     </div>
   </div>
 
-  <section class="eqc" data-in>
-    <div class="wrap eqc__in">
+  {related.length > 0 && (
+    <section class="rel">
+      <div class="wrap">
+        <div class="rel__h">
+          <h2>More {crumbCol ? crumbCol.title : 'Products'}</h2>
+          {crumbCol && <a href={`/collections/${crumbCol.handle}`}>View all</a>}
+        </div>
+        <ul class="rel__grid">{related.slice(0, 4).map((r) => <li><ProductCard p={r} /></li>)}</ul>
+      </div>
+    </section>
+  )}
+
+  <section class="help">
+    <div class="wrap help__in">
       <div>
-        <p class="eq-k eq-k--light"><span></span>{p.isRental ? 'Rental quote' : 'Bulk and agency pricing'}</p>
-        <h2>{p.isRental ? <>Need it on a job? <em>We’ll deliver it.</em></> : <>Buying in bulk? <em>Let’s talk pricing.</em></>}</h2>
+        <h2>{p.isRental ? 'Need it on a job?' : 'Ordering for a crew, agency or job?'}</h2>
+        <p>{p.isRental ? 'We deliver, set up and pick up across NJ, NY, PA and CT.' : 'Our team prices bulk orders, sets up net terms and can arrange delivery.'} Call <a href={PHONE_TEL}>{PHONE}</a>.</p>
       </div>
-      <div class="eqc__acts">
-        <a href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`} class="eq-pill eq-pill--red">{p.isRental ? 'Get rental pricing' : 'Get bulk pricing'}<Fragment set:html={ARROW} /></a>
-        <a href="/pages/contact" class="eq-pill eq-pill--glass">Talk to an expert</a>
-      </div>
+      <a href={`/pages/request-a-quote?type=${p.isRental ? 'rental' : 'products'}`} class="btn-p">{p.isRental ? 'Get Rental Pricing' : 'Request a Quote'}</a>
     </div>
   </section>
 
@@ -425,14 +340,14 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
   <RecentlyViewed exclude={p.handle} />
   <QuickView />
 
-  <div class="buybar" data-buybar style={`--tint:${tint}`}>
+  <div class="buybar" data-buybar>
     <div class="wrap buybar__in">
       {firstImg && <img class="buybar__img" src={img(firstImg, 160)} alt="" />}
       <div class="buybar__txt">
         <b>{p.title}</b>
         <span data-bar-price>{p.isRental ? 'Priced per job' : money(first.price)}</span>
       </div>
-      <button type="button" class="btn buybar__btn" data-bar-add>{p.isRental ? 'Get a Quote' : 'Add to cart'}</button>
+      <button type="button" class="buybar__btn" data-bar-add>{p.isRental ? 'Request a Quote' : 'Add to Cart'}</button>
     </div>
   </div>
 </Layout>
@@ -569,13 +484,18 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       const r = document.querySelector('[data-product]');
       window.TSSChat?.ask(`I have a question about ${r?.dataset.title || 'this product'}.`);
     });
-    // section nav: highlight the section in view
-    const pnav = document.querySelector('[data-pnav]');
-    if (pnav && 'IntersectionObserver' in window) {
-      const links = [...pnav.querySelectorAll('[data-pnav-a]')];
-      const set = (id) => links.forEach((a) => a.classList.toggle('is-on', a.dataset.pnavA === id));
-      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) set(e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
-      links.forEach((a) => { const s = document.getElementById(a.dataset.pnavA); if (s) io.observe(s); });
+    // tabs
+    const tabsEl = document.querySelector('[data-tabs]');
+    if (tabsEl) {
+      const btns = [...tabsEl.querySelectorAll('[data-tab]')], panels = [...tabsEl.querySelectorAll('[data-panel]')];
+      const show = (id) => { btns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id))); panels.forEach((pn) => { pn.hidden = pn.dataset.panel !== id; }); };
+      btns.forEach((b) => b.addEventListener('click', () => show(b.dataset.tab)));
+      tabsEl.querySelector('.tabs__bar').addEventListener('keydown', (e) => {
+        const i = btns.findIndex((b) => b.getAttribute('aria-selected') === 'true');
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = btns[(i + (e.key === 'ArrowRight' ? 1 : -1) + btns.length) % btns.length]; n.focus(); show(n.dataset.tab); }
+      });
+      document.querySelectorAll('[data-tab-go]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); show(a.dataset.tabGo); tabsEl.scrollIntoView({ behavior: 'smooth' }); }));
+      if (location.hash === '#customize') { show('customize'); setTimeout(() => tabsEl.scrollIntoView(), 50); }
     }
   }
 
@@ -602,7 +522,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       const btn = document.querySelector('[data-mode-btn]');
       const txt = document.querySelector('[data-mode-txt]');
       const bar = document.querySelector('[data-bar-add]');
-      const copy = { rent: ['Get a Quote', 'Priced per job. Get a quote for daily, weekly or monthly rates.'], buy: ['Get a Quote', 'Available to buy new. Get a quote for pricing and lead time.'] };
+      const copy = { rent: ['Request a Quote', 'Priced per job. Get a quote for daily, weekly or monthly rates.'], buy: ['Request a Quote', 'Available to buy new. Get a quote for pricing and lead time.'] };
       sw.querySelectorAll('[data-m]').forEach((b) => b.addEventListener('click', () => {
         const m = b.dataset.m;
         sw.dataset.on = m;
@@ -616,276 +536,166 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
 </script>
 
 <style>
-  /* ---------- top band ---------- */
-  .px { position: relative; padding: clamp(18px, 2.2vw, 28px) 0 clamp(44px, 5vw, 76px); isolation: isolate; overflow: clip; }
-  .px__bg { position: absolute; inset: 0 0 auto; height: min(78%, 620px); z-index: -1; background: linear-gradient(180deg, var(--tint) 0%, color-mix(in srgb, var(--tint) 55%, #fff) 60%, #fff 100%); }
-  .px__bg::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(20, 23, 26, .07) 1px, transparent 1.2px); background-size: 22px 22px; mask-image: linear-gradient(180deg, #000 0%, transparent 85%); -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 85%); }
-  .px__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: clamp(14px, 1.8vw, 22px); font-size: .9rem; color: var(--ink-2); animation: pxUp .6s cubic-bezier(.2, .8, .2, 1) both; }
-  .px__crumbs a { color: inherit; text-decoration: none; }
-  .px__crumbs a:hover { color: var(--red); }
-  .px__crumbs svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; opacity: .5; }
-  .px__crumbs span { color: var(--steel); max-width: 40ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .px__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(22px, 3.6vw, 60px); align-items: start; }
-  .px__gal { min-width: 0; animation: pxGal 1s cubic-bezier(.2, .8, .2, 1) both; }
-  .px__gal :global(.gal__stage) { border-radius: 26px; border-color: rgba(20, 23, 26, .06); box-shadow: 0 50px 90px -60px rgba(20, 23, 26, .55), 0 2px 0 rgba(255, 255, 255, .8) inset; }
-  .px__gal :global(.gal__slide img) { transition: transform .9s cubic-bezier(.2, .8, .2, 1); }
-  .px__gal :global(.gal__stage:hover .gal__slide img) { transform: scale(1.035); }
-  .px__gal :global(.gal__thumb) { border-radius: 14px; }
-  .px__gal :global(.gal__zoom) { border-radius: 999px; }
+  /* Traditional product page: white page, clear hierarchy, hairline rules, one accent color. */
+  .pp { padding: 18px 0 clamp(40px, 5vw, 64px); background: #fff; }
+  .pp__crumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; font-size: .86rem; color: var(--steel); }
+  .pp__crumbs a { color: var(--steel); text-decoration: none; }
+  .pp__crumbs a:hover { color: var(--ink); text-decoration: underline; }
+  .pp__crumbs b { color: var(--ink); font-weight: 400; max-width: 46ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pp__top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 4.5vw, 72px); align-items: start; }
+  .pp__gal { min-width: 0; }
+  .pp__gal :global(.gal__stage) { border-radius: 4px; border: 1px solid var(--line); box-shadow: none; background: #fff; }
+  .pp__gal :global(.gal__thumb) { border-radius: 4px; }
+  .pp__gal :global(.gal__zoom), .pp__gal :global(.gal__nav) { border-radius: 4px; }
 
-  /* ---------- buy panel ---------- */
-  .buy { position: sticky; top: calc(var(--hdr-h, 140px) + 20px); display: grid; gap: 18px; padding: clamp(20px, 2.4vw, 32px); border-radius: 26px; background: rgba(255, 255, 255, .86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(20, 23, 26, .07); box-shadow: 0 50px 90px -64px rgba(20, 23, 26, .5); }
-  .px__in { animation: pxUp .7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(.18s + var(--d, 0) * 70ms); }
-  @keyframes pxUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-  @keyframes pxGal { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
-  @keyframes pxRise { from { transform: translateY(105%); } to { transform: none; } }
+  .buy { display: grid; gap: 18px; position: sticky; top: calc(var(--hdr-h, 140px) + 20px); }
+  .buy__cat { justify-self: start; color: var(--red); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-variation-settings: 'wght' 700; text-decoration: none; }
+  .buy__cat:hover { text-decoration: underline; }
+  .buy__title { margin: -8px 0 0; font-size: clamp(1.7rem, 2.6vw, 2.35rem); line-height: 1.12; letter-spacing: -.02em; font-variation-settings: 'wght' 720; font-weight: 400; text-wrap: balance; }
+  .buy__meta { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: -6px 0 0; font-size: .9rem; color: var(--steel); }
+  .st { display: inline-flex; align-items: center; gap: 6px; }
+  .st::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--line-dark); }
+  .st--ok { color: var(--ok); } .st--ok::before { background: var(--ok); }
+  .st--rent::before { background: var(--red); }
+  .st--std { color: var(--ink); font-variation-settings: 'wght' 650; }
+  .st--std::before { content: none; }
+  .st--std { padding: 1px 8px; border: 1px solid var(--line-dark); border-radius: 3px; font-size: .78rem; letter-spacing: .04em; }
 
-  .buy__chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: var(--haze); color: var(--ink-2); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: 'wght' 680; text-decoration: none; }
-  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--steel); }
-  .chip--cat { background: var(--tint); color: var(--ink); transition: background .2s; }
-  .chip--cat i { background: var(--red); }
-  .chip--cat:hover { background: color-mix(in srgb, var(--tint) 70%, #000 6%); }
-  .chip--ok { background: #e7f3eb; color: #1c6b37; }
-  .chip--ok i { background: #23a454; box-shadow: 0 0 0 0 rgba(35, 164, 84, .5); animation: pxPulse 2.2s ease-out infinite; }
-  .chip--rent { background: var(--red); color: #fff; }
-  @keyframes pxPulse { 0% { box-shadow: 0 0 0 0 rgba(35, 164, 84, .45); } 70%, 100% { box-shadow: 0 0 0 9px rgba(35, 164, 84, 0); } }
-
-  .buy__title { margin: 0; font-size: clamp(1.9rem, 3.2vw, 3rem); line-height: 1.04; letter-spacing: -.035em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
-  .buy__ln { display: block; overflow: hidden; padding-bottom: .06em; }
-  .buy__ln > span { display: inline-block; animation: pxRise .9s .1s cubic-bezier(.2, .8, .2, 1) both; }
-  .buy__price { margin: -4px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
-  .buy__price strong { display: inline-block; font-size: clamp(1.8rem, 2.6vw, 2.3rem); letter-spacing: -.03em; font-variation-settings: 'wght' 780; color: var(--red); }
-  .buy__price strong.is-flip { animation: pxFlip .45s cubic-bezier(.2, .8, .2, 1); }
-  @keyframes pxFlip { from { opacity: 0; transform: translateY(-40%); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
-  .buy__unit { color: var(--steel); font-size: .95rem; }
-  .buy__price s { color: var(--steel); font-size: 1.1rem; }
-  .buy__price--q { font-size: 1.05rem; color: var(--ink-2); line-height: 1.45; padding: 12px 14px; border-radius: 14px; background: var(--haze); }
-  .buy__intro { margin: -2px 0 0; color: var(--ink-2); line-height: 1.55; font-size: 1rem; }
+  .buy__price { padding: 16px 0; border-block: 1px solid var(--line); }
+  .buy__price p { margin: 0; display: flex; align-items: baseline; gap: 8px; color: var(--steel); }
+  .buy__price strong { color: var(--ink); font-size: 1.9rem; letter-spacing: -.02em; font-variation-settings: 'wght' 720; }
+  .buy__price strong.is-flip { animation: pxFlip .35s ease; }
+  @keyframes pxFlip { from { opacity: .3; } to { opacity: 1; } }
+  .buy__price s { font-size: 1.05rem; }
+  .buy__q { font-size: 1rem; color: var(--ink-2) !important; display: block !important; line-height: 1.5; }
+  .buy__intro { margin: 0; color: var(--ink-2); line-height: 1.65; }
 
   .opt { border: 0; padding: 0; margin: 0; min-width: 0; }
-  .opt legend { display: flex; gap: 8px; margin-bottom: 10px; padding: 0; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 700; }
-  .opt legend span { color: var(--ink); letter-spacing: .02em; text-transform: none; font-size: .95rem; font-variation-settings: 'wght' 680; }
+  .opt legend { margin-bottom: 10px; padding: 0; font-size: .92rem; color: var(--steel); }
+  .opt legend span { color: var(--ink); font-variation-settings: 'wght' 650; }
   .swatches, .pills { display: flex; flex-wrap: wrap; gap: 8px; }
   .sw, .pill { position: relative; }
-  .sw input, .pill input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
-  .sw > span { display: block; width: 40px; height: 40px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16); transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .2s; }
-  .sw:hover > span { transform: scale(1.08); }
-  .sw input:checked + span { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16), 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
-  .sw input:focus-visible + span { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--red); }
-  .pill > span { display: block; padding: 10px 16px 9px; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; font-variation-settings: 'wght' 620; font-size: .95rem; cursor: pointer; transition: border-color .2s, background .2s, color .2s, transform .2s; }
+  .sw input, .pill input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .sw > span { display: block; width: 34px; height: 34px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); }
+  .sw input:checked + span { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18), 0 0 0 2px #fff, 0 0 0 3.5px var(--ink); }
+  .sw input:focus-visible + span { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--red); }
+  .pill > span { display: block; min-width: 54px; padding: 9px 14px; border: 1px solid var(--line-dark); border-radius: 4px; background: #fff; text-align: center; font-size: .92rem; cursor: pointer; transition: border-color .15s; }
   .pill > span:hover { border-color: var(--ink); }
-  .pill input:active + span { transform: scale(.96); }
-  .pill input:checked + span { border-color: var(--ink); background: var(--ink); color: #fff; }
-  .pill input:focus-visible + span { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; }
+  .pill input:checked + span { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); font-variation-settings: 'wght' 650; }
+  .pill input:focus-visible + span { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  .mode { display: inline-flex; justify-self: start; border: 1px solid var(--line-dark); border-radius: 4px; overflow: hidden; }
+  .mode button { all: unset; padding: 9px 22px; cursor: pointer; font-size: .94rem; color: var(--steel); }
+  .mode button + button { border-left: 1px solid var(--line-dark); }
+  .mode button[aria-selected="true"] { background: var(--ink); color: #fff; }
+  .mode button:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
 
   .qty-row { display: flex; gap: 10px; }
-  .qty { display: flex; align-items: stretch; border: 1.5px solid var(--line-dark); border-radius: 999px; background: #fff; overflow: hidden; flex: none; }
-  .qty button { width: 46px; border: 0; background: none; font-size: 1.3rem; cursor: pointer; color: var(--steel); transition: background .15s, color .15s; }
-  .qty button:hover { background: var(--haze); color: var(--ink); }
-  .qty input { width: 52px; border: 0; text-align: center; font: inherit; font-variation-settings: 'wght' 700; font-size: 1.05rem; background: none; -moz-appearance: textfield; }
+  .qty { display: flex; border: 1px solid var(--line-dark); border-radius: 4px; overflow: hidden; flex: none; }
+  .qty button { width: 42px; border: 0; background: #fff; font-size: 1.2rem; color: var(--ink-2); cursor: pointer; }
+  .qty button:hover { background: var(--haze); }
+  .qty input { width: 48px; border: 0; border-inline: 1px solid var(--line); text-align: center; font: inherit; font-size: 1rem; -moz-appearance: textfield; }
   .qty input::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .buy__add { position: relative; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font: inherit; font-size: 1.04rem; font-variation-settings: 'wght' 720; cursor: pointer; overflow: hidden; box-shadow: 0 18px 34px -18px rgba(182, 6, 6, .85); transition: background .2s, transform .15s, box-shadow .2s; }
-  .buy__add::before { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .28) 50%, transparent 70%); transform: translateX(-120%); transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .buy__add { flex: 1; min-height: 52px; border: 0; border-radius: 4px; background: var(--red); color: #fff; font: inherit; font-size: 1.02rem; font-variation-settings: 'wght' 680; letter-spacing: .01em; cursor: pointer; transition: background .15s; }
   .buy__add:hover { background: var(--red-press); }
-  .buy__add:hover::before { transform: translateX(120%); }
-  .buy__add:active { transform: scale(.98); }
-  .buy__add :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
-  .buy__add:hover :global(svg) { transform: translateX(3px); }
-  .buy__add[disabled] { opacity: .55; cursor: not-allowed; box-shadow: none; }
-  .buy__add.is-busy { cursor: progress; opacity: 1; }
-  .buy__add.is-done { background: #1c7a3e; box-shadow: 0 18px 34px -18px rgba(28, 122, 62, .8); }
-  .buy__add.is-done :global(svg) { opacity: 0; }
-  .buy__add.is-done .buy__addt::before { content: '✓'; display: inline-block; margin-right: 8px; animation: pxPop .4s cubic-bezier(.2, 1.4, .4, 1); }
-  @keyframes pxPop { from { transform: scale(0); } to { transform: scale(1); } }
-  .buy__add--dark { flex: none; width: 100%; background: var(--ink); box-shadow: none; }
-  .buy__add--dark:hover { background: #000; }
-  .buy__unavail { margin: 0; color: var(--red); font-variation-settings: 'wght' 680; }
+  .buy__add[disabled] { opacity: .5; cursor: not-allowed; }
+  .buy__add.is-busy { cursor: progress; }
+  .buy__add.is-done { background: var(--ok); }
+  .buy__sec { min-height: 48px; margin-top: -8px; border: 1px solid var(--ink); border-radius: 4px; background: #fff; color: var(--ink); font: inherit; font-size: .98rem; font-variation-settings: 'wght' 650; cursor: pointer; transition: background .15s, color .15s; }
+  .buy__sec:hover { background: var(--ink); color: #fff; }
+  .bulk { margin: -6px 0 0; font-size: .92rem; color: var(--ink-2); }
+  .bulk[hidden] { display: none; }
+  .bulk button { padding: 0; border: 0; background: none; font: inherit; color: var(--red); text-decoration: underline; cursor: pointer; }
+  .buy__unavail { margin: 0; color: var(--red); }
 
-  .alt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-  .alt { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .92rem; font-variation-settings: 'wght' 640; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
-  .alt:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
-  .alt__ai { padding: 2px 6px; border-radius: 6px; background: var(--gold); color: var(--ink); font-size: .7rem; font-variation-settings: 'wght' 800; }
+  .buy__info { list-style: none; margin: 0; padding: 14px 0 0; border-top: 1px solid var(--line); display: grid; gap: 6px; font-size: .92rem; }
+  .buy__info b { font-variation-settings: 'wght' 650; }
+  .buy__info span { color: var(--steel); }
+  .buy__info b::after { content: ' ·'; color: var(--line-dark); }
+  .buy__links { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: .92rem; }
+  .buy__links a, .buy__links button { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-dark); cursor: pointer; }
+  .buy__links a:hover, .buy__links button:hover { color: var(--red); text-decoration-color: currentColor; }
 
-  .assure { list-style: none; margin: 2px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .assure li { display: grid; gap: 8px; align-content: start; }
-  .assure__ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--haze); color: var(--ink); }
-  .assure__ic svg { width: 21px; height: 21px; }
-  .assure b { display: block; font-size: .92rem; line-height: 1.25; font-variation-settings: 'wght' 720; }
-  .assure small { display: block; margin-top: 2px; color: var(--steel); font-size: .82rem; line-height: 1.35; }
+  /* tabs */
+  .ptabs { padding: clamp(28px, 4vw, 48px) 0 clamp(48px, 6vw, 80px); background: #fff; scroll-margin-top: calc(var(--hdr-h, 120px) + 10px); }
+  .tabs__bar { display: flex; gap: 4px; border-bottom: 1px solid var(--line-dark); overflow-x: auto; scrollbar-width: none; }
+  .tabs__bar::-webkit-scrollbar { display: none; }
+  .tabs__bar button { position: relative; flex: none; padding: 14px 18px; border: 0; background: none; font: inherit; font-size: 1rem; color: var(--steel); cursor: pointer; }
+  .tabs__bar button:hover { color: var(--ink); }
+  .tabs__bar button[aria-selected="true"] { color: var(--ink); font-variation-settings: 'wght' 680; }
+  .tabs__bar button[aria-selected="true"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--red); }
+  .tabs__bar button:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
+  .tab { padding-top: clamp(26px, 3vw, 40px); }
+  .tab[hidden] { display: none; }
+  .tab__h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .tab__lede { margin: 0 0 22px; max-width: 70ch; color: var(--ink-2); line-height: 1.6; }
 
-  .custom { border-radius: 20px; background: linear-gradient(135deg, #fff 0%, var(--haze) 100%); border: 1px solid var(--line); overflow: hidden; }
-  .custom summary { list-style: none; display: grid; grid-template-columns: 42px minmax(0, 1fr) 20px; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
-  .custom summary::-webkit-details-marker { display: none; }
-  .custom__ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: conic-gradient(from 200deg, #ff6a13, #ffcd00, #23a454, #0047bb, #c8102e, #ff6a13); }
-  .custom__ic svg { width: 22px; height: 22px; fill: #fff; stroke: none; opacity: .95; }
-  .custom__t { display: grid; gap: 2px; }
-  .custom__t strong { font-variation-settings: 'wght' 720; }
-  .custom__sub { color: var(--steel); font-size: .88rem; }
-  .custom__chev { width: 20px; height: 20px; fill: none; stroke: var(--steel); stroke-width: 2.2; transition: rotate .3s cubic-bezier(.2, .8, .2, 1); }
-  .custom[open] .custom__chev { rotate: 180deg; }
-  .custom__body { padding: 4px 16px 18px; display: grid; gap: 16px; }
-  .custom[open] .custom__body { animation: pxUp .45s cubic-bezier(.2, .8, .2, 1); }
-  .custom label { display: block; margin-bottom: 6px; font-size: .92rem; font-variation-settings: 'wght' 660; }
-  .custom__color { display: flex; gap: 8px; }
-  .custom__color input[type=color] { width: 54px; min-height: 50px; padding: 4px; border-radius: 12px; border: 1.5px solid var(--line-dark); background: #fff; flex: none; cursor: pointer; }
-  .custom input[type=text], .custom textarea { width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line-dark); font: inherit; background: #fff; }
-  .custom input[type=file] { color: var(--ink-2); font-size: .92rem; }
-  .custom .hint { margin: 6px 0 0; color: var(--steel); font-size: .85rem; }
-  .custom__preview { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
-  .custom__preview img { width: 72px; height: 72px; object-fit: contain; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 6px; }
+  .desc { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); }
+  .desc__main p { margin: 0 0 14px; max-width: 72ch; color: var(--ink-2); line-height: 1.75; }
+  .desc__kick { color: var(--ink) !important; font-size: 1.15rem; font-variation-settings: 'wght' 680; }
+  .desc h3 { margin: 26px 0 10px; font-size: 1rem; font-variation-settings: 'wght' 700; }
+  .desc__side h3:first-child, .desc__main h3:first-child { margin-top: 0; }
+  .desc__side { padding-left: clamp(20px, 3vw, 40px); border-left: 1px solid var(--line); }
+  .desc__list { margin: 0; padding-left: 1.15em; color: var(--ink-2); line-height: 1.65; }
+  .desc__list li { margin-bottom: 6px; }
+  .desc__list li::marker { color: var(--red); }
+  .desc__list b { color: var(--ink); font-variation-settings: 'wght' 650; }
 
-  /* ---------- shared section heads ---------- */
-  .eq-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: clamp(22px, 2.8vw, 36px); }
-  .eq-k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 680; color: var(--steel); }
-  .eq-k span { width: 34px; height: 3px; border-radius: 2px; background: var(--red); }
-  .eq-k--light { color: rgba(255, 255, 255, .8); }
-  .eq-head h2, .eqc h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.6rem); line-height: .98; letter-spacing: -.04em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
-  .eq-head h2 em, .eqc h2 em { font-style: normal; color: var(--red); }
-  .eq-link { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px 12px; border-radius: 999px; border: 1.5px solid var(--line-dark); color: var(--ink); font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
-  .eq-link :global(svg) { width: 17px; height: 17px; transition: transform .2s; }
-  .eq-link:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .eq-link:hover :global(svg) { transform: translateX(3px); }
-  .eq-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 14px 26px 13px; border-radius: 999px; font-size: 1.02rem; font-variation-settings: 'wght' 700; text-decoration: none; white-space: nowrap; transition: background .2s; }
-  .eq-pill :global(svg) { width: 18px; height: 18px; transition: transform .2s; }
-  .eq-pill:hover :global(svg) { transform: translateX(3px); }
-  .eq-pill--red { background: var(--red); color: #fff; }
-  .eq-pill--red:hover { background: #d10a0a; }
-  .eq-pill--glass { background: rgba(255, 255, 255, .08); color: #fff; border: 1.5px solid rgba(255, 255, 255, .4); }
-  .eq-pill--glass:hover { background: rgba(255, 255, 255, .16); }
-  [data-in] li { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--i, 0) * 60ms); }
-  [data-in].is-in li { opacity: 1; transform: none; }
+  .spec { width: 100%; max-width: 880px; border-collapse: collapse; font-size: .98rem; }
+  .spec th, .spec td { padding: 13px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  .spec tr:nth-child(odd) { background: var(--haze); }
+  .spec th { width: 34%; color: var(--steel); font-weight: 400; }
+  .spec td { color: var(--ink); overflow-wrap: anywhere; }
+  .spec__note { margin: 20px 0 0; color: var(--steel); font-size: .94rem; }
+  .spec__note a, .spec__note button { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-decoration: underline; cursor: pointer; }
 
-  /* ---------- specs + details ---------- */
-  .pxd { padding: clamp(48px, 6vw, 90px) 0; background: var(--haze); }
-  .pxd__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: start; }
-  .spec { list-style: none; margin: 0; padding: 0; border-radius: 22px; background: #fff; border: 1px solid var(--line); overflow: hidden; }
-  .spec li { display: grid; grid-template-columns: minmax(110px, .7fr) minmax(0, 1.3fr); gap: 16px; padding: 16px 22px; border-top: 1px solid var(--line); transition: background .2s, opacity .6s, transform .7s cubic-bezier(.2, .8, .2, 1); }
-  .spec li:first-child { border-top: 0; }
-  .spec li:hover { background: #fafafb; }
-  .spec span { color: var(--steel); font-size: .92rem; }
-  .spec b { font-variation-settings: 'wght' 650; font-size: .98rem; overflow-wrap: anywhere; }
-  .pxd__desc { padding: clamp(22px, 2.6vw, 34px); border-radius: 22px; background: #fff; border: 1px solid var(--line); }
-  .pxd__desc--empty { display: grid; gap: 16px; justify-items: start; }
-  .pxd__desc--empty p { margin: 0; font-size: 1.1rem; line-height: 1.55; color: var(--ink-2); }
-  .rte { max-width: 70ch; color: var(--ink-2); line-height: 1.65; }
-  .rte :global(> :first-child) { margin-top: 0; }
-  .rte :global(> :last-child) { margin-bottom: 0; }
-  .rte :global(h1), .rte :global(h2), .rte :global(h3), .rte :global(h4) { color: var(--ink); font-size: 1.2rem; letter-spacing: -.01em; margin: 1.3em 0 .5em; font-variation-settings: 'wght' 740; }
-  .rte :global(ul) { padding-left: 1.1em; }
-  .rte :global(li) { margin: .3em 0; }
-  .rte :global(li::marker) { color: var(--red); }
-  .rte :global(strong) { color: var(--ink); }
-  .rte :global(img) { height: auto; max-width: 100%; border-radius: 12px; }
-  .rte :global(table) { border-collapse: collapse; width: 100%; font-size: .95rem; }
-  .rte :global(td), .rte :global(th) { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; }
-  .rte :global(a) { color: var(--red); }
+  .wcb { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(22px, 4vw, 56px); align-items: center; max-width: 1000px; }
+  .wcb img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
+  .wcb h3 { margin: 0 0 10px; font-size: 1.4rem; font-variation-settings: 'wght' 700; }
+  .wcb p { margin: 0 0 20px; color: var(--ink-2); line-height: 1.65; }
+  .btn-p { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 26px; border-radius: 4px; background: var(--red); color: #fff; text-decoration: none; font-variation-settings: 'wght' 680; white-space: nowrap; transition: background .15s; }
+  .btn-p:hover { background: var(--red-press); }
 
-  /* ---------- 3D + planner ---------- */
-  .px3 { padding: clamp(48px, 6vw, 90px) 0; background: #fff; }
-  .px3__lede { margin: 0; max-width: 40ch; color: var(--steel); }
-  .px3__frame { border-radius: 26px; overflow: hidden; border: 1px solid var(--line); background: radial-gradient(120% 90% at 50% 10%, #fff, var(--haze) 70%); }
+  .faq { max-width: 880px; border-top: 1px solid var(--line); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; font-variation-settings: 'wght' 650; cursor: pointer; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; color: var(--steel); font-size: 1.3rem; line-height: 1; }
+  .faq details[open] summary::after { content: '−'; }
+  .faq p { margin: 0; padding: 0 0 18px; max-width: 72ch; color: var(--ink-2); line-height: 1.65; }
 
-  /* ---------- related ---------- */
-  .pxr { padding: clamp(48px, 6vw, 90px) 0; background: #fff; }
-  .pxd + .pxr, .px3 + .pxr { padding-top: clamp(24px, 3vw, 40px); }
-  .pxr__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 20px); }
-  .pxr__grid > li { display: grid; }
+  /* related */
+  .rel { padding: clamp(44px, 5vw, 72px) 0; background: var(--haze); border-top: 1px solid var(--line); }
+  .rel__h { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+  .rel__h h2 { margin: 0; font-size: clamp(1.4rem, 2vw, 1.8rem); letter-spacing: -.02em; font-variation-settings: 'wght' 720; font-weight: 400; }
+  .rel__h a { color: var(--ink); text-underline-offset: 3px; }
+  .rel__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .rel__grid > li { display: grid; }
 
-  /* ---------- CTA ---------- */
-  .eqc { padding: clamp(56px, 7vw, 100px) 0; background: radial-gradient(120% 140% at 85% 0%, #3a0505 0%, #16181b 55%); color: #fff; }
-  .eqc__in { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 26px 40px; }
-  .eqc h2 { color: #fff; max-width: 16ch; }
-  .eqc__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-  .eqc .eq-k, .eqc h2 { transition: opacity .7s, transform .8s cubic-bezier(.2, .8, .2, 1); }
-  .eqc:not(.is-in) .eq-k, .eqc:not(.is-in) h2 { opacity: 0; transform: translateY(16px); }
+  /* help strip */
+  .help { padding: clamp(32px, 4vw, 48px) 0; background: #fff; border-top: 1px solid var(--line); }
+  .help__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 40px; }
+  .help h2 { margin: 0 0 6px; font-size: 1.35rem; font-variation-settings: 'wght' 720; font-weight: 400; }
+  .help p { margin: 0; color: var(--steel); }
+  .help p a { color: var(--ink); font-variation-settings: 'wght' 650; }
 
-  /* ---------- sticky buy bar ---------- */
-  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: rgba(255, 255, 255, .92); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border-top: 1px solid var(--line); box-shadow: 0 -20px 40px -30px rgba(20, 23, 26, .45); translate: 0 110%; transition: translate .4s cubic-bezier(.2, .8, .2, 1); }
+  /* sticky buy bar */
+  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: #fff; border-top: 1px solid var(--line-dark); box-shadow: 0 -8px 24px -18px rgba(20, 23, 26, .5); translate: 0 110%; transition: translate .3s ease; }
   .buybar.is-on { translate: 0 0; }
   .buybar__in { display: flex; align-items: center; gap: 14px; padding-block: 10px; padding-right: clamp(88px, 9vw, 116px); }
-  .buybar__img { width: 50px; height: 50px; object-fit: contain; border-radius: 12px; background: var(--tint, #fff); padding: 4px; flex: none; }
-  .buybar__txt { display: grid; line-height: 1.25; min-width: 0; margin-right: auto; }
-  .buybar__txt b { font-variation-settings: 'wght' 700; font-size: .98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .buybar__txt span { color: var(--red); font-size: .95rem; font-variation-settings: 'wght' 700; }
-  .buybar__btn { min-height: 48px; padding: 0 24px; border-radius: 999px; background: var(--red); color: #fff; border: 0; font: inherit; font-variation-settings: 'wght' 700; white-space: nowrap; cursor: pointer; transition: background .2s; }
-  .buybar__btn:hover { background: var(--red-press); }
+  .buybar__img { width: 46px; height: 46px; object-fit: contain; border: 1px solid var(--line); border-radius: 4px; flex: none; }
+  .buybar__txt { display: grid; min-width: 0; margin-right: auto; line-height: 1.3; }
+  .buybar__txt b { font-variation-settings: 'wght' 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .buybar__txt span { color: var(--steel); font-size: .92rem; }
+  .buybar__btn { white-space: nowrap; min-height: 46px; padding: 0 24px; border: 0; border-radius: 4px; background: var(--red); color: #fff; font: inherit; font-variation-settings: 'wght' 680; cursor: pointer; }
 
-  /* ---------- rent / buy switch ---------- */
-  .mode { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; width: 220px; padding: 5px; border-radius: 999px; background: var(--haze); border: 1px solid var(--line); }
-  .mode i { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc(50% - 5px); border-radius: 999px; background: var(--red); transition: transform .45s cubic-bezier(.2, .8, .2, 1), background .3s; }
-  .mode[data-on="buy"] i { transform: translateX(100%); background: var(--ink); }
-  .mode button { all: unset; position: relative; z-index: 1; cursor: pointer; text-align: center; padding: 10px 0 9px; font-variation-settings: 'wght' 720; color: var(--steel); transition: color .3s; }
-  .mode button[aria-selected="true"] { color: #fff; }
-  .mode button:focus-visible { outline: 3px solid rgba(182, 6, 6, .35); outline-offset: 2px; border-radius: 999px; }
-
-  /* ---------- responsive ---------- */
-  @media (max-width: 1100px) {
-    .pxr__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .pxr__grid > li:nth-child(4) { display: none; }
-  }
-  @media (max-width: 900px) {
-    .px__grid, .pxd__grid { grid-template-columns: 1fr; }
-    .buy { position: static; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
-    .pxd__desc { margin-top: 0; }
-    .px__bg { height: 520px; }
-  }
-  @media (max-width: 640px) {
-    .px { padding-top: 12px; }
-    .px__crumbs span { max-width: 22ch; }
-    .px__gal :global(.gal__stage) { border-radius: 20px; }
-    .assure { grid-template-columns: 1fr; gap: 10px; }
-    .assure li { grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 12px; }
-    .qty button { width: 40px; }
-    .qty input { width: 40px; }
-    .buy__add { padding: 0 16px; font-size: 1rem; }
-    .eq-head { justify-content: center; text-align: center; }
-    .eq-head .eq-k { justify-content: center; }
-    .spec li { grid-template-columns: minmax(96px, .8fr) minmax(0, 1.2fr); gap: 12px; padding: 12px 16px; }
-    .spec span { font-size: .86rem; }
-    .spec b { font-size: .92rem; }
-    .pxr__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .pxr__grid > li:nth-child(4) { display: grid; }
-    .eqc__in { justify-content: center; text-align: center; }
-    .eqc h2 { margin-inline: auto; }
-    .eqc__acts { justify-content: center; width: 100%; }
-    .eqc__acts .eq-pill { width: 100%; }
-    .buybar__img { display: none; }
-    .buybar__btn { padding-inline: 16px; font-size: .95rem; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .px__crumbs, .px__gal, .px__in, .buy__ln > span, .chip--ok i, .buy__price strong.is-flip { animation: none; }
-    [data-in] li, .eqc:not(.is-in) .eq-k, .eqc:not(.is-in) h2 { opacity: 1; transform: none; transition: none; }
-    .buybar { transition: none; }
-  }
-  .alt--quote { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .alt--quote:hover { background: var(--red); border-color: var(--red); }
-  .alt--quote :global(svg) { width: 16px; height: 16px; }
-
-  /* ================= upgraded product page ================= */
-  .chip--pick { background: #fff3cc; color: #6b4b00; }
-  .cert { list-style: none; margin: -6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-  .cert li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 8px; border-radius: 999px; background: #eef5ff; color: #1b4f9c; font-size: .8rem; letter-spacing: .02em; font-variation-settings: 'wght' 720; }
-  .cert li :global(svg) { width: 15px; height: 15px; }
-  .kspec { display: grid; grid-template-columns: repeat(min(var(--n, 4), 4), minmax(0, 1fr)); gap: 1px; margin: 0; border-radius: 16px; overflow: hidden; background: var(--line); border: 1px solid var(--line); }
-  .kspec > div { display: grid; gap: 3px; align-content: start; padding: 12px 14px; background: #fff; }
-  .kspec dt { color: var(--steel); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; font-variation-settings: 'wght' 700; }
-  .kspec dd { margin: 0; font-size: .98rem; line-height: 1.25; font-variation-settings: 'wght' 720; }
-  .bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: -6px 0 0; padding: 12px 14px; border-radius: 14px; background: #fff7df; border: 1px solid #f5dc8c; color: #5c4300; font-size: .92rem; animation: pxUp .4s cubic-bezier(.2, .8, .2, 1); }
-  .bulk[hidden] { display: none; }
-  .bulk svg { width: 20px; height: 20px; flex: none; }
-  .bulk span { flex: 1 1 200px; }
-  .bulk button { border: 0; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: #fff; font: inherit; font-size: .86rem; font-variation-settings: 'wght' 700; cursor: pointer; }
-  .bulk button:hover { background: var(--red); }
-  .cz { display: grid; grid-template-columns: 44px minmax(0, 1fr) 22px; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; text-decoration: none; color: var(--ink); background: linear-gradient(135deg, #fff 0%, var(--haze) 100%); border: 1px solid var(--line); transition: border-color .2s, transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s; }
-  .cz:hover { border-color: var(--ink); transform: translateY(-2px); box-shadow: 0 18px 34px -24px rgba(20, 23, 26, .6); }
-  .cz__ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: conic-gradient(from 200deg, #ff6a13, #ffcd00, #23a454, #0047bb, #c8102e, #ff6a13); }
-  .cz__ic svg { width: 22px; height: 22px; fill: #fff; }
-  .cz__t { display: grid; gap: 2px; }
-  .cz__t strong { font-variation-settings: 'wght' 740; }
-  .cz__t small { color: var(--steel); font-size: .86rem; }
-  .cz__go { width: 20px; height: 20px; color: var(--steel); transition: transform .3s; }
-  .cz:hover .cz__go { transform: translateY(3px); color: var(--red); }
+  /* the locked builder inside the Customize tab */
+  .tab :global(.sb--bare .sb__stage) { top: calc(var(--hdr-h, 120px) + 16px); }
+  .tab :global(.sb__stage), .tab :global(.sb__grp) { border-radius: 6px; box-shadow: none; }
+  .tab :global(.sb__send) { border-radius: 4px; box-shadow: none; }
+  .tab :global(.sb__chip span), .tab :global(.sb__shape span), .tab :global(.sb__in), .tab :global(.sb__step), .tab :global(.sb__dl) { border-radius: 4px; }
+  .tab :global(.sb__canvas) { border-radius: 4px; }
+  .tab :global(.sb__grp legend span) { border-radius: 3px; }
 
   /* spec sheet (print only) */
   .sheet { display: none; }
@@ -911,139 +721,23 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
   }
 
 
-  /* ---------- hero details, one quiet style ---------- */
-  .chip--pick { background: var(--haze); color: var(--ink); }
-  .cert li { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-dark); }
-  .cert li :global(svg) { color: var(--red); }
-  .bulk { background: var(--haze); border-color: var(--line); color: var(--ink-2); }
-  .bulk svg { color: var(--red); }
-  .cz { background: #fff; }
-  .cz__ic { background: var(--ink); color: #fff; }
-  .cz__ic svg { fill: none; }
-
-  /* ---------- shared buttons ---------- */
-  .pbtn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; font: inherit; font-size: .92rem; font-variation-settings: 'wght' 680; text-decoration: none; cursor: pointer; white-space: nowrap; transition: background .2s, color .2s, border-color .2s; }
-  .pbtn :global(svg) { width: 16px; height: 16px; }
-  .pbtn--line { border: 1.5px solid var(--line-dark); background: #fff; color: var(--ink); }
-  .pbtn--line:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
-  .pbtn--red { border: 0; background: var(--red); color: #fff; }
-  .ptext { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-variation-settings: 'wght' 680; text-decoration: none; }
-  .ptext :global(svg) { width: 15px; height: 15px; transition: transform .2s; }
-  .ptext:hover { color: var(--red); }
-  .ptext:hover :global(svg) { transform: translateX(3px); }
-  .ptext--inline { padding: 0; border: 0; background: none; font: inherit; color: var(--red); text-decoration: underline; cursor: pointer; }
-
-  /* ---------- section tabs ---------- */
-  .pnav { position: sticky; top: var(--hdr-h, 120px); z-index: 20; background: rgba(255, 255, 255, .94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-block: 1px solid var(--line); }
-  .pnav__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; }
-  .pnav__links { display: flex; gap: 26px; overflow-x: auto; scrollbar-width: none; align-self: stretch; }
-  .pnav__links::-webkit-scrollbar { display: none; }
-  .pnav__links a { position: relative; flex: none; display: flex; align-items: center; color: var(--steel); text-decoration: none; font-size: .95rem; font-variation-settings: 'wght' 640; transition: color .2s; }
-  .pnav__links a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--red); transform: scaleX(0); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
-  .pnav__links a:hover { color: var(--ink); }
-  .pnav__links a.is-on { color: var(--ink); }
-  .pnav__links a.is-on::after { transform: scaleX(1); }
-  .pnav__sheet { min-height: 38px; padding: 0 14px; font-size: .88rem; }
-  #overview, #specs, #customize, #uses, #pairs, #faq, #plan { scroll-margin-top: calc(var(--hdr-h, 120px) + 64px); }
-  :global(html) { scroll-behavior: smooth; }
-
-  /* ---------- the document: each section = title column + content column, divided by hairlines ---------- */
-  .pdoc { background: #fff; padding-bottom: clamp(24px, 3vw, 48px); }
-  .prow { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); gap: clamp(24px, 4vw, 72px); padding: clamp(40px, 4.6vw, 68px) 0; border-top: 1px solid var(--line); }
-  .prow:first-child { border-top: 0; }
-  .prow__h { align-self: start; position: sticky; top: calc(var(--hdr-h, 120px) + 84px); display: grid; gap: 10px; justify-items: start; }
-  .prow__n { font-size: .8rem; letter-spacing: .16em; color: var(--red); font-variation-settings: 'wght' 720; }
-  .prow__h h2 { margin: 0; font-size: clamp(1.6rem, 2.2vw, 2.1rem); line-height: 1.05; letter-spacing: -.03em; font-variation-settings: 'wght' 760; font-weight: 400; }
-  .prow__sub { margin: 0; max-width: 32ch; color: var(--steel); font-size: .95rem; line-height: 1.55; }
-  .prow__sub a { color: var(--ink); font-variation-settings: 'wght' 680; }
-  .prow__acts { display: grid; gap: 12px; justify-items: start; margin-top: 8px; }
-  .prow__b { min-width: 0; }
-  .prow--wide { grid-template-columns: 1fr; gap: 28px; }
-  .prow--wide .prow__h { position: static; grid-template-columns: auto 1fr; align-items: baseline; column-gap: 16px; }
-  .prow--wide .prow__h .prow__sub { grid-column: 1 / -1; max-width: 70ch; }
-  .prow__full { min-width: 0; }
-
-  /* overview */
-  .pdoc__kick { margin: 0 0 12px; font-size: clamp(1.3rem, 1.8vw, 1.6rem); line-height: 1.25; letter-spacing: -.02em; font-variation-settings: 'wght' 720; text-wrap: balance; }
-  .pdoc__lead { margin: 0 0 14px; max-width: 68ch; color: var(--ink-2); font-size: 1.05rem; line-height: 1.7; }
-  .pdoc__facts { display: grid; gap: 0; margin: 20px 0 0; border-top: 1px solid var(--line); }
-  .pdoc__facts > div { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
-  .pdoc__facts dt { color: var(--steel); font-size: .9rem; }
-  .pdoc__facts dd { margin: 0; font-variation-settings: 'wght' 620; }
-  .pfeat { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid var(--line); }
-  .pfeat li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-  .pfeat li :global(svg) { width: 20px; height: 20px; margin-top: 1px; color: var(--red); }
-  .pfeat li > span { color: var(--ink-2); line-height: 1.5; }
-  .pfeat b { display: block; margin-bottom: 2px; color: var(--ink); font-variation-settings: 'wght' 700; }
-
-  /* specs */
-  .ptab { width: 100%; border-collapse: collapse; }
-  .ptab th, .ptab td { padding: 15px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-  .ptab tr:first-child th, .ptab tr:first-child td { border-top: 1px solid var(--line); }
-  .ptab th { width: 34%; padding-right: 20px; color: var(--steel); font-size: .95rem; font-weight: 400; }
-  .ptab td { font-variation-settings: 'wght' 640; overflow-wrap: anywhere; }
-  .pstd { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pstd span { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 7px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-dark); font-size: .86rem; }
-  .pstd :global(svg) { width: 15px; height: 15px; color: var(--red); }
-
-  /* watercade */
-  .pwc { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; color: var(--ink); text-decoration: none; transition: border-color .2s; }
-  .pwc:hover { border-color: var(--ink); }
-  .pwc__img { display: block; min-height: 220px; background: var(--haze); }
-  .pwc__img img { width: 100%; height: 100%; object-fit: cover; }
-  .pwc__t { display: grid; gap: 10px; align-content: center; justify-items: start; padding: clamp(20px, 2.4vw, 32px); }
-  .pwc__t b { font-size: 1.3rem; letter-spacing: -.02em; font-variation-settings: 'wght' 740; }
-  .pwc__t > span:not(.pbtn) { color: var(--ink-2); line-height: 1.55; }
-  .pwc__t .pbtn { margin-top: 6px; }
-
-  /* uses */
-  .puse { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid var(--line); }
-  .puse li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); font-variation-settings: 'wght' 620; }
-  .puse li :global(svg) { width: 18px; height: 18px; color: var(--red); }
-
-  /* pairs */
-  .ppair { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-  .ppair > li { display: grid; }
-
-  /* questions */
-  .pq { border-bottom: 1px solid var(--line); }
-  .pq:first-child { border-top: 1px solid var(--line); }
-  .pq summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; font-size: 1.04rem; font-variation-settings: 'wght' 680; cursor: pointer; }
-  .pq summary::-webkit-details-marker { display: none; }
-  .pq summary:hover { color: var(--red); }
-  .pq__pm { position: relative; flex: none; width: 14px; height: 14px; }
-  .pq__pm::before, .pq__pm::after { content: ''; position: absolute; left: 0; top: 6px; width: 14px; height: 2px; border-radius: 2px; background: currentColor; transition: rotate .3s; }
-  .pq__pm::after { rotate: 90deg; }
-  .pq[open] .pq__pm::after { rotate: 0deg; }
-  .pq p { margin: 0; padding: 0 40px 20px 0; max-width: 70ch; color: var(--ink-2); line-height: 1.65; }
-  .pq[open] p { animation: pxUp .4s cubic-bezier(.2, .8, .2, 1); }
-
-  /* related sits on the same white page */
-  .pxr { border-top: 1px solid var(--line); }
-
-  @media (max-width: 1100px) { .kspec { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1000px) { .rel__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .rel__grid > li:nth-child(4) { display: none; } }
   @media (max-width: 900px) {
-    .prow { grid-template-columns: 1fr; gap: 20px; }
-    .prow__h { position: static; }
-    .prow__sub { max-width: 60ch; }
-    .prow__acts { grid-auto-flow: column; align-items: center; }
-    .ppair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pp__top, .desc, .wcb { grid-template-columns: minmax(0, 1fr); }
+    .buy { position: static; }
+    .desc__side { padding: 22px 0 0; border-left: 0; border-top: 1px solid var(--line); }
   }
   @media (max-width: 640px) {
-    .pnav__in { min-height: 50px; }
-    .pnav__links { gap: 20px; }
-    .pnav__links a { font-size: .9rem; }
-    .pnav__sheet { display: none; }
-    .prow { padding: 34px 0; }
-    .prow__h { grid-template-columns: auto 1fr; align-items: baseline; column-gap: 12px; }
-    .prow__h .prow__sub, .prow__h .prow__acts { grid-column: 1 / -1; }
-    .prow__acts { grid-auto-flow: row; }
-    .pfeat, .puse { grid-template-columns: 1fr; }
-    .pdoc__facts > div { grid-template-columns: 110px minmax(0, 1fr); }
-    .ptab th { width: 40%; font-size: .88rem; }
-    .ptab td { font-size: .94rem; }
-    .pwc { grid-template-columns: 1fr; }
-    .pwc__img { min-height: 180px; }
-    .pq p { padding-right: 0; }
+    .pp { padding-top: 12px; }
+    .pp__crumbs { margin-bottom: 14px; font-size: .8rem; }
+    .pp__crumbs b { max-width: 20ch; }
+    .tabs__bar button { padding: 12px 12px; font-size: .94rem; }
+    .spec th, .spec td { padding: 11px 10px; font-size: .92rem; }
+    .spec th { width: 40%; }
+    .rel__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .rel__grid > li:nth-child(4) { display: grid; }
+    .help__in .btn-p { width: 100%; }
+    .buybar__img { display: none; }
+    .buybar__btn { padding: 0 16px; }
   }
 </style>
