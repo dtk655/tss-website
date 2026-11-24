@@ -208,10 +208,10 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
             {perks.map(([t, d]) => <li><b>{t}</b> <span>{d}</span></li>)}
           </ul>
 
-          <div class="buy__links">
-            {customizable && <a href="#tabs" data-tab-go="customize">{builder?.kind === 'aframe' ? 'Print your own rails' : builder ? 'Stencil your name or logo' : 'Brand it with your logo'}</a>}
-            <button type="button" data-print>Download spec sheet</button>
-            <button type="button" data-ask>Ask a question</button>
+          <div class="tools">
+            <button type="button" class="tool" data-print><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5 M12 11v6 M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Spec Sheet</button>
+            {customizable && <a href="#tabs" class="tool" data-tab-go="customize"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z M14 7l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Customize</a>}
+            <button type="button" class="tool tool--ai" data-ask><span class="tool__ai">AI</span>Ask a Question</button>
           </div>
         </div>
       </div>
@@ -739,5 +739,39 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
     .help__in .btn-p { width: 100%; }
     .buybar__img { display: none; }
     .buybar__btn { padding: 0 16px; }
+  }
+
+  /* modern finish: rounded controls, tool buttons */
+  .pill > span { border-radius: 999px; padding: 9px 16px; }
+  .mode { border-radius: 999px; padding: 4px; gap: 4px; background: var(--haze); border-color: var(--line); }
+  .mode button { border-radius: 999px; padding: 8px 22px; }
+  .mode button + button { border-left: 0; }
+  .qty { border-radius: 999px; }
+  .qty input { border-inline: 0; }
+  .buy__add, .buy__sec, .btn-p, .buybar__btn { border-radius: 999px; }
+  .buy__add { box-shadow: 0 12px 24px -14px rgba(182, 6, 6, .8); }
+  .st--std { border-radius: 999px; padding: 2px 10px; }
+  .tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; }
+  .tool { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-dark); background: #fff; color: var(--ink); font: inherit; font-size: .92rem; font-variation-settings: 'wght' 650; text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+  .tool svg { width: 18px; height: 18px; flex: none; }
+  .tool:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .tool__ai { display: inline-grid; place-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: var(--gold); color: var(--ink); font-size: .68rem; letter-spacing: .04em; font-variation-settings: 'wght' 800; }
+  .tool--ai:hover .tool__ai { background: #fff; }
+  .pp__gal :global(.gal__stage) { border-radius: 18px; }
+  .pp__gal :global(.gal__slide) { padding: clamp(18px, 3vw, 36px); }
+  .pp__gal :global(.gal__thumb) { border-radius: 12px; }
+  .pp__gal :global(.gal__zoom) { border-radius: 999px; }
+  .pp__gal :global(.gal__nav) { border-radius: 50%; }
+  .wcb img, .tab :global(.sb__canvas) { border-radius: 14px; }
+  .tab :global(.sb__stage), .tab :global(.sb__grp) { border-radius: 16px; }
+  .tab :global(.sb__chip span), .tab :global(.sb__shape span), .tab :global(.sb__step), .tab :global(.sb__dl), .tab :global(.sb__send) { border-radius: 999px; }
+  .tab :global(.sb__in) { border-radius: 12px; }
+  .tab :global(.sb__grp legend span) { border-radius: 50%; }
+  .spec { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); border-collapse: separate; border-spacing: 0; }
+  .spec tr:last-child th, .spec tr:last-child td { border-bottom: 0; }
+  @media (max-width: 640px) {
+    .tools { grid-template-columns: 1fr 1fr; }
+    .tools .tool--ai { grid-column: 1 / -1; }
+    .tools:not(:has(> a)) .tool--ai { grid-column: auto; }
   }
 </style>
