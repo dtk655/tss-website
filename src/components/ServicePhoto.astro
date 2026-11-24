@@ -13,8 +13,8 @@ const P = {
     pins: [[58, 22, 'Lanes closed and coned off', 'u'], [81, 36.5, 'Work zone lighting', 'd'], [46.5, 84, 'Crash trucks protecting the work', 'r']],
     lights: [[66.3, 9.4, 2.2, 'a', 0], [67.6, 11.8, 2.2, 'a', .2], [69, 13.6, 2.2, 'a', .4], [41.6, 79.6, 2.2, 'a', 0], [42.8, 83, 2.2, 'a', .15], [45.2, 86, 2.2, 'a', .3], [46.2, 88.6, 2.2, 'a', .45], [5.6, 36.6, 2.4, 'b', 0], [22, 81, 2.4, 'b', .3], [13.5, 96, 3, 'b', .1],
       [46.5, 28.5, 7, 'w', 0], [69, 27, 6, 'w', .8], [25.5, 36, 7, 'w', .4], [81, 36.5, 6, 'w', 1.2], [28.5, 45.5, 7, 'w', 1.6]] },
-  'tma-protection': { src: '/fleet/sv-tma-yard.webp', m: '/fleet/sv-tma-yard-m.webp', w: 2000, h: 1125, fx: 58, fy: 55,
-    pins: [[72, 76, 'Truck mounted attenuator', 'u'], [47.5, 43, 'Arrow board', 'u'], [64, 16, 'Crash trucks from our own yard', 'd']] },
+  // A TSS crash truck unfolding its scorpion attenuator (stabilized, looped). Framed narrower so the whole truck stays in view.
+  'tma-protection': { src: '/video/tma-hero.webp', w: 1440, h: 1066, fx: 50, fy: 40, video: '/video/tma-hero.mp4', videoSm: '/video/tma-hero-sm.mp4', narrow: true, pins: [] },
   'flagging-operations': { src: '/fleet/sv-flag.webp', w: 1400, h: 1616, fx: 65, fy: 72,
     pins: [[54, 58, 'Stop/Slow paddle', 'l'], [66, 67, 'Certified flagger', 'r'], [86.5, 54, 'Advance warning sign', 'u']] },
   'sign-and-barricade-installs': { src: '/fleet/sv-roadclosed.webp', m: '/fleet/sv-roadclosed-m.webp', w: 1920, h: 1080, fx: 55, fy: 55,
@@ -31,7 +31,7 @@ const zone = `M${pts(up)}L${pts([...lo].reverse())}Z`;
 const dl = (s) => `style="animation-delay:${s}s"`;
 ---
 {p && (
-  <div class:list={['sp', p.plan && 'sp--plan', p.tight && 'sp--tight', p.video && 'sp--video']} data-sp style={`--fx:${p.fx}%;--fy:${p.fy}%;--r:${(p.w / p.h).toFixed(4)}`}>
+  <div class:list={['sp', p.plan && 'sp--plan', p.tight && 'sp--tight', p.video && 'sp--video', p.narrow && 'sp--narrow']} data-sp style={`--fx:${p.fx}%;--fy:${p.fy}%;--r:${(p.w / p.h).toFixed(4)}`}>
     <div class="sp__cv">
       <div class="sp__mv">
         <picture>
@@ -161,14 +161,17 @@ const dl = (s) => `style="animation-delay:${s}s"`;
     48% { transform: translate(70px, 772px); } 60% { transform: translate(800px, 620px); } 70% { transform: translate(900px, 900px); } 80% { transform: translate(1260px, 268px); } 90% { transform: translate(1500px, 940px); } 96% { opacity: 1; transform: translate(1600px, 615px); } 100% { opacity: 0; transform: translate(1600px, 615px); }
   }
 
+  .sp--narrow { width: 52%; }
+  .sp--narrow .sp__fade { background: linear-gradient(90deg, #121416 0%, rgba(18, 20, 22, .55) 10%, rgba(18, 20, 22, 0) 30%), linear-gradient(180deg, rgba(18, 20, 22, 0) 80%, #121416 100%); }
   @media (max-width: 900px) {
     .sp { position: relative; width: 100%; aspect-ratio: 16 / 11; }
+    .sp--narrow { width: 100%; aspect-ratio: 4 / 3; }
     .sp .sp__fade { background: linear-gradient(180deg, rgba(18, 20, 22, 0) 62%, #121416 100%); }
     .sp__pin b { font-size: .74rem; padding: 6px 10px; }
     .sp__pin--u b { bottom: 30px; } .sp__pin--u::before { height: 20px; } .sp__pin--d b { top: 30px; } .sp__pin--d::before { height: 20px; }
     .sp__pin--r b { left: 32px; } .sp__pin--r::before { width: 22px; } .sp__pin--l b { right: 32px; } .sp__pin--l::before { width: 22px; }
   }
-  @media (max-width: 640px) { .sp__pin { display: none; } .sp { aspect-ratio: 16 / 10; } }
+  @media (max-width: 640px) { .sp__pin { display: none; } .sp { aspect-ratio: 16 / 10; } .sp--narrow { aspect-ratio: 4 / 3; } }
   @media (prefers-reduced-motion: reduce) {
     .sp * { animation: none !important; transition: none !important; }
     .sp__mv, .sp__pin, .sp-fade, .sp-pop, .sp-box { opacity: 1 !important; transform: none !important; }
