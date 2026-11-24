@@ -6,6 +6,7 @@ import ProductCard from '../../components/ProductCard.astro';
 import QuickView from '../../components/QuickView.astro';
 import RecentlyViewed from '../../components/RecentlyViewed.astro';
 import CustomBuilder from '../../components/CustomBuilder.astro';
+import UnitPage from '../../components/UnitPage.astro';
 import { parseDescription, deriveSpecs, deriveBadges, deriveIncluded, USES, accessoriesFor } from '../../lib/productInfo.js';
 import { PHONE, PHONE_TEL, EMAIL } from '../../lib/config.js';
 import { loadCatalog, money, img } from '../../lib/shopify.js';
@@ -160,6 +161,12 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
     ...(p.isRental ? {} : { offers: { '@type': 'AggregateOffer', priceCurrency: 'USD', lowPrice: p.minPrice, highPrice: p.maxPrice, availability: 'https://schema.org/InStock' } })
   })} />
 
+  {p.isRental ? (
+    <UnitPage p={p} crumbCol={crumbCol} related={related} sellable={sellable}>
+      {/^truck-mounted-attenuator/.test(p.handle) && <TmaTruck slot="after-overview" />}
+    </UnitPage>
+  ) : (
+  <>
   <div class="pp">
     <div class="wrap">
       <nav class="pp__crumbs" aria-label="Breadcrumb">
@@ -351,7 +358,7 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
     </div>
   </section>
 
-  <!-- printable one-page spec sheet -->
+  {/* printable one-page spec sheet */}
   <div class="sheet" aria-hidden="true">
     <div class="sheet__top"><img src="/brand/tss-logo.webp" alt="" width="200" /><span>Traffic Safety Service · South Plainfield, NJ · {PHONE} · {EMAIL}</span></div>
     <div class="sheet__main">
@@ -381,6 +388,8 @@ const relTitle = crumbCol ? crumbCol.title.toLowerCase() : 'products';
       <button type="button" class="buybar__btn" data-bar-add>{p.isRental ? 'Request a Quote' : 'Add to Cart'}</button>
     </div>
   </div>
+  </>
+  )}
 </Layout>
 
 <script>

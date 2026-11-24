@@ -1,0 +1,505 @@
+---
+// Full page for a rental unit (equipment and fleet): big media hero, overview, gallery, specs,
+// uses, how renting works, other units and questions. Every number shown comes from the product's own data.
+import { img } from '../lib/shopify.js';
+import { cutouts } from '../lib/cutouts.js';
+import { mediaFor } from '../lib/unitMedia.js';
+import { parseDescription, deriveSpecs, deriveBadges, USES } from '../lib/productInfo.js';
+import { PHONE, PHONE_TEL, EMAIL } from '../lib/config.js';
+
+const { p, crumbCol, related = [], sellable = false } = Astro.props;
+const isFleet = p.collections.includes('truck-rentals');
+const kind = isFleet ? 'Truck Fleet' : 'Equipment';
+const backHref = isFleet ? '/pages/fleet' : '/pages/equipment';
+const media = mediaFor(p.handle);
+const cut = cutouts[p.handle];
+const shopImgs = (p.images || []).map((i) => ({ src: img(i.url, 1400), alt: i.altText || p.title, product: true }));
+
+const info = parseDescription(p.descriptionHtml || p.description);
+const specs = deriveSpecs({ title: p.title, handle: p.handle, text: info.text, options: p.options || [], specLines: info.specLines });
+const badges = deriveBadges(`${p.title} ${info.text}`);
+const lead = info.lead.slice(0, 2);
+const leadText = lead.length ? lead : [isFleet ? 'Ready for your crew, maintained in our own yard and available by the day, week or month.' : 'Delivered to your site, set up and picked up when the job is done.'];
+const benefits = info.features.filter((f) => f.label).slice(0, 6);
+const points = info.features.filter((f) => !f.label).slice(0, 6);
+const uses = (info.uses.length ? info.uses : USES[isFleet ? 'truck-rentals' : 'equipment-rentals'] || []).slice(0, 6);
+const sizes = (p.options || []).find((o) => !/title/i.test(o.name) && o.values.length > 1);
+const allSpecs = [
+  ...specs,
+  sizes && [sizes.name.charAt(0).toUpperCase() + sizes.name.slice(1), sizes.values.join(', ')],
+  ['Rental terms', 'Daily, weekly, monthly or long-term'],
+  ['Service area', 'New Jersey, New York, Pennsylvania and Connecticut'],
+  sellable && ['Buy it', 'Also available to purchase'],
+  ['Yard', '448 Hollywood Avenue, South Plainfield, NJ']
+].filter(Boolean);
+
+// hero: real video/photo when we have one, otherwise the cut-out on a stage
+const hero = media.hero || null;
+const stageImg = cut || shopImgs[0]?.src;
+// Real photos lead; the store's product shots only fill in when a unit has fewer than 3 real photos.
+const realG = media.gallery || [];
+const gallery = (realG.length >= 3 ? realG : realG.length ? [...realG, ...shopImgs] : shopImgs.length >= 2 ? shopImgs : []).slice(0, 9);
+
+const quote = `/pages/request-a-quote?${new URLSearchParams({ type: 'rental', add: p.handle, t: p.title }).toString()}`;
+const buyQuote = `/pages/request-a-quote?${new URLSearchParams({ type: 'products', add: p.handle, t: p.title }).toString()}`;
+const short = p.title.replace(/\s*\(.*?\)\s*/g, ' ').replace(/\s+-\s+.*$/, '').trim();
+const tagline = info.kicker || info.tagline[0] || (isFleet ? 'Rent it with or without our crew.' : 'Delivered, set up and picked up.');
+const steps = [
+  ['Tell Us The Job', 'Dates, location and what the work needs. Online or by phone.'],
+  ['We Confirm And Schedule', 'Availability and rates for your dates, usually the same day.'],
+  [isFleet ? 'Ready For Your Job' : 'Delivered And Set Up', isFleet ? 'Inspected and ready from our South Plainfield yard.' : 'Dropped at your site and set up the way the job needs it.'],
+  ['Picked Up When You’re Done', 'Extend any time. We collect it when the job wraps.']
+];
+const faqs = [
+  ['Where do you deliver?', 'Anywhere in New Jersey, New York, Pennsylvania and Connecticut.'],
+  ['How long can I rent it?', 'Daily, weekly, monthly or long-term. Tell us your dates and we’ll quote the rate that fits.'],
+  isFleet ? ['Can your crew run it for us?', 'Yes. Our certified, experienced crews can run it as part of a lane closure, or you can rent it on its own.'] : ['Do you set it up?', 'Yes. We deliver it, set it up and pick it up. Our certified, experienced crews can also run the whole closure.'],
+  sellable && ['Can I buy one?', 'Yes. It’s also available to purchase. Request a quote and choose Buy.'],
+  ['How do I get pricing?', 'Request a quote online or call us. Rates depend on the dates, location and length of the rental.']
+].filter(Boolean);
+const nav = [['overview', 'Overview'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
+const AR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DOC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5 M12 11v6 M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z', 'M3 12h4l3 8 4-16 3 8h4', 'M12 3v4 M12 17v4 M3 12h4 M17 12h4 M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M5 21V5l7-2 7 2v16'];
+---
+<div class="un" data-unit data-title={p.title} data-handle={p.handle}>
+  <!-- ============ HERO ============ -->
+  <section class="un__hero">
+    <div class="wrap un__hin">
+      <div class="un__copy">
+        <nav class="un__crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href={backHref}>{kind}</a><span>/</span><b aria-current="page">{short}</b></nav>
+        <p class="un__k"><span></span>{kind} rental</p>
+        <h1 class="un__h">{p.title}</h1>
+        <p class="un__lede">{tagline}</p>
+        <ul class="un__chips">
+          <li>Daily, weekly or monthly</li>
+          <li>{isFleet ? 'Maintained in our own yard' : 'Delivered and set up'}</li>
+          <li>NJ, NY, PA and CT</li>
+          {sellable && <li>Also for sale</li>}
+          {badges.map((b) => <li class="un__std">{b.k}</li>)}
+        </ul>
+        <div class="un__ctas">
+          <a href={quote} class="ub ub--red">Request a Quote<Fragment set:html={AR} /></a>
+          <button type="button" class="ub ub--glass" data-print><Fragment set:html={DOC} />Spec Sheet</button>
+          <button type="button" class="ub ub--glass" data-ask><span class="ub__ai">AI</span>Ask a Question</button>
+        </div>
+        <p class="un__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
+      </div>
+      <div class={`un__media${hero ? ' un__media--photo' : ''}`}>
+        {hero?.video ? (
+          <video class="un__vid" muted loop playsinline autoplay preload="auto" poster={hero.src} data-src={hero.video} data-src-sm={media.heroSm} aria-label={hero.alt}></video>
+        ) : hero ? (
+          <img class="un__photo" src={hero.src} alt={hero.alt} fetchpriority="high" />
+        ) : (
+          <div class="un__stage"><img src={stageImg} alt={p.title} fetchpriority="high" /><span class="un__floor" aria-hidden="true"></span></div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <nav class="un__nav" aria-label="On this page" data-unav>
+    <div class="wrap un__navin">
+      <div class="un__navl">{nav.map(([id, l]) => <a href={`#${id}`} data-unav-a={id}>{l}</a>)}</div>
+      <a href={quote} class="ub ub--red ub--sm">Request a Quote</a>
+    </div>
+  </nav>
+
+  <!-- ============ OVERVIEW ============ -->
+  <section class="us" id="overview">
+    <div class="wrap">
+      <div class="us__h">
+        <p class="un__k un__k--dk"><span></span>Overview</p>
+        <h2>{short}, <em>ready for your job.</em></h2>
+      </div>
+      <div class="ov">
+        <div class="ov__txt">
+          {leadText.map((l) => <p>{l}</p>)}
+          {points.length > 0 && <ul class="ov__pts">{points.map((x) => <li>{x.text}</li>)}</ul>}
+        </div>
+        {benefits.length > 0 && (
+          <ul class="ov__ben">
+            {benefits.map((b, i) => (
+              <li><span class="ov__n">{String(i + 1).padStart(2, '0')}</span><b>{b.label}</b><span>{b.text}</span></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <slot name="after-overview" />
+
+  <!-- ============ GALLERY ============ -->
+  {gallery.length > 0 && (
+    <section class="us us--dark" id="gallery">
+      <div class="wrap">
+        <div class="us__h">
+          <p class="un__k"><span></span>Gallery</p>
+          <h2>See it <em>on the job.</em></h2>
+        </div>
+        <ul class={`gl gl--${gallery.length}`}>
+          {gallery.map((g, i) => (
+            <li class={g.product ? 'gl--prod' : ''}>
+              <button type="button" data-gl={i} aria-label={`Open ${g.alt}`}>
+                {g.video ? <video src={g.video} poster={g.src} muted loop playsinline autoplay preload="metadata"></video> : <img src={g.src} alt={g.alt} loading="lazy" />}
+                {g.video && <span class="gl__play" aria-hidden="true">Video</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <dialog class="glb" data-glb aria-label="Gallery">
+        <button type="button" class="glb__x" data-glb-x aria-label="Close">×</button>
+        <button type="button" class="glb__nv glb__nv--p" data-glb-p aria-label="Previous">‹</button>
+        <div class="glb__v" data-glb-v></div>
+        <button type="button" class="glb__nv glb__nv--n" data-glb-n aria-label="Next">›</button>
+        <script type="application/json" data-glb-list set:html={JSON.stringify(gallery)} />
+      </dialog>
+    </section>
+  )}
+
+  <!-- ============ SPECS ============ -->
+  <section class="us" id="specs">
+    <div class="wrap sp2">
+      <div>
+        <div class="us__h">
+          <p class="un__k un__k--dk"><span></span>Specifications</p>
+          <h2>The <em>details.</em></h2>
+        </div>
+        <table class="spt"><tbody>{allSpecs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}</tbody></table>
+      </div>
+      <aside class="sp2__card">
+        <p class="sp2__k">For bids and submittals</p>
+        <h3>Get the spec sheet</h3>
+        <p>A one-page sheet with the photo, specs and rental details. Need certification documents or manufacturer data? Our team will send them over.</p>
+        <button type="button" class="ub ub--red" data-print><Fragment set:html={DOC} />Download Spec Sheet</button>
+        <a href={quote} class="ub ub--line">Request Documents</a>
+        {uses.length > 0 && (
+          <>
+            <p class="sp2__k sp2__k--u">Common uses</p>
+            <ul class="sp2__uses">{uses.map((u, i) => <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d={USE_IC[i % USE_IC.length]} /></svg>{u}</li>)}</ul>
+          </>
+        )}
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="us us--haze" id="how">
+    <div class="wrap">
+      <div class="us__h us__h--row">
+        <div>
+          <p class="un__k un__k--dk"><span></span>How renting works</p>
+          <h2>From quote <em>to job site.</em></h2>
+        </div>
+        <a href={quote} class="ub ub--red">Start Your Quote<Fragment set:html={AR} /></a>
+      </div>
+      <ol class="hw">
+        {steps.map(([t, d], i) => <li><span>{i + 1}</span><b>{t}</b><p>{d}</p></li>)}
+      </ol>
+      {sellable && <p class="hw__buy">Want to own one? <a href={buyQuote}>Request a purchase quote</a>.</p>}
+    </div>
+  </section>
+
+  <!-- ============ MORE ============ -->
+  {related.length > 0 && (
+    <section class="us">
+      <div class="wrap">
+        <div class="us__h us__h--row">
+          <div>
+            <p class="un__k un__k--dk"><span></span>More {kind.toLowerCase()}</p>
+            <h2>Complete <em>the setup.</em></h2>
+          </div>
+          <a href={backHref} class="ub ub--line">See All {kind}<Fragment set:html={AR} /></a>
+        </div>
+        <ul class="mr">
+          {related.slice(0, 4).map((r) => (
+            <li><a href={`/products/${r.handle}`}><span class="mr__i"><img src={cutouts[r.handle] || img(r.featuredImage?.url, 500)} alt="" loading="lazy" /></span><b>{r.title.replace(/\s*\(.*?\)\s*/g, ' ').trim()}</b><span class="mr__go">View<Fragment set:html={AR} /></span></a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ QUESTIONS ============ -->
+  <section class="us us--haze" id="faq">
+    <div class="wrap fq">
+      <div>
+        <p class="un__k un__k--dk"><span></span>Questions</p>
+        <h2 class="fq__h">Good <em>questions.</em></h2>
+        <p class="fq__p">Ask our AI assistant anything about the {short.toLowerCase()}, or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
+        <button type="button" class="ub ub--dark" data-ask><span class="ub__ai">AI</span>Ask a Question</button>
+      </div>
+      <div class="fq__list">{faqs.map(([q, a], i) => <details open={i === 0}><summary>{q}</summary><p>{a}</p></details>)}</div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="ucta">
+    <div class="wrap ucta__in">
+      <div><h2>Need {short.toLowerCase().startsWith('a') ? 'an' : 'a'} {short} <em>on your job?</em></h2><p>Delivered across NJ, NY, PA and CT. Daily, weekly and monthly rates.</p></div>
+      <div class="ucta__b"><a href={quote} class="ub ub--red">Request a Quote<Fragment set:html={AR} /></a><a href={PHONE_TEL} class="ub ub--glass">Call {PHONE}</a></div>
+    </div>
+  </section>
+
+  <!-- printable spec sheet -->
+  <div class="usheet" aria-hidden="true">
+    <div class="usheet__top"><img src="/brand/tss-logo.webp" alt="" width="200" /><span>Traffic Safety Service · South Plainfield, NJ · {PHONE} · {EMAIL}</span></div>
+    <div class="usheet__main">
+      <img class="usheet__img" src={hero && !hero.video ? hero.src : stageImg} alt="" />
+      <div><p class="usheet__cat">{kind} rental</p><h2>{p.title}</h2>{badges.length > 0 && <p class="usheet__std">{badges.map((b) => b.k).join(' · ')}</p>}<p>{leadText[0]}</p></div>
+    </div>
+    <table><tbody>{allSpecs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}</tbody></table>
+    {benefits.length > 0 && <ul>{benefits.map((b) => <li>{b.label}: {b.text}</li>)}</ul>}
+    <p class="usheet__foot">trafficsafetyservice.com/products/{p.handle} · Request a quote at {PHONE}. Specifications subject to change.</p>
+  </div>
+</div>
+
+<script>
+  {
+    const u = document.querySelector('[data-unit]');
+    if (u) {
+      const title = u.dataset.title;
+      document.querySelectorAll('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+      document.querySelectorAll('[data-ask]').forEach((b) => b.addEventListener('click', () => window.TSSChat?.ask(`I'm looking at the ${title}. Can you tell me more about it and how renting it works?`)));
+      // hero video: phones get the smaller file
+      const v = u.querySelector('.un__vid');
+      if (v && v.dataset.srcSm && innerWidth < 900) { v.src = v.dataset.srcSm; } else if (v) { v.src = v.dataset.src; }
+      if (v) { if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.removeAttribute('autoplay'); else v.play().catch(() => {}); }
+      // section nav highlight
+      const links = [...u.querySelectorAll('[data-unav-a]')];
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('is-on', a.dataset.unavA === e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+        links.forEach((a) => { const s = document.getElementById(a.dataset.unavA); if (s) io.observe(s); });
+        const first = document.getElementById('overview');
+        addEventListener('scroll', () => { if (first && first.getBoundingClientRect().top > innerHeight * .5) links.forEach((a) => a.classList.remove('is-on')); }, { passive: true });
+      }
+      // gallery lightbox
+      const dlg = u.querySelector('[data-glb]');
+      if (dlg) {
+        const list = JSON.parse(dlg.querySelector('[data-glb-list]').textContent);
+        const view = dlg.querySelector('[data-glb-v]');
+        let i = 0;
+        const show = (n) => { i = (n + list.length) % list.length; const g = list[i]; view.innerHTML = g.video ? `<video src="${g.video}" poster="${g.src}" autoplay muted loop playsinline controls></video>` : `<img src="${g.src}" alt="">`; };
+        u.querySelectorAll('[data-gl]').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.gl); dlg.showModal(); }));
+        dlg.querySelector('[data-glb-x]').addEventListener('click', () => dlg.close());
+        dlg.querySelector('[data-glb-p]').addEventListener('click', () => show(i - 1));
+        dlg.querySelector('[data-glb-n]').addEventListener('click', () => show(i + 1));
+        dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+        dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });
+        dlg.addEventListener('close', () => { view.innerHTML = ''; });
+      }
+    }
+  }
+</script>
+
+<style>
+  .un { background: #fff; }
+  .un__k { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; color: var(--gold); font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; font-variation-settings: 'wght' 720; }
+  .un__k span { width: 30px; height: 3px; border-radius: 2px; background: var(--red); }
+  .un__k--dk { color: var(--steel); }
+  .ub { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 22px; border-radius: 999px; border: 1.5px solid transparent; font: inherit; font-size: .98rem; font-variation-settings: 'wght' 690; text-decoration: none; white-space: nowrap; cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform .2s; }
+  .ub :global(svg) { width: 18px; height: 18px; flex: none; }
+  .ub:hover { transform: translateY(-1px); }
+  .ub--red { background: var(--red); color: #fff; box-shadow: 0 14px 28px -16px rgba(182, 6, 6, .9); }
+  .ub--red:hover { background: var(--red-press); }
+  .ub--glass { border-color: rgba(255, 255, 255, .28); background: rgba(255, 255, 255, .06); color: #fff; }
+  .ub--glass:hover { border-color: #fff; background: rgba(255, 255, 255, .14); }
+  .ub--line { border-color: var(--line-dark); background: #fff; color: var(--ink); }
+  .ub--line:hover { border-color: var(--ink); }
+  .ub--dark { background: var(--ink); color: #fff; }
+  .ub--sm { min-height: 40px; padding: 0 16px; font-size: .9rem; }
+  .ub__ai { display: inline-grid; place-items: center; height: 20px; padding: 0 6px; border-radius: 6px; background: var(--gold); color: var(--ink); font-size: .68rem; letter-spacing: .04em; font-variation-settings: 'wght' 800; }
+
+  /* hero */
+  .un__hero { position: relative; overflow: hidden; background: radial-gradient(110% 120% at 80% 30%, #26292e 0%, #141619 60%); color: #fff; }
+  .un__hin { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(24px, 4vw, 64px); align-items: center; min-height: clamp(520px, calc(100svh - var(--hdr-h, 150px) - 60px), 760px); padding-block: clamp(30px, 4vw, 56px); }
+  .un__crumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; font-size: .86rem; color: rgba(255, 255, 255, .55); }
+  .un__crumbs a { color: rgba(255, 255, 255, .7); text-decoration: none; }
+  .un__crumbs a:hover { color: #fff; }
+  .un__crumbs b { color: var(--gold); font-weight: 400; }
+  .un__h { margin: 0 0 14px; font-size: clamp(2.3rem, 4.4vw, 4.2rem); line-height: 1; letter-spacing: -.035em; font-variation-settings: 'wght' 790; font-weight: 400; text-wrap: balance; }
+  .un__lede { margin: 0 0 22px; max-width: 46ch; color: rgba(255, 255, 255, .78); font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.55; }
+  .un__chips { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .un__chips li { padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); font-size: .86rem; color: rgba(255, 255, 255, .88); }
+  .un__chips .un__std { background: var(--gold); border-color: var(--gold); color: var(--ink); font-variation-settings: 'wght' 720; }
+  .un__ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+  .un__call { margin: 18px 0 0; color: rgba(255, 255, 255, .6); font-size: .92rem; }
+  .un__call a { color: #fff; font-variation-settings: 'wght' 680; }
+  .un__media { position: relative; align-self: stretch; display: grid; place-items: center; min-height: 360px; }
+  .un__media--photo { border-radius: 26px; overflow: hidden; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .9); max-height: 640px; }
+  .un__vid, .un__photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .un__stage { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
+  .un__stage::before { content: ''; position: absolute; inset: 8% 4%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 196, 80, .18), rgba(255, 196, 80, 0)); }
+  .un__stage img { position: relative; z-index: 1; width: 100%; max-height: 520px; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(0, 0, 0, .55)); animation: unIn 1s cubic-bezier(.2, .8, .2, 1) both; }
+  .un__floor { position: absolute; left: 12%; right: 12%; bottom: 8%; height: 28px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .55), transparent); }
+  @keyframes unIn { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+
+  /* sub nav */
+  .un__nav { position: sticky; top: var(--hdr-h, 120px); z-index: 20; background: rgba(255, 255, 255, .94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  .un__navin { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; }
+  .un__navl { display: flex; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .un__navl::-webkit-scrollbar { display: none; }
+  .un__navl a { flex: none; padding: 9px 15px; border-radius: 999px; color: var(--steel); text-decoration: none; font-size: .94rem; font-variation-settings: 'wght' 640; transition: color .2s, background .2s; }
+  .un__navl a:hover { color: var(--ink); background: var(--haze); }
+  .un__navl a.is-on { color: #fff; background: var(--ink); }
+  .un section[id] { scroll-margin-top: calc(var(--hdr-h, 120px) + 70px); }
+
+  /* sections */
+  .us { padding: clamp(56px, 7vw, 104px) 0; }
+  .us--haze { background: var(--haze); }
+  .us--dark { background: #141619; color: #fff; }
+  .us__h { margin-bottom: clamp(26px, 3vw, 44px); }
+  .us__h--row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; }
+  .us h2, .fq__h { margin: 0; font-size: clamp(2rem, 3.8vw, 3.4rem); line-height: 1; letter-spacing: -.035em; font-variation-settings: 'wght' 780; font-weight: 400; text-wrap: balance; }
+  .us h2 em, .fq__h em, .ucta h2 em { font-style: normal; color: var(--red); }
+  .us--dark h2 em { color: var(--gold); }
+
+  .ov { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(26px, 4vw, 64px); align-items: start; }
+  .ov__txt p { margin: 0 0 16px; color: var(--ink-2); font-size: 1.1rem; line-height: 1.7; }
+  .ov__pts { margin: 0; padding-left: 1.1em; color: var(--ink-2); line-height: 1.7; }
+  .ov__pts li::marker { color: var(--red); }
+  .ov__ben { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .ov__ben li { display: grid; gap: 6px; align-content: start; padding: 22px; border-radius: 20px; background: var(--haze); border: 1px solid transparent; transition: background .2s, border-color .2s, transform .3s; }
+  .ov__ben li:hover { background: #fff; border-color: var(--line-dark); transform: translateY(-2px); }
+  .ov__n { color: var(--red); font-size: .8rem; letter-spacing: .12em; font-variation-settings: 'wght' 760; }
+  .ov__ben b { font-size: 1.08rem; font-variation-settings: 'wght' 720; }
+  .ov__ben li > span:last-child { color: var(--ink-2); line-height: 1.5; font-size: .95rem; }
+
+  /* gallery */
+  .gl { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(150px, 15vw, 230px); gap: 12px; }
+  .gl li:first-child { grid-column: span 2; grid-row: span 2; }
+  .gl--1 { grid-template-columns: 1fr; grid-auto-rows: clamp(260px, 40vw, 520px); }
+  .gl--1 li:first-child { grid-column: auto; grid-row: auto; }
+  .gl--2 li:first-child { grid-column: span 2; grid-row: span 2; }
+  .gl--2 li:nth-child(2) { grid-column: span 2; grid-row: span 2; }
+  .gl--3 li:nth-child(n+2) { grid-column: span 2; }
+  .gl--4 li:nth-child(4) { grid-column: span 2; }
+  .gl--6 li:nth-child(6) { grid-column: span 4; }
+  .gl--7 li:nth-child(n+6) { grid-column: span 2; }
+  .gl--8 li:nth-child(6) { grid-column: span 2; }
+  .gl button { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 20px; overflow: hidden; background: #22262b; cursor: zoom-in; }
+  .gl img, .gl video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.2, .8, .2, 1); }
+  .gl button:hover img, .gl button:hover video { transform: scale(1.04); }
+  .gl .gl--prod button { background: radial-gradient(closest-side, #fff, #e9ecef); }
+  .gl .gl--prod img { object-fit: contain; padding: 8%; }
+  .gl__play { position: absolute; left: 14px; top: 14px; padding: 5px 11px; border-radius: 999px; background: rgba(0, 0, 0, .55); color: #fff; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
+  .glb { width: min(1200px, 94vw); max-height: 92vh; padding: 0; border: 0; border-radius: 20px; background: #0d0e10; overflow: visible; }
+  .glb::backdrop { background: rgba(8, 9, 10, .86); backdrop-filter: blur(6px); }
+  .glb__v { display: grid; place-items: center; }
+  .glb__v :global(img), .glb__v :global(video) { max-width: 100%; max-height: 88vh; border-radius: 20px; display: block; }
+  .glb__x, .glb__nv { position: absolute; z-index: 2; width: 46px; height: 46px; border: 0; border-radius: 50%; background: #fff; color: var(--ink); font-size: 1.6rem; line-height: 1; cursor: pointer; }
+  .glb__x { right: -12px; top: -12px; }
+  .glb__nv { top: 50%; translate: 0 -50%; }
+  .glb__nv--p { left: 12px; } .glb__nv--n { right: 12px; }
+
+  /* specs */
+  .sp2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: clamp(26px, 4vw, 64px); align-items: start; }
+  .spt { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .spt th, .spt td { padding: 15px 20px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  .spt tr:last-child th, .spt tr:last-child td { border-bottom: 0; }
+  .spt tr:nth-child(odd) { background: var(--haze); }
+  .spt th { width: 38%; color: var(--steel); font-weight: 400; }
+  .spt td { font-variation-settings: 'wght' 640; }
+  .sp2__card { position: sticky; top: calc(var(--hdr-h, 120px) + 84px); display: grid; gap: 12px; padding: clamp(22px, 2.4vw, 32px); border-radius: 24px; background: #141619; color: #fff; }
+  .sp2__k { margin: 0; color: var(--gold); font-size: .76rem; letter-spacing: .16em; text-transform: uppercase; font-variation-settings: 'wght' 720; }
+  .sp2__k--u { margin-top: 12px; }
+  .sp2__card h3 { margin: 0; font-size: 1.5rem; letter-spacing: -.02em; font-variation-settings: 'wght' 740; }
+  .sp2__card > p:not(.sp2__k) { margin: 0 0 6px; color: rgba(255, 255, 255, .72); line-height: 1.55; }
+  .sp2__card .ub--line { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .3); }
+  .sp2__uses { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .sp2__uses li { display: flex; align-items: center; gap: 10px; color: rgba(255, 255, 255, .88); font-size: .95rem; }
+  .sp2__uses svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* how */
+  .hw { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; counter-reset: s; }
+  .hw li { position: relative; display: grid; gap: 8px; align-content: start; padding: 26px 22px; border-radius: 22px; background: #fff; border: 1px solid var(--line); }
+  .hw li span { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 6px; border-radius: 50%; background: var(--red); color: #fff; font-variation-settings: 'wght' 780; }
+  .hw b { font-size: 1.1rem; font-variation-settings: 'wght' 720; }
+  .hw p { margin: 0; color: var(--ink-2); line-height: 1.5; font-size: .95rem; }
+  .hw li:not(:last-child)::after { content: ''; position: absolute; top: 46px; right: -12px; width: 12px; height: 2px; background: var(--line-dark); }
+  .hw__buy { margin: 22px 0 0; color: var(--ink-2); }
+  .hw__buy a { color: var(--red); font-variation-settings: 'wght' 680; }
+
+  /* more */
+  .mr { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .mr li { min-width: 0; }
+  .mr a { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; height: 100%; padding: 14px 14px 18px; border-radius: 22px; background: var(--haze); color: var(--ink); text-decoration: none; transition: background .2s, transform .3s; }
+  .mr a:hover { background: #eceef0; transform: translateY(-3px); }
+  .mr__i { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: 16px; background: radial-gradient(closest-side, #fff, #f1f2f4); }
+  .mr__i { overflow: hidden; }
+  .mr__i img { width: 86%; height: 86%; max-width: 100%; min-width: 0; object-fit: contain; }
+  .mr b { font-variation-settings: 'wght' 700; line-height: 1.25; }
+  .mr__go { display: inline-flex; align-items: center; gap: 6px; color: var(--red); font-size: .9rem; font-variation-settings: 'wght' 680; }
+  .mr__go :global(svg) { width: 15px; height: 15px; }
+
+  /* faq */
+  .fq { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(26px, 4vw, 64px); align-items: start; }
+  .fq__h { margin-bottom: 14px; }
+  .fq__p { margin: 0 0 20px; color: var(--steel); line-height: 1.6; }
+  .fq__p a { color: var(--ink); font-variation-settings: 'wght' 680; }
+  .fq__list { display: grid; gap: 10px; }
+  .fq__list details { border-radius: 18px; background: #fff; border: 1px solid var(--line); }
+  .fq__list summary { list-style: none; display: flex; justify-content: space-between; gap: 16px; padding: 18px 22px; font-size: 1.04rem; font-variation-settings: 'wght' 690; cursor: pointer; }
+  .fq__list summary::-webkit-details-marker { display: none; }
+  .fq__list summary::after { content: '+'; color: var(--red); font-size: 1.4rem; line-height: 1; }
+  .fq__list details[open] summary::after { content: '−'; }
+  .fq__list p { margin: 0; padding: 0 22px 20px; color: var(--ink-2); line-height: 1.6; }
+
+  /* cta */
+  .ucta { padding: clamp(48px, 6vw, 84px) 0; background: radial-gradient(120% 140% at 90% 0%, #3a0505 0%, #141619 60%); color: #fff; }
+  .ucta__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 22px 40px; }
+  .ucta h2 { margin: 0 0 8px; font-size: clamp(1.8rem, 3.4vw, 3rem); line-height: 1.02; letter-spacing: -.03em; font-variation-settings: 'wght' 780; font-weight: 400; }
+  .ucta h2 em { color: var(--gold); }
+  .ucta p { margin: 0; color: rgba(255, 255, 255, .72); }
+  .ucta__b { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* spec sheet (print) */
+  .usheet { display: none; }
+  @media print {
+    @page { margin: .5in; }
+    :global(body > *:not(main)), :global(main > *:not(.un)), .un > *:not(.usheet) { display: none !important; }
+    .usheet { display: block; color: #111; font-size: 10.5pt; }
+    .usheet__top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 3px solid #b60606; font-size: 9pt; color: #444; }
+    .usheet__top img { width: 150px; height: auto; }
+    .usheet__main { display: grid; grid-template-columns: 200px 1fr; gap: 22px; align-items: center; margin: 16px 0; }
+    .usheet__img { width: 200px; height: 170px; object-fit: contain; }
+    .usheet__cat { margin: 0 0 4px; font-size: 9pt; letter-spacing: .14em; text-transform: uppercase; color: #b60606; }
+    .usheet h2 { margin: 0 0 8px; font-size: 20pt; }
+    .usheet__std { font-weight: 700; color: #1b4f9c; }
+    .usheet table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .usheet th, .usheet td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #ddd; vertical-align: top; }
+    .usheet th { width: 32%; color: #555; font-weight: 600; }
+    .usheet ul { padding-left: 1.1em; columns: 2; column-gap: 24px; }
+    .usheet__foot { margin-top: 14px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 8.5pt; color: #666; }
+  }
+
+  @media (max-width: 1000px) {
+    .un__hin, .ov, .sp2, .fq { grid-template-columns: minmax(0, 1fr); }
+    .un__hin { min-height: 0; }
+    .un__media { order: -1; min-height: 0; }
+    .un__media--photo { aspect-ratio: 4 / 3; }
+    .un__stage img { max-height: 320px; }
+    .sp2__card { position: static; }
+    .hw { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .hw li::after { display: none; }
+    .mr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .un__hin { padding-block: 16px 34px; gap: 22px; }
+    .un__media--photo { border-radius: 18px; }
+    .un__copy { text-align: center; }
+    .un__crumbs, .un__k, .un__chips, .un__ctas { justify-content: center; }
+    .un__lede { margin-inline: auto; }
+    .un__ctas .ub { flex: 1 1 calc(50% - 5px); }
+    .un__ctas .ub--red { flex-basis: 100%; }
+    .un__nav .ub { display: none; }
+    .ov__ben { grid-template-columns: 1fr; }
+    .gl { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 140px; gap: 8px; }
+    .gl button { border-radius: 14px; }
+    .gl li:nth-child(n+2) { grid-column: auto; }
+    .gl--2 li:last-child, .gl--4 li:last-child, .gl--6 li:last-child, .gl--8 li:last-child { grid-column: span 2; }
+    .hw { grid-template-columns: 1fr; }
+    .ucta__b .ub { flex: 1 1 100%; }
+  }
+</style>
