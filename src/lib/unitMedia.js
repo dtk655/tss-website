@@ -6,6 +6,10 @@ const P = (src, alt) => ({ src, alt });
 const V = (src, poster, alt, pos, ar) => ({ src: poster, video: src, alt, pos, ar });
 
 export const UNIT_MEDIA = {
+  'portable-traffic-light': {
+    hero: V('/video/portable-traffic-light-hero.mp4', '/video/portable-traffic-light-hero.webp', 'Portable traffic signal cycling from green to red as cars stop at a one-lane work zone', '82% 50%', '1728 / 1152'),
+    heroSm: '/video/portable-traffic-light-hero-sm.mp4'
+  },
   'speed-limit-trailer': {
     hero: V('/video/speed-limit-trailer-hero.mp4', '/video/speed-limit-trailer-hero.webp', 'Speed limit trailer showing passing drivers their speed under a 25 mph limit sign', '62% 50%', '1280 / 960'),
     heroSm: '/video/speed-limit-trailer-hero-sm.mp4'
