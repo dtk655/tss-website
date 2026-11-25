@@ -3,9 +3,13 @@
 // gallery: extra real photos and videos shown in the Gallery section, after the hero.
 // To add new media: drop the file in /public/photos or /public/video and list it here.
 const P = (src, alt) => ({ src, alt });
-const V = (src, poster, alt) => ({ src: poster, video: src, alt });
+const V = (src, poster, alt, pos, ar) => ({ src: poster, video: src, alt, pos, ar });
 
 export const UNIT_MEDIA = {
+  'arrow-board': {
+    hero: V('/video/arrow-board-hero.mp4', '/video/arrow-board-hero.webp', 'Arrow board flashing a left arrow beside a lane closure at dusk as traffic passes', '50% 50%', '1920 / 1072'),
+    heroSm: '/video/arrow-board-hero-sm.mp4'
+  },
   'truck-mounted-attenuator-tma': {
     hero: V('/video/tma-hero.mp4', '/video/tma-hero.webp', 'TSS crash truck unfolding its scorpion attenuator'),
     heroSm: '/video/tma-hero-sm.mp4',
