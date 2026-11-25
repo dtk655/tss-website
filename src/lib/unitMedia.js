@@ -7,27 +7,22 @@ const V = (src, poster, alt, pos, ar) => ({ src: poster, video: src, alt, pos, a
 
 export const UNIT_MEDIA = {
   'portable-traffic-light': {
-    shift: '0%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/portable-traffic-light-hero.mp4', '/video/portable-traffic-light-hero.webp', 'Portable traffic signal cycling from green to red as cars stop at a one-lane work zone', '82% 50%', '1728 / 1152'),
     heroSm: '/video/portable-traffic-light-hero-sm.mp4'
   },
   'speed-limit-trailer': {
-    shift: '12%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/speed-limit-trailer-hero.mp4', '/video/speed-limit-trailer-hero.webp', 'Speed limit trailer showing passing drivers their speed under a 25 mph limit sign', '62% 50%', '1280 / 960'),
     heroSm: '/video/speed-limit-trailer-hero-sm.mp4'
   },
   'ground-mount-attenuator-gma': {
-    shift: '40%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/gma-hero.mp4', '/video/gma-hero.webp', 'Ground mount attenuator protecting the end of a barrier run as highway traffic passes', '0% 50%', '1280 / 928'),
     heroSm: '/video/gma-hero-sm.mp4'
   },
   'arrow-board': {
-    shift: '8%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/arrow-board-hero.mp4', '/video/arrow-board-hero.webp', 'Arrow board flashing a left arrow beside a lane closure at dusk as traffic passes', '76% 50%', '1920 / 1072'),
     heroSm: '/video/arrow-board-hero-sm.mp4'
   },
   'truck-mounted-attenuator-tma': {
-    shift: '22%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/tma-hero.mp4', '/video/tma-hero.webp', 'TSS crash truck unfolding its scorpion attenuator'),
     heroSm: '/video/tma-hero-sm.mp4',
     gallery: [
@@ -43,7 +38,6 @@ export const UNIT_MEDIA = {
     ]
   },
   'bucket-van': {
-    shift: '24%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/bucket-van-hero.mp4', '/video/bucket-van-hero.webp', 'TSS bucket van with its boom raised to a streetlight at dusk, cones set around it', '56% 50%', '1920 / 1080'),
     heroSm: '/video/bucket-van-hero-sm.mp4',
     gallery: [
@@ -56,7 +50,6 @@ export const UNIT_MEDIA = {
     ]
   },
   'bucket-truck': {
-    shift: '22%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: P('/fleet/fleet-buckets.webp', 'TSS bucket trucks lined up in the yard'),
     gallery: [
       P('/photos/bucket-truck-row.webp', 'A row of TSS bucket trucks'),
@@ -67,7 +60,6 @@ export const UNIT_MEDIA = {
     ]
   },
   'variable-message-sign-vms-board': {
-    shift: '0%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/vms-hero.mp4', '/video/vms-hero.webp', 'Message board warning drivers of construction ahead and men working', '78% 50%', '1344 / 896'),
     heroSm: '/video/vms-hero-sm.mp4',
     gallery: [
@@ -78,7 +70,6 @@ export const UNIT_MEDIA = {
     ]
   },
   'light-tower': {
-    shift: '38%', // desktop: how far from the left the scene starts (moves the subject right of the headline)
     hero: V('/video/light-tower-hero.mp4', '/video/light-tower-hero.webp', 'Light tower switching on at dusk and lighting up a work site', '32% 50%', '1632 / 1080'),
     heroSm: '/video/light-tower-hero-sm.mp4',
     gallery: [

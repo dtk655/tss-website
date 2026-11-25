@@ -100,7 +100,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
         </div>
         <p class="un__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
       </div>
-      <div class={`un__media${hero ? ' un__media--photo' : ''}${hero?.ar ? ' un__media--ar' : ''}`} style={[hero?.ar && `--ar:${hero.ar}`, media.shift && `--bl:${media.shift}`].filter(Boolean).join(';') || undefined}>
+      <div class={`un__media${hero ? ' un__media--photo' : ''}${hero?.ar ? ' un__media--ar' : ''}`} style={hero?.ar ? `--ar:${hero.ar}` : undefined}>
         {hero?.video ? (
           <video class="un__vid" style={hero.pos ? `object-position:${hero.pos}` : undefined} muted loop playsinline autoplay preload="auto" poster={hero.src} data-src={hero.video} data-src-sm={media.heroSm} aria-label={hero.alt}></video>
         ) : hero ? (
@@ -384,7 +384,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   .un__hero--bleed { background: #141619; }
   .un__hero--bleed .un__hin { position: static; }
   .un__hero--bleed .un__copy { position: relative; z-index: 2; }
-  .un__hero--bleed .un__media { position: absolute; top: 0; right: 0; bottom: 0; left: var(--bl, 0%); width: auto; max-height: none; aspect-ratio: auto; border-radius: 0; box-shadow: none; align-self: auto; }
+  .un__hero--bleed .un__media { position: absolute; top: 0; right: 0; bottom: 0; width: 54%; max-height: none; aspect-ratio: auto; border-radius: 0; box-shadow: none; align-self: auto; }
   @media (min-width: 1001px) {
     .un__hero--bleed .un__hin { grid-template-columns: minmax(0, 1fr); min-height: clamp(560px, calc(100svh - var(--hdr-h, 150px) - 72px), 820px); }
     .un__hero--bleed .un__copy { max-width: min(44vw, 780px); }
@@ -395,7 +395,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
     .un__hero--bleed .un__ctas { gap: 10px; flex-wrap: nowrap; }
     .un__hero--bleed .un__ctas .ub { min-height: 56px; padding: 0 clamp(16px, 1.5vw, 26px); font-size: clamp(.95rem, 1.05vw, 1.06rem); }
   }
-  .un__fade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #141619 0%, rgba(20, 22, 25, .9) calc(30% - var(--bl, 0%) * .5), rgba(20, 22, 25, .62) calc(46% - var(--bl, 0%) * .6), rgba(20, 22, 25, .18) calc(62% - var(--bl, 0%) * .6), rgba(20, 22, 25, 0) calc(74% - var(--bl, 0%) * .6)), linear-gradient(180deg, rgba(20, 22, 25, .35) 0%, rgba(20, 22, 25, 0) 18%, rgba(20, 22, 25, 0) 86%, rgba(20, 22, 25, .7) 100%); }
+  .un__fade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #141619 0%, rgba(20, 22, 25, .78) 12%, rgba(20, 22, 25, .2) 32%, rgba(20, 22, 25, 0) 48%), linear-gradient(180deg, rgba(20, 22, 25, .35) 0%, rgba(20, 22, 25, 0) 18%, rgba(20, 22, 25, 0) 86%, rgba(20, 22, 25, .7) 100%); }
   .un__chips, .un__call { display: none; }
   .un__stage { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
   .un__stage::before { content: ''; position: absolute; inset: 8% 4%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 196, 80, .18), rgba(255, 196, 80, 0)); }
