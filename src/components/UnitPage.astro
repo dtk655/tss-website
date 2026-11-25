@@ -344,7 +344,18 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   .un__hero--bleed .un__hin { position: static; }
   .un__hero--bleed .un__copy { position: relative; z-index: 2; }
   .un__hero--bleed .un__media { position: absolute; top: 0; right: 0; bottom: 0; width: 54%; max-height: none; aspect-ratio: auto; border-radius: 0; box-shadow: none; align-self: auto; }
-  .un__fade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #141619 0%, rgba(20, 22, 25, .78) 12%, rgba(20, 22, 25, .2) 32%, rgba(20, 22, 25, 0) 48%), linear-gradient(180deg, rgba(20, 22, 25, .35) 0%, rgba(20, 22, 25, 0) 18%, rgba(20, 22, 25, 0) 86%, rgba(20, 22, 25, .7) 100%); }
+  @media (min-width: 1001px) {
+    .un__hero--bleed .un__hin { grid-template-columns: minmax(0, 1fr); min-height: clamp(560px, calc(100svh - var(--hdr-h, 150px) - 72px), 820px); }
+    .un__hero--bleed .un__copy { max-width: min(44vw, 780px); }
+    .un__hero--bleed .un__media { width: 62%; }
+    .un__hero--bleed .un__crumbs { font-size: .95rem; margin-bottom: 26px; }
+    .un__hero--bleed .un__k { font-size: .9rem; }
+    .un__hero--bleed .un__h { font-size: clamp(3rem, 4.6vw, 5rem); margin-bottom: 18px; }
+    .un__hero--bleed .un__lede { font-size: clamp(1.15rem, 1.45vw, 1.45rem); margin-bottom: 34px; }
+    .un__hero--bleed .un__ctas { gap: 10px; flex-wrap: nowrap; }
+    .un__hero--bleed .un__ctas .ub { min-height: 56px; padding: 0 clamp(16px, 1.5vw, 26px); font-size: clamp(.95rem, 1.05vw, 1.06rem); }
+  }
+  .un__fade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #141619 0%, rgba(20, 22, 25, .7) 9%, rgba(20, 22, 25, .15) 24%, rgba(20, 22, 25, 0) 36%), linear-gradient(180deg, rgba(20, 22, 25, .35) 0%, rgba(20, 22, 25, 0) 18%, rgba(20, 22, 25, 0) 86%, rgba(20, 22, 25, .7) 100%); }
   .un__chips, .un__call { display: none; }
   .un__stage { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
   .un__stage::before { content: ''; position: absolute; inset: 8% 4%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 196, 80, .18), rgba(255, 196, 80, 0)); }
