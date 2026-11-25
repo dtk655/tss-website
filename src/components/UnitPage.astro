@@ -91,7 +91,11 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
         </ul>
         <div class="un__ctas">
           <a href={quote} class="ub ub--red">Request a Quote<Fragment set:html={AR} /></a>
-          <button type="button" class="ub ub--glass" data-print><Fragment set:html={DOC} />Spec Sheet</button>
+          {models.length > 0 ? (
+            <a href="#models" class="ub ub--glass">See Our Options<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
+          ) : (
+            <button type="button" class="ub ub--glass" data-print><Fragment set:html={DOC} />Spec Sheet</button>
+          )}
           <button type="button" class="ub ub--glass" data-ask><span class="ub__ai">AI</span>Ask a Question</button>
         </div>
         <p class="un__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
