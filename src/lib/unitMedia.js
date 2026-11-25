@@ -6,6 +6,10 @@ const P = (src, alt) => ({ src, alt });
 const V = (src, poster, alt, pos, ar) => ({ src: poster, video: src, alt, pos, ar });
 
 export const UNIT_MEDIA = {
+  'ground-mount-attenuator-gma': {
+    hero: V('/video/gma-hero.mp4', '/video/gma-hero.webp', 'Ground mount attenuator protecting the end of a barrier run as highway traffic passes', '0% 50%', '1280 / 928'),
+    heroSm: '/video/gma-hero-sm.mp4'
+  },
   'arrow-board': {
     hero: V('/video/arrow-board-hero.mp4', '/video/arrow-board-hero.webp', 'Arrow board flashing a left arrow beside a lane closure at dusk as traffic passes', '76% 50%', '1920 / 1072'),
     heroSm: '/video/arrow-board-hero-sm.mp4'
