@@ -1,4 +1,5 @@
 ---
+import { badgesFor } from '../lib/unitBadges.js';
 import { VMS_MODELS } from '../lib/vmsModels.js';
 // Full page for a rental unit (equipment and fleet): big media hero, overview, gallery, specs,
 // uses, how renting works, other units and questions. Every number shown comes from the product's own data.
@@ -60,6 +61,7 @@ const faqs = [
 ].filter(Boolean);
 const models = p.handle === 'variable-message-sign-vms-board' ? VMS_MODELS : [];
 const mQuote = (m) => `/pages/request-a-quote?${new URLSearchParams({ type: 'rental', add: p.handle, t: `${p.title} - ${m.name} (${m.model})` }).toString()}`;
+const hl = badgesFor(p.handle);
 const NAV_IC = {
   models: 'M3 5h18v11H3z M8 20h8 M12 16v4 M7 9h2M11 9h2M15 9h2M7 12h10',
   overview: 'M4 5h16M4 10h16M4 15h10M4 20h7',
@@ -98,6 +100,11 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
           )}
           <button type="button" class="ub ub--glass" data-ask><span class="ub__ai">AI</span>Ask a Question</button>
         </div>
+        <ul class={`un__hl un__hl--${hl.length}`}>
+          {hl.map((b) => (
+            <li><span class="un__hli"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={b.icon} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></span><b>{b.t}</b><small>{b.d}</small></li>
+          ))}
+        </ul>
         <p class="un__call">Rather talk? Call <a href={PHONE_TEL}>{PHONE}</a></p>
       </div>
       <div class={`un__media${hero ? ' un__media--photo' : ''}${hero?.ar ? ' un__media--ar' : ''}`} style={hero?.ar ? `--ar:${hero.ar}` : undefined}>
@@ -448,6 +455,34 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   .vm__note { margin: 26px 0 0; text-align: center; color: var(--muted, #5b6068); font-size: .92rem; max-width: none; }
   .vm__ask { border: 0; background: none; padding: 0; font: inherit; color: var(--red); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
   @media (max-width: 980px) { .vm__grid { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin-inline: auto; } }
+  /* header highlights */
+  .un__hl { list-style: none; margin: 30px 0 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); border: 1px solid rgba(255, 255, 255, .1); border-top: 1.5px solid var(--red); border-radius: 16px; background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .015)); overflow: hidden; }
+  .un__hl--2 { --n: 2; } .un__hl--3 { --n: 3; }
+  .un__hl li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 14px 18px; }
+  .un__hl li + li { border-left: 1px solid rgba(255, 255, 255, .08); }
+  .un__hli { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 4px; border-radius: 11px; background: rgba(182, 6, 6, .16); border: 1px solid rgba(229, 57, 53, .35); color: #ff6b5e; }
+  .un__hli svg { width: 20px; height: 20px; }
+  .un__hl b { color: #fff; font-size: .98rem; line-height: 1.2; font-variation-settings: 'wght' 700; }
+  .un__hl small { color: rgba(255, 255, 255, .6); font-size: .82rem; line-height: 1.4; }
+  @media (min-width: 1001px) {
+    .un__hero--bleed .un__copy { width: calc(46vw - var(--gutter) - 2vw); max-width: none; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .un__hero--bleed .un__crumbs, .un__hero--bleed .un__k, .un__hero--bleed .un__ctas { justify-content: center; }
+    .un__hero--bleed .un__lede { margin-inline: auto; }
+    .un__hero--bleed .un__hl { width: 100%; max-width: 640px; }
+  }
+  @media (min-width: 1001px) and (max-width: 1320px) {
+    .un__hero--bleed .un__copy { width: calc(46vw - var(--gutter)); }
+    .un__hero--bleed .un__ctas { flex-wrap: wrap; justify-content: center; }
+    .un__hero--bleed .un__ctas .ub { min-height: 50px; padding: 0 18px; font-size: .95rem; }
+    .un__hero--bleed .un__h { font-size: clamp(2.6rem, 4.2vw, 3.4rem); }
+  }
+  @media (max-width: 640px) {
+    .un__hl { margin-top: 18px; }
+    .un__hl li { padding: 14px 6px; gap: 4px; }
+    .un__hl small { display: none; }
+    .un__hl b { font-size: .82rem; }
+    .un__hli { width: 34px; height: 34px; }
+  }
   .us { padding: clamp(56px, 7vw, 104px) 0; }
   .us--haze { background: var(--haze); }
   .us--dark { background: #141619; color: #fff; }
