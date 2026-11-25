@@ -2,7 +2,7 @@
 // name: the page headline; short: cards, breadcrumbs and lists.
 export const UNIT_NAMES = {
   'arrow-board': { name: 'Trailer-Mounted Arrow Board', short: 'Arrow Board Trailer' },
-  'variable-message-sign-vms-board': { name: 'Portable Changeable Message Sign', short: 'Message Sign (PCMS)' },
+  'variable-message-sign-vms-board': { name: 'Variable Message Signs', short: 'Variable Message Signs' },
   'light-tower': { name: 'Mobile Light Tower', short: 'Mobile Light Tower' },
   'portable-traffic-light': { name: 'Portable Traffic Signal System', short: 'Portable Traffic Signal' },
   'speed-limit-trailer': { name: 'Radar Speed Display Trailer', short: 'Speed Display Trailer' },
