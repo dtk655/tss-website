@@ -1,4 +1,5 @@
 ---
+import { unitShort } from '../../lib/unitNames.js';
 // Truck fleet landing page: what we rent, which truck fits the job, the TMA explorer, how renting works.
 import Layout from '../../layouts/Layout.astro';
 import Showroom from '../../components/Showroom.astro';
@@ -20,7 +21,7 @@ const tints = ['#ffdede', '#fff1c9', '#e2edf8', '#ffe7d2', '#e3f3d8', '#ebebe8']
 const fleet = (fleetCol?.products || []).map((p, i) => ({
   handle: p.handle,
   href: `/products/${p.handle}`,
-  title: p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim(),
+  title: unitShort(p),
   blurb: blurbs[p.handle] || '',
   img: cutouts[p.handle] || (p.featuredImage ? img(p.featuredImage.url, 600) : ''),
   cut: !!cutouts[p.handle],
@@ -31,7 +32,7 @@ const equipCol = colByHandle.get('equipment-rentals');
 const fleetHandles = new Set(fleet.map((f) => f.handle));
 const equipment = (equipCol?.products || []).filter((p) => !fleetHandles.has(p.handle)).slice(0, 4).map((p) => ({
   href: `/products/${p.handle}`,
-  title: p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim(),
+  title: unitShort(p),
   img: cutouts[p.handle] || (p.featuredImage ? img(p.featuredImage.url, 400) : ''),
   cut: !!cutouts[p.handle]
 }));

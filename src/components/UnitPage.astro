@@ -1,4 +1,5 @@
 ---
+import { unitName, unitShort } from '../lib/unitNames.js';
 import { badgesFor } from '../lib/unitBadges.js';
 import { VMS_MODELS } from '../lib/vmsModels.js';
 // Full page for a rental unit (equipment and fleet): big media hero, overview, gallery, specs,
@@ -44,7 +45,8 @@ const gallery = (realG.length >= 3 ? realG : realG.length ? [...realG, ...shopIm
 
 const quote = `/pages/request-a-quote?${new URLSearchParams({ type: 'rental', add: p.handle, t: p.title }).toString()}`;
 const buyQuote = `/pages/request-a-quote?${new URLSearchParams({ type: 'products', add: p.handle, t: p.title }).toString()}`;
-const short = p.title.replace(/\s*\(.*?\)\s*/g, ' ').replace(/\s+-\s+.*$/, '').trim();
+const short = unitShort(p);
+const display = unitName(p);
 const tagline = info.kicker || info.tagline[0] || (isFleet ? 'Rent it with or without our crew.' : 'Delivered, set up and picked up.');
 const steps = [
   ['Tell Us The Job', 'Dates, location and what the work needs. Online or by phone.'],
@@ -82,7 +84,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
       <div class="un__copy">
         <nav class="un__crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href={backHref}>{kind}</a><span>/</span><b aria-current="page">{short}</b></nav>
         <p class="un__k"><span></span>{kind} rental</p>
-        <h1 class="un__h">{p.title}</h1>
+        <h1 class="un__h">{display}</h1>
         <p class="un__lede"><span>{isFleet ? 'Available to rent, with or without our crew.' : 'Available to rent or buy.'}</span></p>
         <ul class="un__chips">
           <li>Daily, weekly or monthly</li>
@@ -115,7 +117,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
         ) : null}
         {hero && <span class="un__fade" aria-hidden="true"></span>}
         {!hero && (
-          <div class="un__stage"><img src={stageImg} alt={p.title} fetchpriority="high" /><span class="un__floor" aria-hidden="true"></span></div>
+          <div class="un__stage"><img src={stageImg} alt={display} fetchpriority="high" /><span class="un__floor" aria-hidden="true"></span></div>
         )}
       </div>
     </div>
@@ -271,7 +273,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
         </div>
         <ul class="mr">
           {related.slice(0, 4).map((r) => (
-            <li><a href={`/products/${r.handle}`}><span class="mr__i"><img src={cutouts[r.handle] || img(r.featuredImage?.url, 500)} alt="" loading="lazy" /></span><b>{r.title.replace(/\s*\(.*?\)\s*/g, ' ').trim()}</b><span class="mr__go">View<Fragment set:html={AR} /></span></a></li>
+            <li><a href={`/products/${r.handle}`}><span class="mr__i"><img src={cutouts[r.handle] || img(r.featuredImage?.url, 500)} alt="" loading="lazy" /></span><b>{unitShort(r)}</b><span class="mr__go">View<Fragment set:html={AR} /></span></a></li>
           ))}
         </ul>
       </div>
@@ -284,7 +286,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
       <div>
         <p class="un__k un__k--dk"><span></span>Questions</p>
         <h2 class="fq__h">Good <em>questions.</em></h2>
-        <p class="fq__p">Ask our AI assistant anything about the {short.toLowerCase()}, or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
+        <p class="fq__p">Ask our AI assistant anything about the {short}, or call <a href={PHONE_TEL}>{PHONE}</a>.</p>
         <button type="button" class="ub ub--dark" data-ask><span class="ub__ai">AI</span>Ask a Question</button>
       </div>
       <div class="fq__list">{faqs.map(([q, a], i) => <details open={i === 0}><summary>{q}</summary><p>{a}</p></details>)}</div>
@@ -304,7 +306,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
     <div class="usheet__top"><img src="/brand/tss-logo.webp" alt="" width="200" /><span>Traffic Safety Service · South Plainfield, NJ · {PHONE} · {EMAIL}</span></div>
     <div class="usheet__main">
       <img class="usheet__img" src={hero && !hero.video ? hero.src : stageImg} alt="" />
-      <div><p class="usheet__cat">{kind} rental</p><h2>{p.title}</h2>{badges.length > 0 && <p class="usheet__std">{badges.map((b) => b.k).join(' · ')}</p>}<p>{leadText[0]}</p></div>
+      <div><p class="usheet__cat">{kind} rental</p><h2>{display}</h2>{badges.length > 0 && <p class="usheet__std">{badges.map((b) => b.k).join(' · ')}</p>}<p>{leadText[0]}</p></div>
     </div>
     <table><tbody>{allSpecs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}</tbody></table>
     {benefits.length > 0 && <ul>{benefits.map((b) => <li>{b.label}: {b.text}</li>)}</ul>}
