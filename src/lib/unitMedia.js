@@ -34,8 +34,10 @@ export const UNIT_MEDIA = {
     ]
   },
   'bucket-van': {
-    hero: P('/photos/bucket-van-side.webp', 'TSS bucket van 334 in the yard'),
+    hero: V('/video/bucket-van-hero.mp4', '/video/bucket-van-hero.webp', 'TSS bucket van with its boom raised to a streetlight at dusk, cones set around it', '42% 50%', '1472 / 800'),
+    heroSm: '/video/bucket-van-hero-sm.mp4',
     gallery: [
+      P('/photos/bucket-van-side.webp', 'TSS bucket van 334 in the yard'),
       P('/photos/bucket-van-row.webp', 'A row of TSS bucket vans'),
       P('/photos/bucket-van-rear.webp', 'Rear of a TSS bucket van with the bucket'),
       P('/photos/bucket-van-row2.webp', 'TSS bucket vans lined up'),
