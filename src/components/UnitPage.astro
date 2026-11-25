@@ -1,4 +1,5 @@
 ---
+import { VMS_MODELS } from '../lib/vmsModels.js';
 // Full page for a rental unit (equipment and fleet): big media hero, overview, gallery, specs,
 // uses, how renting works, other units and questions. Every number shown comes from the product's own data.
 import { img } from '../lib/shopify.js';
@@ -57,14 +58,17 @@ const faqs = [
   sellable && ['Can I buy one?', 'Yes. It’s also available to purchase. Request a quote and choose Buy.'],
   ['How do I get pricing?', 'Request a quote online or call us. Rates depend on the dates, location and length of the rental.']
 ].filter(Boolean);
+const models = p.handle === 'variable-message-sign-vms-board' ? VMS_MODELS : [];
+const mQuote = (m) => `/pages/request-a-quote?${new URLSearchParams({ type: 'rental', add: p.handle, t: `${p.title} - ${m.name} (${m.model})` }).toString()}`;
 const NAV_IC = {
+  models: 'M3 5h18v11H3z M8 20h8 M12 16v4 M7 9h2M11 9h2M15 9h2M7 12h10',
   overview: 'M4 5h16M4 10h16M4 15h10M4 20h7',
   gallery: 'M4 5h16v14H4z M4 16l5-5 4 4 3-3 4 4 M15.5 9.5h.01',
   specs: 'M9 4h6v3H9z M7 5H5v16h14V5h-2 M8.5 12h7 M8.5 16h5',
   how: 'M5 6h14M5 12h14M5 18h14 M3 6h.01M3 12h.01M3 18h.01',
   faq: 'M12 21a9 9 0 1 0-9-9c0 1.6.4 3.1 1.2 4.4L3 21l4.6-1.2A9 9 0 0 0 12 21z M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1v.5 M12 16.5h.01'
 };
-const nav = [['overview', 'Overview'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
+const nav = [models.length > 0 && ['models', 'Models'], ['overview', 'Overview'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
 const AR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const DOC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5 M12 11v6 M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z', 'M3 12h4l3 8 4-16 3 8h4', 'M12 3v4 M12 17v4 M3 12h4 M17 12h4 M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M5 21V5l7-2 7 2v16'];
@@ -112,6 +116,39 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
       <a href={quote} class="ub ub--red ub--sm">Request a Quote</a>
     </div>
   </nav>
+
+  {models.length > 0 && (
+    <section class="us vm" id="models">
+      <div class="wrap">
+        <div class="us__h">
+          <p class="un__k un__k--dk"><span></span>Our Message Boards</p>
+          <h2>Three boards, <em>one for every job.</em></h2>
+        </div>
+        <div class="vm__grid">
+          {models.map((m) => (
+            <article class="vm__card">
+              <div class="vm__img">
+                <img src={m.img} alt={`${m.name} message board (${m.model})`} loading="lazy" decoding="async" referrerpolicy="no-referrer" data-fallback={cut || '/photos/vms-new.webp'} onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.fallback;this.classList.add('is-fb')}" />
+                <span class="vm__model">{m.model}</span>
+              </div>
+              <div class="vm__body">
+                <h3>{m.name}</h3>
+                {m.colors && <div class="vm__dots" aria-label="LED colors">{m.colors.map((c) => <i style={`--c:${c}`}></i>)}</div>}
+                <p class="vm__lede">{m.lede}</p>
+                <ul class="vm__tags">{m.tags.map((t) => <li>{t}</li>)}</ul>
+                <dl class="vm__specs">{m.specs.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+                <div class="vm__btns">
+                  <a class="ub ub--red ub--sm" href={mQuote(m)}>Request a Quote</a>
+                  <a class="ub ub--line ub--sm" href={m.sheet} target="_blank" rel="noopener">Spec Sheet</a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p class="vm__note">Specs from the manufacturer. Not sure which board fits your job? <button type="button" class="vm__ask" onclick="window.TSSChat?.ask('Which message board should I rent: Full-Size Matrix, Mini Matrix or 5-Color Matrix?')">Ask our AI</button> or call 908-561-4800.</p>
+      </div>
+    </section>
+  )}
 
   <!-- ============ OVERVIEW ============ -->
   <section class="us" id="overview">
@@ -382,6 +419,31 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   .un section[id] { scroll-margin-top: calc(var(--hdr-h, 120px) + 70px); }
 
   /* sections */
+  /* message board models */
+  .vm { background: var(--haze); }
+  .vm__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .vm__card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 1px 2px rgba(20, 22, 25, .05), 0 24px 48px -32px rgba(20, 22, 25, .35); transition: transform .25s ease, box-shadow .25s ease; }
+  .vm__card:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(20, 22, 25, .06), 0 32px 60px -30px rgba(20, 22, 25, .45); }
+  .vm__img { position: relative; aspect-ratio: 4 / 3; background: radial-gradient(120% 90% at 50% 20%, #fff 0%, #eef0f3 70%); overflow: hidden; }
+  .vm__img img { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply; }
+  .vm__img img.is-fb { object-fit: contain; padding: 8%; }
+  .vm__model { position: absolute; left: 14px; top: 14px; padding: 6px 11px; border-radius: 999px; background: rgba(20, 22, 25, .82); color: #fff; font-size: .74rem; letter-spacing: .04em; font-variation-settings: 'wght' 650; backdrop-filter: blur(6px); }
+  .vm__body { display: flex; flex-direction: column; flex: 1; padding: 22px clamp(18px, 1.8vw, 26px) 24px; }
+  .vm__body h3 { margin: 0 0 8px; font-size: clamp(1.3rem, 1.6vw, 1.6rem); line-height: 1.1; }
+  .vm__dots { display: flex; gap: 6px; margin: 0 0 10px; }
+  .vm__dots i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 1px rgba(20, 22, 25, .18), 0 0 10px -1px var(--c); }
+  .vm__lede { margin: 0 0 14px; color: var(--muted, #5b6068); font-size: .97rem; line-height: 1.5; max-width: none; }
+  .vm__tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 18px; padding: 0; list-style: none; }
+  .vm__tags li { padding: 5px 10px; border-radius: 999px; background: rgba(182, 6, 6, .07); color: var(--red); font-size: .78rem; font-variation-settings: 'wght' 650; }
+  .vm__specs { margin: 0 0 22px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .vm__specs div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: .9rem; line-height: 1.4; }
+  .vm__specs dt { color: var(--muted, #5b6068); }
+  .vm__specs dd { margin: 0; color: var(--ink); font-variation-settings: 'wght' 560; }
+  .vm__btns { display: flex; gap: 8px; margin-top: auto; }
+  .vm__btns .ub { flex: 1; }
+  .vm__note { margin: 26px 0 0; text-align: center; color: var(--muted, #5b6068); font-size: .92rem; max-width: none; }
+  .vm__ask { border: 0; background: none; padding: 0; font: inherit; color: var(--red); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  @media (max-width: 980px) { .vm__grid { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin-inline: auto; } }
   .us { padding: clamp(56px, 7vw, 104px) 0; }
   .us--haze { background: var(--haze); }
   .us--dark { background: #141619; color: #fff; }
