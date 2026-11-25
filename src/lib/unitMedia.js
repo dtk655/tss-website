@@ -6,6 +6,10 @@ const P = (src, alt) => ({ src, alt });
 const V = (src, poster, alt, pos, ar) => ({ src: poster, video: src, alt, pos, ar });
 
 export const UNIT_MEDIA = {
+  'speed-limit-trailer': {
+    hero: V('/video/speed-limit-trailer-hero.mp4', '/video/speed-limit-trailer-hero.webp', 'Speed limit trailer showing passing drivers their speed under a 25 mph limit sign', '62% 50%', '1280 / 960'),
+    heroSm: '/video/speed-limit-trailer-hero-sm.mp4'
+  },
   'ground-mount-attenuator-gma': {
     hero: V('/video/gma-hero.mp4', '/video/gma-hero.webp', 'Ground mount attenuator protecting the end of a barrier run as highway traffic passes', '0% 50%', '1280 / 928'),
     heroSm: '/video/gma-hero-sm.mp4'
