@@ -2,6 +2,7 @@
 import { unitName, unitShort } from '../lib/unitNames.js';
 import { badgesFor } from '../lib/unitBadges.js';
 import { VMS_MODELS } from '../lib/vmsModels.js';
+import { specsFor } from '../lib/unitSpecs.js';
 // Full page for a rental unit (equipment and fleet): big media hero, overview, gallery, specs,
 // uses, how renting works, other units and questions. Every number shown comes from the product's own data.
 import { img } from '../lib/shopify.js';
@@ -19,17 +20,18 @@ const cut = cutouts[p.handle];
 const shopImgs = (p.images || []).map((i) => ({ src: img(i.url, 1400), alt: i.altText || p.title, product: true }));
 
 const info = parseDescription(p.descriptionHtml || p.description);
+const ms = specsFor(p.handle);
 const specs = deriveSpecs({ title: p.title, handle: p.handle, text: info.text, options: p.options || [], specLines: info.specLines });
 const badges = deriveBadges(`${p.title} ${info.text}`);
 const lead = info.lead.slice(0, 2);
-const leadText = lead.length ? lead : [isFleet ? 'Ready for your crew, maintained in our own yard and available by the day, week or month.' : 'Delivered to your site, set up and picked up when the job is done.'];
-const benefits = info.features.filter((f) => f.label).slice(0, 6);
-const points = info.features.filter((f) => !f.label).slice(0, 6);
+const leadText = ms ? ms.lead : lead.length ? lead : [isFleet ? 'Ready for your crew, maintained in our own yard and available by the day, week or month.' : 'Delivered to your site, set up and picked up when the job is done.'];
+const benefits = ms ? ms.benefits : info.features.filter((f) => f.label).slice(0, 6);
+const points = ms ? [] : info.features.filter((f) => !f.label).slice(0, 6);
 const uses = (info.uses.length ? info.uses : USES[isFleet ? 'truck-rentals' : 'equipment-rentals'] || []).slice(0, 6);
 const sizes = (p.options || []).find((o) => !/title/i.test(o.name) && o.values.length > 1);
 const allSpecs = [
-  ...specs,
-  sizes && [sizes.name.charAt(0).toUpperCase() + sizes.name.slice(1), sizes.values.join(', ')],
+  ...(ms ? ms.specs : specs),
+  !ms && sizes && [sizes.name.charAt(0).toUpperCase() + sizes.name.slice(1), sizes.values.join(', ')],
   ['Rental terms', 'Daily, weekly, monthly or long-term'],
   ['Service area', 'New Jersey, New York, Pennsylvania and Connecticut'],
   sellable && ['Buy it', 'Also available to purchase'],
@@ -41,7 +43,7 @@ const hero = media.hero || null;
 const stageImg = cut || shopImgs[0]?.src;
 // Real photos lead; the store's product shots only fill in when a unit has fewer than 3 real photos.
 const realG = media.gallery || [];
-const gallery = (realG.length >= 3 ? realG : realG.length ? [...realG, ...shopImgs] : shopImgs.length >= 2 ? shopImgs : []).slice(0, 9);
+const gallery = ms?.gallery ? [...realG, ...ms.gallery].slice(0, 9) : (realG.length >= 3 ? realG : realG.length ? [...realG, ...shopImgs] : shopImgs.length >= 2 ? shopImgs : []).slice(0, 9);
 
 const quote = `/pages/request-a-quote?${new URLSearchParams({ type: 'rental', add: p.handle, t: p.title }).toString()}`;
 const buyQuote = `/pages/request-a-quote?${new URLSearchParams({ type: 'products', add: p.handle, t: p.title }).toString()}`;
@@ -67,12 +69,13 @@ const hl = badgesFor(p.handle);
 const NAV_IC = {
   models: 'M3 5h18v11H3z M8 20h8 M12 16v4 M7 9h2M11 9h2M15 9h2M7 12h10',
   overview: 'M4 5h16M4 10h16M4 15h10M4 20h7',
+  features: 'M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z',
   gallery: 'M4 5h16v14H4z M4 16l5-5 4 4 3-3 4 4 M15.5 9.5h.01',
   specs: 'M9 4h6v3H9z M7 5H5v16h14V5h-2 M8.5 12h7 M8.5 16h5',
   how: 'M5 6h14M5 12h14M5 18h14 M3 6h.01M3 12h.01M3 18h.01',
   faq: 'M12 21a9 9 0 1 0-9-9c0 1.6.4 3.1 1.2 4.4L3 21l4.6-1.2A9 9 0 0 0 12 21z M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1v.5 M12 16.5h.01'
 };
-const nav = [models.length > 0 && ['models', 'Models'], ['overview', 'Overview'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
+const nav = [models.length > 0 && ['models', 'Models'], ['overview', 'Overview'], ms?.groups && ['features', 'Features'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
 const AR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const DOC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5 M12 11v6 M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z', 'M3 12h4l3 8 4-16 3 8h4', 'M12 3v4 M12 17v4 M3 12h4 M17 12h4 M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M5 21V5l7-2 7 2v16'];
@@ -183,8 +186,40 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
           </ul>
         )}
       </div>
+      {ms?.stats && (
+        <ul class="ovs">{ms.stats.map(([n, l]) => <li><b>{n}</b><span>{l}</span></li>)}</ul>
+      )}
     </div>
   </section>
+
+  {ms?.groups && (
+    <section class="us us--haze" id="features">
+      <div class="wrap">
+        <div class="us__h us__h--row">
+          <div>
+            <p class="un__k un__k--dk"><span></span>{ms.maker} {ms.model}</p>
+            <h2>Built for <em>the long shift.</em></h2>
+          </div>
+        </div>
+        <div class="ft">
+          {ms.groups.map((g) => (
+            <div class="ft__g"><h3>{g.t}</h3><ul>{g.items.map((x) => <li>{x}</li>)}</ul></div>
+          ))}
+        </div>
+        {ms.patterns && (
+          <div class="ftp">
+            <div class="ftp__img"><img src={ms.patterns.img} alt="Arrow board display patterns" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.ftp__img').remove()" /></div>
+            <div class="ftp__txt">
+              <p class="un__k un__k--dk"><span></span>Display Patterns</p>
+              <h3>Arrows, chevrons and caution modes.</h3>
+              <dl>{ms.patterns.lines.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+              {ms.options && (<><p class="ftp__k">Available Options</p><ul class="ftp__opts">{ms.options.map((o) => <li>{o}</li>)}</ul></>)}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
 
   <slot name="after-overview" />
 
@@ -200,7 +235,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
           {gallery.map((g, i) => (
             <li class={g.product ? 'gl--prod' : ''}>
               <button type="button" data-gl={i} aria-label={`Open ${g.alt}`}>
-                {g.video ? <video src={g.video} poster={g.src} muted loop playsinline autoplay preload="metadata"></video> : <img src={g.src} alt={g.alt} loading="lazy" />}
+                {g.video ? <video src={g.video} poster={g.src} muted loop playsinline autoplay preload="metadata"></video> : <img src={g.src} alt={g.alt} loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('li').remove()" />}
                 {g.video && <span class="gl__play" aria-hidden="true">Video</span>}
               </button>
             </li>
@@ -232,7 +267,11 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
         <h3>Get the spec sheet</h3>
         <p>A one-page sheet with the photo, specs and rental details. Need certification documents or manufacturer data? Our team will send them over.</p>
         <button type="button" class="ub ub--red" data-print><Fragment set:html={DOC} />Download Spec Sheet</button>
-        <a href={quote} class="ub ub--line">Request Documents</a>
+        {ms?.docs ? (
+          <ul class="sp2__docs">{ms.docs.map(([t, u]) => <li><a href={u} target="_blank" rel="noopener"><Fragment set:html={DOC} />{t}<span>PDF</span></a></li>)}</ul>
+        ) : (
+          <a href={quote} class="ub ub--line">Request Documents</a>
+        )}
         {uses.length > 0 && (
           <>
             <p class="sp2__k sp2__k--u">Common uses</p>
@@ -678,5 +717,47 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
     .un__hl { margin-top: 20px; padding-top: 16px; }
     .un__hl li { padding: 0 6px; }
     .un__hl b { font-size: .8rem; }
+  }
+
+  /* manufacturer detail */
+  .ovs { list-style: none; margin: clamp(30px, 4vw, 48px) 0 0; padding: 26px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+  .ovs li { display: flex; flex-direction: column; gap: 6px; padding: 0 22px; }
+  .ovs li:first-child { padding-left: 0; }
+  .ovs li + li { border-left: 1px solid var(--line); }
+  .ovs b { font-size: clamp(1.7rem, 2.6vw, 2.4rem); line-height: 1; letter-spacing: -.035em; color: var(--ink); font-variation-settings: 'wght' 740; }
+  .ovs span { color: var(--muted, #5b6068); font-size: .9rem; line-height: 1.4; }
+  .ft { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+  .ft__g { padding: 26px 24px 8px 0; }
+  .ft__g + .ft__g { padding-left: 24px; border-left: 1px solid var(--line); }
+  .ft__g h3 { margin: 0 0 14px; font-size: 1.05rem; letter-spacing: -.01em; }
+  .ft__g ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .ft__g li { position: relative; padding-left: 16px; color: #3c4047; font-size: .93rem; line-height: 1.45; }
+  .ft__g li::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 1.5px; background: var(--red); }
+  .ftp { margin-top: clamp(36px, 5vw, 64px); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(24px, 4vw, 64px); align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: clamp(20px, 3vw, 40px); }
+  .ftp__img img { width: 100%; height: auto; display: block; }
+  .ftp__txt h3 { margin: 0 0 18px; font-size: clamp(1.4rem, 2vw, 1.9rem); letter-spacing: -.03em; line-height: 1.1; }
+  .ftp__txt dl { margin: 0 0 22px; border-top: 1px solid var(--line); }
+  .ftp__txt dl div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .ftp__txt dt { font-variation-settings: 'wght' 680; }
+  .ftp__txt dd { margin: 0; color: var(--muted, #5b6068); }
+  .ftp__k { margin: 0 0 10px; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted, #5b6068); font-variation-settings: 'wght' 650; }
+  .ftp__opts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .ftp__opts li { padding: 6px 11px; border: 1px solid var(--line); border-radius: 999px; font-size: .82rem; color: #3c4047; }
+  .sp2__docs { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+  .sp2__docs a { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid rgba(255, 255, 255, .18); border-radius: 12px; color: #fff; text-decoration: none; font-size: .92rem; transition: border-color .2s, background .2s; }
+  .sp2__docs a:hover { border-color: rgba(255, 255, 255, .5); background: rgba(255, 255, 255, .05); }
+  .sp2__docs a :global(svg) { width: 17px; height: 17px; flex: none; }
+  .sp2__docs span { margin-left: auto; font-size: .7rem; letter-spacing: .12em; color: rgba(255, 255, 255, .5); }
+  @media (max-width: 980px) {
+    .ovs { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 22px; }
+    .ovs li:nth-child(3) { padding-left: 0; border-left: 0; }
+    .ft { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ft__g:nth-child(3) { padding-left: 0; border-left: 0; }
+    .ftp { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .ft { grid-template-columns: minmax(0, 1fr); }
+    .ft__g, .ft__g + .ft__g { padding: 20px 0 6px; border-left: 0; border-top: 1px solid var(--line); }
+    .ft__g:first-child { border-top: 0; }
   }
 </style>
