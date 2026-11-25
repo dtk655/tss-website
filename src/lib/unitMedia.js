@@ -7,7 +7,7 @@ const V = (src, poster, alt, pos, ar) => ({ src: poster, video: src, alt, pos, a
 
 export const UNIT_MEDIA = {
   'arrow-board': {
-    hero: V('/video/arrow-board-hero.mp4', '/video/arrow-board-hero.webp', 'Arrow board flashing a left arrow beside a lane closure at dusk as traffic passes', '50% 50%', '1920 / 1072'),
+    hero: V('/video/arrow-board-hero.mp4', '/video/arrow-board-hero.webp', 'Arrow board flashing a left arrow beside a lane closure at dusk as traffic passes', '76% 50%', '1920 / 1072'),
     heroSm: '/video/arrow-board-hero-sm.mp4'
   },
   'truck-mounted-attenuator-tma': {
