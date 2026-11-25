@@ -70,7 +70,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
         <nav class="un__crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href={backHref}>{kind}</a><span>/</span><b aria-current="page">{short}</b></nav>
         <p class="un__k"><span></span>{kind} rental</p>
         <h1 class="un__h">{p.title}</h1>
-        <p class="un__lede"><span class="un__dk">{tagline}</span><span class="un__mb">{isFleet ? 'Available to rent, with or without our crew.' : 'Available to rent or buy.'}</span></p>
+        <p class="un__lede"><span>{isFleet ? 'Available to rent, with or without our crew.' : 'Available to rent or buy.'}</span></p>
         <ul class="un__chips">
           <li>Daily, weekly or monthly</li>
           <li>{isFleet ? 'Maintained in our own yard' : 'Delivered and set up'}</li>
@@ -338,7 +338,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   .un__hero--bleed .un__copy { position: relative; z-index: 2; }
   .un__hero--bleed .un__media { position: absolute; top: 0; right: 0; bottom: 0; width: 54%; max-height: none; aspect-ratio: auto; border-radius: 0; box-shadow: none; align-self: auto; }
   .un__fade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #141619 0%, rgba(20, 22, 25, .78) 12%, rgba(20, 22, 25, .2) 32%, rgba(20, 22, 25, 0) 48%), linear-gradient(180deg, rgba(20, 22, 25, .35) 0%, rgba(20, 22, 25, 0) 18%, rgba(20, 22, 25, 0) 86%, rgba(20, 22, 25, .7) 100%); }
-  .un__mb { display: none; }
+  .un__chips, .un__call { display: none; }
   .un__stage { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
   .un__stage::before { content: ''; position: absolute; inset: 8% 4%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 196, 80, .18), rgba(255, 196, 80, 0)); }
   .un__stage img { position: relative; z-index: 1; width: 100%; max-height: 520px; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(0, 0, 0, .55)); animation: unIn 1s cubic-bezier(.2, .8, .2, 1) both; }
@@ -506,9 +506,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
     .un__crumbs, .un__k, .un__chips, .un__ctas { justify-content: center; }
     .un__lede { margin-inline: auto; }
     /* phones: name, one line and the buttons, all on the first screen */
-    .un__crumbs, .un__k, .un__chips, .un__call { display: none; }
-    .un__dk { display: none; }
-    .un__mb { display: inline; }
+    .un__crumbs, .un__k { display: none; }
     .un__hero--bleed .un__media { aspect-ratio: auto; height: clamp(210px, calc(100svh - var(--hdr-h, 150px) - 330px), 46svh); }
     .un__hin { padding-block: 0 24px; gap: 14px; }
     .un__h { font-size: clamp(1.9rem, 8.4vw, 2.4rem); margin-bottom: 8px; }
