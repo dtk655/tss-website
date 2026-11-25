@@ -1,0 +1,287 @@
+---
+// Body of a unit page when we know the exact make and model (src/lib/unitSpecs.js).
+// Sections: intro with key numbers, live display-pattern demo, benefits with a real photo,
+// rent or buy, grouped specs with manufacturer documents.
+const { ms, quote, buyQuote, sellable, cutout, photo, short } = Astro.props;
+const AR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DOC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// lamp grid for the pattern demo: 13 columns x 5 rows
+const COLS = 13, ROWS = 5;
+const lamps = [];
+for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) lamps.push([c, r]);
+---
+<div class="ud">
+  <!-- INTRO -->
+  <section class="ud__s" id="overview">
+    <div class="wrap ud__intro">
+      <div class="ud__introTxt">
+        <p class="ud__k">{ms.maker} {ms.model}</p>
+        <h2 class="ud__h2">{ms.headline}</h2>
+        {ms.lead.map((l) => <p class="ud__p">{l}</p>)}
+        <div class="ud__btns">
+          <a href={quote} class="udb udb--red">Request a Rental Quote<Fragment set:html={AR} /></a>
+          {sellable && <a href={buyQuote} class="udb udb--line">Buy One</a>}
+        </div>
+      </div>
+      <div class="ud__introImg">{cutout && <img src={cutout} alt={`${ms.maker} ${ms.model}`} loading="lazy" />}</div>
+    </div>
+    <div class="wrap">
+      <ul class="ud__stats">{ms.stats.map(([n, l]) => <li><b>{n}</b><span>{l}</span></li>)}</ul>
+    </div>
+  </section>
+
+  <!-- PATTERN DEMO -->
+  {ms.patternsDemo && (
+    <section class="ud__s ud__s--dark" id="patterns">
+      <div class="wrap ud__demo">
+        <div class="ud__demoTxt">
+          <p class="ud__k ud__k--lt">Display Patterns</p>
+          <h2 class="ud__h2">One board, every lane closure.</h2>
+          <p class="ud__p ud__p--lt">{ms.patternsDemo.note}</p>
+          <div class="ud__pats" role="tablist" aria-label="Display patterns" data-pats>
+            {ms.patternsDemo.list.map(([id, label], i) => (
+              <button type="button" role="tab" class={`ud__pat${i === 0 ? ' is-on' : ''}`} aria-selected={i === 0 ? 'true' : 'false'} data-pat={id}>{label}</button>
+            ))}
+          </div>
+          <dl class="ud__patCount">{ms.patterns.lines.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+        </div>
+        <div class="ud__board" data-board aria-label="Arrow board pattern demonstration">
+          <svg viewBox={`0 0 ${COLS * 40 + 40} ${ROWS * 40 + 40}`} role="img" aria-hidden="true">
+            <defs>
+              <radialGradient id="udLamp" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#fff6d6" /><stop offset=".35" stop-color="#ffc240" /><stop offset="1" stop-color="#ff8a00" /></radialGradient>
+              <radialGradient id="udGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffb000" stop-opacity=".55" /><stop offset="1" stop-color="#ffb000" stop-opacity="0" /></radialGradient>
+            </defs>
+            <rect x="2" y="2" width={COLS * 40 + 36} height={ROWS * 40 + 36} rx="14" fill="#0b0c0d" stroke="#2a2d31" stroke-width="3" />
+            {lamps.map(([c, r]) => (
+              <g data-l={`${c},${r}`} transform={`translate(${40 + c * 40} ${40 + r * 40})`}>
+                <circle class="ud__glow" r="26" fill="url(#udGlow)" />
+                <circle class="ud__off" r="11" fill="#1c1e21" stroke="#2c2f33" stroke-width="1.5" />
+                <circle class="ud__on" r="11" fill="url(#udLamp)" />
+              </g>
+            ))}
+          </svg>
+          <p class="ud__boardCap">Illustration of standard arrow panel modes.</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- BENEFITS -->
+  <section class="ud__s" id="why">
+    <div class="wrap ud__why">
+      <div class="ud__whyImg">{photo && <img src={photo} alt={`${short} deployed beside a lane closure`} loading="lazy" />}</div>
+      <div>
+        <p class="ud__k">Why Crews Choose It</p>
+        <h2 class="ud__h2">Less time setting up. More time working.</h2>
+        <ul class="ud__ben">
+          {ms.benefits.slice(0, 4).map((b) => <li><b>{b.label}</b><p>{b.text}</p></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- RENT OR BUY -->
+  <section class="ud__s ud__s--haze" id="rent-buy">
+    <div class="wrap">
+      <div class="ud__head">
+        <p class="ud__k">Rent or Buy</p>
+        <h2 class="ud__h2">Use it for a job, or add it to your fleet.</h2>
+      </div>
+      <div class="ud__rb">
+        <article class="ud__rbc">
+          <p class="ud__rbk">Rent</p>
+          <h3>Delivered, set up and picked up.</h3>
+          <ul>
+            <li>Daily, weekly or monthly rates</li>
+            <li>Delivered across NJ, NY, PA and CT</li>
+            <li>Add our certified and experienced crew for the full closure</li>
+            <li>Swap or extend any time during the job</li>
+          </ul>
+          <a href={quote} class="udb udb--red">Request a Rental Quote<Fragment set:html={AR} /></a>
+        </article>
+        {sellable && (
+          <article class="ud__rbc ud__rbc--dark">
+            <p class="ud__rbk">Buy</p>
+            <h3>A new {ms.maker} {ms.model}.</h3>
+            <ul>{ms.buyPoints.map((x) => <li>{x}</li>)}</ul>
+            <a href={buyQuote} class="udb udb--white">Request a Purchase Quote<Fragment set:html={AR} /></a>
+          </article>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- SPECS -->
+  <section class="ud__s" id="specs">
+    <div class="wrap">
+      <div class="ud__head ud__head--row">
+        <div>
+          <p class="ud__k">Specifications</p>
+          <h2 class="ud__h2">Built to spec.</h2>
+        </div>
+        <button type="button" class="udb udb--line" data-print><Fragment set:html={DOC} />Download Spec Sheet</button>
+      </div>
+      <div class="ud__spec">
+        {ms.specGroups.map((g) => (
+          <div class="ud__sg">
+            <h3>{g.t}</h3>
+            <dl>{g.rows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+          </div>
+        ))}
+      </div>
+      <div class="ud__docs">
+        <p>Manufacturer documents</p>
+        <ul>{ms.docs.map(([t, u]) => <li><a href={u} target="_blank" rel="noopener"><Fragment set:html={DOC} />{t}<span>PDF</span></a></li>)}</ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Pattern demo: draws each mode on the lamp grid and animates it (flash rate ~37 per minute).
+  const board = document.querySelector('[data-board]');
+  if (board) {
+    const L = (c, r) => board.querySelector(`[data-l="${c},${r}"]`);
+    const all = [...board.querySelectorAll('[data-l]')];
+    const set = (pts) => { const on = new Set(pts.map(([c, r]) => `${c},${r}`)); all.forEach((g) => g.classList.toggle('is-on', on.has(g.dataset.l))); };
+    const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+    const shaft = (a, b) => range(a, b).map((c) => [c, 2]);
+    const headR = (x) => [[x - 2, 0], [x - 1, 1], [x, 2], [x - 1, 3], [x - 2, 4]];
+    const headL = (x) => [[x + 2, 0], [x + 1, 1], [x, 2], [x + 1, 3], [x + 2, 4]];
+    const chevR = (x) => [[x, 0], [x + 1, 1], [x + 2, 2], [x + 1, 3], [x, 4]];
+    const chevL = (x) => [[x + 2, 0], [x + 1, 1], [x, 2], [x + 1, 3], [x + 2, 4]];
+    const P = {
+      right: { frames: [[...shaft(0, 11), ...headR(12)], []], t: 800 },
+      left: { frames: [[...shaft(1, 12), ...headL(0)], []], t: 800 },
+      seqRight: { frames: [shaft(0, 3), shaft(0, 7), [...shaft(0, 11), ...headR(12)], []], t: 420 },
+      chevRight: { frames: [chevR(0), [...chevR(0), ...chevR(4)], [...chevR(0), ...chevR(4), ...chevR(8)], []], t: 420 },
+      chevLeft: { frames: [chevL(10), [...chevL(10), ...chevL(6)], [...chevL(10), ...chevL(6), ...chevL(2)], []], t: 420 },
+      double: { frames: [[...shaft(1, 11), ...headL(0), ...headR(12)], []], t: 800 },
+      caution: { frames: [[[0, 0], [12, 0], [0, 4], [12, 4]], []], t: 800 }
+    };
+    let timer = 0, cur = 'right';
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const run = (id) => {
+      cur = id; clearInterval(timer);
+      const p = P[id]; let i = 0; set(p.frames[0]);
+      if (reduce) return;
+      timer = setInterval(() => { i = (i + 1) % p.frames.length; set(p.frames[i]); }, p.t);
+    };
+    document.querySelectorAll('[data-pat]').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('[data-pat]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      run(b.dataset.pat);
+    }));
+    // start when visible
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) run(cur); else clearInterval(timer); }), { threshold: .2 });
+      io.observe(board);
+    } else run(cur);
+  }
+</script>
+
+<style>
+  .ud__s { padding: clamp(64px, 8vw, 120px) 0; background: #fff; }
+  .ud__s--haze { background: var(--haze); }
+  .ud__s--dark { background: #121416; color: #fff; }
+  .ud__k { margin: 0 0 14px; font-size: .74rem; letter-spacing: .24em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 650; }
+  .ud__k--lt { color: var(--gold); }
+  .ud__h2 { margin: 0 0 20px; font-size: clamp(2rem, 3.6vw, 3.4rem); line-height: 1.02; letter-spacing: -.04em; color: inherit; text-wrap: balance; max-width: 18ch; }
+  .ud__p { margin: 0 0 14px; max-width: 54ch; color: var(--steel); font-size: clamp(1.02rem, 1.2vw, 1.14rem); line-height: 1.6; }
+  .ud__p--lt { color: rgba(255, 255, 255, .66); }
+  .ud__head { margin-bottom: clamp(30px, 4vw, 52px); }
+  .ud__head--row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; }
+  .ud__head .ud__h2 { margin: 0; max-width: 22ch; }
+
+  .udb { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 0 24px; border-radius: 999px; border: 1px solid transparent; font: inherit; font-size: .98rem; font-variation-settings: 'wght' 660; text-decoration: none; white-space: nowrap; cursor: pointer; transition: background .2s, border-color .2s, color .2s; }
+  .udb :global(svg) { width: 17px; height: 17px; }
+  .udb--red { background: var(--red); color: #fff; }
+  .udb--red:hover { background: var(--red-press); }
+  .udb--line { border-color: var(--line-dark); color: var(--ink); background: #fff; }
+  .udb--line:hover { border-color: var(--ink); }
+  .udb--white { background: #fff; color: var(--ink); }
+  .udb--white:hover { background: var(--haze-2); }
+  .ud__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+
+  /* intro */
+  .ud__intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(30px, 5vw, 90px); align-items: center; }
+  .ud__introImg { position: relative; aspect-ratio: 5 / 4; display: grid; place-items: center; border-radius: 28px; background: radial-gradient(90% 80% at 50% 40%, #fff 0%, #eef0f2 70%, #e6e9ec 100%); overflow: hidden; }
+  .ud__introImg::after { content: ''; position: absolute; left: 14%; right: 14%; bottom: 10%; height: 26px; border-radius: 50%; background: radial-gradient(closest-side, rgba(20, 22, 25, .28), transparent); }
+  .ud__introImg img { position: relative; z-index: 1; width: 78%; height: 82%; object-fit: contain; }
+  .ud__stats { list-style: none; margin: clamp(48px, 6vw, 80px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+  .ud__stats li { padding: 26px 24px 0; display: flex; flex-direction: column; gap: 8px; }
+  .ud__stats li:first-child { padding-left: 0; }
+  .ud__stats li + li { border-left: 1px solid var(--line); }
+  .ud__stats b { font-size: clamp(2rem, 3.4vw, 3.2rem); line-height: 1; letter-spacing: -.045em; color: var(--ink); font-variation-settings: 'wght' 720; }
+  .ud__stats span { color: var(--steel); font-size: .94rem; line-height: 1.4; max-width: 22ch; }
+
+  /* demo */
+  .ud__demo { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(30px, 5vw, 80px); align-items: center; }
+  .ud__pats { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 28px; }
+  .ud__pat { padding: 10px 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); background: transparent; color: rgba(255, 255, 255, .82); font: inherit; font-size: .9rem; font-variation-settings: 'wght' 600; cursor: pointer; transition: background .2s, border-color .2s, color .2s; }
+  .ud__pat:hover { border-color: rgba(255, 255, 255, .55); color: #fff; }
+  .ud__pat.is-on { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .ud__patCount { margin: 0; border-top: 1px solid rgba(255, 255, 255, .12); max-width: 380px; }
+  .ud__patCount div { display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid rgba(255, 255, 255, .12); }
+  .ud__patCount dt { font-variation-settings: 'wght' 650; }
+  .ud__patCount dd { margin: 0; color: rgba(255, 255, 255, .6); }
+  .ud__board { position: relative; padding: clamp(18px, 2.4vw, 34px); border-radius: 26px; background: radial-gradient(120% 120% at 50% 0%, #24272b 0%, #17191c 60%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
+  .ud__board svg { width: 100%; height: auto; display: block; }
+  .ud__board :global(.ud__on), .ud__board :global(.ud__glow) { opacity: 0; transition: opacity .09s linear; }
+  .ud__board :global(.is-on .ud__on), .ud__board :global(.is-on .ud__glow) { opacity: 1; }
+  .ud__boardCap { margin: 14px 0 0; text-align: center; font-size: .78rem; color: rgba(255, 255, 255, .4); max-width: none; }
+
+  /* benefits */
+  .ud__why { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(30px, 5vw, 90px); align-items: center; }
+  .ud__whyImg { aspect-ratio: 4 / 3; border-radius: 26px; overflow: hidden; background: #1a1c1f; }
+  .ud__whyImg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ud__ben { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .ud__ben li { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .ud__ben b { font-size: 1.02rem; letter-spacing: -.01em; font-variation-settings: 'wght' 700; }
+  .ud__ben p { margin: 0; color: var(--steel); line-height: 1.55; max-width: none; }
+
+  /* rent or buy */
+  .ud__rb { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
+  .ud__rbc { display: flex; flex-direction: column; padding: clamp(28px, 3.4vw, 48px); border-radius: 26px; background: #fff; border: 1px solid var(--line); }
+  .ud__rbc--dark { background: #141619; border-color: #141619; color: #fff; }
+  .ud__rbk { margin: 0 0 12px; font-size: .74rem; letter-spacing: .24em; text-transform: uppercase; color: var(--red); font-variation-settings: 'wght' 650; }
+  .ud__rbc--dark .ud__rbk { color: var(--gold); }
+  .ud__rbc h3 { margin: 0 0 22px; font-size: clamp(1.5rem, 2.2vw, 2.1rem); letter-spacing: -.035em; line-height: 1.08; }
+  .ud__rbc ul { list-style: none; margin: 0 0 30px; padding: 0; border-top: 1px solid var(--line); flex: 1; }
+  .ud__rbc--dark ul { border-color: rgba(255, 255, 255, .12); }
+  .ud__rbc li { padding: 14px 0 14px 28px; border-bottom: 1px solid var(--line); position: relative; line-height: 1.45; }
+  .ud__rbc--dark li { border-color: rgba(255, 255, 255, .12); color: rgba(255, 255, 255, .85); }
+  .ud__rbc li::before { content: ''; position: absolute; left: 2px; top: 20px; width: 12px; height: 6px; border-left: 2px solid var(--red); border-bottom: 2px solid var(--red); transform: rotate(-45deg); }
+  .ud__rbc--dark li::before { border-color: var(--gold); }
+  .ud__rbc .udb { align-self: flex-start; }
+
+  /* specs */
+  .ud__spec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
+  .ud__sg h3 { margin: 0 0 6px; padding-bottom: 14px; font-size: 1.05rem; border-bottom: 2px solid var(--ink); }
+  .ud__sg dl { margin: 0; }
+  .ud__sg dl div { display: flex; justify-content: space-between; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: .93rem; }
+  .ud__sg dt { color: var(--steel); }
+  .ud__sg dd { margin: 0; text-align: right; color: var(--ink); font-variation-settings: 'wght' 600; }
+  .ud__docs { margin-top: clamp(36px, 4vw, 56px); display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .ud__docs p { margin: 0; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 650; }
+  .ud__docs ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .ud__docs a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid var(--line-dark); border-radius: 999px; color: var(--ink); text-decoration: none; font-size: .9rem; font-variation-settings: 'wght' 600; transition: border-color .2s; }
+  .ud__docs a:hover { border-color: var(--ink); }
+  .ud__docs a :global(svg) { width: 16px; height: 16px; }
+  .ud__docs span { font-size: .68rem; letter-spacing: .1em; color: var(--steel); }
+
+  @media (max-width: 980px) {
+    .ud__intro, .ud__demo, .ud__why, .ud__rb { grid-template-columns: minmax(0, 1fr); }
+    .ud__introImg { order: -1; }
+    .ud__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ud__stats li:nth-child(3) { padding-left: 0; border-left: 0; }
+    .ud__stats li:nth-child(n+3) { padding-top: 22px; }
+    .ud__spec { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .ud__ben li { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .ud__stats li { padding-inline: 14px; }
+    .ud__stats li:nth-child(odd) { padding-left: 0; border-left: 0; }
+    .ud__btns .udb, .ud__rbc .udb { width: 100%; }
+    .ud__h2 { max-width: none; }
+  }
+</style>

@@ -7,6 +7,17 @@ export const UNIT_SPECS = {
   'arrow-board': {
     maker: 'Wanco',
     model: 'W|ECO Folding Frame Arrow Board',
+    headline: 'Seen from a mile away. Runs on a fraction of the power.',
+    patternsDemo: {
+      note: 'Switch between arrows, chevrons and caution modes from the control box, set on the side away from traffic.',
+      list: [['right', 'Arrow Right'], ['left', 'Arrow Left'], ['seqRight', 'Sequential Arrow'], ['chevRight', 'Sequential Chevron'], ['double', 'Double Arrow'], ['caution', 'Caution']]
+    },
+    buyPoints: ['15-light or 25-light display', 'Connected Pro package with Wanco Fleet Manager', 'Extra solar and battery capacity', 'Ball and pintle combo hitch or lunette ring', 'Customer Pick Up at our South Plainfield yard, or we deliver'],
+    specGroups: [
+      { t: 'Display', rows: [['Lamps', '15 or 25 amber LEDs'], ['Patterns', '7 or 12'], ['Dimming', 'Automatic'], ['Standard', 'MUTCD Type C'], ['Visibility', '1 mile or more']] },
+      { t: 'Power', rows: [['Solar', 'One 50 W panel'], ['Batteries', 'Two sealed 12 V VRLA'], ['Capacity', '36 Ah total'], ['Charging', 'Solar or commercial'], ['Protection', 'Low-voltage disconnect']] },
+      { t: 'Trailer', rows: [['Weight', 'About 1,250 lb'], ['Frame', 'All-welded steel'], ['Axle', '2,000 lb tubular'], ['Wheel track', '60 in.'], ['Tires', 'ST205/75 D15']] }
+    ],
     lead: [
       'The Wanco W|ECO is built to be seen from a mile or more away, while drawing a fraction of the power of a traditional solar arrow board.',
       'Its folding frame swings the panel upright on site and flat for travel, held by a single support. One person can raise it with the hand winch.'
