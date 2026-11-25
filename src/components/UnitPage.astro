@@ -57,6 +57,13 @@ const faqs = [
   sellable && ['Can I buy one?', 'Yes. It’s also available to purchase. Request a quote and choose Buy.'],
   ['How do I get pricing?', 'Request a quote online or call us. Rates depend on the dates, location and length of the rental.']
 ].filter(Boolean);
+const NAV_IC = {
+  overview: 'M4 5h16M4 10h16M4 15h10M4 20h7',
+  gallery: 'M4 5h16v14H4z M4 16l5-5 4 4 3-3 4 4 M15.5 9.5h.01',
+  specs: 'M9 4h6v3H9z M7 5H5v16h14V5h-2 M8.5 12h7 M8.5 16h5',
+  how: 'M5 6h14M5 12h14M5 18h14 M3 6h.01M3 12h.01M3 18h.01',
+  faq: 'M12 21a9 9 0 1 0-9-9c0 1.6.4 3.1 1.2 4.4L3 21l4.6-1.2A9 9 0 0 0 12 21z M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1v.5 M12 16.5h.01'
+};
 const nav = [['overview', 'Overview'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
 const AR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const DOC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5 M12 11v6 M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -101,7 +108,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
 
   <nav class="un__nav" aria-label="On this page" data-unav>
     <div class="wrap un__navin">
-      <div class="un__navl">{nav.map(([id, l]) => <a href={`#${id}`} data-unav-a={id}>{l}</a>)}</div>
+      <div class="un__navl">{nav.map(([id, l]) => <a href={`#${id}`} data-unav-a={id}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={NAV_IC[id]} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>{l}</a>)}</div>
       <a href={quote} class="ub ub--red ub--sm">Request a Quote</a>
     </div>
   </nav>
@@ -271,7 +278,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
       // section nav highlight
       const links = [...u.querySelectorAll('[data-unav-a]')];
       if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('is-on', a.dataset.unavA === e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+        const io = new IntersectionObserver((es) => es.forEach((e) => { if (!e.isIntersecting) return; links.forEach((a) => a.classList.toggle('is-on', a.dataset.unavA === e.target.id)); const on = links.find((a) => a.dataset.unavA === e.target.id), bar = on && on.parentElement; if (bar && bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: on.offsetLeft - (bar.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' }); }), { rootMargin: '-45% 0px -50% 0px' });
         links.forEach((a) => { const s = document.getElementById(a.dataset.unavA); if (s) io.observe(s); });
         const first = document.getElementById('overview');
         addEventListener('scroll', () => { if (first && first.getBoundingClientRect().top > innerHeight * .5) links.forEach((a) => a.classList.remove('is-on')); }, { passive: true });
@@ -346,13 +353,22 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   @keyframes unIn { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
 
   /* sub nav */
-  .un__nav { position: sticky; top: var(--hdr-h, 120px); z-index: 20; background: rgba(255, 255, 255, .94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
-  .un__navin { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; }
-  .un__navl { display: flex; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .un__nav { position: sticky; top: var(--hdr-h, 120px); z-index: 20; background: rgba(246, 247, 249, .92); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border-bottom: 1px solid var(--line); }
+  .un__navin { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; }
+  .un__navl { display: flex; gap: 10px; min-width: 0; overflow-x: auto; scrollbar-width: none; padding: 6px 2px; }
   .un__navl::-webkit-scrollbar { display: none; }
-  .un__navl a { flex: none; padding: 9px 15px; border-radius: 999px; color: var(--steel); text-decoration: none; font-size: .94rem; font-variation-settings: 'wght' 640; transition: color .2s, background .2s; }
-  .un__navl a:hover { color: var(--ink); background: var(--haze); }
-  .un__navl a.is-on { color: #fff; background: var(--ink); }
+  .un__navl a { flex: none; display: inline-flex; align-items: center; gap: 9px; height: 46px; padding: 0 20px 0 16px; border-radius: 999px; background: #fff; border: 1px solid rgba(20, 22, 25, .1); box-shadow: 0 1px 2px rgba(20, 22, 25, .06), 0 6px 16px -10px rgba(20, 22, 25, .25); color: var(--ink); text-decoration: none; font-size: .95rem; font-variation-settings: 'wght' 660; transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease; }
+  .un__navl a svg { width: 19px; height: 19px; flex: none; color: var(--red); transition: color .2s ease; }
+  .un__navl a:hover { transform: translateY(-1px); border-color: rgba(20, 22, 25, .18); box-shadow: 0 2px 4px rgba(20, 22, 25, .06), 0 12px 24px -12px rgba(20, 22, 25, .35); }
+  .un__navl a.is-on { background: var(--ink); border-color: var(--ink); color: #fff; box-shadow: 0 10px 22px -12px rgba(20, 22, 25, .7); }
+  .un__navl a.is-on svg { color: var(--gold); }
+  .un__navl a:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    .un__navin { min-height: 64px; }
+    .un__navl { gap: 8px; margin-inline: -16px; padding-inline: 16px; scroll-padding-inline: 16px; }
+    .un__navl a { height: 42px; padding: 0 16px 0 13px; font-size: .9rem; gap: 7px; }
+    .un__navl a svg { width: 17px; height: 17px; }
+  }
   .un section[id] { scroll-margin-top: calc(var(--hdr-h, 120px) + 70px); }
 
   /* sections */
