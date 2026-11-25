@@ -66,8 +66,10 @@ export const UNIT_MEDIA = {
     ]
   },
   'light-tower': {
-    hero: P('/photos/light-towers-row.webp', 'A row of light towers in the TSS yard'),
+    hero: V('/video/light-tower-hero.mp4', '/video/light-tower-hero.webp', 'Light tower switching on at dusk and lighting up a work site', '32% 50%', '1632 / 1080'),
+    heroSm: '/video/light-tower-hero-sm.mp4',
     gallery: [
+      P('/photos/light-towers-row.webp', 'A row of light towers in the TSS yard'),
       P('/photos/light-tower-319.webp', 'Light tower 319 with four LED heads'),
       P('/photos/light-towers-wanco.webp', 'Light towers lined up'),
       P('/photos/light-tower-319-rear.webp', 'Rear of light tower 319'),
