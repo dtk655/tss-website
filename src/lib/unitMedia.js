@@ -54,8 +54,10 @@ export const UNIT_MEDIA = {
     ]
   },
   'variable-message-sign-vms-board': {
-    hero: P('/photos/vms-new.webp', 'Full-matrix message board on a trailer'),
+    hero: V('/video/vms-hero.mp4', '/video/vms-hero.webp', 'Message board warning drivers of construction ahead and men working', '78% 50%', '1344 / 896'),
+    heroSm: '/video/vms-hero-sm.mp4',
     gallery: [
+      P('/photos/vms-new.webp', 'Full-matrix message board on a trailer'),
       P('/photos/vms-396.webp', 'TSS message board 396'),
       P('/photos/vms-side.webp', 'Message board trailer in the yard'),
       P('/fleet/vms-yard.webp', 'Message boards ready in the TSS yard')
