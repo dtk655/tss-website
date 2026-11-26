@@ -7,7 +7,7 @@ export const UNIT_SPECS = {
   'arrow-board': {
     maker: 'Wanco',
     model: 'W|ECO Folding Frame Arrow Board',
-    headline: 'Seen from a mile away. Runs on a fraction of the power.',
+    tags: ['15 or 25 LEDs', 'MUTCD Type C', 'Solar Powered', '1+ Mile Visibility'],
     patternsDemo: {
       note: 'Switch between arrows, chevrons and caution modes from the control box, set on the side away from traffic.',
       list: [['right', 'Arrow Right'], ['left', 'Arrow Left'], ['seqRight', 'Sequential Arrow'], ['chevRight', 'Sequential Chevron'], ['double', 'Double Arrow'], ['caution', 'Caution']]

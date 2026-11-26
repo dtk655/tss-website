@@ -3,7 +3,6 @@ import { unitName, unitShort } from '../lib/unitNames.js';
 import { badgesFor } from '../lib/unitBadges.js';
 import { VMS_MODELS } from '../lib/vmsModels.js';
 import { specsFor } from '../lib/unitSpecs.js';
-import UnitDetail from './UnitDetail.astro';
 // Full page for a rental unit (equipment and fleet): big media hero, overview, gallery, specs,
 // uses, how renting works, other units and questions. Every number shown comes from the product's own data.
 import { img } from '../lib/shopify.js';
@@ -69,6 +68,7 @@ const mQuote = (m) => `/pages/request-a-quote?${new URLSearchParams({ type: 'ren
 const hl = badgesFor(p.handle);
 const NAV_IC = {
   models: 'M3 5h18v11H3z M8 20h8 M12 16v4 M7 9h2M11 9h2M15 9h2M7 12h10',
+  product: 'M3 5h18v11H3z M8 20h8 M12 16v4 M7 9h2M11 9h2M15 9h2M7 12h10',
   overview: 'M4 5h16M4 10h16M4 15h10M4 20h7',
   patterns: 'M3 12h14 M13 7l5 5-5 5',
   why: 'M5 12l4 4 10-10',
@@ -79,7 +79,7 @@ const NAV_IC = {
   how: 'M5 6h14M5 12h14M5 18h14 M3 6h.01M3 12h.01M3 18h.01',
   faq: 'M12 21a9 9 0 1 0-9-9c0 1.6.4 3.1 1.2 4.4L3 21l4.6-1.2A9 9 0 0 0 12 21z M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1v.5 M12 16.5h.01'
 };
-const nav = ms ? [['overview', 'Overview'], ms.patternsDemo && ['patterns', 'Patterns'], ['why', 'Benefits'], ['rent-buy', 'Rent or Buy'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean) : [models.length > 0 && ['models', 'Models'], ['overview', 'Overview'], ms?.groups && ['features', 'Features'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
+const nav = ms ? [['product', 'Product'], ['how', 'How It Works'], ['faq', 'Questions']] : [models.length > 0 && ['models', 'Models'], ['overview', 'Overview'], ms?.groups && ['features', 'Features'], gallery.length > 0 && ['gallery', 'Gallery'], ['specs', 'Specs'], ['how', 'How It Works'], ['faq', 'Questions']].filter(Boolean);
 const AR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const DOC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5 M12 11v6 M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z', 'M3 12h4l3 8 4-16 3 8h4', 'M12 3v4 M12 17v4 M3 12h4 M17 12h4 M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M5 21V5l7-2 7 2v16'];
@@ -171,7 +171,38 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   )}
 
   {ms ? (
-    <UnitDetail ms={ms} quote={quote} buyQuote={buyQuote} sellable={sellable} cutout={cut || shopImgs[0]?.src} photo={hero?.src} short={short} />
+    <section class="us vm" id="product">
+      <div class="wrap">
+        <div class="us__h">
+          <p class="un__k un__k--dk"><span></span>The Equipment</p>
+          <h2>{ms.maker} {ms.model}</h2>
+        </div>
+        <article class="vm__card vm__card--wide">
+          <div class="vm__img"><img src={cut || shopImgs[0]?.src} alt={`${ms.maker} ${ms.model}`} loading="lazy" decoding="async" /><span class="vm__model">{ms.maker} W|ECO</span></div>
+          <div class="vm__body">
+            <h3>{ms.model}</h3>
+            <p class="vm__lede">{ms.lead.join(' ')}</p>
+            <ul class="vm__tags">{ms.tags.map((t) => <li>{t}</li>)}</ul>
+            <div class="vm__cols">
+              <div>
+                <p class="vm__sub">Features</p>
+                <ul class="vm__feat">{ms.benefits.map((b) => <li><b>{b.label}</b><span>{b.text}</span></li>)}</ul>
+              </div>
+              <div>
+                <p class="vm__sub">Specifications</p>
+                <dl class="vm__specs">{ms.specs.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+              </div>
+            </div>
+            <div class="vm__btns">
+              <a class="ub ub--red ub--sm" href={quote}>Request a Quote</a>
+              <a class="ub ub--line ub--sm" href={ms.docs[0][1]} target="_blank" rel="noopener">Spec Sheet</a>
+              {sellable && <a class="ub ub--line ub--sm" href={buyQuote}>Buy One</a>}
+            </div>
+            <p class="vm__docs">{ms.docs.slice(1).map(([t, u]) => <a href={u} target="_blank" rel="noopener">{t} (PDF)</a>)}</p>
+          </div>
+        </article>
+      </div>
+    </section>
   ) : (<>
   <!-- ============ OVERVIEW ============ -->
   <section class="us" id="overview">
@@ -768,5 +799,30 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
     .ft { grid-template-columns: minmax(0, 1fr); }
     .ft__g, .ft__g + .ft__g { padding: 20px 0 6px; border-left: 0; border-top: 1px solid var(--line); }
     .ft__g:first-child { border-top: 0; }
+  }
+
+  /* single-product card (arrow board) */
+  .vm__card--wide { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+  .vm__card--wide .vm__img { aspect-ratio: auto; min-height: 100%; }
+  .vm__card--wide .vm__img img { position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: contain; }
+  .vm__card--wide .vm__body { padding: clamp(24px, 3vw, 44px); }
+  .vm__card--wide h3 { font-size: clamp(1.5rem, 2.2vw, 2.1rem); letter-spacing: -.03em; }
+  .vm__cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 2.6vw, 36px); margin-bottom: 22px; }
+  .vm__sub { margin: 0 0 10px; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--steel); font-variation-settings: 'wght' 650; }
+  .vm__feat { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .vm__feat li { display: grid; gap: 3px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: .9rem; line-height: 1.4; }
+  .vm__feat b { font-variation-settings: 'wght' 680; }
+  .vm__feat span { color: var(--steel); }
+  .vm__cols .vm__specs { margin: 0; }
+  .vm__cols .vm__specs div { grid-template-columns: 104px minmax(0, 1fr); }
+  .vm__card--wide .vm__btns .ub { flex: 0 1 auto; padding: 0 22px; }
+  .vm__docs { margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .86rem; max-width: none; }
+  .vm__docs a { color: var(--ink); text-underline-offset: 3px; }
+  @media (max-width: 1100px) { .vm__cols { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 860px) {
+    .vm__card--wide { grid-template-columns: minmax(0, 1fr); }
+    .vm__card--wide .vm__img { aspect-ratio: 4 / 3; min-height: 0; }
+    .vm__card--wide .vm__btns { flex-wrap: wrap; }
+    .vm__card--wide .vm__btns .ub { flex: 1 1 100%; }
   }
 </style>
