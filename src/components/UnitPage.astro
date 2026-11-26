@@ -173,7 +173,6 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
             <p class="vm__sub">{ms.maker}</p>
             <h3>{ms.model}</h3>
             <p class="pc__lede">{ms.lead[0]}</p>
-            <ul class="pc__stats">{ms.stats.map(([n, l]) => <li><b>{n}</b><span>{l}</span></li>)}</ul>
             <div class="pc__tabs" role="tablist" aria-label="Product details" data-pctabs>
               <button type="button" role="tab" aria-selected="true" class="is-on" data-pct="f">Features</button>
               <button type="button" role="tab" aria-selected="false" data-pct="s">Specifications</button>
@@ -899,7 +898,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
 
   /* product card: summary, key numbers, tabbed detail */
   .pc h3 { margin-bottom: 10px; }
-  .pc__lede { margin: 0 0 24px; color: var(--steel); font-size: 1.04rem; line-height: 1.55; max-width: 56ch; }
+  .pc__lede { margin: 0 0 26px; color: var(--steel); font-size: 1.04rem; line-height: 1.55; max-width: 56ch; }
   .pc__stats { list-style: none; margin: 0 0 28px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 16px; }
   .pc__stats li { padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 5px; }
   .pc__stats li + li { border-left: 1px solid var(--line); }
