@@ -874,4 +874,11 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
     .un .un__hero .un__hl b { font-size: 1.38em; }
     .un .un__hero .un__hl small { font-size: 1.05em; line-height: 1.35; }
   }
+
+  /* desktop: let the photo or video melt into the dark side instead of stopping at an edge */
+  @media (min-width: 1001px) {
+    .un__hero--bleed { background: #141619; }
+    .un__hero--bleed .un__media { width: 64%; -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.03) 6%, rgba(0,0,0,.1) 12%, rgba(0,0,0,.22) 18%, rgba(0,0,0,.38) 24%, rgba(0,0,0,.56) 30%, rgba(0,0,0,.74) 36%, rgba(0,0,0,.88) 42%, rgba(0,0,0,.96) 48%, #000 56%); mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.03) 6%, rgba(0,0,0,.1) 12%, rgba(0,0,0,.22) 18%, rgba(0,0,0,.38) 24%, rgba(0,0,0,.56) 30%, rgba(0,0,0,.74) 36%, rgba(0,0,0,.88) 42%, rgba(0,0,0,.96) 48%, #000 56%); }
+    .un__hero--bleed .un__fade { background: linear-gradient(180deg, rgba(20, 22, 25, .3) 0%, rgba(20, 22, 25, 0) 16%, rgba(20, 22, 25, 0) 84%, rgba(20, 22, 25, .55) 100%); }
+  }
 </style>
