@@ -24,7 +24,7 @@ export const UNIT_SPECS = {
     ],
     stats: [
       ['1+ mile', 'Visibility'],
-      ['Up to 80%', 'Less power than traditional solar boards'],
+      ['Up to 80%', 'Less power than standard solar boards'],
       ['15 or 25', 'High-output amber LEDs'],
       ['MUTCD', 'Type C arrow panel']
     ],

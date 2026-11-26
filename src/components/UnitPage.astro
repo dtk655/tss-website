@@ -169,27 +169,33 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
       <div class="wrap">
         <article class="vm__card vm__card--wide">
           <div class="vm__img"><img src={cut || shopImgs[0]?.src} alt={`${ms.maker} ${ms.model}`} loading="lazy" decoding="async" /><span class="vm__model">{ms.maker} W|ECO</span></div>
-          <div class="vm__body">
+          <div class="vm__body pc">
             <p class="vm__sub">{ms.maker}</p>
             <h3>{ms.model}</h3>
-            <p class="vm__lede">{ms.lead.join(' ')}</p>
-            <ul class="vm__tags">{ms.tags.map((t) => <li>{t}</li>)}</ul>
-            <div class="vm__cols">
-              <div>
-                <p class="vm__sub">Features</p>
-                <ul class="vm__feat">{ms.benefits.map((b) => <li><b>{b.label}</b><span>{b.text}</span></li>)}</ul>
-              </div>
-              <div>
-                <p class="vm__sub">Specifications</p>
-                <dl class="vm__specs">{ms.specs.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+            <p class="pc__lede">{ms.lead[0]}</p>
+            <ul class="pc__stats">{ms.stats.map(([n, l]) => <li><b>{n}</b><span>{l}</span></li>)}</ul>
+            <div class="pc__tabs" role="tablist" aria-label="Product details" data-pctabs>
+              <button type="button" role="tab" aria-selected="true" class="is-on" data-pct="f">Features</button>
+              <button type="button" role="tab" aria-selected="false" data-pct="s">Specifications</button>
+              <button type="button" role="tab" aria-selected="false" data-pct="d">Documents</button>
+            </div>
+            <div class="pc__panel is-on" data-pcp="f" role="tabpanel">
+              <ul class="pc__feat">{ms.benefits.map((b) => <li><b>{b.label}</b><span>{b.text}</span></li>)}</ul>
+            </div>
+            <div class="pc__panel" data-pcp="s" role="tabpanel">
+              <div class="pc__spec">
+                {ms.specGroups.map((g) => (
+                  <div><p>{g.t}</p><dl>{g.rows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl></div>
+                ))}
               </div>
             </div>
-            <div class="vm__btns">
+            <div class="pc__panel" data-pcp="d" role="tabpanel">
+              <ul class="pc__docs">{ms.docs.map(([t, u]) => <li><a href={u} target="_blank" rel="noopener"><Fragment set:html={DOC} /><span>{t}</span><em>PDF</em></a></li>)}</ul>
+            </div>
+            <div class="vm__btns pc__btns">
               <a class="ub ub--red ub--sm" href={quote}>Request a Quote</a>
-              <a class="ub ub--line ub--sm" href={ms.docs[0][1]} target="_blank" rel="noopener">Spec Sheet</a>
               {sellable && <a class="ub ub--line ub--sm" href={buyQuote}>Buy One</a>}
             </div>
-            <p class="vm__docs">{ms.docs.slice(1).map(([t, u]) => <a href={u} target="_blank" rel="noopener">{t} (PDF)</a>)}</p>
           </div>
         </article>
       </div>
@@ -384,6 +390,15 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   </div>
 </div>
 
+<script>
+  document.querySelectorAll('[data-pctabs]').forEach((tabs) => {
+    const card = tabs.closest('.pc');
+    tabs.querySelectorAll('[data-pct]').forEach((b) => b.addEventListener('click', () => {
+      tabs.querySelectorAll('[data-pct]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      card.querySelectorAll('[data-pcp]').forEach((p) => p.classList.toggle('is-on', p.dataset.pcp === b.dataset.pct));
+    }));
+  });
+</script>
 <script>
   // Desktop header: pick the largest base size that still fits the first screen with room to spare.
   (() => {
@@ -880,5 +895,45 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
     .un__hero--bleed { background: #141619; }
     .un__hero--bleed .un__media { width: 64%; -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.03) 6%, rgba(0,0,0,.1) 12%, rgba(0,0,0,.22) 18%, rgba(0,0,0,.38) 24%, rgba(0,0,0,.56) 30%, rgba(0,0,0,.74) 36%, rgba(0,0,0,.88) 42%, rgba(0,0,0,.96) 48%, #000 56%); mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.03) 6%, rgba(0,0,0,.1) 12%, rgba(0,0,0,.22) 18%, rgba(0,0,0,.38) 24%, rgba(0,0,0,.56) 30%, rgba(0,0,0,.74) 36%, rgba(0,0,0,.88) 42%, rgba(0,0,0,.96) 48%, #000 56%); }
     .un__hero--bleed .un__fade { background: linear-gradient(180deg, rgba(20, 22, 25, .3) 0%, rgba(20, 22, 25, 0) 16%, rgba(20, 22, 25, 0) 84%, rgba(20, 22, 25, .55) 100%); }
+  }
+
+  /* product card: summary, key numbers, tabbed detail */
+  .pc h3 { margin-bottom: 10px; }
+  .pc__lede { margin: 0 0 24px; color: var(--steel); font-size: 1.04rem; line-height: 1.55; max-width: 56ch; }
+  .pc__stats { list-style: none; margin: 0 0 28px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 16px; }
+  .pc__stats li { padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 5px; }
+  .pc__stats li + li { border-left: 1px solid var(--line); }
+  .pc__stats b { font-size: clamp(1.25rem, 1.7vw, 1.6rem); line-height: 1; letter-spacing: -.03em; color: var(--ink); font-variation-settings: 'wght' 720; }
+  .pc__stats span { font-size: .8rem; line-height: 1.35; color: var(--steel); }
+  .pc__tabs { display: flex; gap: 4px; padding: 4px; margin: 0 0 18px; background: var(--haze); border-radius: 999px; width: fit-content; }
+  .pc__tabs button { border: 0; background: none; padding: 9px 18px; border-radius: 999px; font: inherit; font-size: .9rem; color: var(--steel); font-variation-settings: 'wght' 620; cursor: pointer; transition: background .2s, color .2s; }
+  .pc__tabs button:hover { color: var(--ink); }
+  .pc__tabs button.is-on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(20, 22, 25, .12); }
+  .pc__panel { display: none; min-height: 236px; }
+  .pc__panel.is-on { display: block; animation: pcIn .25s ease; }
+  @keyframes pcIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .pc__feat { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; }
+  .pc__feat li { display: grid; gap: 4px; padding-left: 14px; border-left: 2px solid var(--red); }
+  .pc__feat b { font-size: .95rem; font-variation-settings: 'wght' 680; }
+  .pc__feat span { font-size: .86rem; line-height: 1.45; color: var(--steel); }
+  .pc__spec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .pc__spec p { margin: 0 0 6px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); font-size: .86rem; font-variation-settings: 'wght' 700; }
+  .pc__spec dl { margin: 0; }
+  .pc__spec dl div { display: grid; gap: 2px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .pc__spec dt { font-size: .76rem; color: var(--steel); }
+  .pc__spec dd { margin: 0; font-size: .88rem; color: var(--ink); font-variation-settings: 'wght' 600; }
+  .pc__docs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-width: 460px; }
+  .pc__docs a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; font-variation-settings: 'wght' 600; transition: border-color .2s; }
+  .pc__docs a:hover { border-color: var(--ink); }
+  .pc__docs a :global(svg) { width: 18px; height: 18px; color: var(--red); flex: none; }
+  .pc__docs em { margin-left: auto; font-style: normal; font-size: .7rem; letter-spacing: .12em; color: var(--steel); }
+  .pc__btns { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+  @media (max-width: 1100px) { .pc__spec { grid-template-columns: minmax(0, 1fr); } .pc__panel { min-height: 0; } }
+  @media (max-width: 640px) {
+    .pc__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pc__stats li:nth-child(3) { border-left: 0; }
+    .pc__stats li:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .pc__feat { grid-template-columns: minmax(0, 1fr); }
+    .pc__tabs { width: 100%; } .pc__tabs button { flex: 1; padding-inline: 8px; }
   }
 </style>
