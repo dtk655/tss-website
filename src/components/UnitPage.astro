@@ -167,13 +167,10 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   {ms ? (
     <section class="us vm" id="product">
       <div class="wrap">
-        <div class="us__h">
-          <p class="un__k un__k--dk"><span></span>The Equipment</p>
-          <h2>{ms.maker} {ms.model}</h2>
-        </div>
         <article class="vm__card vm__card--wide">
           <div class="vm__img"><img src={cut || shopImgs[0]?.src} alt={`${ms.maker} ${ms.model}`} loading="lazy" decoding="async" /><span class="vm__model">{ms.maker} W|ECO</span></div>
           <div class="vm__body">
+            <p class="vm__sub">{ms.maker}</p>
             <h3>{ms.model}</h3>
             <p class="vm__lede">{ms.lead.join(' ')}</p>
             <ul class="vm__tags">{ms.tags.map((t) => <li>{t}</li>)}</ul>
@@ -797,7 +794,8 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
 
   /* single-product card (arrow board) */
   .vm__card--wide { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
-  .vm__card--wide .vm__img { aspect-ratio: auto; min-height: 100%; }
+  .vm__card--wide { align-items: start; overflow: visible; }
+  .vm__card--wide .vm__img { aspect-ratio: auto; height: min(460px, calc(100svh - var(--hdr-h, 144px) - 160px)); position: sticky; top: calc(var(--hdr-h, 144px) + 24px); margin: clamp(16px, 2vw, 28px); border-radius: 18px; }
   .vm__card--wide .vm__img img { position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: contain; }
   .vm__card--wide .vm__body { padding: clamp(24px, 3vw, 44px); }
   .vm__card--wide h3 { font-size: clamp(1.5rem, 2.2vw, 2.1rem); letter-spacing: -.03em; }
@@ -815,7 +813,7 @@ const USE_IC = ['M12 3l9 16H3z M12 10v4 M12 17v.01', 'M4 17l5-5 4 4 7-8', 'M12 2
   @media (max-width: 1100px) { .vm__cols { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 860px) {
     .vm__card--wide { grid-template-columns: minmax(0, 1fr); }
-    .vm__card--wide .vm__img { aspect-ratio: 4 / 3; min-height: 0; }
+    .vm__card--wide .vm__img { aspect-ratio: 4 / 3; height: auto; position: relative; top: auto; margin: 0; border-radius: 0; }
     .vm__card--wide .vm__btns { flex-wrap: wrap; }
     .vm__card--wide .vm__btns .ub { flex: 1 1 100%; }
   }
